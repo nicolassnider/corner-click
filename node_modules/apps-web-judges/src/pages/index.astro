@@ -1,0 +1,22 @@
+---
+import ScorePad from '../components/ScorePad.jsx';
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Corner Click - Judge Scoring</title>
+		<style>
+			/* Prevent pull-to-refresh on mobile */
+			body {
+				overscroll-behavior-y: contain;
+			}
+		</style>
+	</head>
+	<body>
+		<ScorePad client:load />
+	</body>
+</html>
