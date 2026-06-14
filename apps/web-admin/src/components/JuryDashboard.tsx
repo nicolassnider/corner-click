@@ -3,6 +3,12 @@ import { ref, onValue, set } from 'firebase/database';
 import { database } from '../lib/firebase';
 import '../styles/global.css';
 
+interface MatchState {
+  status: string;
+  red: { score: number; warnings: number; deductions: number };
+  blue: { score: number; warnings: number; deductions: number };
+}
+
 const MOCK_MATCHES = [
   { id: 1, title: 'Final - Black Belt - 70kg', red: 'John Doe', blue: 'Jane Smith', status: 'PENDING' },
   { id: 2, title: 'Semi-Final - Black Belt - 70kg', red: 'Mike T.', blue: 'Alex B.', status: 'ENDED' },

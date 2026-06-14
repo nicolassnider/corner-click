@@ -3,7 +3,18 @@ import { ref, onValue, set, get } from 'firebase/database';
 import { database } from '../lib/firebase';
 import '../styles/global.css';
 
-export default function ScorePad() {
+interface ScorePadProps {
+  matchId: string;
+  cornerId: string;
+}
+
+interface ScoreState {
+  score: number;
+  warnings: number;
+  deductions: number;
+}
+
+export default function ScorePad({ matchId, cornerId }: ScorePadProps) {
   const [redScore, setRedScore] = useState(0);
   const [blueScore, setBlueScore] = useState(0);
   
@@ -14,10 +25,6 @@ export default function ScorePad() {
   const [blueDeductions, setBlueDeductions] = useState(0);
 
   const [matchStatus, setMatchStatus] = useState('PENDING');
-
-  const searchParams = new URLSearchParams(window?.location?.search || '');
-  const matchId = searchParams.get('matchId') || 'mock-match-123';
-  const cornerId = searchParams.get('cornerId') || 'corner1';
 
   // Listen to Match Status
   useEffect(() => {
@@ -56,7 +63,7 @@ export default function ScorePad() {
     }
   }, [blueWarnings]);
 
-  const handleScore = (e, color, points) => {
+  const handleScore = (e: React.MouseEvent<HTMLButtonElement>, color: 'red' | 'blue', points: number) => {
     e.currentTarget.blur();
     if (matchStatus !== 'ACTIVE') return;
     if (color === 'red') setRedScore(prev => prev + points);
@@ -71,14 +78,14 @@ export default function ScorePad() {
     }
   };
 
-  const handleWarning = (e, color) => {
+  const handleWarning = (e: React.MouseEvent<HTMLButtonElement>, color: 'red' | 'blue') => {
     e.currentTarget.blur();
     if (matchStatus !== 'ACTIVE') return;
     if (color === 'red') setRedWarnings(prev => prev + 1);
     if (color === 'blue') setBlueWarnings(prev => prev + 1);
   };
 
-  const handleDeduction = (e, color) => {
+  const handleDeduction = (e: React.MouseEvent<HTMLButtonElement>, color: 'red' | 'blue') => {
     e.currentTarget.blur();
     if (matchStatus !== 'ACTIVE') return;
     if (color === 'red') {
