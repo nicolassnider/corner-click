@@ -53,8 +53,8 @@ This document outlines the primary use cases for the Corner Click application, d
 ## 3. Corner Referee (Judge) Use Cases
 
 ### UC-3.1: Connect to Assigned Ring
-- **Description:** The judge opens the `web-judges` app on their mobile device and selects their assigned ring and corner position.
-- **Outcome:** The device syncs with the Jury President's table via Firebase.
+- **Description:** The judge opens the `web-judges` app on their mobile device and enters a **temporary PIN code** provided by the Organizer.
+- **Outcome:** The device authenticates the judge anonymously, assigns them to their specific ring and corner position, and syncs with the Jury President's table via Firebase.
 
 ### UC-3.2: Score Points
 - **Description:** While the match is `ACTIVE`, the judge taps the screen to award points to the Red or Blue competitor based on the techniques observed.

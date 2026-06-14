@@ -7,6 +7,8 @@ Corner Click is a comprehensive web application designed for managing ITF Taekwo
 - **Bracket Management:** Automatically and manually generate tournament brackets (llaves) with support for seeding and byes.
 - **Match Listing:** Keep track of all matches, their statuses (pending, active, completed), and assigned areas/rings.
 - **Live Scoring Interface:** A real-time, low-latency dashboard for Corner Referees to award points (1, 2, or 3) and record warnings or deductions, fully compliant with ITF Official Competition Rules.
+- **Role-Based Access Control:** Secure access separated by roles (Admin, Organizer, Jury, Judge).
+- **Frictionless Judge Login:** Judges log in instantly using temporary PIN codes generated for specific rings and corners, avoiding the need for complex account creation on tournament day.
 - **Internationalization (i18n):** Built from the ground up to support multiple languages.
 
 ## Technology Stack
