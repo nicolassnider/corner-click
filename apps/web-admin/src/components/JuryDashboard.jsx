@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { ref, onValue, set } from 'firebase/database';
+import { database } from '../lib/firebase';
 import '../styles/global.css';
 
 const MOCK_MATCHES = [
@@ -10,6 +12,29 @@ export default function JuryDashboard() {
   const [selectedMatch, setSelectedMatch] = useState(MOCK_MATCHES[0]);
   const [status, setStatus] = useState('PENDING'); // PENDING, ACTIVE, PAUSED, ENDED
   const [timeRemaining, setTimeRemaining] = useState(120); // 2 minutes in seconds
+  const [judgesData, setJudgesData] = useState({});
+
+  // Sync Master Status and Timer to Firebase
+  useEffect(() => {
+    const matchRef = ref(database, `live_matches/${selectedMatch.id}`);
+    set(matchRef, {
+      status,
+      timeRemaining
+    });
+  }, [status, timeRemaining, selectedMatch.id]);
+
+  // Listen to Judges
+  useEffect(() => {
+    const judgesRef = ref(database, `live_matches/${selectedMatch.id}/judges`);
+    const unsubscribe = onValue(judgesRef, (snapshot) => {
+      if (snapshot.exists()) {
+        setJudgesData(snapshot.val());
+      } else {
+        setJudgesData({});
+      }
+    });
+    return () => unsubscribe();
+  }, [selectedMatch.id]);
 
   useEffect(() => {
     let interval = null;
@@ -73,6 +98,21 @@ export default function JuryDashboard() {
 
           <div className="match-timer">
             {formatTime(timeRemaining)}
+          </div>
+
+          <div style={{ display: 'flex', gap: '2rem', marginBottom: '2rem' }}>
+            <div style={{ background: '#222', padding: '1rem', borderRadius: '8px' }}>
+              <h3 style={{ color: 'var(--color-danger)' }}>Red Total</h3>
+              <div style={{ fontSize: '2rem', fontWeight: 'bold', textAlign: 'center' }}>
+                {Object.values(judgesData).reduce((acc, curr) => acc + (curr.redScore || 0), 0)}
+              </div>
+            </div>
+            <div style={{ background: '#222', padding: '1rem', borderRadius: '8px' }}>
+              <h3 style={{ color: 'var(--color-primary)' }}>Blue Total</h3>
+              <div style={{ fontSize: '2rem', fontWeight: 'bold', textAlign: 'center' }}>
+                {Object.values(judgesData).reduce((acc, curr) => acc + (curr.blueScore || 0), 0)}
+              </div>
+            </div>
           </div>
 
           <div className="controls">

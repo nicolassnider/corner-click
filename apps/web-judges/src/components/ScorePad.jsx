@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { ref, onValue, set, get } from 'firebase/database';
+import { database } from '../lib/firebase';
 import '../styles/global.css';
 
 export default function ScorePad() {
@@ -10,6 +12,32 @@ export default function ScorePad() {
   
   const [redDeductions, setRedDeductions] = useState(0);
   const [blueDeductions, setBlueDeductions] = useState(0);
+
+  const [matchStatus, setMatchStatus] = useState('PENDING');
+
+  const searchParams = new URLSearchParams(window?.location?.search || '');
+  const matchId = searchParams.get('matchId') || 'mock-match-123';
+  const cornerId = searchParams.get('cornerId') || 'corner1';
+
+  // Listen to Match Status
+  useEffect(() => {
+    const statusRef = ref(database, `live_matches/${matchId}/status`);
+    const unsubscribe = onValue(statusRef, (snapshot) => {
+      if (snapshot.exists()) {
+        setMatchStatus(snapshot.val());
+      }
+    });
+    return () => unsubscribe();
+  }, [matchId]);
+
+  // Sync local state to Firebase whenever it changes (simple 1-way sync from local to RTDB)
+  // To avoid loops, we only push local state up. In a real app, you might want 2-way sync.
+  useEffect(() => {
+    const cornerRef = ref(database, `live_matches/${matchId}/judges/${cornerId}`);
+    set(cornerRef, {
+      redScore, blueScore, redWarnings, blueWarnings, redDeductions, blueDeductions
+    });
+  }, [redScore, blueScore, redWarnings, blueWarnings, redDeductions, blueDeductions, matchId, cornerId]);
 
   // According to BR-024: 3 warnings = 1 point deduction
   useEffect(() => {
@@ -30,6 +58,7 @@ export default function ScorePad() {
 
   const handleScore = (e, color, points) => {
     e.currentTarget.blur();
+    if (matchStatus !== 'ACTIVE') return;
     if (color === 'red') setRedScore(prev => prev + points);
     if (color === 'blue') setBlueScore(prev => prev + points);
     
@@ -44,12 +73,14 @@ export default function ScorePad() {
 
   const handleWarning = (e, color) => {
     e.currentTarget.blur();
+    if (matchStatus !== 'ACTIVE') return;
     if (color === 'red') setRedWarnings(prev => prev + 1);
     if (color === 'blue') setBlueWarnings(prev => prev + 1);
   };
 
   const handleDeduction = (e, color) => {
     e.currentTarget.blur();
+    if (matchStatus !== 'ACTIVE') return;
     if (color === 'red') {
       setRedDeductions(prev => prev + 1);
       setRedScore(prev => prev - 1);
@@ -62,6 +93,11 @@ export default function ScorePad() {
 
   return (
     <div className="score-pad-container">
+      {matchStatus !== 'ACTIVE' && (
+        <div style={{ position: 'absolute', top: 10, left: 0, right: 0, textAlign: 'center', background: 'var(--color-warning)', color: '#000', padding: '10px', zIndex: 10, fontWeight: 'bold' }}>
+          MATCH IS {matchStatus} - SCORING DISABLED
+        </div>
+      )}
       {/* RED COMPETITOR */}
       <div className="competitor-panel red">
         <div className="panel-header">
