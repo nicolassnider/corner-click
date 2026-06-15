@@ -5,6 +5,7 @@ import settings from './config/settings';
 const authRoutes = require('./routes/auth').default || require('./routes/auth');
 const tournamentsRoutes = require('./routes/tournaments').default || require('./routes/tournaments');
 const judgesRoutes = require('./routes/judges').default || require('./routes/judges');
+const matchesRoutes = require('./routes/matches').default || require('./routes/matches');
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/tournaments', tournamentsRoutes);
 app.use('/api/tournaments', judgesRoutes);
+app.use('/api/matches', matchesRoutes);
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({ 
