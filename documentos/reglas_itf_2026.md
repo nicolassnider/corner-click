@@ -8,92 +8,165 @@ Campeonatos Mundiales y Copas del Mundo
 
 TABLA DE CONTENIDOS
 
+## TOC: SECCIÓN I - GENERAL
 
-## SECCIÓN I - GENERAL
-### T1. PROPÓSITO
-### T2. APLICACIÓN
-### T3. OFICIALES
-### T4. DEBERES
-### T5. COMPETIDORES
-### T6. REQUISITOS DE VESTIMENTA
-### T7. VESTIMENTA Y EQUIPOS DE SEGURIDAD Y PROTECCIÓN
-### T8. ATENCIÓN MÉDICA
-### T9. SEGURO Y RESPONSABILIDAD POR LESIONES: COMPETIDORES
-### T10. SEGURO: PARA EL EVENTO
-### T11. TAMAÑO DEL RING
-### T12. REGISTRO DE RESULTADOS
-### T13. DELEGADOS
-### T14. ENTRENADORES
-### T15. PREMIOS (Masculino y Femenino)
-### T16. TERMINOLOGÍA OFICIAL
-### T17. DIVISIÓN DE LA COMPETENCIA
-### T18. NÚMEROS DE COMPETIDORES – INDIVIDUALES Y POR EQUIPOS
-### T19. ORDEN DE LA COMPETENCIA
-### T20. SORTEO DEL ORDEN DE COMPETENCIA
-### T21. PROCESO DE REGISTRO / CONTROL DE PESO
-### T22. ANUNCIOS
-### T23. REEMPLAZO DE EQUIPAMIENTO O O VESTIMENTA
-### T24. CORTESÍA
-## SECCIÓN II - FORMAS
-### T25. GRUPOS
-### T26. ELIMINATORIAS Y DECISIONES – INDIVIDUAL
-### T28. ELIMINATORIAS Y DECISIONES – EQUIPOS
-### T29. EJECUCIÓN – EQUIPO
-### T30. OFICIALES PARA LA DIVISIÓN DE FORMAS
-## SECCIÓN III - LUCHA
-### T31. DIVISIONES
-### T32. DURACIÓN DE LOS COMBATES Y DECISIONES
-### T33. ÁREA OBJETIVO
-### T34. PUNTOS OTORGADOS
-### T35. SISTEMA DE PUNTUACIÓN DE “LIGHT CONTACT”
-### T36. DESCUENTO DE PUNTOS/FALTAS
-### T37. ADVERTENCIAS
-### T38. DESCALIFICACIÓN
-### T39. LESIONES
-### T40. PROCEDIMIENTO DEL COMBATE – INDIVIDUAL Y POR EQUIPOS
-### T41. TIEMPO
-### T42. OFICIALES PARA LA COMPETENCIA DE LUCHA
-## SECCIÓN IV – ROTURA DE POTENCIA
-### T43. DIVISIONES
-### T44. PROCEDIMIENTO – INDIVIDUAL Y EQUIPOS
-### T45. OFICIALES PARA LA ROTURA DE POTENCIA
-## SECCIÓN V – TÉCNICAS ESPECIALES
-### T46. DIVISIONES
-### T47. PROCEDIMIENTO – INDIVIDUAL Y EQUIPOS
-### T48. OFICIALES PARA TÉCNICAS ESPECIALES
-## SECCIÓN VI – LUCHA PREESTABLECIDA
-### T49. DIVISIONES
-### T50. PROCEDIMIENTO
-### T51. OFICIALES PARA LUCHA PREESTABLECIDA
-## SECCIÓN VII – PROCEDIMIENTO DE DISPUTA
-### T52. PROTESTA
-### T53. PROTESTA – DECISIONES
-### T54. DESCALIFICACIÓN
-### T55. RETIRO DE EQUIPOS/COMPETIDORES
-### T56. CONTROL ANTIDOPAJE DE LA ITF
-### T57. POLÍTICA DE LA ITF SOBRE CONMOCIONES CEREBRALES
-### T58. EVENTOS INESPERADOS
-### T59. COPIAS DE LAS REGLAS
-### T60. IMPLEMENTACIÓN
-### S1. Anexo 1 – Grupos de Formas
-### S2. Anexo 2 – Divisiones de Lucha
-### S3. Anexo 3 – Divisiones de Rotura de Potencia
-### S4. Anexo 4 – Divisiones de Técnicas Especiales
-### S5. Apéndice 5 – Divisiones de Lucha Preestablecida
-### S6. Apéndice 6 – Números de Categorías, Medallas y Trofeos
-### D1. Diagrama 1.          Tamaño del Ring– Formas, Formas Equipos, Pre-Establecda
-### D2. Diagrama 2.          Tamaño del Ring– Lucha - Lucha por Equipos
-### D3. Diagrama 3.          Tamaño del Ring – Rotura de Potencia (Word-Championships)
-### D4. Diagrama 4.          Tamaño del Ring – Técnicas Especiales (Word-Championships)
-### D5. Diagrama 5.          Tamaño del Ring – Técnicas Especiales / Rotura de Potencia (World Cup Events)
+### TOC: T1. PROPÓSITO
+
+### TOC: T2. APLICACIÓN
+
+### TOC: T3. OFICIALES
+
+### TOC: T4. DEBERES
+
+### TOC: T5. COMPETIDORES
+
+### TOC: T6. REQUISITOS DE VESTIMENTA
+
+### TOC: T7. VESTIMENTA Y EQUIPOS DE SEGURIDAD Y PROTECCIÓN
+
+### TOC: T8. ATENCIÓN MÉDICA
+
+### TOC: T9. SEGURO Y RESPONSABILIDAD POR LESIONES: COMPETIDORES
+
+### TOC: T10. SEGURO: PARA EL EVENTO
+
+### TOC: T11. TAMAÑO DEL RING
+
+### TOC: T12. REGISTRO DE RESULTADOS
+
+### TOC: T13. DELEGADOS
+
+### TOC: T14. ENTRENADORES
+
+### TOC: T15. PREMIOS (Masculino y Femenino)
+
+### TOC: T16. TERMINOLOGÍA OFICIAL
+
+### TOC: T17. DIVISIÓN DE LA COMPETENCIA
+
+### TOC: T18. NÚMEROS DE COMPETIDORES – INDIVIDUALES Y POR EQUIPOS
+
+### TOC: T19. ORDEN DE LA COMPETENCIA
+
+### TOC: T20. SORTEO DEL ORDEN DE COMPETENCIA
+
+### TOC: T21. PROCESO DE REGISTRO / CONTROL DE PESO
+
+### TOC: T22. ANUNCIOS
+
+### TOC: T23. REEMPLAZO DE EQUIPAMIENTO O O VESTIMENTA
+
+### TOC: T24. CORTESÍA
+
+## TOC: SECCIÓN II - FORMAS
+
+### TOC: T25. GRUPOS
+
+### TOC: T26. ELIMINATORIAS Y DECISIONES – INDIVIDUAL
+
+### TOC: T28. ELIMINATORIAS Y DECISIONES – EQUIPOS
+
+### TOC: T29. EJECUCIÓN – EQUIPO
+
+### TOC: T30. OFICIALES PARA LA DIVISIÓN DE FORMAS
+
+## TOC: SECCIÓN III - LUCHA
+
+### TOC: T31. DIVISIONES
+
+### TOC: T32. DURACIÓN DE LOS COMBATES Y DECISIONES
+
+### TOC: T33. ÁREA OBJETIVO
+
+### TOC: T34. PUNTOS OTORGADOS
+
+### TOC: T35. SISTEMA DE PUNTUACIÓN DE "LIGHT CONTACT"
+
+### TOC: T36. DESCUENTO DE PUNTOS/FALTAS
+
+### TOC: T37. ADVERTENCIAS
+
+### TOC: T38. DESCALIFICACIÓN
+
+### TOC: T39. LESIONES
+
+### TOC: T40. PROCEDIMIENTO DEL COMBATE – INDIVIDUAL Y POR EQUIPOS
+
+### TOC: T41. TIEMPO
+
+### TOC: T42. OFICIALES PARA LA COMPETENCIA DE LUCHA
+
+## TOC: SECCIÓN IV – ROTURA DE POTENCIA
+
+### TOC: T43. DIVISIONES
+
+### TOC: T44. PROCEDIMIENTO – INDIVIDUAL Y EQUIPOS
+
+### TOC: T45. OFICIALES PARA LA ROTURA DE POTENCIA
+
+## TOC: SECCIÓN V – TÉCNICAS ESPECIALES
+
+### TOC: T46. DIVISIONES
+
+### TOC: T47. PROCEDIMIENTO – INDIVIDUAL Y EQUIPOS
+
+### TOC: T48. OFICIALES PARA TÉCNICAS ESPECIALES
+
+## TOC: SECCIÓN VI – LUCHA PREESTABLECIDA
+
+### TOC: T49. DIVISIONES
+
+### TOC: T50. PROCEDIMIENTO
+
+### TOC: T51. OFICIALES PARA LUCHA PREESTABLECIDA
+
+## TOC: SECCIÓN VII – PROCEDIMIENTO DE DISPUTA
+
+### TOC: T52. PROTESTA
+
+### TOC: T53. PROTESTA – DECISIONES
+
+### TOC: T54. DESCALIFICACIÓN
+
+### TOC: T55. RETIRO DE EQUIPOS/COMPETIDORES
+
+### TOC: T56. CONTROL ANTIDOPAJE DE LA ITF
+
+### TOC: T57. POLÍTICA DE LA ITF SOBRE CONMOCIONES CEREBRALES
+
+### TOC: T58. EVENTOS INESPERADOS
+
+### TOC: T59. COPIAS DE LAS REGLAS
+
+### TOC: T60. IMPLEMENTACIÓN
+
+### TOC: S1. Anexo 1 – Grupos de Formas
+
+### TOC: S2. Anexo 2 – Divisiones de Lucha
+
+### TOC: S3. Anexo 3 – Divisiones de Rotura de Potencia
+
+### TOC: S4. Anexo 4 – Divisiones de Técnicas Especiales
+
+### TOC: S5. Apéndice 5 – Divisiones de Lucha Preestablecida
+
+### TOC: S6. Apéndice 6 – Números de Categorías, Medallas y Trofeos
+
+### TOC: D1. Diagrama 1.          Tamaño del Ring– Formas, Formas Equipos, Pre-Establecda
+
+### TOC: D2. Diagrama 2.          Tamaño del Ring– Lucha - Lucha por Equipos
+
+### TOC: D3. Diagrama 3.          Tamaño del Ring – Rotura de Potencia (Word-Championships)
+
+### TOC: D4. Diagrama 4.          Tamaño del Ring – Técnicas Especiales (Word-Championships)
+
+### TOC: D5. Diagrama 5.          Tamaño del Ring – Técnicas Especiales / Rotura de Potencia (World Cup Events)
+
 A11.       Apéndice 11 – Ajustes a las Reglas Oficiales de Competición de la ITF para Torneos Electrónicos .. 124
 
-
 ## SECCIÓN I - GENERAL
 
-
 ### T1. PROPÓSITO
-
 
 El propósito de estas reglas es:
 1.1. Elevar la calidad de las competiciones de Taekwon-Do de la ITF mediante la puntuación de todos
@@ -107,17 +180,13 @@ de sus habilidades en una competición amistosa entre ellos.
 1.7. Proteger la autoridad de los miembros del jurado, árbitros y jueces.
 1.8. Delimitar los derechos y deberes de los miembros del jurado, árbitros y jueces.
 
-
 ### T2. APLICACIÓN
-
 
 Estas normas se aplicarán en todos los campeonatos mundiales oficiales de la ITF y en todas las
 competencias de la Copa Mundial de Taekwon-Do ITF, y se aplicarán tanto a los competidores
 masculinos como a los femeninos, salvo que se indique lo contrario.
 
-
 ### T3. OFICIALES
-
 
 3.1.     Comité de Arbitros
 
@@ -239,9 +308,7 @@ ring para garantizar que el árbitro de esquina en las divisiones de combate por
 equipos no sea miembro del mismo país que ninguno de los dos equipos de ese
 mismo combate.
 
-
 ### T4. DEBERES
-
 
 4.1.     Presidente del Jurado
 Un (1) presidente del jurado estará sentado en la mesa del jurado en todo momento durante la
@@ -510,9 +577,7 @@ por el rango, sin embargo, el rango no es un factor determinante a la hora de as
 los oficiales deben estar dispuestos a desempeñar cualquier función, independientemente del
 rango que ostenten.
 
-
 ### T5. COMPETIDORES
-
 
 La edad “competitiva” de los competidores se define mediante la siguiente fórmula:
 
@@ -760,14 +825,11 @@ competidores es responsabilidad de la Asociación Nacional. El anfitrión del ev
 responsabilidad de obtener un seguro de accidentes y un seguro de responsabilidad civil adecuados
 para el torneo.
 
-
 ### T10. SEGURO: PARA EL EVENTO
-
 
 Todos los Organizadores deben asegurarse de que el evento reservado cuente con todos los seguros de
 responsabilidad civil, certificados contra incendios y licencias gubernamentales necesarios para celebrar
 este tipo de eventos en su localidad.
-
 
 ### T11. TAMAÑO DEL RING
 
@@ -807,7 +869,6 @@ presenta la documentación, presenta quejas y                             a los 
 coopera con los demás oficiales de la competición.                       presenta quejas y coopera con los demás oficiales de
 la competición.
 
-
 ### T14. ENTRENADORES
 
 (Véase también: Apéndice 2, Apéndice 9, Apéndices de Rings, Glosario de Términos)
@@ -829,7 +890,6 @@ minutos.
 14.9.2. Esto podrá ser realizado por un competidor registrado que vista el uniforme de entrenador.
 14.9.2.1. Válido únicamente para el match en curso.
 14.10. Si otro entrenador no se presenta en el plazo de dos (2) minutos, el competidor será descalificado.
-
 
 ### T15. PREMIOS (Masculino y Femenino)
 
@@ -893,7 +953,6 @@ un solo Oro y no se multiplicará por 6, por ejemplo el
 Equipo ganador de Formas tendrá solo un Oro
 añadido al total general y no 6 oros.
 
-
 ### T16. TERMINOLOGÍA OFICIAL
 
 (Véase también: Apéndice 3, Apéndice 7, Glosario de términos)
@@ -921,14 +980,11 @@ añadido al total general y no 6 oros.
 16.20     SA HUE JONG                     CUARTO ROUND (al primer punto o muerte súbita)
 16.21     SUNG                            GANADOR
 
-
 ### T17. DIVISIÓN DE LA COMPETENCIA
 
 Todas las divisiones están enumeradas en los Anexos 1, 2, 3, 4 y 5.
 
-
 ### T18. NÚMEROS DE COMPETIDORES – INDIVIDUALES Y POR EQUIPOS
-
 
 World Championship                                                                     World Cup
 18.1. INDIVIDUAL                                                          18.1. INDIVIDUAL
@@ -997,11 +1053,9 @@ Un mínimo de tres (3) competidores y un máximo
 de cinco (5) competidores + 1 reserva (opcional)
 deben competir en la competencia de Combate.
 
-
 ### T19. ORDEN DE LA COMPETENCIA
 
 El orden de la competición está sujeto a los requisitos de tiempo y al calendario general del torneo.
-
 
 ### T20. SORTEO DEL ORDEN DE COMPETENCIA
 
@@ -1021,7 +1075,6 @@ decidirán en el sorteo.                             en el sorteo.
 20.3. El sorteo de la competición se realizará al menos 48 horas antes del evento y estará disponible en
 el sitio web de la ITF.
 
-
 ### T21. PROCESO DE REGISTRO / CONTROL DE PESO
 
 Todos los competidores deben asistir al registro oficial en el lugar de pesaje.
@@ -1030,7 +1083,6 @@ El primer control de peso se realizará dentro de las 24 horas previas al inicio
 competidores que no alcancen su peso en el primer pesaje tendrán una (1) hora para presentarse al
 segundo y último pesaje. Si no alcanzan el peso, serán eliminados de la categoría de sparring y no podrán
 participar en ninguna otra categoría de peso.
-
 
 ### T22. ANUNCIOS
 
@@ -1042,7 +1094,6 @@ Si el competidor/equipo no se presenta en el área al ser llamado para actuar, e
 dará un tiempo de un (1) minuto a partir de ese momento para que se presente. No presentarse dentro
 del plazo establecido resultará en la descalificación.
 
-
 ### T23. REEMPLAZO DE EQUIPAMIENTO O O VESTIMENTA
 
 (Véase también: Apéndice 7, Apéndice 8)
@@ -1051,7 +1102,6 @@ Dobok contaminado) durante la competencia tendrá un tiempo para ser reemplazado
 De no reemplazar el equipo o la vestimenta defectuosos, el competidor será descalificado y los puntos
 del match se otorgarán al oponente, si corresponde.
 
-
 ### T24. CORTESÍA
 
 (Véase también: T38, Apéndice 7)
@@ -1059,18 +1109,14 @@ del match se otorgarán al oponente, si corresponde.
 Los competidores deben saludar en todo momento al jurado y también entre ellos al comienzo y al final
 de cada actuación/combate.
 
-
 ## SECCIÓN II - FORMAS
-
 
 ### T25. GRUPOS
 
 Los competidores de FORMAS se organizarán en grupos de acuerdo a género, edad, grado, como se
 describe en las categorías enumeradas en el Anexo 1.
 
-
 ### T26. ELIMINATORIAS Y DECISIONES – INDIVIDUAL
-
 
 26.1. Se utilizará el sistema piramidal de eliminación.
 
@@ -1143,7 +1189,6 @@ en el mismo match, la Forma Designada se elegirá
 del grupo de formas del competidor con el rango
 más bajo en ese encuentro.
 
-
 ### T28. ELIMINATORIAS Y DECISIONES – EQUIPOS
 
 28.1. Se utilizará el sistema piramidal de eliminación
@@ -1193,9 +1238,7 @@ antes de la hora programada para la categoría correspondiente.
 programada para la categoría correspondiente (siguiendo el procedimiento correcto descrito en
 T28.6.).
 
-
 ### T29. EJECUCIÓN – EQUIPO
-
 
 World Championship                                        World Cup
 29.1. Los equipos (cinco (5) competidores) deben    29.1.
@@ -1222,19 +1265,14 @@ T30. OFICIALES PARA LA DIVISIÓN DE FORMAS
 El concejo del ring activo está compuesto por: un (1) presidente del jurado, un (1) miembro del jurado, un (1)
 árbitro de TI, cinco (5) árbitros y dos (2) verificadores de equipos.
 
-
 ## SECCIÓN III - LUCHA
 
-
 ### T31. DIVISIONES
-
 
 Los competidores de Lucha se organizarán en divisiones según género, edad y peso, de acuerdo con las
 categorías que figuran en el Anexo 2.
 
-
 ### T32. DURACIÓN DE LOS COMBATES Y DECISIONES
-
 
 World Championship                                                             World Cup
 32.1. Individuales                                                        32.1. Individuales
@@ -1450,9 +1488,7 @@ T42. OFICIALES PARA LA COMPETENCIA DE LUCHA
 El consejo del ring activo está compuesto por: un (1) Presidente del Jurado, un (1) Miembro del Jurado, un
 Árbitro de TI, un (1) Árbitro Central, cuatro (4) Árbitros de Esquina y dos (2) Verificadores de Equipo.
 
-
 ## SECCIÓN IV – ROTURA DE POTENCIA
-
 
 T43. DIVISIONES
 
@@ -1547,16 +1583,12 @@ decide el competidor.
 44.15. Los competidores y/o equipos que no hayan obtenido puntos en su primera ronda de rotura no podrán
 continuar en la competencia de Rotura de Potencia para determinar su lugar y no recibirán medalla.
 
-
 ### T45. OFICIALES PARA LA ROTURA DE POTENCIA
-
 
 El concejo del ring activo está compuesto por: un (1) presidente del jurado, un (1) miembro del jurado, un (1)
 árbitro de TI, un (1) árbitro central, dos (2) árbitros y un (1) verificador de equipo.
 
-
 ## SECCIÓN V – TÉCNICAS ESPECIALES
-
 
 T46. DIVISIONES
 Los competidores de Técnicas Especiales se organizarán en grupos según género y edad, de acuerdo con
@@ -1640,9 +1672,7 @@ T48. OFICIALES PARA TÉCNICAS ESPECIALES
 El concejo del ring activo está compuesto por: un (1) presidente del jurado, un (1) miembro del jurado,
 un (1) árbitro de TI, un (1) árbitro central, dos (2) árbitros y un (1) verificador de equipo.
 
-
 ## SECCIÓN VI – LUCHA PREESTABLECIDA
-
 
 T49. DIVISIONES
 
@@ -1694,9 +1724,7 @@ T51. OFICIALES PARA LUCHA PREESTABLECIDA
 El concejo del ring activo está compuesto por: un (1) presidente del jurado, un (1) miembro del jurado,
 un (1) árbitro de TI, cinco (5) árbitros y dos (2) verificadores de equipos.
 
-
 ## SECCIÓN VII – PROCEDIMIENTO DE DISPUTA
-
 
 T52. PROTESTA
 
@@ -1777,7 +1805,6 @@ T60. IMPLEMENTACIÓN
 1 de mayo de 2026
 Bajo la autoridad del Comité de Árbitros de la ITF, el Comité de Torneos de la ITF y el Comité de
 Tecnología de la Información de la ITF.
-
 
 ### S1. Anexo 1 – Grupos de Formas
 
@@ -1934,7 +1961,6 @@ Los cinturones de color pueden ser de cualquier grado
 del 1º al 6º.
 
 1.2.4. No se pueden combinar distintas categorías de edad. *Ver Regla T5.
-
 
 ### S2. Anexo 2 – Divisiones de Lucha
 
@@ -2281,7 +2307,6 @@ competidores, se perderán las decisiones de los jueces.
 competidores, se perderán las decisiones de los jueces.
 2.4.
 
-
 ### S3. Anexo 3 – Divisiones de Rotura de Potencia
 
 (ver T 43.)
@@ -2351,7 +2376,6 @@ enumerados en el Apéndice 6 para su grupo.
 3.4. Cada equipo masculino y femenino (de cualquier
 grado y peso) debe estar compuesto por cinco (5)
 competidores y un (1) reserva (opcional).
-
 
 ### S4. Anexo 4 – Divisiones de Técnicas Especiales
 
@@ -2457,7 +2481,6 @@ enumeradas en el Apéndice 6 para su grupo.
 categoría y peso) deberá estar compuesto por cinco (5)
 competidores y un (1) suplente (opcional).
 
-
 ### S5. Apéndice 5 – Divisiones de Lucha Preestablecida
 
 (ver T 49.)
@@ -2490,7 +2513,6 @@ Equipos 1st-6th Dan
 5.3.1. dos (2) competidores masculinos
 5.3.2. dos (2) competidoras femeninas
 5.3.3. o un (1) competidor masculino y una (1) competidora femenina
-
 
 ### S6. Apéndice 6 – Números de Categorías, Medallas y Trofeos
 
@@ -2719,9 +2741,7 @@ En las competencias por equipos de lucha preestablecida, los equipos premiados r
 Total de medallas:             1800,                                   450 de oro                                                          450 de plata                                                   900 de bronce.
 Total de categorías:           245
 
-
 ### D1. Diagrama 1.           Tamaño del Ring– Formas, Formas Equipos, Pre-Establecda
-
 
 1m                                    8m                                     1m
 10 por 10 metros están en juego
@@ -2745,9 +2765,7 @@ RO1          RO2                            Mesa del Jurado
 
 IT           JP          JM
 
-
 ### D2. Diagrama 2.           Tamaño del Ring– Lucha - Lucha por Equipos
-
 
 1m                                    8m                                     1m
 8 por 8 metros están en juego
@@ -2769,9 +2787,7 @@ RO1          RO2                            Mesa del Jurado
 
 IT           JP          JM
 
-
 ### D3. Diagrama 3.          Tamaño del Ring – Rotura de Potencia (Word-Championships)
-
 
 1m                                      8m                                     1m
 10 por 10 metros están en juego
@@ -2807,9 +2823,7 @@ Se requieren máquinas de Rotua de potencia homologadas por la ITF TUIC.
 Se requiere un mínimo de cinco (5).
 La posición horizontal de las tablas en el ring es fija. Solo se puede modificar verticalmente.
 
-
 ### D4. Diagrama 4.          Tamaño del Ring – Técnicas Especiales (Word-Championships)
-
 
 1m                                    8m                                       1m
 10 por 10 metros están en juego
@@ -2821,17 +2835,19 @@ U2                                              YOPCHA JIRUGI
 
 U3
 CR
-- 3. TWIMYO                                                       U1
+
+- 1. TWIMYO                                                       U1
 BANDAE
 8m
 DOLLYO
 CHAGI
 
-- 2. TWIMYO
+- 1. TWIMYO
 DOLLYO CHAGI
 
 1m
-- 5. TWIO NOMO
+
+- 1. TWIO NOMO
 YOP CHAGI
 Sco             Sco              Sco               C
 2               1                3                             EV
@@ -2848,12 +2864,11 @@ La posición horizontal de las vallas en el ring es fija. Solo se puede cambiar 
 Para cambiar la distancia entre la valla y la valla para la técnica Nomo Yop Cha Jirugi, la valla se puede mover
 hacia adelante y hacia atrás.
 
-
-### D5. Diagrama 5.          Tamaño del Ring – Técnicas Especiales / Rotura de Potencia (World Cup Events)
-
+### TOC: D5. Diagrama 5. Tamaño del Ring – Técnicas Especiales / Rotura de Potencia (World Cup Events)
 
 1m                                      8m                                     1m
 10 por 10 metros están en juego
+
 - 1. TWIMYO NOPI
 APCHA BUSIGI
 1m
@@ -2870,7 +2885,8 @@ FOOT
 TECHNIQUE
 
 1m
-- 2. TWIO NOMO
+
+- 1. TWIO NOMO
 YOP CHAGI
 Sco              Sco            Sco                 C
 2                1              3                                EV
@@ -3442,16 +3458,17 @@ WALTER RILEY
 III
 CANADIAN TAEKWON-DO FEDERATION
 
-- 1.    Nombre
-- 2.    Nombre de la Asociación Nacional o Asosiación Aliada
+- 1. Nombre
+- 1. Nombre de la Asociación Nacional o Asosiación Aliada
 
 Cinturón Negro Oficial Pre-Junior y Junior con “INFORMACIÓN OPCIONAL” por EJEMPLO
 
 JAMES BRADLEY
 I
 국제 태권도 연맹
-- 1.    Nombre
-- 2.    Federación Internacional de Taekwon-Do en caligrafía coreana.
+
+- 1. Nombre
+- 1. Federación Internacional de Taekwon-Do en caligrafía coreana.
 
 2.3.3. Todos los cinturones de color de la ITF deben cumplir con los siguientes criterios (solo Copa del Mundo):
 
@@ -3572,19 +3589,19 @@ COMPETIDOR
 - 1. Indique al competidor que extienda los                                2. Compruebe la superficie frontal de los
 brazos para inspección.                                                         guantes.
 
-- 3. Compruebe la superficie superior de los                          4. Revise las palmas y la parte inferior de los
+- 1. Compruebe la superficie superior de los                          4. Revise las palmas y la parte inferior de los
 guantes y las muñecas.
 guantes.
 
-- 5. Compruebe el Protector Bucal                                       6. Compruebe el Protector Inguinal
+- 1. Compruebe el Protector Bucal                                       6. Compruebe el Protector Inguinal
 
 Obligatorio para hombres, opcional para mujeres
 (Debe usarse debajo del pantalón del Dobok)
 
-- 7. Compruebe la parte superior del protector del                       8. Compruebe la parte del talón del protector del
+- 1. Compruebe la parte superior del protector del                       8. Compruebe la parte del talón del protector del
 pie.                                                                    pie.
 
-- 9. Indicar al competidor que se dé la vuelta:                        10. Verificar el número de identificación/país del
+- 1. Indicar al competidor que se dé la vuelta:                        10. Verificar el número de identificación/país del
 revisar el casco y buscar fijaciones de metal o                                           competidor
 plástico para el cabello.
 
@@ -3593,19 +3610,19 @@ SALUDO INICIAL
 - 1. El árbitro llama al competidor             2. El árbitro llama al competidor             3. Los competidores se enfrentan
 Rojo "Hong"                                   azul “Chong”                        a la mesa del jurado. “Charyot”
 
-- 4. Los competidores saludan                  5. Los competidores se enfrentan                 6. Los competidores saludan al
+- 1. Los competidores saludan                  5. Los competidores se enfrentan                 6. Los competidores saludan al
 hacia la mesa del jurado. “Kyong-                 al árbitro central. “Charyot”                    árbitro central. “Kyong-Ye”
 Ye”
 
-- 7. Los competidores se enfrentan.               8. Los competidores se saludan
+- 1. Los competidores se enfrentan.               8. Los competidores se saludan
 “Charyot”                                  entre sí. "Kyong-Ye"
 
 INICIANDO EL MATCH
 
-- 9. Retrocede a la posición                       10. Extender el brazo entre                  11. Indica el número de round.
+- 1. Retrocede a la posición                       10. Extender el brazo entre                  11. Indica el número de round.
 preparatoria. "Junbi"                                competidores                                    “Il Hue Jong”
 
-- 12. Manteniendo el brazo entre                     13. Baja el brazo para iniciar
+- 1. Manteniendo el brazo entre                     13. Baja el brazo para iniciar
 los competidores, verifique                           el combate. “Sijak”
 visualmente para asegurarse
 de que el presidente del
@@ -3619,15 +3636,15 @@ AL FINAL DEL MATCH
 competidores para detener el                   rojo de vuelta al centro "Hong"               Azul de regreso al centro “Chong”
 combate. "Goman"
 
-- 4. Los competidores se enfrentan.                5. Los competidores se saludan                  6. Los competidores enfrentan al
+- 1. Los competidores se enfrentan.                5. Los competidores se saludan                  6. Los competidores enfrentan al
 “Charyot”                                   entre sí. "Kyong-Ye"                          árbitro central. “Charyot”
 
-- 7. Los competidores saludan al                 8. Los competidores enfrentan a                 9. Los competidores saludan a la
+- 1. Los competidores saludan al                 8. Los competidores enfrentan a                 9. Los competidores saludan a la
 árbitro central. “Kyong-Ye”                  la mesa del jurado. “Charyot”                    mesa del jurado. “Kyong-Ye”
 
 AL FINAL DEL MATCH (continuación)
 
-- 10. El árbitro central toma los                11. Levanta el brazo del ganador.
+- 1. El árbitro central toma los                11. Levanta el brazo del ganador.
 brazos de los competidores.                      (Ganador Azul “Chong Sung”)
 
 SEÑALES ADICIONALES 1
@@ -3701,7 +3718,7 @@ desde la altura de los                              central hasta el costado).
 ojos hasta la del
 hombro).
 
-- 3. Caída.                                           4. Simular una lesión                             6. Ataque involuntario
+- 1. Caída.                                           4. Simular una lesión                             6. Ataque involuntario
 a un objetivo ilegal.
 (Extiende ambas manos,                             8. Empujar
 con las palmas hacia                                                                                (Ejecutar un golpe de
@@ -3740,10 +3757,10 @@ intencional del ring / manipulación del tiempo, comportamiento / lenguaje
 inapropiado…)
 
 - 1. Contacto Fuerte                             2. Atacar a un oponente                      3. Barrido de piernas
-- 4. Agarre/Retención                            caído
-- 5. Ataque intencional a un                                                                        (Ejecutar una patada de
+- 1. Agarre/Retención                            caído
+- 1. Ataque intencional a un                                                                        (Ejecutar una patada de
 objetivo ilegal                            (Ejecutar una patada frontal                               barrido)
-- 6. Conducta Antideportiva                             baja y rápida)
+- 1. Conducta Antideportiva                             baja y rápida)
 
 (Ejecutar un puño en
 ángulo sobre la palma
@@ -3771,7 +3788,7 @@ círculo con la mano sobre la
 un objetivo ilegal)
 “Gam Jum Hanna”
 
-- 4. El árbitro central devuelve a los          5. El árbitro central levanta la mano y da la orden de continuar. "Gaesok"
+- 1. El árbitro central devuelve a los          5. El árbitro central levanta la mano y da la orden de continuar. "Gaesok"
 competidores a la posición de
 preparados.
 
@@ -3904,13 +3921,13 @@ El Jefe de Delegación arriba indicado
 
 - 1. Asegura por la presente que ha leído y entendido completamente las normas y requisitos del
 Patrocinio/Publicidad y se compromete a seguir dichas normas,
-- 2. asegura por la presente que el Patrocinador arriba mencionado y todas las imágenes, logotipos,
+- 1. asegura por la presente que el Patrocinador arriba mencionado y todas las imágenes, logotipos,
 marcas de palabras y textos asociados se adhieren estrictamente a los requisitos del Apéndice 4 -
 Aprobación de Patrocinio, y los cumplen,
-- 3. se compromete por la presente a acatar cualquier decisión tomada por el Comité de Árbitros de la
+- 1. se compromete por la presente a acatar cualquier decisión tomada por el Comité de Árbitros de la
 ITF con respecto a la idoneidad de dicho patrocinio/publicidad, en caso de que haya alguna duda o
 pregunta sobre el cumplimiento o la idoneidad de dicho patrocinio/publicidad,
-- 4. se compromete a aceptar todas las acciones y/o sanciones aplicadas por el Comité de Árbitros de la
+- 1. se compromete a aceptar todas las acciones y/o sanciones aplicadas por el Comité de Árbitros de la
 ITF en caso de incumplimiento o violación de las normas mencionadas anteriormente.
 
 FIRMA:                          (Insertar la Firma del Jefe de la Delegación)
@@ -4044,6 +4061,7 @@ gráfico o la foto.
 marcada en el gráfico o la foto.
 5.4.2. Tras recibir la Solicitud de Aprobación, el Comité de Árbitros de la ITF revisará la
 solicitud para verificar su conformidad con las Reglas Oficiales de Competición de la ITF
+
 - Apéndice 2 - Ropa Aprobada.
 5.4.3. La Aprobación se evaluará en función del cumplimiento real de las normas y
 reglamentos escritos, así como considerando la intención de las mismas, los Principios
@@ -4278,7 +4296,8 @@ SOBRE UNA VALLA”" desde la placa objetivo.
 6.2.1.2.1. Realizar una (1) Posición en Guardia de Antebrazos (señalando
 que están listos).
 6.2.1.2.2. Realizar una (1) medición obligatoria de distancia
-* Para Técnicas Especiales: Una medición se define como dar al menos un
+
+- Para Técnicas Especiales: Una medición se define como dar al menos un
 (1) paso deliberado hacia el objetivo.
 6.2.1.2.3. Realizar una (1) Posición en Guardia de Antebrazos
 (inmediatamente antes de la rotura)
@@ -5014,7 +5033,7 @@ vinculante.
 Medida.                                     1. Para Rotura de Potencia: La extensión de cualquier herramienta
 de ataque hacia el/los tableros(s) objetivo.
 
-- 2. Para Técnica Especial: Dar al menos uno (1) paso hacia el
+- 1. Para Técnica Especial: Dar al menos uno (1) paso hacia el
 objetivo.
 
 Mezcla de Movimientos:                      En las formas, la mezcla de movimientos ocurre cuando un
@@ -5237,7 +5256,7 @@ Tabla Rota:                                 1. En Rotura de Potencia, una tabla 
 separación exitosa y completa de las dos mitades de una tabla
 objetivo, de modo que no quede ninguna parte conectada.
 
-- 2. En Técnicas Especiales, una tabla rota se define como el
+- 1. En Técnicas Especiales, una tabla rota se define como el
 movimiento exitoso de la superficie objetivo desde su plano de
 reposo hasta, o más allá, de uno de los planos de puntuación
 preestablecidos.
@@ -5324,4 +5343,4 @@ material similar para:
 esguinces,
 • sin proporcionar un soporte mecánico excesivo.
 
-*Ver también: Vendaje deportivo, Vendaje/Vendaje suave.
+*Ver también: Vendaje deportivo, Vendaje/Vendaje suave
