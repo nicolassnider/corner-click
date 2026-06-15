@@ -42,3 +42,4 @@ lerna-debug.log*
 firebase-debug.log
 firebase-debug.*.log
 corner-check-8d397-firebase-adminsdk-fbsvc-d42f3d9cfe.json
+node_modules/*

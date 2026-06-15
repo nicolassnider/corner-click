@@ -22,10 +22,17 @@ export default function JudgeApp() {
   const [judgeName, setJudgeName] = useState<string>('');
 
   useEffect(() => {
-    let unsubFirestore: () => void;
+    let unsubFirestore: (() => void) | undefined;
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      
+      // Clean up previous listener if it exists
+      if (unsubFirestore) {
+        unsubFirestore();
+        unsubFirestore = undefined;
+      }
+
       if (currentUser) {
         const tokenResult = await currentUser.getIdTokenResult();
         const tournamentId = tokenResult.claims.tournamentId as string;
@@ -33,8 +40,6 @@ export default function JudgeApp() {
         const jName = tokenResult.claims.judgeName as string;
         
         if (!tournamentId || !judgeId) {
-          // If we have a user but no claims, it's an old or invalid session (like an Anonymous one).
-          // We must sign them out to force a clean login with the PIN.
           await auth.signOut();
           setUser(null);
           setLoading(false);
@@ -124,6 +129,12 @@ export default function JudgeApp() {
     );
   }
 
+  const handleLogout = async () => {
+    await auth.signOut();
+    setAssignment(null);
+    setPin('');
+  };
+
   if (!assignment) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-950 px-6 text-center">
@@ -139,6 +150,13 @@ export default function JudgeApp() {
             <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce [animation-delay:300ms]"></div>
           </div>
         </div>
+        
+        <button 
+          onClick={handleLogout}
+          className="mt-12 text-gray-500 hover:text-white underline font-semibold transition-colors"
+        >
+          Cerrar Sesión
+        </button>
       </div>
     );
   }
@@ -147,6 +165,7 @@ export default function JudgeApp() {
     <ScorePad 
       matchId={assignment.matchId} 
       cornerId={assignment.cornerId} 
+      onLogout={handleLogout}
     />
   );
 }

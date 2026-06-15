@@ -29,6 +29,7 @@ export interface Competitor {
   lastName: string;
   club: string;
   country: string;
+  isSeeded?: boolean;
 }
 
 export interface Judge {
@@ -50,6 +51,8 @@ export interface Match {
   categoryId: string;
   areaId: string;
   status: 'PENDING' | 'ACTIVE' | 'PAUSED' | 'COMPLETED';
+  round?: number;
+  nextMatchId?: string;
   redCompetitorId: string;
   blueCompetitorId: string;
   winnerId: string | null;
@@ -66,3 +69,5 @@ export interface Match {
     blue: number;
   };
 }
+
+export * from './itfCategories';

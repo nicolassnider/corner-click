@@ -6,9 +6,10 @@ import '../styles/global.css';
 interface ScorePadProps {
   matchId: string;
   cornerId: string;
+  onLogout?: () => void;
 }
 
-export default function ScorePad({ matchId, cornerId }: ScorePadProps) {
+export default function ScorePad({ matchId, cornerId, onLogout }: ScorePadProps) {
   const [redScore, setRedScore] = useState(0);
   const [blueScore, setBlueScore] = useState(0);
   
@@ -20,13 +21,6 @@ export default function ScorePad({ matchId, cornerId }: ScorePadProps) {
 
   const [matchStatus, setMatchStatus] = useState('PENDING');
 
-  const [flash, setFlash] = useState<'red' | 'blue' | null>(null);
-
-  const triggerFlash = (color: 'red' | 'blue') => {
-    setFlash(color);
-    setTimeout(() => setFlash(null), 150);
-  };
-
   useEffect(() => {
     const statusRef = ref(database, `live_matches/${matchId}/status`);
     const unsubscribe = onValue(statusRef, (snapshot) => {
@@ -37,19 +31,27 @@ export default function ScorePad({ matchId, cornerId }: ScorePadProps) {
     return () => unsubscribe();
   }, [matchId]);
 
+  const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000/api';
+
   useEffect(() => {
-    const cornerRef = ref(database, `live_matches/${matchId}/judges/${cornerId}`);
-    set(cornerRef, {
-      redScore, blueScore, redWarnings, blueWarnings, redDeductions, blueDeductions
-    });
-  }, [redScore, blueScore, redWarnings, blueWarnings, redDeductions, blueDeductions, matchId, cornerId]);
+    if (matchStatus === 'ENDED') {
+      fetch(`${API_URL}/api/matches/${matchId}/scores`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cornerId,
+          redScore, blueScore, redWarnings, blueWarnings, redDeductions, blueDeductions
+        })
+      }).catch(err => console.error("Failed to submit scores:", err));
+    }
+  }, [matchStatus]); // Only trigger when matchStatus changes, the state variables will be captured from the closure (they are updated synchronously)
+
 
   useEffect(() => {
     if (redWarnings >= 3) {
       setRedDeductions(prev => prev + 1);
       setRedWarnings(0);
       setRedScore(prev => prev - 1);
-      triggerFlash('blue'); // Opponent benefits or just flash red to indicate deduction
     }
   }, [redWarnings]);
 
@@ -66,7 +68,6 @@ export default function ScorePad({ matchId, cornerId }: ScorePadProps) {
     if (matchStatus !== 'ACTIVE') return;
     if (color === 'red') setRedScore(prev => prev + points);
     if (color === 'blue') setBlueScore(prev => prev + points);
-    triggerFlash(color);
   };
 
   const handleWarning = (e: React.MouseEvent<HTMLButtonElement>, color: 'red' | 'blue') => {
@@ -91,12 +92,20 @@ export default function ScorePad({ matchId, cornerId }: ScorePadProps) {
 
   return (
     <div className="flex flex-col h-[100dvh] w-screen bg-gray-950 overflow-hidden text-white font-sans touch-manipulation select-none relative">
-      
-      {/* Screen Flash Overlay */}
-      <div className={`absolute inset-0 z-50 pointer-events-none transition-opacity duration-150 ${flash === 'red' ? 'bg-rose-500/30 opacity-100' : flash === 'blue' ? 'bg-indigo-500/30 opacity-100' : 'opacity-0'}`} />
 
       {/* Scoreboard Header */}
-      <div className="flex-none bg-gray-900 border-b border-gray-800 shadow-xl z-20 pb-2">
+      <div className="flex-none bg-gray-900 border-b border-gray-800 shadow-xl z-20 pb-2 relative">
+        
+        {/* Logout Button */}
+        {onLogout && (
+          <button 
+            onClick={onLogout}
+            className="absolute top-2 left-3 z-30 text-gray-500 hover:text-gray-300 text-xs font-bold uppercase tracking-widest bg-gray-800/50 hover:bg-gray-700 px-2 py-1 rounded"
+          >
+            Salir
+          </button>
+        )}
+
         {/* Status Bar */}
         {matchStatus !== 'ACTIVE' && (
           <div className="bg-yellow-500 text-black text-xs font-black text-center py-1 uppercase tracking-widest animate-pulse">
