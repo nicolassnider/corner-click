@@ -1,20 +1,23 @@
 {
   "name": "corner-click",
   "version": "1.0.0",
-  "private": true,
+  "devDependencies": {
+    "prettier": "^3.0.0",
+    "syncpack": "^15.3.2",
+    "turbo": "^2.0.0"
+  },
   "packageManager": "npm@11.9.0",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "private": true,
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,astro}\"",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md,json,astro}\""
+    "lint:deps": "syncpack list-mismatches",
+    "sync-deps": "syncpack fix && syncpack format"
   },
-  "devDependencies": {
-    "prettier": "^3.0.0",
-    "turbo": "^2.0.0"
-  }
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }

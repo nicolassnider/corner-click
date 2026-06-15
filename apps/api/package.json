@@ -1,14 +1,8 @@
 {
   "name": "api",
-  "version": "1.0.0",
   "description": "Corner Click API",
-  "main": "index.js",
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsx watch --env-file=.env src/index.ts",
-    "start": "node dist/index.js",
-    "lint": "eslint src/"
-  },
+  "version": "1.0.0",
+  "author": "",
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^4.22.2",
@@ -16,17 +10,23 @@
     "swagger-ui-express": "^5.0.1",
     "yamljs": "^0.3.0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "devDependencies": {
-    "@corner-click/types": "*",
+    "@corner-click/types": "0.0.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.9.3",
     "@types/swagger-ui-express": "^4.1.8",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"
-  }
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch --env-file=.env src/index.ts",
+    "lint": "eslint src/",
+    "start": "node dist/index.js"
+  },
+  "type": "commonjs"
 }
