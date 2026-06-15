@@ -12,12 +12,12 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@corner-click/types": "*",
     "@astrojs/react": "^5.0.7",
+    "@corner-click/types": "*",
     "@tailwindcss/vite": "^4.3.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "astro": "^6.4.6",
+    "astro": "^2.4.5",
     "firebase": "^12.14.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
