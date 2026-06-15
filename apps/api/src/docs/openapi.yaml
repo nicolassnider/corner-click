@@ -51,15 +51,14 @@ paths:
                 properties:
                   token:
                     type: string
-                    description: Firebase Custom Token
-                  assigned:
+                  judge:
                     type: object
                     properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
                       tournamentId:
-                        type: string
-                      ringId:
-                        type: string
-                      cornerId:
                         type: string
         '400':
           description: Bad Request (Missing PIN)
@@ -97,10 +96,34 @@ paths:
       responses:
         '201':
           description: Created
-  /tournaments/{id}/pins/generate:
+  /tournaments/{id}/judges:
     post:
-      summary: Generate PINs for a tournament
-      description: Automatically generates 4-digit PINs for all rings and corners of the given tournament.
+      summary: Register a new judge
+      description: Registers a judge and automatically generates their personal 4-digit PIN.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  example: "John Doe"
+      responses:
+        '201':
+          description: Judge created successfully
+    get:
+      summary: List judges
+      description: Lists all judges registered for a given tournament.
       parameters:
         - in: path
           name: id
@@ -108,5 +131,5 @@ paths:
           schema:
             type: string
       responses:
-        '201':
-          description: PINs generated successfully
+        '200':
+          description: List of judges

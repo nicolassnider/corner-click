@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { db } from '../services/firebase';
+import type { Tournament } from '@corner-click/types';
 
 const router = express.Router();
 
@@ -46,16 +47,19 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
     }
 
     const { name, date, location, rings } = req.body;
+    // We accept rings or areas for backward compatibility temporarily, but map to areas
+    const areas = req.body.areas || rings || 1;
+
     if (!name) {
       res.status(400).json({ error: 'Name is required' });
       return;
     }
 
-    const newTournament = {
+    const newTournament: Omit<Tournament, 'id'> = {
       name,
       date: date || new Date().toISOString(),
       location: location || '',
-      rings: rings || 1,
+      areas: areas,
       status: 'UPCOMING',
       createdAt: new Date().toISOString()
     };

@@ -17,38 +17,38 @@ router.post('/pin', async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const pinRef = db.collection('pins').doc(pin);
-    const pinDoc = await pinRef.get();
+    // 1. Verify PIN in Firestore across all judges (Collection Group)
+    const snapshot = await db.collectionGroup('judges').where('pin', '==', pin).get();
 
-    if (!pinDoc.exists) {
+    if (snapshot.empty) {
       res.status(401).json({ error: 'Invalid PIN' });
       return;
     }
 
-    const pinData = pinDoc.data();
-    
-    if (pinData?.expiresAt && pinData.expiresAt.toDate() < new Date()) {
-      res.status(401).json({ error: 'PIN has expired' });
-      return;
-    }
+    // Assuming PINs are globally unique
+    const judgeDoc = snapshot.docs[0];
+    const judgeData = judgeDoc.data();
+    const judgeId = judgeDoc.id;
 
-    const uid = `judge_${pinData?.tournamentId}_${pinData?.ringId}_${pinData?.cornerId}`;
+    // Optional: Update status to ONLINE
+    await judgeDoc.ref.update({ status: 'ONLINE' });
 
+    // 2. Create Custom Token with Custom Claims
     const customClaims = {
       role: 'judge',
-      tournamentId: pinData?.tournamentId,
-      ringId: pinData?.ringId,
-      cornerId: pinData?.cornerId
+      tournamentId: judgeData.tournamentId,
+      judgeId: judgeId,
+      judgeName: judgeData.name
     };
 
-    const customToken = await auth.createCustomToken(uid, customClaims);
+    const customToken = await auth.createCustomToken(judgeId, customClaims);
 
     res.json({ 
       token: customToken,
-      assigned: {
-        tournamentId: pinData?.tournamentId,
-        ringId: pinData?.ringId,
-        cornerId: pinData?.cornerId
+      judge: {
+        id: judgeId,
+        name: judgeData.name,
+        tournamentId: judgeData.tournamentId
       }
     });
 

@@ -2,9 +2,9 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import settings from './config/settings';
 
-import authRoutes from './routes/auth';
-import tournamentsRoutes from './routes/tournaments';
-import pinsRoutes from './routes/pins';
+const authRoutes = require('./routes/auth').default || require('./routes/auth');
+const tournamentsRoutes = require('./routes/tournaments').default || require('./routes/tournaments');
+const judgesRoutes = require('./routes/judges').default || require('./routes/judges');
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
@@ -19,7 +19,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/tournaments', tournamentsRoutes);
-app.use('/api/tournaments', pinsRoutes); // Mounted on tournaments since it extends /:id/pins
+app.use('/api/tournaments', judgesRoutes);
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({ 

@@ -39,6 +39,27 @@ Instead of requiring judges to create accounts, the Organizer generates temporar
 - `401 Unauthorized`: `{ "error": "Invalid PIN" }` or `{ "error": "PIN has expired" }`
 - `503 Service Unavailable`: `{ "error": "Firebase Admin not configured" }` (Credentials missing from `.env`)
 
+## Tournament & PIN Endpoints
+
+### `POST /tournaments/{id}/pins/generate`
+Generates all necessary PINs for a given tournament.
+
+**Description:**
+This endpoint is used by the **Organizer** (from the Admin Dashboard or Swagger) to automatically generate 4-digit numeric PINs for all rings and corners of a tournament. This is how the PINs are "obtained" to be later distributed to the judges.
+
+**Response:**
+Returns a list of the generated PINs. The Organizer must note these down or print them to give to the respective judges.
+
+```json
+{
+  "message": "Generated 16 PINs successfully",
+  "pins": [
+    { "pin": "4829", "ringId": "ring_1", "cornerId": "red" },
+    { "pin": "1234", "ringId": "ring_1", "cornerId": "blue" }
+  ]
+}
+```
+
 ---
 
 ## Environment Variables required
