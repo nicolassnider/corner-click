@@ -35,7 +35,7 @@ export function useJudges(tournamentId: string) {
     }
   };
 
-  const assignJudge = async (judgeId: string, assignment: { ringId: string, cornerId: string, matchId: string }) => {
+  const assignJudge = async (judgeId: string, assignment: { areaId: string, cornerId: string, matchId: string }) => {
     try {
       setError(null);
       await judgeService.assignJudge(tournamentId, judgeId, assignment);

@@ -8,7 +8,7 @@ import '../styles/global.css';
 
 interface AssignedData {
   tournamentId: string;
-  ringId: string;
+  areaId: string;
   cornerId: string;
   matchId: string;
 }

@@ -84,7 +84,7 @@ export default function JuryDashboard() {
               >
                 <div className="match-item-title">{match.title}</div>
                 <div className="match-item-meta">
-                  <span style={{ color: 'var(--color-danger)' }}>{match.red}</span> vs <span style={{ color: 'var(--color-primary)' }}>{match.blue}</span>
+                  <span className="text-red-500">{match.red}</span> vs <span className="text-blue-500">{match.blue}</span>
                 </div>
               </div>
             ))}
@@ -95,7 +95,7 @@ export default function JuryDashboard() {
         <section className="panel control-panel">
           <h2>Match Control</h2>
           <div className="match-item-meta" style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
-            <span style={{ color: 'var(--color-danger)' }}>{selectedMatch.red}</span> vs <span style={{ color: 'var(--color-primary)' }}>{selectedMatch.blue}</span>
+            <span className="text-red-500">{selectedMatch.red}</span> vs <span className="text-blue-500">{selectedMatch.blue}</span>
           </div>
 
           <div className={`status-badge status-${status.toLowerCase()}`}>
@@ -108,13 +108,13 @@ export default function JuryDashboard() {
 
           <div style={{ display: 'flex', gap: '2rem', marginBottom: '2rem' }}>
             <div style={{ background: '#222', padding: '1rem', borderRadius: '8px' }}>
-              <h3 style={{ color: 'var(--color-danger)' }}>Red Total</h3>
+              <h3 className="text-red-500">Red Total</h3>
               <div style={{ fontSize: '2rem', fontWeight: 'bold', textAlign: 'center' }}>
                 {Object.values(judgesData).reduce((acc, curr) => acc + (curr.redScore || 0), 0)}
               </div>
             </div>
             <div style={{ background: '#222', padding: '1rem', borderRadius: '8px' }}>
-              <h3 style={{ color: 'var(--color-primary)' }}>Blue Total</h3>
+              <h3 className="text-blue-500">Blue Total</h3>
               <div style={{ fontSize: '2rem', fontWeight: 'bold', textAlign: 'center' }}>
                 {Object.values(judgesData).reduce((acc, curr) => acc + (curr.blueScore || 0), 0)}
               </div>

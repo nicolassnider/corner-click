@@ -96,10 +96,10 @@ router.put('/:id/judges/:judgeId/assign', async (req: Request, res: Response): P
       return;
     }
     const { id: tournamentId, judgeId } = req.params;
-    const { ringId, cornerId, matchId } = req.body;
+    const { areaId, cornerId, matchId } = req.body;
 
-    if (!ringId || !cornerId || !matchId) {
-      res.status(400).json({ error: 'ringId, cornerId, and matchId are required' });
+    if (!areaId || !cornerId || !matchId) {
+      res.status(400).json({ error: 'areaId, cornerId, and matchId are required' });
       return;
     }
 
@@ -113,7 +113,7 @@ router.put('/:id/judges/:judgeId/assign', async (req: Request, res: Response): P
 
     const currentAssignment = {
       tournamentId,
-      ringId,
+      areaId,
       cornerId,
       matchId
     };

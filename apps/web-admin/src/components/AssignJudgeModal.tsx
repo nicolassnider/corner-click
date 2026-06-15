@@ -6,7 +6,7 @@ interface Props {
   onClose: () => void;
   judge: Judge | null;
   tournamentAreas: number;
-  onAssign: (judgeId: string, assignment: { ringId: string, cornerId: string, matchId: string }) => Promise<void>;
+  onAssign: (judgeId: string, assignment: { areaId: string, cornerId: string, matchId: string }) => Promise<void>;
 }
 
 export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAreas, onAssign }: Props) {
@@ -18,7 +18,7 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
   // Reset form when opened with a new judge
   useEffect(() => {
     if (judge) {
-      setAreaId(judge.currentAssignment?.ringId || '1');
+      setAreaId(judge.currentAssignment?.areaId || '1');
       setCornerId(judge.currentAssignment?.cornerId || 'red');
       setMatchId(judge.currentAssignment?.matchId || '');
     }
@@ -31,7 +31,7 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
     if (!matchId.trim()) return;
     setSubmitting(true);
     try {
-      await onAssign(judge.id!, { ringId: areaId, cornerId, matchId });
+      await onAssign(judge.id!, { areaId, cornerId, matchId });
       onClose();
     } catch (error) {
       console.error('Failed to assign', error);

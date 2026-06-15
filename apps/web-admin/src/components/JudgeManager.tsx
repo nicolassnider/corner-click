@@ -93,7 +93,7 @@ export default function JudgeManager({ tournamentId, tournamentAreas }: Props) {
                   <td className="px-6 py-4">
                     {j.currentAssignment ? (
                       <div className="flex flex-col">
-                        <span className="text-blue-700 font-bold">Area {j.currentAssignment.ringId} &bull; <span className="capitalize">{j.currentAssignment.cornerId}</span></span>
+                        <span className="text-blue-700 font-bold">Area {j.currentAssignment.areaId} &bull; <span className="capitalize">{j.currentAssignment.cornerId}</span></span>
                         <span className="text-xs font-mono text-gray-500">{j.currentAssignment.matchId}</span>
                       </div>
                     ) : (
