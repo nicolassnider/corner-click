@@ -1,6 +1,7 @@
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
+import { getDatabase } from 'firebase-admin/database';
 import settings from '../config/settings';
 
 if (settings.firebase.projectId && settings.firebase.privateKey && settings.firebase.clientEmail) {
@@ -23,3 +24,4 @@ if (settings.firebase.projectId && settings.firebase.privateKey && settings.fire
 
 export const db = getApps().length > 0 ? getFirestore() : null;
 export const auth = getApps().length > 0 ? getAuth() : null;
+export const rtdb = getApps().length > 0 ? getDatabase() : null;
