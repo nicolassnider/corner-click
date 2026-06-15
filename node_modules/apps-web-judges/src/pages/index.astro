@@ -1,5 +1,5 @@
 ---
-import ScorePad from '../components/ScorePad.jsx';
+import JudgeApp from '../components/JudgeApp.tsx';
 ---
 
 <html lang="en">
@@ -13,10 +13,11 @@ import ScorePad from '../components/ScorePad.jsx';
 			/* Prevent pull-to-refresh on mobile */
 			body {
 				overscroll-behavior-y: contain;
+				margin: 0;
 			}
 		</style>
 	</head>
 	<body>
-		<ScorePad client:load />
+		<JudgeApp client:only="react" />
 	</body>
 </html>

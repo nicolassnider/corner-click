@@ -3,12 +3,11 @@ node_modules/
 
 # Environment Variables
 .env
-.env.example
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-.env.*
 
 # Turborepo
 .turbo/
@@ -42,3 +41,4 @@ lerna-debug.log*
 .firebase/
 firebase-debug.log
 firebase-debug.*.log
+corner-check-8d397-firebase-adminsdk-fbsvc-d42f3d9cfe.json

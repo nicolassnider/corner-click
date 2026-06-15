@@ -2,8 +2,10 @@
   "name": "corner-click",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "npm@11.9.0",
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "build": "turbo run build",

@@ -1,0 +1,135 @@
+openapi: 3.0.0
+info:
+  title: Corner Click API
+  description: Backend API for the Corner Click Taekwondo Scoring System
+  version: 1.0.0
+servers:
+  - url: /api
+    description: Local Development Server
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  firebaseConfigured:
+                    type: boolean
+                    example: true
+  /auth/pin:
+    post:
+      summary: Authenticate Judge with PIN
+      description: Verifies a 4-digit temporary PIN against Firestore and returns a Firebase Custom Token for the Judge.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pin
+              properties:
+                pin:
+                  type: string
+                  description: The 4-digit PIN assigned to the corner judge
+                  example: "4829"
+      responses:
+        '200':
+          description: Successfully authenticated. Returns Firebase custom token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  judge:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      tournamentId:
+                        type: string
+        '400':
+          description: Bad Request (Missing PIN)
+        '401':
+          description: Unauthorized (Invalid or expired PIN)
+        '503':
+          description: Service Unavailable (Firebase Admin not configured)
+  /tournaments:
+    get:
+      summary: List all tournaments
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create a new tournament
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  example: "Copa America ITF 2026"
+                date:
+                  type: string
+                location:
+                  type: string
+                rings:
+                  type: integer
+                  example: 4
+      responses:
+        '201':
+          description: Created
+  /tournaments/{id}/judges:
+    post:
+      summary: Register a new judge
+      description: Registers a judge and automatically generates their personal 4-digit PIN.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  example: "John Doe"
+      responses:
+        '201':
+          description: Judge created successfully
+    get:
+      summary: List judges
+      description: Lists all judges registered for a given tournament.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of judges

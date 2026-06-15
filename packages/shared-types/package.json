@@ -1,0 +1,13 @@
+{
+  "name": "@corner-click/types",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
