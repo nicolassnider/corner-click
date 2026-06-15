@@ -1,6 +1,10 @@
-import React from 'react';
-import type { Tournament } from '@corner-click/types';
+import React, { useState, useEffect } from 'react';
+import type { Tournament, Category } from '@corner-click/types';
 import JudgeManager from './JudgeManager';
+import { CompetitorManager } from './CompetitorManager';
+import { BracketManager } from './BracketManager';
+import { CategoryManager } from './CategoryManager';
+import { getCategories } from '../services/categoryService';
 
 interface Props {
   tournament: Tournament;
@@ -8,6 +12,22 @@ interface Props {
 }
 
 export default function TournamentDetail({ tournament, onBack }: Props) {
+  const [activeTab, setActiveTab] = useState<'categories' | 'judges' | 'competitors' | 'brackets'>('categories');
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
+  
+  const defaultArea = 'area-1';
+
+  useEffect(() => {
+    // Load categories so we can select them in the dropdown
+    getCategories(tournament.id!).then(data => {
+      setCategories(data);
+      if (data.length > 0 && !selectedCategoryId) {
+        setSelectedCategoryId(data[0].id);
+      }
+    });
+  }, [tournament.id, activeTab]);
+
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-8">
       {/* Header */}
@@ -41,9 +61,71 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           </div>
         </div>
 
-        {/* Right Column: Manage Judges */}
+        {/* Right Column: Manage Content */}
         <div className="lg:col-span-2">
-          <JudgeManager tournamentId={tournament.id!} tournamentAreas={tournament.areas || tournament.rings || 1} />
+          {/* Tabs */}
+          <div className="flex space-x-4 border-b border-gray-200 mb-6 overflow-x-auto">
+            <button
+              className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'categories' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+              onClick={() => setActiveTab('categories')}
+            >
+              Categorías
+            </button>
+            <button
+              className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'judges' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+              onClick={() => setActiveTab('judges')}
+            >
+              Jueces
+            </button>
+            <button
+              className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'competitors' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+              onClick={() => setActiveTab('competitors')}
+            >
+              Competidores
+            </button>
+            <button
+              className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'brackets' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+              onClick={() => setActiveTab('brackets')}
+            >
+              Llaves
+            </button>
+          </div>
+
+          {(activeTab === 'competitors' || activeTab === 'brackets') && (
+            <div className="mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Seleccionar Categoría</label>
+              <select
+                value={selectedCategoryId}
+                onChange={(e) => setSelectedCategoryId(e.target.value)}
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
+              >
+                <option value="" disabled>-- Selecciona una categoría --</option>
+                {categories.map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {activeTab === 'categories' && (
+            <CategoryManager tournamentId={tournament.id!} />
+          )}
+
+          {activeTab === 'judges' && (
+            <JudgeManager tournamentId={tournament.id!} tournamentAreas={tournament.areas || tournament.rings || 1} />
+          )}
+
+          {activeTab === 'competitors' && selectedCategoryId && (
+            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+              <CompetitorManager tournamentId={tournament.id!} categoryId={selectedCategoryId} />
+            </div>
+          )}
+
+          {activeTab === 'brackets' && selectedCategoryId && (
+            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+              <BracketManager tournamentId={tournament.id!} categoryId={selectedCategoryId} areaId={defaultArea} />
+            </div>
+          )}
         </div>
 
       </div>
