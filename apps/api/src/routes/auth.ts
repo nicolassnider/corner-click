@@ -41,7 +41,9 @@ router.post('/pin', async (req: Request, res: Response): Promise<void> => {
       judgeName: judgeData.name
     };
 
+    console.log(`[DEBUG] Attempting to create custom token for judge: ${judgeId}`);
     const customToken = await auth.createCustomToken(judgeId, customClaims);
+    console.log(`[DEBUG] Custom token created successfully. Length: ${customToken.length}`);
 
     res.json({ 
       token: customToken,
