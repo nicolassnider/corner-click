@@ -130,7 +130,7 @@ export const generateBracket = async (tournamentId: string, categoryId: string, 
   const finalMatches: Match[] = [];
   
   const createNodes = (round: number, matchCount: number, nextMatchIds: string[] = []): string[] => {
-    if (round > totalRounds) return [];
+    if (round < 1) return [];
     
     const currentIds: string[] = [];
     for(let i=0; i<matchCount; i++) {
@@ -167,7 +167,7 @@ export const generateBracket = async (tournamentId: string, categoryId: string, 
         areaId,
         status,
         round,
-        nextMatchId: nextMatchIds[Math.floor(i / 2)] || undefined,
+        nextMatchId: nextMatchIds[Math.floor(i / 2)] || null,
         redCompetitorId: redId,
         blueCompetitorId: blueId,
         winnerId,

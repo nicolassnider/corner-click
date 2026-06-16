@@ -11,7 +11,7 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ tournamentId }
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [merging, setMerging] = useState(false);
-  const [selectedType, setSelectedType] = useState<TournamentType>('WORLD_CUP');
+  const [selectedType, setSelectedType] = useState<TournamentType>('LOCAL_OPEN');
 
   useEffect(() => {
     loadCategories();
@@ -80,15 +80,22 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ tournamentId }
               onChange={(e) => setSelectedType(e.target.value as TournamentType)}
               className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
             >
+              <option value="LOCAL_OPEN">Torneo Local / Abierto</option>
               <option value="WORLD_CUP">Copa del Mundo (World Cup)</option>
               <option value="WORLD_CHAMPIONSHIP">Campeonato Mundial (World Champ)</option>
             </select>
 
             <div className="bg-blue-50 p-4 rounded-md text-sm text-blue-800">
-              {selectedType === 'WORLD_CUP' ? (
+              {selectedType === 'LOCAL_OPEN' ? (
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Edades: Micro (4-5), Pre-Mini (6-7), Mini (8-9), Infantil (10-11) y todas las edades mayores.</li>
+                  <li>Cinturones: Divisiones detalladas de Gups (10-9, 8-7, 6-5, 4-1) y Danes.</li>
+                  <li>Total aproximado: ~250 categorías. Ideal para academias y regionales.</li>
+                </ul>
+              ) : selectedType === 'WORLD_CUP' ? (
                 <ul className="list-disc pl-5 space-y-1">
                   <li>Edades: Pre-Junior (12-14), Junior (15-17), Adulto (18-35), Senior (36-45), Veterano (46+).</li>
-                  <li>Cinturones: Color (4-1 Gup) y Negros (1-6 Dan).</li>
+                  <li>Cinturones: Color (10-1 Gup) y Negros (1-6 Dan).</li>
                   <li>Total aproximado: ~130 categorías.</li>
                 </ul>
               ) : (

@@ -29,6 +29,11 @@ export interface Competitor {
   lastName: string;
   club: string;
   country: string;
+  birthDate?: string;
+  gender?: 'MALE' | 'FEMALE';
+  weight?: number;
+  height?: number;
+  belt?: string;
   isSeeded?: boolean;
 }
 

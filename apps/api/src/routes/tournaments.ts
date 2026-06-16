@@ -4,6 +4,16 @@ import type { Tournament } from '@corner-click/types';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /tournaments:
+ *   get:
+ *     tags: [Tournaments]
+ *     summary: List all tournaments
+ *     responses:
+ *       '200':
+ *         description: OK
+ */
 router.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     if (!db) {
@@ -20,6 +30,24 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+/**
+ * @swagger
+ * /tournaments/{id}:
+ *   get:
+ *     tags: [Tournaments]
+ *     summary: Get tournament by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Tournament details
+ *       '404':
+ *         description: Tournament not found
+ */
 router.get('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     if (!db) {
@@ -27,7 +55,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const doc = await db.collection('tournaments').doc(req.params.id).get();
+    const doc = await db.collection('tournaments').doc(req.params.id as string).get();
     if (!doc.exists) {
       res.status(404).json({ error: 'Tournament not found' });
       return;
@@ -39,6 +67,35 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+/**
+ * @swagger
+ * /tournaments:
+ *   post:
+ *     tags: [Tournaments]
+ *     summary: Create a new tournament
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Copa America ITF 2026"
+ *               date:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *               rings:
+ *                 type: integer
+ *                 example: 4
+ *     responses:
+ *       '201':
+ *         description: Created
+ */
 router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
     if (!db) {

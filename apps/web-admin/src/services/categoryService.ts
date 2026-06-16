@@ -1,7 +1,7 @@
 import { ref, get, update, push, remove } from 'firebase/database';
 import { database } from '../lib/firebase';
 import type { Category, TournamentType, Gender, AgeGroupDef, WeightClass, BeltGroupDef } from '@corner-click/types';
-import { WORLD_CHAMPIONSHIP_AGES, WORLD_CUP_AGES, getBeltsForAgeGroup } from '@corner-click/types';
+import { WORLD_CHAMPIONSHIP_AGES, WORLD_CUP_AGES, LOCAL_AGES, getBeltsForAgeGroup } from '@corner-click/types';
 import { getCompetitors } from './competitorService';
 
 export const getCategories = async (tournamentId: string): Promise<Category[]> => {
@@ -26,7 +26,7 @@ export const generateOfficialCategories = async (tournamentId: string, type: Tou
      await remove(ref(database, `tournaments/${tournamentId}/categories/${c.id}`));
   }
 
-  const ageGroups = type === 'WORLD_CHAMPIONSHIP' ? WORLD_CHAMPIONSHIP_AGES : WORLD_CUP_AGES;
+  const ageGroups = type === 'LOCAL_OPEN' ? LOCAL_AGES : type === 'WORLD_CHAMPIONSHIP' ? WORLD_CHAMPIONSHIP_AGES : WORLD_CUP_AGES;
   const updates: Record<string, any> = {};
 
   const createCategoryNode = (ageGroup: AgeGroupDef, gender: Gender, weight: WeightClass, belt: BeltGroupDef) => {

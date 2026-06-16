@@ -1,4 +1,4 @@
-export type TournamentType = 'WORLD_CHAMPIONSHIP' | 'WORLD_CUP';
+export type TournamentType = 'WORLD_CHAMPIONSHIP' | 'WORLD_CUP' | 'LOCAL_OPEN';
 export type Gender = 'MALE' | 'FEMALE';
 
 export interface WeightClass {
@@ -23,9 +23,15 @@ export const WORLD_CHAMPIONSHIP_BELTS = [
   { name: 'Cinturones Negros' } // World Champ is usually only Black Belts, but we'll leave it generic or just specific to the rules provided
 ];
 
-export const WORLD_CUP_BELTS_COLOR = { name: '4º – 1º Gup' };
+export const WORLD_CUP_BELTS_COLOR_LOWER = { name: '10º – 5º Gup' };
+export const WORLD_CUP_BELTS_COLOR_UPPER = { name: '4º – 1º Gup' };
 export const WORLD_CUP_BELTS_BLACK_JUNIOR = { name: '1º – 3º Dan' };
 export const WORLD_CUP_BELTS_BLACK_ADULT = { name: '1º – 6º Dan' };
+
+export const LOCAL_BELTS_10_9 = { name: '10º – 9º Gup' };
+export const LOCAL_BELTS_8_7 = { name: '8º – 7º Gup' };
+export const LOCAL_BELTS_6_5 = { name: '6º – 5º Gup' };
+export const LOCAL_BELTS_4_1 = { name: '4º – 1º Gup' };
 
 // Weights Definitions
 
@@ -135,14 +141,42 @@ export const WORLD_CUP_AGES: AgeGroupDef[] = [
   { name: 'Veterano', minAge: 46, maxAge: 99, maleWeights: veteranMaleWeights, femaleWeights: veteranFemaleWeights },
 ];
 
+const childrenWeights: WeightClass[] = [
+  { name: 'Hasta 25 kg', maxWeight: 25 },
+  { name: 'Más de 25 a 30 kg', minWeight: 25, maxWeight: 30 },
+  { name: 'Más de 30 a 35 kg', minWeight: 30, maxWeight: 35 },
+  { name: 'Más de 35 a 40 kg', minWeight: 35, maxWeight: 40 },
+  { name: 'Más de 40 kg', minWeight: 40 }
+];
+
+export const LOCAL_AGES: AgeGroupDef[] = [
+  { name: 'Micro', minAge: 4, maxAge: 5, maleWeights: childrenWeights, femaleWeights: childrenWeights },
+  { name: 'Pre-Mini', minAge: 6, maxAge: 7, maleWeights: childrenWeights, femaleWeights: childrenWeights },
+  { name: 'Mini', minAge: 8, maxAge: 9, maleWeights: childrenWeights, femaleWeights: childrenWeights },
+  { name: 'Infantil', minAge: 10, maxAge: 11, maleWeights: childrenWeights, femaleWeights: childrenWeights },
+  ...WORLD_CUP_AGES
+];
+
 // Helpers for Generation
 export const getBeltsForAgeGroup = (tournamentType: TournamentType, ageGroupName: string): BeltGroupDef[] => {
   if (tournamentType === 'WORLD_CHAMPIONSHIP') {
     return [{ name: 'Cinturones Negros' }];
   }
   
+  if (tournamentType === 'LOCAL_OPEN') {
+    const belts = [LOCAL_BELTS_10_9, LOCAL_BELTS_8_7, LOCAL_BELTS_6_5, LOCAL_BELTS_4_1];
+    if (ageGroupName !== 'Micro' && ageGroupName !== 'Pre-Mini' && ageGroupName !== 'Mini' && ageGroupName !== 'Infantil') {
+      if (ageGroupName === 'Pre-Junior' || ageGroupName === 'Junior') {
+        belts.push(WORLD_CUP_BELTS_BLACK_JUNIOR);
+      } else {
+        belts.push(WORLD_CUP_BELTS_BLACK_ADULT);
+      }
+    }
+    return belts;
+  }
+
   // WORLD_CUP
-  const belts = [WORLD_CUP_BELTS_COLOR];
+  const belts = [WORLD_CUP_BELTS_COLOR_LOWER, WORLD_CUP_BELTS_COLOR_UPPER];
   if (ageGroupName === 'Pre-Junior' || ageGroupName === 'Junior') {
     belts.push(WORLD_CUP_BELTS_BLACK_JUNIOR);
   } else {

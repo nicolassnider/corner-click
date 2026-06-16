@@ -7,15 +7,33 @@ const tournamentsRoutes = require('./routes/tournaments').default || require('./
 const judgesRoutes = require('./routes/judges').default || require('./routes/judges');
 const matchesRoutes = require('./routes/matches').default || require('./routes/matches');
 import swaggerUi from 'swagger-ui-express';
-import YAML from 'yamljs';
-import path from 'path';
+import swaggerJSDoc from 'swagger-jsdoc';
 
 const app = express();
 app.use(cors());
 
-// Load OpenAPI spec
-const swaggerDocument = YAML.load(path.join(__dirname, 'docs', 'openapi.yaml'));
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// Configure Swagger JSDoc
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Corner Click API',
+      version: '1.0.0',
+      description: 'Backend API for the Corner Click Taekwondo Scoring System',
+    },
+    servers: [
+      {
+        url: '/api',
+        description: 'Local Development Server',
+      },
+    ],
+  },
+  // Automatically parse JSDoc comments in route files
+  apis: ['./src/routes/*.ts', './src/index.ts'],
+};
+
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);

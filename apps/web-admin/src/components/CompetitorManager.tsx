@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import type { Competitor } from '@corner-click/types';
+import type { Competitor, Category } from '@corner-click/types';
 import { getCompetitors, addCompetitor, updateCompetitor, deleteCompetitor } from '../services/competitorService';
 import { CompetitorForm } from './CompetitorForm';
 
 interface CompetitorManagerProps {
   tournamentId: string;
   categoryId: string;
+  categories: Category[];
+  onCategoryChange: (id: string) => void;
 }
 
-export const CompetitorManager: React.FC<CompetitorManagerProps> = ({ tournamentId, categoryId }) => {
+export const CompetitorManager: React.FC<CompetitorManagerProps> = ({ tournamentId, categoryId, categories, onCategoryChange }) => {
   const [competitors, setCompetitors] = useState<Competitor[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCompetitor, setEditingCompetitor] = useState<Competitor | undefined>();
@@ -39,7 +41,12 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({ tournament
       }
       setIsFormOpen(false);
       setEditingCompetitor(undefined);
-      await loadCompetitors();
+      
+      if (competitorData.categoryId !== categoryId) {
+        onCategoryChange(competitorData.categoryId);
+      } else {
+        await loadCompetitors();
+      }
     } catch (error) {
       console.error('Failed to save competitor:', error);
     }
@@ -56,17 +63,66 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({ tournament
     }
   };
 
+  const generateMockCompetitors = async () => {
+    if (!confirm('Generar 8 competidores aleatorios para esta categoría?')) return;
+    setLoading(true);
+    const firstNames = ['Liam', 'Emma', 'Noah', 'Olivia', 'Oliver', 'Ava', 'Elijah', 'Charlotte', 'Mateo', 'Sophia', 'Lucas', 'Mia', 'Hugo', 'Lucia', 'Martin', 'Martina'];
+    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Gomez', 'Lopez', 'Diaz', 'Perez'];
+    const clubs = ['Tigers TKD', 'Dragon Martial Arts', 'Elite Fighters', 'Kick Masters', 'Do San', 'Chon Ji'];
+    const countries = ['ARG', 'BRA', 'USA', 'CAN', 'CHI', 'URU', 'ESP'];
+
+    const mockCompetitors = Array.from({ length: 8 }).map(() => ({
+      categoryId,
+      firstName: firstNames[Math.floor(Math.random() * firstNames.length)],
+      lastName: lastNames[Math.floor(Math.random() * lastNames.length)],
+      club: clubs[Math.floor(Math.random() * clubs.length)],
+      country: countries[Math.floor(Math.random() * countries.length)],
+      gender: 'MALE' as const,
+      birthDate: '2005-05-15',
+      weight: 70,
+      belt: '1º – 3º Dan',
+      isSeeded: Math.random() > 0.8
+    }));
+
+    try {
+      console.log('Iniciando generación de 8 competidores...');
+      await Promise.all(mockCompetitors.map(async (comp, index) => {
+        const result = await addCompetitor(tournamentId, comp);
+        console.log(`Competidor ${index + 1}/8 creado: ${comp.firstName} ${comp.lastName}`);
+        return result;
+      }));
+      console.log('¡Generación completada!');
+      alert('8 competidores generados con éxito');
+      await loadCompetitors();
+    } catch (err) {
+      console.error('Error generating mock data', err);
+      alert('Hubo un error al generar los competidores');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="mt-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Competitors ({competitors.length})</h2>
         {!isFormOpen && (
-          <button
-            onClick={() => setIsFormOpen(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Add Competitor
-          </button>
+          <div className="flex space-x-2">
+            <button
+              onClick={generateMockCompetitors}
+              disabled={loading}
+              className={`px-4 py-2 text-white rounded-md ${loading ? 'bg-purple-400 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'}`}
+            >
+              {loading ? 'Generando...' : 'Generar Random'}
+            </button>
+            <button
+              onClick={() => setIsFormOpen(true)}
+              disabled={loading}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400"
+            >
+              Add Competitor
+            </button>
+          </div>
         )}
       </div>
 
@@ -74,6 +130,7 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({ tournament
         <div className="mb-8 border-b pb-8">
           <CompetitorForm
             categoryId={categoryId}
+            categories={categories}
             initialData={editingCompetitor}
             onSave={handleSave}
             onCancel={() => {

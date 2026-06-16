@@ -117,7 +117,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
 
           {activeTab === 'competitors' && selectedCategoryId && (
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-              <CompetitorManager tournamentId={tournament.id!} categoryId={selectedCategoryId} />
+              <CompetitorManager tournamentId={tournament.id!} categoryId={selectedCategoryId} categories={categories} onCategoryChange={setSelectedCategoryId} />
             </div>
           )}
 

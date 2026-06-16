@@ -3,6 +3,52 @@ import { db, auth } from '../services/firebase';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /auth/pin:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Authenticate Judge with PIN
+ *     description: Verifies a 4-digit temporary PIN against Firestore and returns a Firebase Custom Token for the Judge.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - pin
+ *             properties:
+ *               pin:
+ *                 type: string
+ *                 description: The 4-digit PIN assigned to the corner judge
+ *                 example: "4829"
+ *     responses:
+ *       '200':
+ *         description: Successfully authenticated. Returns Firebase custom token.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                 judge:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     tournamentId:
+ *                       type: string
+ *       '400':
+ *         description: Bad Request (Missing PIN)
+ *       '401':
+ *         description: Unauthorized (Invalid or expired PIN)
+ *       '503':
+ *         description: Service Unavailable (Firebase Admin not configured)
+ */
 router.post('/pin', async (req: Request, res: Response): Promise<void> => {
   try {
     const { pin } = req.body;

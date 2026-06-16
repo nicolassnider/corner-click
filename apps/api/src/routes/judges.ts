@@ -6,8 +6,33 @@ const router = express.Router();
 const generatePin = (): string => Math.floor(1000 + Math.random() * 9000).toString();
 
 /**
- * POST /api/tournaments/:id/judges
- * Registers a new judge and generates their personal PIN.
+ * @swagger
+ * /tournaments/{id}/judges:
+ *   post:
+ *     tags: [Judges]
+ *     summary: Register a new judge
+ *     description: Registers a judge and automatically generates their personal 4-digit PIN.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "John Doe"
+ *     responses:
+ *       '201':
+ *         description: Judge created successfully
  */
 router.post('/:id/judges', async (req: Request, res: Response): Promise<void> => {
   try {
@@ -15,7 +40,7 @@ router.post('/:id/judges', async (req: Request, res: Response): Promise<void> =>
       res.status(503).json({ error: 'Database not initialized' });
       return;
     }
-    const tournamentId = req.params.id;
+    const tournamentId = req.params.id as string;
     const { name } = req.body;
 
     if (!name) {
@@ -64,8 +89,21 @@ router.post('/:id/judges', async (req: Request, res: Response): Promise<void> =>
 });
 
 /**
- * GET /api/tournaments/:id/judges
- * List all judges for a tournament
+ * @swagger
+ * /tournaments/{id}/judges:
+ *   get:
+ *     tags: [Judges]
+ *     summary: List judges
+ *     description: Lists all judges registered for a given tournament.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: List of judges
  */
 router.get('/:id/judges', async (req: Request, res: Response): Promise<void> => {
   try {
@@ -73,7 +111,7 @@ router.get('/:id/judges', async (req: Request, res: Response): Promise<void> => 
       res.status(503).json({ error: 'Database not initialized' });
       return;
     }
-    const tournamentId = req.params.id;
+    const tournamentId = req.params.id as string;
 
     const snapshot = await db.collection('tournaments').doc(tournamentId).collection('judges').get();
     const judges = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -86,8 +124,38 @@ router.get('/:id/judges', async (req: Request, res: Response): Promise<void> => 
 });
 
 /**
- * PUT /api/tournaments/:id/judges/:judgeId/assign
- * Assigns a judge to an area and corner
+ * @swagger
+ * /tournaments/{id}/judges/{judgeId}/assign:
+ *   put:
+ *     tags: [Judges]
+ *     summary: Assign a judge to an area and corner
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: judgeId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               areaId:
+ *                 type: string
+ *               cornerId:
+ *                 type: string
+ *               matchId:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Judge assigned successfully
  */
 router.put('/:id/judges/:judgeId/assign', async (req: Request, res: Response): Promise<void> => {
   try {
@@ -95,7 +163,8 @@ router.put('/:id/judges/:judgeId/assign', async (req: Request, res: Response): P
       res.status(503).json({ error: 'Database not initialized' });
       return;
     }
-    const { id: tournamentId, judgeId } = req.params;
+    const tournamentId = req.params.id as string;
+    const judgeId = req.params.judgeId as string;
     const { areaId, cornerId, matchId } = req.body;
 
     if (!areaId || !cornerId || !matchId) {
