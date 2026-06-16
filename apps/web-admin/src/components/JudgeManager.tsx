@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { Judge } from '@corner-click/types';
+import { JudgeStatus } from '@corner-click/types';
 import { useJudges } from '../hooks/useJudges';
 import AssignJudgeModal from './AssignJudgeModal';
 
@@ -85,7 +86,7 @@ export default function JudgeManager({ tournamentId, tournamentAreas }: Props) {
                     <span className="font-mono text-lg tracking-widest bg-gray-900 text-white px-3 py-1 rounded-md">{j.pin}</span>
                   </td>
                   <td className="px-6 py-4">
-                    {j.status === 'ONLINE' 
+                    {j.status === JudgeStatus.ONLINE 
                       ? <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-green-100 text-green-800"><span className="w-2 h-2 rounded-full bg-green-500"></span> Online</span>
                       : <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-gray-100 text-gray-600"><span className="w-2 h-2 rounded-full bg-gray-400"></span> Offline</span>
                     }

@@ -6,6 +6,8 @@ import { getCategories } from '../services/categoryService';
 import { getMatches, advanceWinner } from '../services/bracketService';
 import { getCompetitors } from '../services/competitorService';
 import type { Tournament, Category, Match, Competitor } from '@corner-click/types';
+import { MatchStatus } from '@corner-click/types';
+import { getCompetitorFullName } from '../utils/competitorUtils';
 
 export default function JuryDashboard() {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
@@ -17,7 +19,7 @@ export default function JuryDashboard() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
 
-  const [status, setStatus] = useState('PENDING'); // PENDING, ACTIVE, PAUSED, ENDED
+  const [status, setStatus] = useState<MatchStatus>(MatchStatus.PENDING);
   const [timeRemaining, setTimeRemaining] = useState(120); // 2 minutes in seconds
   const [judgesData, setJudgesData] = useState<Record<string, any>>({});
   const [isLoaded, setIsLoaded] = useState(false);
@@ -93,10 +95,10 @@ export default function JuryDashboard() {
       const snapshot = await get(matchRef);
       if (snapshot.exists()) {
         const data = snapshot.val();
-        setStatus(data.status || 'PENDING');
+        setStatus(data.status || MatchStatus.PENDING);
         setTimeRemaining(data.timeRemaining !== undefined ? data.timeRemaining : 120);
       } else {
-        setStatus(selectedMatch.status || 'PENDING');
+        setStatus(selectedMatch.status || MatchStatus.PENDING);
         setTimeRemaining(120);
       }
       setIsLoaded(true);
@@ -117,7 +119,7 @@ export default function JuryDashboard() {
 
   // Fetch Final Scores from API when match ends
   useEffect(() => {
-    if (status === 'ENDED' && selectedMatch) {
+    if (status === MatchStatus.ENDED && selectedMatch) {
       fetch(`${API_URL}/api/matches/${selectedMatch.id}/scores`)
         .then(res => res.json())
         .then(data => {
@@ -129,12 +131,12 @@ export default function JuryDashboard() {
 
   useEffect(() => {
     let interval: any = null;
-    if (status === 'ACTIVE' && timeRemaining > 0) {
+    if (status === MatchStatus.ACTIVE && timeRemaining > 0) {
       interval = setInterval(() => {
         setTimeRemaining((prev) => prev - 1);
       }, 1000);
-    } else if (timeRemaining === 0 && status === 'ACTIVE') {
-      updateMatchStatus('ENDED');
+    } else if (timeRemaining === 0 && status === MatchStatus.ACTIVE) {
+      updateMatchStatus(MatchStatus.ENDED);
     }
     return () => clearInterval(interval);
   }, [status, timeRemaining]);
@@ -145,7 +147,7 @@ export default function JuryDashboard() {
     return `${m}:${s}`;
   };
 
-  const updateMatchStatus = async (newStatus: string) => {
+  const updateMatchStatus = async (newStatus: MatchStatus) => {
     if (!selectedMatch) return;
     try {
       await fetch(`${API_URL}/api/matches/${selectedMatch.id}/status`, {
@@ -159,12 +161,12 @@ export default function JuryDashboard() {
     }
   };
 
-  const handleStart = () => updateMatchStatus('ACTIVE');
-  const handlePause = () => updateMatchStatus('PAUSED');
-  const handleEnd = () => updateMatchStatus('ENDED');
+  const handleStart = () => updateMatchStatus(MatchStatus.ACTIVE);
+  const handlePause = () => updateMatchStatus(MatchStatus.PAUSED);
+  const handleEnd = () => updateMatchStatus(MatchStatus.ENDED);
   const handleExtraTime = () => {
     setTimeRemaining(60);
-    updateMatchStatus('ACTIVE');
+    updateMatchStatus(MatchStatus.ACTIVE);
   };
 
   const handleDeclareWinner = async (winnerId: string) => {
@@ -179,7 +181,7 @@ export default function JuryDashboard() {
       const updatedSelectedMatch = updatedMatches.find(m => m.id === selectedMatch.id);
       if (updatedSelectedMatch) {
         setSelectedMatch(updatedSelectedMatch);
-        setStatus('ENDED'); // Force ENDED status view on top instead of ACTIVE
+        setStatus(MatchStatus.ENDED); // Force ENDED status view on top instead of ACTIVE
       }
       
       alert('Winner declared and bracket updated!');
@@ -191,14 +193,6 @@ export default function JuryDashboard() {
 
   const totalRed = Object.values(judgesData).reduce((acc: number, curr: any) => acc + (curr.redScore || 0), 0);
   const totalBlue = Object.values(judgesData).reduce((acc: number, curr: any) => acc + (curr.blueScore || 0), 0);
-
-  const getCompetitorName = (id: string | null | undefined) => {
-    if (!id) return 'TBD';
-    if (id === 'BYE') return 'BYE';
-    const comp = competitors[id];
-    if (comp) return `${comp.firstName} ${comp.lastName}`;
-    return id; // fallback to ID if not found
-  };
 
   // Determine if a match is "startable". Both competitors must be known and not BYE.
   const isMatchStartable = selectedMatch && 
@@ -272,17 +266,17 @@ export default function JuryDashboard() {
                     </div>
                     <div className="font-semibold text-lg flex items-center justify-between">
                       <span className={`text-red-600 truncate max-w-[45%] ${match.winnerId === match.redCompetitorId ? 'font-black underline' : ''}`}>
-                        {getCompetitorName(match.redCompetitorId)}
+                        {getCompetitorFullName(match.redCompetitorId, competitors)}
                       </span>
                       <span className="text-gray-400 text-xs uppercase tracking-widest px-2">vs</span>
                       <span className={`text-blue-600 truncate max-w-[45%] text-right ${match.winnerId === match.blueCompetitorId ? 'font-black underline' : ''}`}>
-                        {getCompetitorName(match.blueCompetitorId)}
+                        {getCompetitorFullName(match.blueCompetitorId, competitors)}
                       </span>
                     </div>
                     <div className="mt-3">
                       <span className={`text-xs font-bold px-2 py-1 rounded-md ${
-                        match.status === 'COMPLETED' ? 'bg-gray-200 text-gray-600' : 
-                        match.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 
+                        match.status === MatchStatus.COMPLETED ? 'bg-gray-200 text-gray-600' : 
+                        match.status === MatchStatus.ACTIVE ? 'bg-green-100 text-green-700' : 
                         'bg-yellow-100 text-yellow-700'
                       }`}>
                         {match.status}
@@ -311,18 +305,18 @@ export default function JuryDashboard() {
                 {/* Status Badge */}
                 <div className="absolute top-4 left-4">
                   <span className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest ${
-                    status === 'ACTIVE' ? 'bg-green-500 text-white shadow-[0_0_15px_rgba(34,197,94,0.5)] animate-pulse' :
-                    status === 'PAUSED' ? 'bg-yellow-500 text-white' :
-                    status === 'ENDED' || selectedMatch.status === 'COMPLETED' ? 'bg-gray-500 text-white' :
+                    status === MatchStatus.ACTIVE ? 'bg-green-500 text-white shadow-[0_0_15px_rgba(34,197,94,0.5)] animate-pulse' :
+                    status === MatchStatus.PAUSED ? 'bg-yellow-500 text-white' :
+                    status === MatchStatus.ENDED || selectedMatch.status === MatchStatus.COMPLETED ? 'bg-gray-500 text-white' :
                     'bg-blue-500 text-white'
                   }`}>
-                    {selectedMatch.status === 'COMPLETED' ? 'COMPLETED' : status}
+                    {selectedMatch.status === MatchStatus.COMPLETED ? 'COMPLETED' : status}
                   </span>
                 </div>
 
                 <div className="relative z-10 flex justify-center items-center space-x-8 mt-4">
                   <div className="text-right flex-1">
-                    <h3 className="text-4xl font-black text-red-500 tracking-tight">{getCompetitorName(selectedMatch.redCompetitorId)}</h3>
+                    <h3 className="text-4xl font-black text-red-500 tracking-tight">{getCompetitorFullName(selectedMatch.redCompetitorId, competitors)}</h3>
                   </div>
                   <div className="text-gray-500 font-black italic flex flex-col items-center mx-4">
                     <span className="text-2xl">VS</span>
@@ -331,13 +325,13 @@ export default function JuryDashboard() {
                     </span>
                   </div>
                   <div className="text-left flex-1">
-                    <h3 className="text-4xl font-black text-blue-500 tracking-tight">{getCompetitorName(selectedMatch.blueCompetitorId)}</h3>
+                    <h3 className="text-4xl font-black text-blue-500 tracking-tight">{getCompetitorFullName(selectedMatch.blueCompetitorId, competitors)}</h3>
                   </div>
                 </div>
 
                 {/* Timer Display */}
                 <div className="mt-12 mb-4">
-                  <div className={`font-mono text-8xl font-black tracking-tighter ${status === 'ACTIVE' ? 'text-white' : 'text-gray-400'}`}>
+                  <div className={`font-mono text-8xl font-black tracking-tighter ${status === MatchStatus.ACTIVE ? 'text-white' : 'text-gray-400'}`}>
                     {formatTime(timeRemaining)}
                   </div>
                 </div>
@@ -356,7 +350,7 @@ export default function JuryDashboard() {
               </div>
 
               {/* Match Complete / Tie Breaker Controls */}
-              {status === 'ENDED' && selectedMatch.status !== 'COMPLETED' && (
+              {status === MatchStatus.ENDED && selectedMatch.status !== MatchStatus.COMPLETED && (
                 <div className="p-6 bg-yellow-50 border-b border-yellow-200 flex flex-col items-center">
                   <h4 className="text-lg font-black text-yellow-800 mb-4 uppercase tracking-widest">Match Ended - Action Required</h4>
                   <div className="flex space-x-4 w-full max-w-lg">
@@ -388,37 +382,37 @@ export default function JuryDashboard() {
               <div className="p-8 bg-gray-50 flex justify-center space-x-6 mt-auto">
                 <button 
                   className={`px-8 py-4 rounded-xl font-black text-xl tracking-wide uppercase transition-all shadow-lg flex-1 max-w-xs ${
-                    status === 'ACTIVE' || status === 'ENDED' || selectedMatch.status === 'COMPLETED' || !isMatchStartable
+                    status === MatchStatus.ACTIVE || status === MatchStatus.ENDED || selectedMatch.status === MatchStatus.COMPLETED || !isMatchStartable
                       ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none' 
                       : 'bg-green-500 hover:bg-green-400 text-white hover:-translate-y-1 hover:shadow-green-500/30'
                   }`}
                   onClick={handleStart}
-                  disabled={status === 'ACTIVE' || status === 'ENDED' || selectedMatch.status === 'COMPLETED' || !isMatchStartable}
+                  disabled={status === MatchStatus.ACTIVE || status === MatchStatus.ENDED || selectedMatch.status === MatchStatus.COMPLETED || !isMatchStartable}
                   title={!isMatchStartable ? 'Cannot start a match with TBD or BYE' : ''}
                 >
-                  {status === 'PAUSED' ? 'Resume' : 'Start'}
+                  {status === MatchStatus.PAUSED ? 'Resume' : 'Start'}
                 </button>
                 
                 <button 
                   className={`px-8 py-4 rounded-xl font-black text-xl tracking-wide uppercase transition-all shadow-lg flex-1 max-w-xs ${
-                    status !== 'ACTIVE' || selectedMatch.status === 'COMPLETED' || !isMatchStartable
+                    status !== MatchStatus.ACTIVE || selectedMatch.status === MatchStatus.COMPLETED || !isMatchStartable
                       ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none' 
                       : 'bg-yellow-500 hover:bg-yellow-400 text-white hover:-translate-y-1 hover:shadow-yellow-500/30'
                   }`}
                   onClick={handlePause}
-                  disabled={status !== 'ACTIVE' || selectedMatch.status === 'COMPLETED' || !isMatchStartable}
+                  disabled={status !== MatchStatus.ACTIVE || selectedMatch.status === MatchStatus.COMPLETED || !isMatchStartable}
                 >
                   Pause
                 </button>
 
                 <button 
                   className={`px-8 py-4 rounded-xl font-black text-xl tracking-wide uppercase transition-all shadow-lg flex-1 max-w-xs ${
-                    status === 'ENDED' || selectedMatch.status === 'COMPLETED' || !isMatchStartable
+                    status === MatchStatus.ENDED || selectedMatch.status === MatchStatus.COMPLETED || !isMatchStartable
                       ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none' 
                       : 'bg-gray-900 hover:bg-gray-800 text-white hover:-translate-y-1 hover:shadow-gray-900/30'
                   }`}
                   onClick={handleEnd}
-                  disabled={status === 'ENDED' || selectedMatch.status === 'COMPLETED' || !isMatchStartable}
+                  disabled={status === MatchStatus.ENDED || selectedMatch.status === MatchStatus.COMPLETED || !isMatchStartable}
                 >
                   End Match
                 </button>

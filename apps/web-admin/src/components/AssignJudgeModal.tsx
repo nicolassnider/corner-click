@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import type { Judge, Match, Competitor } from '@corner-click/types';
+import { CornerRole } from '@corner-click/types';
 import { getMatches } from '../services/bracketService';
 import { getCompetitors } from '../services/competitorService';
+import { getCompetitorFullName } from '../utils/competitorUtils';
 
 interface Props {
   isOpen: boolean;
@@ -26,7 +28,7 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
   useEffect(() => {
     if (judge) {
       setAreaId(judge.currentAssignment?.areaId || '1');
-      setCornerId(judge.currentAssignment?.cornerId || 'red');
+      setCornerId(judge.currentAssignment?.cornerId || CornerRole.RED);
       setMatchId(judge.currentAssignment?.matchId || '');
     }
   }, [judge]);
@@ -44,13 +46,6 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
       }).catch(console.error);
     }
   }, [isOpen, tournamentId]);
-
-  const getCompetitorName = (id: string | null | undefined) => {
-    if (!id) return 'TBD';
-    if (id === 'BYE') return 'BYE';
-    const comp = competitors[id];
-    return comp ? `${comp.firstName} ${comp.lastName}` : id;
-  };
 
   if (!isOpen || !judge) return null;
 
@@ -111,12 +106,12 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
                 onChange={(e) => setCornerId(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-gray-50 text-gray-900 font-medium"
               >
-                <option value="red">Red Corner</option>
-                <option value="blue">Blue Corner</option>
-                <option value="corner_1">Corner 1 (Generic)</option>
-                <option value="corner_2">Corner 2 (Generic)</option>
-                <option value="corner_3">Corner 3 (Generic)</option>
-                <option value="corner_4">Corner 4 (Generic)</option>
+                <option value={CornerRole.RED}>Red Corner</option>
+                <option value={CornerRole.BLUE}>Blue Corner</option>
+                <option value={CornerRole.CORNER_1}>Corner 1 (Generic)</option>
+                <option value={CornerRole.CORNER_2}>Corner 2 (Generic)</option>
+                <option value={CornerRole.CORNER_3}>Corner 3 (Generic)</option>
+                <option value={CornerRole.CORNER_4}>Corner 4 (Generic)</option>
               </select>
             </div>
 
@@ -133,9 +128,9 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
                   return (
                     <div className="flex items-center gap-2 truncate">
                       <span className="font-bold text-gray-700">R{m.round}:</span>
-                      <span className="text-red-600 font-bold truncate">{getCompetitorName(m.redCompetitorId)}</span>
+                      <span className="text-red-600 font-bold truncate">{getCompetitorFullName(m.redCompetitorId, competitors)}</span>
                       <span className="text-xs text-gray-400">vs</span>
-                      <span className="text-blue-600 font-bold truncate">{getCompetitorName(m.blueCompetitorId)}</span>
+                      <span className="text-blue-600 font-bold truncate">{getCompetitorFullName(m.blueCompetitorId, competitors)}</span>
                     </div>
                   );
                 })() : (
@@ -158,9 +153,9 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
                           Round {m.round} <span className="font-mono text-gray-400 ml-1">({m.id})</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-red-600 font-black">{getCompetitorName(m.redCompetitorId)}</span>
+                          <span className="text-red-600 font-black">{getCompetitorFullName(m.redCompetitorId, competitors)}</span>
                           <span className="text-xs text-gray-400 italic">vs</span>
-                          <span className="text-blue-600 font-black">{getCompetitorName(m.blueCompetitorId)}</span>
+                          <span className="text-blue-600 font-black">{getCompetitorFullName(m.blueCompetitorId, competitors)}</span>
                         </div>
                       </li>
                     ))}
