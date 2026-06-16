@@ -9,6 +9,15 @@ import type { Tournament, Category, Match, Competitor } from '@corner-click/type
 import { MatchStatus } from '@corner-click/types';
 import { getCompetitorFullName } from '../utils/competitorUtils';
 
+interface ScoreData {
+  redScore: number;
+  blueScore: number;
+  redWarnings: number;
+  blueWarnings: number;
+  redDeductions: number;
+  blueDeductions: number;
+}
+
 export default function JuryDashboard() {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -21,7 +30,7 @@ export default function JuryDashboard() {
 
   const [status, setStatus] = useState<MatchStatus>(MatchStatus.PENDING);
   const [timeRemaining, setTimeRemaining] = useState(120); // 2 minutes in seconds
-  const [judgesData, setJudgesData] = useState<Record<string, any>>({});
+  const [judgesData, setJudgesData] = useState<Record<string, ScoreData>>({});
   const [isLoaded, setIsLoaded] = useState(false);
 
   const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
@@ -80,9 +89,15 @@ export default function JuryDashboard() {
   // Fetch matches when category changes
   useEffect(() => {
     if (selectedTournamentId && selectedCategoryId) {
-      getMatches(selectedTournamentId, selectedCategoryId).then(setMatches).catch(console.error);
+      getMatches(selectedTournamentId, selectedCategoryId)
+        .then(fetchedMatches => {
+          setMatches(fetchedMatches);
+          setSelectedMatch(fetchedMatches[0] ?? null);
+        })
+        .catch(console.error);
     } else {
       setMatches([]);
+      setSelectedMatch(null);
     }
   }, [selectedTournamentId, selectedCategoryId]);
 
@@ -191,8 +206,8 @@ export default function JuryDashboard() {
     }
   };
 
-  const totalRed = Object.values(judgesData).reduce((acc: number, curr: any) => acc + (curr.redScore || 0), 0);
-  const totalBlue = Object.values(judgesData).reduce((acc: number, curr: any) => acc + (curr.blueScore || 0), 0);
+  const totalRed = Object.values(judgesData).reduce((acc: number, curr: ScoreData) => acc + (curr.redScore || 0), 0);
+  const totalBlue = Object.values(judgesData).reduce((acc: number, curr: ScoreData) => acc + (curr.blueScore || 0), 0);
 
   // Determine if a match is "startable". Both competitors must be known and not BYE.
   const isMatchStartable = selectedMatch && 

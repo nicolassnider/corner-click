@@ -78,7 +78,7 @@ export interface Judge {
   status: JudgeStatus;
   currentAssignment: {
     areaId: string;
-    cornerId: string; // Keep as string for DB compatibility or use CornerRole
+    cornerId: CornerRole;
     matchId: string;
   } | null;
 }

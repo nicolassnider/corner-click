@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import type { Judge, Match, Competitor } from '@corner-click/types';
 import { CornerRole } from '@corner-click/types';
 import { getMatches } from '../services/bracketService';
@@ -24,6 +24,11 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
   const [matches, setMatches] = useState<Match[]>([]);
   const [competitors, setCompetitors] = useState<Record<string, Competitor>>({});
 
+  const filteredMatches = useMemo(
+    () => matches.filter((m) => m.areaId === areaId),
+    [matches, areaId]
+  );
+
   // Reset form when opened with a new judge
   useEffect(() => {
     if (judge) {
@@ -46,6 +51,19 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
       }).catch(console.error);
     }
   }, [isOpen, tournamentId]);
+
+  // Ensure match selection stays consistent with selected area
+  useEffect(() => {
+    if (!matchId) return;
+
+    const matchInSelectedArea = matches.some(
+      (m) => m.id === matchId && m.areaId === areaId
+    );
+
+    if (!matchInSelectedArea) {
+      setMatchId('');
+    }
+  }, [areaId, matchId, matches]);
 
   if (!isOpen || !judge) return null;
 
@@ -143,7 +161,7 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setDropdownOpen(false)}></div>
                   <ul className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-xl shadow-2xl max-h-60 overflow-y-auto">
-                    {matches.map(m => (
+                    {filteredMatches.map(m => (
                       <li 
                         key={m.id}
                         onClick={() => { setMatchId(m.id); setDropdownOpen(false); }}
@@ -159,8 +177,8 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
                         </div>
                       </li>
                     ))}
-                    {matches.length === 0 && (
-                      <li className="px-4 py-4 text-center text-gray-500 italic">No matches available.</li>
+                    {filteredMatches.length === 0 && (
+                      <li className="px-4 py-4 text-center text-gray-500 italic">No matches available in Area {areaId}.</li>
                     )}
                   </ul>
                 </>
