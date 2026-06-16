@@ -120,6 +120,7 @@ export default function JudgeManager({ tournamentId, tournamentAreas }: Props) {
         onClose={() => setSelectedJudge(null)}
         judge={selectedJudge}
         tournamentAreas={tournamentAreas}
+        tournamentId={tournamentId}
         onAssign={assignJudge}
       />
     </div>
