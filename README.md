@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="documentos/portada02.png" alt="Corner Click Portada" width="100%" />
+</div>
+
 # Corner Click
 
 Corner Click is a comprehensive web application designed for managing ITF Taekwondo tournaments. It empowers organizers to seamlessly create tournament brackets, list upcoming matches, and provides a highly responsive, real-time scoring interface for judges.
