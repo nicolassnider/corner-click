@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { db } from '../services/firebase';
 import type { Tournament } from '@corner-click/types';
+import { TournamentStatus } from '@corner-click/types';
 
 const router = express.Router();
 
@@ -117,7 +118,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
       date: date || new Date().toISOString(),
       location: location || '',
       areas: areas,
-      status: 'UPCOMING',
+      status: TournamentStatus.UPCOMING,
       createdAt: new Date().toISOString()
     };
 

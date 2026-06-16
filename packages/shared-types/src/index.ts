@@ -1,10 +1,43 @@
+export enum TournamentStatus {
+  UPCOMING = 'UPCOMING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+}
+
+export enum Gender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+}
+
+export enum JudgeStatus {
+  ONLINE = 'ONLINE',
+  OFFLINE = 'OFFLINE',
+}
+
+export enum MatchStatus {
+  PENDING = 'PENDING',
+  ACTIVE = 'ACTIVE',
+  PAUSED = 'PAUSED',
+  ENDED = 'ENDED',
+  COMPLETED = 'COMPLETED',
+}
+
+export enum CornerRole {
+  RED = 'red',
+  BLUE = 'blue',
+  CORNER_1 = 'corner_1',
+  CORNER_2 = 'corner_2',
+  CORNER_3 = 'corner_3',
+  CORNER_4 = 'corner_4',
+}
+
 export interface Tournament {
   id: string;
   name: string;
   date: string;
   location: string;
   areas: number;
-  status: 'UPCOMING' | 'IN_PROGRESS' | 'COMPLETED';
+  status: TournamentStatus;
   organizerId?: string;
   createdAt?: string;
 }
@@ -13,7 +46,7 @@ export interface Category {
   id: string;
   tournamentId: string;
   name: string;
-  gender: 'MALE' | 'FEMALE';
+  gender: Gender;
   ageGroup: string;
   beltLevel: string;
   weightClass: string;
@@ -30,7 +63,7 @@ export interface Competitor {
   club: string;
   country: string;
   birthDate?: string;
-  gender?: 'MALE' | 'FEMALE';
+  gender?: Gender;
   weight?: number;
   height?: number;
   belt?: string;
@@ -42,10 +75,10 @@ export interface Judge {
   tournamentId: string;
   name: string;
   pin: string;
-  status: 'ONLINE' | 'OFFLINE';
+  status: JudgeStatus;
   currentAssignment: {
     areaId: string;
-    cornerId: string;
+    cornerId: CornerRole;
     matchId: string;
   } | null;
 }
@@ -55,7 +88,7 @@ export interface Match {
   tournamentId: string;
   categoryId: string;
   areaId: string;
-  status: 'PENDING' | 'ACTIVE' | 'PAUSED' | 'COMPLETED';
+  status: MatchStatus;
   round?: number;
   nextMatchId?: string;
   redCompetitorId: string;

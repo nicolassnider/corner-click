@@ -1,6 +1,7 @@
 import { ref, get, set, remove, push, update } from 'firebase/database';
 import { database } from '../lib/firebase';
 import type { Match, Competitor } from '@corner-click/types';
+import { MatchStatus } from '@corner-click/types';
 
 /**
  * Shuffles an array randomly using Fisher-Yates algorithm.
@@ -76,7 +77,7 @@ export const generateBracket = async (tournamentId: string, categoryId: string, 
       tournamentId,
       categoryId,
       areaId,
-      status: isBye ? 'COMPLETED' : 'PENDING',
+      status: isBye ? MatchStatus.COMPLETED : MatchStatus.PENDING,
       round: 1,
       redCompetitorId: comp1 ? comp1.id : 'BYE',
       blueCompetitorId: comp2 ? comp2.id : 'BYE',
@@ -99,7 +100,7 @@ export const generateBracket = async (tournamentId: string, categoryId: string, 
         tournamentId,
         categoryId,
         areaId,
-        status: 'PENDING',
+        status: MatchStatus.PENDING,
         round: r,
         redCompetitorId: '',
         blueCompetitorId: '',
@@ -144,7 +145,7 @@ export const generateBracket = async (tournamentId: string, categoryId: string, 
       const matchId = currentIds[i];
       let redId = '';
       let blueId = '';
-      let status: Match['status'] = 'PENDING';
+      let status: MatchStatus = MatchStatus.PENDING;
       let winnerId = null;
 
       if (round === 1) {
@@ -155,7 +156,7 @@ export const generateBracket = async (tournamentId: string, categoryId: string, 
         
         const isBye = comp1 === null || comp2 === null;
         if (isBye) {
-          status = 'COMPLETED';
+          status = MatchStatus.COMPLETED;
           winnerId = comp1 ? comp1.id : (comp2 ? comp2.id : null);
         }
       }
@@ -219,7 +220,7 @@ export const advanceWinner = async (tournamentId: string, matchId: string, winne
   
   // Set winner for current match
   updates[`tournaments/${tournamentId}/matches/${matchId}/winnerId`] = winnerId;
-  updates[`tournaments/${tournamentId}/matches/${matchId}/status`] = 'COMPLETED';
+  updates[`tournaments/${tournamentId}/matches/${matchId}/status`] = MatchStatus.COMPLETED;
 
   // If there's a next match, advance the winner
   if (nextMatchId) {
