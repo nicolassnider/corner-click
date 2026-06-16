@@ -1,0 +1,23 @@
+const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
+
+interface ScorePayload {
+  cornerId: string;
+  redScore: number;
+  blueScore: number;
+  redWarnings: number;
+  blueWarnings: number;
+  redDeductions: number;
+  blueDeductions: number;
+}
+
+export const submitScores = async (matchId: string, scores: ScorePayload): Promise<void> => {
+  const response = await fetch(`${API_URL}/api/matches/${matchId}/scores`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(scores)
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to submit scores');
+  }
+};

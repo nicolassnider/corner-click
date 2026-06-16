@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged, signInWithCustomToken } from 'firebase/auth';
 import type { User } from 'firebase/auth';
-import { auth, db } from '../lib/firebase';
 import { doc as firestoreDoc, onSnapshot as firestoreOnSnapshot } from 'firebase/firestore';
+import { auth, db } from '../lib/firebase';
 import ScorePad from './ScorePad';
 import '../styles/global.css';
 
