@@ -4,6 +4,7 @@ import TournamentList from './TournamentList';
 import TournamentForm from './TournamentForm';
 import TournamentDetail from './TournamentDetail';
 import AdminHeader from './AdminHeader';
+import Footer from './Footer';
 
 export default function Dashboard() {
   const [view, setView] = useState<'LIST' | 'FORM' | 'DETAIL'>('LIST');
@@ -20,11 +21,11 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
+    <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900 font-sans">
       <AdminHeader onHomeClick={handleBackToList} />
 
       {/* Main Content Area */}
-      <main className="pb-12">
+      <main className="flex-1 pb-12">
         {view === 'LIST' && (
           <TournamentList 
             onSelect={handleSelect} 
@@ -46,6 +47,8 @@ export default function Dashboard() {
           />
         )}
       </main>
+
+      <Footer />
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { getCompetitors } from '../services/competitorService';
 import type { Tournament, Category, Match, Competitor } from '@corner-click/types';
 import { MatchStatus } from '@corner-click/types';
 import { getCompetitorFullName } from '../utils/competitorUtils';
+import Footer from './Footer';
 
 interface ScoreData {
   redScore: number;
@@ -436,6 +437,8 @@ export default function JuryDashboard() {
           )}
         </section>
       </main>
+
+      <Footer />
     </div>
   );
 }

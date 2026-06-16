@@ -4,6 +4,7 @@ import type { User } from 'firebase/auth';
 import { doc as firestoreDoc, onSnapshot as firestoreOnSnapshot } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
 import ScorePad from './ScorePad';
+import { APP_MOTTO, AUTHOR_NAME, AUTHOR_GITHUB, AUTHOR_LINKEDIN } from '@corner-click/types';
 import '../styles/global.css';
 
 interface AssignedData {
@@ -101,8 +102,8 @@ export default function JudgeApp() {
 
   if (!user) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-950">
-        <form onSubmit={handleLogin} className="flex flex-col gap-6 w-80 max-w-sm bg-gray-900 p-8 rounded-2xl border border-gray-800 shadow-2xl">
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-950 relative">
+        <form onSubmit={handleLogin} className="flex flex-col gap-6 w-80 max-w-sm bg-gray-900 p-8 rounded-2xl border border-gray-800 shadow-2xl z-10">
           <h1 className="text-3xl font-extrabold text-white text-center tracking-wide">
             Corner <span className="text-blue-500">Click</span>
           </h1>
@@ -125,6 +126,17 @@ export default function JudgeApp() {
             INGRESAR
           </button>
         </form>
+
+        <div className="absolute bottom-6 left-0 right-0 text-center opacity-40 hover:opacity-100 transition-opacity flex flex-col items-center gap-1 z-0">
+          <p className="text-gray-500 text-[10px] font-bold tracking-widest uppercase mb-1">
+            "{APP_MOTTO}"
+          </p>
+          <div className="flex gap-4 text-[10px] text-gray-600 font-bold">
+            <span>By {AUTHOR_NAME}</span>
+            <a href={AUTHOR_GITHUB} target="_blank" rel="noopener noreferrer" className="hover:text-white">GitHub</a>
+            <a href={AUTHOR_LINKEDIN} target="_blank" rel="noopener noreferrer" className="hover:text-blue-500">LinkedIn</a>
+          </div>
+        </div>
       </div>
     );
   }
@@ -153,10 +165,21 @@ export default function JudgeApp() {
         
         <button 
           onClick={handleLogout}
-          className="mt-12 text-gray-500 hover:text-white underline font-semibold transition-colors"
+          className="mt-12 text-gray-500 hover:text-white underline font-semibold transition-colors z-10"
         >
           Cerrar Sesión
         </button>
+
+        <div className="absolute bottom-6 left-0 right-0 text-center opacity-40 hover:opacity-100 transition-opacity flex flex-col items-center gap-1">
+          <p className="text-gray-500 text-[10px] font-bold tracking-widest uppercase mb-1">
+            "Every Point. Every Match. Every Corner."
+          </p>
+          <div className="flex gap-4 text-[10px] text-gray-600 font-bold">
+            <span>By Nicolas Snider</span>
+            <a href="https://github.com/nicolassnider" target="_blank" rel="noopener noreferrer" className="hover:text-white">GitHub</a>
+            <a href="https://www.linkedin.com/in/nicolas-snider-7a362b39/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500">LinkedIn</a>
+          </div>
+        </div>
       </div>
     );
   }
