@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import React, { useState, useEffect } from 'react';
+import { signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 
-interface LoginFormProps {
-  onSuccess: () => void;
-}
+const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
 
-export default function LoginForm({ onSuccess }: LoginFormProps) {
+export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // If already logged in, go to dashboard
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => {
+      if (u) window.location.href = '/';
+    });
+    return () => unsub();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,10 +24,31 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      onSuccess();
+      // Call our API — credentials never go directly to Firebase from the browser
+      const res = await fetch(`${API_URL}/api/auth/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (res.status === 403) {
+          setError('Acceso denegado: no eres administrador.');
+        } else if (res.status === 401) {
+          setError('Credenciales inválidas. Verifica tu email y contraseña.');
+        } else {
+          setError(data.error || 'Error al iniciar sesión');
+        }
+        return;
+      }
+
+      // Sign in with the custom token returned by the API
+      await signInWithCustomToken(auth, data.token);
+      window.location.href = '/';
     } catch (err: any) {
-      setError(err.message || 'Error al iniciar sesión');
+      setError('Error de conexión. Verifica que el servidor esté activo.');
     } finally {
       setLoading(false);
     }

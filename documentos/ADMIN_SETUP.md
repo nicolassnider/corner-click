@@ -6,7 +6,7 @@ Para que un usuario pueda acceder al panel de administración, debe estar regist
 
 ### Estructura del documento
 
-```
+```text
 admins/
   {uid}/
     email: string
@@ -27,6 +27,7 @@ admins/
 7. Crea un nuevo documento en la colección `admins`:
    - **ID del documento**: El UID del usuario (copiado en paso 5)
    - **Campos**:
+
      ```json
      {
        "email": "admin@cornerclick.com",
@@ -73,6 +74,7 @@ createAdmin('USER_UID_HERE', 'admin@cornerclick.com');
 ## Verificación de Admin
 
 El middleware `requireAdmin` en la API verifica que:
+
 1. El token de Firebase Auth sea válido
 2. El UID del usuario exista en la colección `admins`
 
