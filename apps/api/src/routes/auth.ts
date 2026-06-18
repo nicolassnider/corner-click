@@ -132,6 +132,11 @@ router.post('/logout', async (req: Request, res: Response): Promise<void> => {
 
     const token = authHeader.split('Bearer ')[1];
 
+    if (!auth) {
+      res.status(503).json({ error: 'Auth not initialized' });
+      return;
+    }
+
     const decodedToken = await auth.verifyIdToken(token);
     const { tournamentId, judgeId } = decodedToken;
 

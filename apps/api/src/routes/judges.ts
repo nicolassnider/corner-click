@@ -141,7 +141,7 @@ router.get('/:id/judges/stream', (req: Request, res: Response) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
   
-  const tournamentId = req.params.id;
+  const tournamentId = req.params.id as string;
   const judgesRef = db.collection('tournaments').doc(tournamentId).collection('judges');
   
   const unsubscribe = judgesRef.onSnapshot(snapshot => {
@@ -258,7 +258,8 @@ router.put('/:id/judges/:judgeId/disconnect', async (req: Request, res: Response
       res.status(503).json({ error: 'Firestore not initialized' });
       return;
     }
-    const { id, judgeId } = req.params;
+    const id = req.params.id as string;
+    const judgeId = req.params.judgeId as string;
     
     await db.collection('tournaments').doc(id).collection('judges').doc(judgeId).update({
       currentAssignment: null,
@@ -285,7 +286,8 @@ router.delete('/:id/judges/:judgeId', async (req: Request, res: Response): Promi
       res.status(503).json({ error: 'Firestore not initialized' });
       return;
     }
-    const { id, judgeId } = req.params;
+    const id = req.params.id as string;
+    const judgeId = req.params.judgeId as string;
     
     await db.collection('tournaments').doc(id).collection('judges').doc(judgeId).delete();
     
