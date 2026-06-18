@@ -48,6 +48,10 @@ app.get('/api/health', (req: Request, res: Response) => {
   });
 });
 
-app.listen(settings.port, () => {
-  console.log(`Corner Click API running on port ${settings.port}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(settings.port, () => {
+    console.log(`Corner Click API running on port ${settings.port}`);
+  });
+}
+
+export default app;
