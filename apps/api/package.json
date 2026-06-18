@@ -6,7 +6,7 @@
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^4.22.2",
-    "firebase-admin": "^14.0.0",
+    "firebase-admin": "^13.10.0",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1"
   },
@@ -24,9 +24,6 @@
   "keywords": [],
   "license": "ISC",
   "main": "dist/index.js",
-  "overrides": {
-    "jose": "4.15.5"
-  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch --env-file=.env src/index.ts",
