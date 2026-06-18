@@ -39,11 +39,13 @@ const swaggerSpec = swaggerJSDoc(swaggerOptions);
 app.use(`${apiPrefix}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(express.json());
 
+import { authenticateToken } from './middlewares/auth';
+
 // Routes
 app.use(`${apiPrefix}/auth`, authRoutes);
-app.use(`${apiPrefix}/tournaments`, tournamentsRoutes);
-app.use(`${apiPrefix}/judges`, judgesRoutes);
-app.use(`${apiPrefix}/matches`, matchesRoutes);
+app.use(`${apiPrefix}/tournaments`, authenticateToken, tournamentsRoutes);
+app.use(`${apiPrefix}/judges`, authenticateToken, judgesRoutes);
+app.use(`${apiPrefix}/matches`, authenticateToken, matchesRoutes);
 
 // Root endpoint for quick deployment verification
 app.get('/', (req: Request, res: Response) => {

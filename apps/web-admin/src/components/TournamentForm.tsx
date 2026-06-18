@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { fetchWithAuth } from '../utils/apiClient';
+
+const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
 
 interface Props {
   onCancel: () => void;
@@ -17,9 +20,8 @@ export default function TournamentForm({ onCancel, onCreated }: Props) {
     setLoading(true);
     
     try {
-      const res = await fetch('http://localhost:4000/api/tournaments', {
+      const res = await fetchWithAuth(`${API_URL}/api/tournaments`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, date, location, rings: Number(areas) })
       });
       if (res.ok) {

@@ -1,3 +1,5 @@
+import { auth } from '../lib/firebase';
+
 const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
 
 interface ScorePayload {
@@ -11,9 +13,15 @@ interface ScorePayload {
 }
 
 export const submitScores = async (matchId: string, scores: ScorePayload): Promise<void> => {
+  const user = auth.currentUser;
+  const token = user ? await user.getIdToken() : '';
+
   const response = await fetch(`${API_URL}/api/matches/${matchId}/scores`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
     body: JSON.stringify(scores)
   });
 

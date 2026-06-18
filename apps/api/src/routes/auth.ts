@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { db, auth } from '../services/firebase';
+import { authenticateToken } from '../middlewares/auth';
 
 const router = express.Router();
 
@@ -118,27 +119,14 @@ router.post('/pin', async (req: Request, res: Response): Promise<void> => {
  *       200:
  *         description: Logged out successfully
  */
-router.post('/logout', async (req: Request, res: Response): Promise<void> => {
+router.post('/logout', authenticateToken, async (req: Request, res: Response): Promise<void> => {
   try {
     if (!db) {
       res.status(503).json({ error: 'Firestore not initialized' });
       return;
     }
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
 
-    const token = authHeader.split('Bearer ')[1];
-
-    if (!auth) {
-      res.status(503).json({ error: 'Auth not initialized' });
-      return;
-    }
-
-    const decodedToken = await auth.verifyIdToken(token);
-    const { tournamentId, judgeId } = decodedToken;
+    const { tournamentId, judgeId } = req.user as any;
 
     if (tournamentId && judgeId) {
       await db.collection('tournaments').doc(tournamentId).collection('judges').doc(judgeId).update({

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import type { Tournament } from '@corner-click/types';
+import { fetchWithAuth } from '../utils/apiClient';
+
+const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
 
 interface Props {
   onSelect: (t: Tournament) => void;
@@ -11,7 +14,7 @@ export default function TournamentList({ onSelect, onCreateNew }: Props) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:4000/api/tournaments')
+    fetchWithAuth(`${API_URL}/api/tournaments`)
       .then(res => res.json())
       .then(data => {
         setTournaments(data);
