@@ -6,6 +6,9 @@
     "syncpack": "^15.3.2",
     "turbo": "^2.0.0"
   },
+  "overrides": {
+    "jose": "4.15.5"
+  },
   "packageManager": "npm@11.9.0",
   "private": true,
   "scripts": {

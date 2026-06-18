@@ -2,10 +2,9 @@
   "name": "@corner-click/types",
   "version": "0.0.1",
   "devDependencies": {
-    "typescript": "^5.7.3",
-    "@corner-click/tsconfig": "*"
+    "@corner-click/tsconfig": "0.0.1",
+    "typescript": "^5.7.3"
   },
-  "type": "module",
   "main": "dist/index.js",
   "private": true,
   "scripts": {

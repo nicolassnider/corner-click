@@ -11,7 +11,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
-    "@corner-click/tsconfig": "*",
+    "@corner-click/tsconfig": "0.0.1",
     "@corner-click/types": "0.0.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
@@ -23,12 +23,15 @@
   },
   "keywords": [],
   "license": "ISC",
-  "type": "commonjs",
   "main": "dist/index.js",
+  "overrides": {
+    "jose": "4.15.5"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch --env-file=.env src/index.ts",
-    "lint": "eslint src/",
+    "lint": "tsc --noEmit",
     "start": "node dist/index.js"
-  }
+  },
+  "type": "commonjs"
 }
