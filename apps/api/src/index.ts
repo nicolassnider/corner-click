@@ -36,15 +36,30 @@ const swaggerSpec = swaggerJSDoc(swaggerOptions);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(express.json());
 
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/tournaments', tournamentsRoutes);
-app.use('/api/tournaments', judgesRoutes);
+app.use('/api/tournaments', judgesRoutes); // wait, should judges have /api/judges instead of /api/tournaments? The original had app.use('/api/tournaments', judgesRoutes);
 app.use('/api/matches', matchesRoutes);
 
+// Root endpoint for quick deployment verification
+app.get('/', (req: Request, res: Response) => {
+  res.json({
+    message: '🚀 Corner Click API is up and running!',
+    environment: process.env.VERCEL ? 'Production (Vercel)' : 'Local Development',
+    timestamp: new Date().toISOString(),
+    docs: '/api/docs'
+  });
+});
+
+// Health check endpoint
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({ 
     status: 'ok', 
-    firebaseConfigured: !!settings.firebase.projectId 
+    message: '✅ API is healthy and ready to process requests',
+    firebaseConfigured: !!settings.firebase.projectId,
+    environment: process.env.VERCEL ? 'Vercel' : 'Local',
+    uptime: process.uptime()
   });
 });
 
