@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { db } from '../services/firebase';
 import type { Tournament } from '@corner-click/types';
 import { TournamentStatus } from '@corner-click/types';
+import { authenticateToken, requireAdmin } from '../middlewares/auth';
 
 const router = express.Router();
 
@@ -97,7 +98,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
  *       '201':
  *         description: Created
  */
-router.post('/', async (req: Request, res: Response): Promise<void> => {
+router.post('/', authenticateToken, requireAdmin, async (req: Request, res: Response): Promise<void> => {
   try {
     if (!db) {
       res.status(503).json({ error: 'Database not initialized' });

@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { db } from '../services/firebase';
+import { authenticateToken, requireAdmin } from '../middlewares/auth';
 
 const router = express.Router();
 
@@ -280,7 +281,7 @@ router.put('/:id/judges/:judgeId/disconnect', async (req: Request, res: Response
  *     tags: [Judges]
  *     summary: Delete a judge
  */
-router.delete('/:id/judges/:judgeId', async (req: Request, res: Response): Promise<void> => {
+router.delete('/:id/judges/:judgeId', authenticateToken, requireAdmin, async (req: Request, res: Response): Promise<void> => {
   try {
     if (!db) {
       res.status(503).json({ error: 'Firestore not initialized' });
