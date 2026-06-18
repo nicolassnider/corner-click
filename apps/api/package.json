@@ -16,8 +16,10 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.9.3",
+    "@types/supertest": "^7.2.0",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "supertest": "^7.2.2",
     "tsx": "^4.22.4",
     "typescript": "^5.7.3"
   },
@@ -28,7 +30,10 @@
     "build": "tsc",
     "dev": "tsx watch --env-file=.env src/index.ts",
     "lint": "tsc --noEmit",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "type": "commonjs"
 }
