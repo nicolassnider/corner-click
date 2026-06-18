@@ -1,0 +1,305 @@
+import React, { useState, useEffect } from 'react';
+import type { Competitor, Category, AgeGroupDef, WeightClass } from '@corner-click/types';
+import { WORLD_CUP_AGES, WORLD_CHAMPIONSHIP_AGES } from '@corner-click/types';
+
+interface CompetitorFormProps {
+  initialData?: Competitor;
+  categoryId: string;
+  categories: Category[];
+  onSave: (competitor: Omit<Competitor, 'id' | 'tournamentId'>) => void;
+  onCancel: () => void;
+}
+
+export const CompetitorForm: React.FC<CompetitorFormProps> = ({
+  initialData,
+  categoryId,
+  categories,
+  onSave,
+  onCancel
+}) => {
+  const [formData, setFormData] = useState({
+    categoryId: categoryId,
+    firstName: '',
+    lastName: '',
+    club: '',
+    country: '',
+    birthDate: '',
+    gender: 'MALE' as 'MALE' | 'FEMALE',
+    weight: '' as string | number,
+    height: '' as string | number,
+    belt: '',
+    isSeeded: false,
+  });
+
+  const [displayDate, setDisplayDate] = useState(() => {
+    if (initialData?.birthDate) {
+      const [y, m, d] = initialData.birthDate.split('-');
+      return `${d}/${m}/${y}`;
+    }
+    return '';
+  });
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        categoryId: initialData.categoryId || categoryId,
+        firstName: initialData.firstName || '',
+        lastName: initialData.lastName || '',
+        club: initialData.club || '',
+        country: initialData.country || '',
+        birthDate: initialData.birthDate || '',
+        gender: initialData.gender || 'MALE',
+        weight: initialData?.weight?.toString() || '',
+        height: initialData?.height?.toString() || '',
+        belt: initialData?.belt || '',
+        isSeeded: initialData.isSeeded || false,
+      });
+    } else {
+      setFormData(prev => ({ ...prev, categoryId }));
+    }
+  }, [initialData, categoryId]);
+
+  // Derived unique belt groups from categories
+  const uniqueBelts = Array.from(new Set(categories.map(c => c.beltLevel))).filter(Boolean);
+
+  // Auto-detect category based on inputs
+  useEffect(() => {
+    if (!formData.birthDate || !formData.weight || !formData.belt) return;
+
+    const age = new Date().getFullYear() - new Date(formData.birthDate).getFullYear();
+    const weightNum = Number(formData.weight);
+
+    const allAges = [...WORLD_CUP_AGES, ...WORLD_CHAMPIONSHIP_AGES];
+    const ageGroup = allAges.find(ag => age >= ag.minAge && age <= ag.maxAge);
+    
+    if (ageGroup) {
+      const weightClasses = formData.gender === 'MALE' ? ageGroup.maleWeights : ageGroup.femaleWeights;
+      const weightClass = weightClasses.find(wc => {
+        const min = wc.minWeight ?? 0;
+        const max = wc.maxWeight ?? 999;
+        return weightNum > min && weightNum <= max;
+      });
+
+      if (weightClass) {
+        const matchedCategory = categories.find(c => 
+          c.gender === formData.gender &&
+          c.ageGroup === ageGroup.name &&
+          c.weightClass === weightClass.name &&
+          c.beltLevel === formData.belt
+        );
+
+        if (matchedCategory && matchedCategory.id !== formData.categoryId) {
+          setFormData(prev => ({ ...prev, categoryId: matchedCategory.id }));
+        }
+      }
+    }
+  }, [formData.birthDate, formData.gender, formData.weight, formData.belt, categories]);
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value.replace(/\D/g, ''); // Solo números
+    if (val.length > 8) val = val.slice(0, 8); // Máximo 8 dígitos
+
+    // Formatear como DD/MM/YYYY
+    let formatted = val;
+    if (val.length > 4) {
+      formatted = `${val.slice(0, 2)}/${val.slice(2, 4)}/${val.slice(4)}`;
+    } else if (val.length > 2) {
+      formatted = `${val.slice(0, 2)}/${val.slice(2)}`;
+    }
+
+    setDisplayDate(formatted);
+
+    // Si está completa, validar y actualizar formData
+    if (val.length === 8) {
+      const d = parseInt(val.slice(0, 2), 10);
+      const m = parseInt(val.slice(2, 4), 10);
+      const y = parseInt(val.slice(4), 10);
+
+      const isValid = m > 0 && m <= 12 && d > 0 && d <= 31 && y > 1900 && y <= new Date().getFullYear();
+      
+      if (isValid) {
+        setFormData({ ...formData, birthDate: `${y}-${m.toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}` });
+      }
+    } else {
+      if (formData.birthDate) {
+        setFormData({ ...formData, birthDate: '' });
+      }
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave({
+      ...formData,
+      weight: formData.weight ? Number(formData.weight) : undefined,
+      height: formData.height ? Number(formData.height) : undefined
+    });
+  };
+
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-md mt-4 border border-gray-100">
+      <h3 className="text-xl font-bold mb-4 text-gray-800">{initialData ? 'Editar Competidor' : 'Añadir Competidor'}</h3>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        
+        {/* Category Dropdown */}
+        <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Categoría Asignada</label>
+          <select
+            required
+            className="block w-full rounded-md border-gray-300 shadow-sm p-2.5 border focus:ring-blue-500 focus:border-blue-500 bg-white font-medium text-blue-900"
+            value={formData.categoryId}
+            onChange={e => setFormData({ ...formData, categoryId: e.target.value })}
+          >
+            <option value="" disabled>Selecciona o ingresa datos para auto-asignar...</option>
+            {categories.map(c => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-gray-500">La categoría se asignará automáticamente al ingresar los datos físicos del competidor.</p>
+        </div>
+
+        {/* Basic Info */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Nombre</label>
+            <input
+              type="text"
+              required
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
+              value={formData.firstName}
+              onChange={e => setFormData({ ...formData, firstName: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Apellidos</label>
+            <input
+              type="text"
+              required
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
+              value={formData.lastName}
+              onChange={e => setFormData({ ...formData, lastName: e.target.value })}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Club / Escuela</label>
+            <input
+              type="text"
+              required
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
+              value={formData.club}
+              onChange={e => setFormData({ ...formData, club: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">País</label>
+            <input
+              type="text"
+              required
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
+              value={formData.country}
+              onChange={e => setFormData({ ...formData, country: e.target.value })}
+            />
+          </div>
+        </div>
+
+        {/* Physical / Registration Details */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 bg-blue-50 p-4 rounded-md border border-blue-100">
+          <div>
+            <label className="block text-sm font-medium text-blue-900">Fecha de Nac.</label>
+            <input
+              type="tel"
+              required
+              placeholder="DD/MM/AAAA"
+              className="mt-1 block w-full rounded-md border-blue-200 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
+              value={displayDate}
+              onChange={handleDateChange}
+            />
+            {displayDate.length === 10 && !formData.birthDate && (
+              <p className="mt-1 text-xs text-red-500">Fecha inválida.</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-blue-900">Género</label>
+            <select
+              required
+              className="mt-1 block w-full rounded-md border-blue-200 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
+              value={formData.gender}
+              onChange={e => setFormData({ ...formData, gender: e.target.value as 'MALE' | 'FEMALE' })}
+            >
+              <option value="MALE">Masculino</option>
+              <option value="FEMALE">Femenino</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-blue-900">Peso (kg)</label>
+            <input
+              type="number"
+              step="0.1"
+              required
+              className="mt-1 block w-full rounded-md border-blue-200 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
+              value={formData.weight}
+              onChange={e => setFormData({ ...formData, weight: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-blue-900">Altura (cm) <span className="text-gray-400 font-normal">(Opcional)</span></label>
+            <input
+              type="number"
+              step="1"
+              className="mt-1 block w-full rounded-md border-blue-200 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
+              value={formData.height}
+              onChange={e => setFormData({ ...formData, height: e.target.value })}
+              placeholder="Ej. 175"
+            />
+          </div>
+          <div className="col-span-1 md:col-span-5">
+            <label className="block text-sm font-medium text-blue-900">Nivel de Cinturón</label>
+            <select
+              required
+              className="mt-1 block w-full rounded-md border-blue-200 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
+              value={formData.belt}
+              onChange={e => setFormData({ ...formData, belt: e.target.value })}
+            >
+              <option value="" disabled>Seleccionar...</option>
+              {uniqueBelts.map(b => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="flex items-center mt-2">
+          <input
+            id="isSeeded"
+            type="checkbox"
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            checked={formData.isSeeded}
+            onChange={e => setFormData({ ...formData, isSeeded: e.target.checked })}
+          />
+          <label htmlFor="isSeeded" className="ml-2 block text-sm font-medium text-gray-900">
+            Cabeza de Serie (Seed) <span className="text-gray-500 font-normal">- Para evitar enfrentamientos tempranos con favoritos</span>
+          </label>
+        </div>
+
+        <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors shadow-sm"
+          >
+            {initialData ? 'Guardar Cambios' : 'Registrar Competidor'}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};

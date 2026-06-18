@@ -1,14 +1,10 @@
 {
-  "extends": "astro/tsconfigs/strict",
+  "extends": "@corner-click/tsconfig/astro.json",
   "include": [
     ".astro/types.d.ts",
     "**/*"
   ],
   "exclude": [
     "dist"
-  ],
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "react"
-  }
+  ]
 }

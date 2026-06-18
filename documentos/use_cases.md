@@ -1,68 +1,67 @@
-# Corner Click - Use Cases
+# Corner Click - Use Cases (por Aplicación)
 
-This document outlines the primary use cases for the Corner Click application, defining the interactions between the system and its various users (Actors).
-
-## Actors
-
-1. **Tournament Organizer / Administrator:** Responsible for setting up the tournament, managing competitors, and generating brackets.
-2. **Jury President / IT Table:** The official running a specific ring/area. They control the match flow, timer, and official match state.
-3. **Corner Referee (Judge):** The official seated at the corners of the ring. Their primary role is to observe the match and score points using a mobile device or tablet.
+Este documento define todos los casos de uso principales para evaluar y probar el funcionamiento end-to-end de todo el ecosistema (Monorepo), separados por la aplicación responsable de ejecutarlos.
 
 ---
 
-## 1. Organizer Use Cases
+## 1. Aplicación: Web-Admin (Panel de Control)
 
-### UC-1.1: Create and Configure Tournament
-- **Description:** The Organizer creates a new tournament event and configures the available categories (age, weight, rank) according to ITF rules.
-- **Outcome:** A new tournament instance is created in the database.
+*Directorio: `apps/web-admin`*
 
-### UC-1.2: Register Competitors
-- **Description:** The Organizer adds competitors manually or imports them, assigning them to their respective club and categories (BR-001, BR-002, BR-003).
+Esta es la consola de mando para el Organizador del Torneo y los Presidentes de Mesa (Jury).
 
-### UC-1.3: Generate Brackets (Draw)
-- **Description:** The Organizer triggers the bracket generation algorithm for a specific category.
-- **Pre-conditions:** Competitors must be registered and verified.
-- **Flow:** The system randomly distributes competitors (BR-054), applying specific seeding for top-3 previous finishers if applicable (BR-055).
+### 1.1 Gestión del Torneo (Organizer)
 
----
+- **UC-1.1.1: Crear y Configurar Torneo**: El administrador crea un nuevo evento definiendo nombre, fecha, locación y número de áreas (rings).
+- **UC-1.1.2: Generación de Categorías ITF**: Generar automáticamente las categorías oficiales de la ITF basadas en edad, peso y grado.
+- **UC-1.1.3: Inscripción de Competidores**: Agregar competidores manual o masivamente y asignarlos a sus respectivas categorías.
+- **UC-1.1.4: Gestión de Jueces**: Registrar jueces, generarles un PIN de acceso temporal, asignarlos a un área/ring específico y gestionar sus sesiones activas de manera remota (forzar desconexión o eliminarlos en tiempo real).
 
-## 2. Jury President / IT Table Use Cases
+### 1.2 Llaves y Sorteos (Organizer)
 
-### UC-2.1: Select and Load Match
-- **Description:** The Jury President selects the next match from the bracket to be played in their assigned ring.
-- **Outcome:** The match state is initialized as `PENDING`. The competitors' names are broadcasted to the Corner Referees' devices.
+- **UC-1.2.1: Generación de Llaves (Brackets)**: Dado un grupo de competidores en una categoría, el sistema genera automáticamente el árbol de torneo.
+- **UC-1.2.2: Sorteos y Pases Directos (Byes)**: Si el número de competidores no es par o potencia de 2, el sistema asigna automáticamente pases directos (`BYE`) de manera equilibrada.
 
-### UC-2.2: Start / Resume Match Timer
-- **Description:** Upon the Central Referee's command ("SIJAK" / "GAE-SOK"), the Jury President starts the timer.
-- **Outcome:** The match state changes to `ACTIVE`. The system enables the scoring buttons on all Corner Referees' devices.
+### 1.3 Live Match Control / Jury Dashboard (Jury President)
 
-### UC-2.3: Pause Match Timer
-- **Description:** Upon the Central Referee's command ("JUNG-JI"), the Jury President pauses the timer.
-- **Outcome:** The match state changes to `PAUSED`. The system instantly disables the scoring buttons on the Corner Referees' devices to prevent invalid scoring.
-
-### UC-2.4: Handle Medical Time
-- **Description:** If a competitor is injured, the Jury President starts the medical timer (maximum 3 minutes per match, BR-034).
-- **Outcome:** Match is paused. If medical time exceeds 3 minutes, the system prompts the Jury President to declare the match over (BR-036).
-
-### UC-2.5: End Match and Declare Winner
-- **Description:** When the timer runs out or a disqualification occurs, the Jury President ends the match.
-- **Outcome:** Match state changes to `ENDED`. The system aggregates the scores from the Corner Referees and calculates the winner. If it's a tie, the system prompts for a tie-breaking round (BR-042).
+- **UC-1.3.1: Selección de Combate**: El presidente selecciona el combate a disputar de la lista (filtrada sin categorías vacías). Los nombres reales reemplazan a los IDs.
+- **UC-1.3.2: Control de Tiempo (Start/Pause)**: El presidente controla el inicio (`ACTIVE`), pausa (`PAUSED`) y fin (`ENDED`) del combate, bloqueando controles si hay competidores en `TBD` o `BYE`.
+- **UC-1.3.3: Sincronización en Tiempo Real**: El cronómetro local del Admin se sincroniza constantemente con Firebase. Las puntuaciones de los jueces se reciben en tiempo real vía Server-Sent Events (SSE).
+- **UC-1.3.4: Manejo de Empates (Golden Point)**: Cuando el combate termina (`ENDED`), si hay empate, el administrador puede iniciar "Extra Time (1m)".
+- **UC-1.3.5: Avance Automático de Llaves**: Al declarar un ganador ("Red Wins" / "Blue Wins"), el combate se marca como `COMPLETED` y el ganador avanza a su siguiente posición en el árbol de forma automática.
 
 ---
 
-## 3. Corner Referee (Judge) Use Cases
+## 2. Aplicación: Web-Judges (App de Jueces de Esquina)
 
-### UC-3.1: Connect to Assigned Ring
-- **Description:** The judge opens the `web-judges` app on their mobile device and enters a **temporary PIN code** provided by the Organizer.
-- **Outcome:** The device authenticates the judge anonymously, assigns them to their specific ring and corner position, and syncs with the Jury President's table via Firebase.
+*Directorio: `apps/web-judges`*
 
-### UC-3.2: Score Points
-- **Description:** While the match is `ACTIVE`, the judge taps the screen to award points to the Red or Blue competitor based on the techniques observed.
-  - +1 Point (Hand attack to mid/high section)
-  - +2 Points (Foot attack to mid section)
-  - +3 Points (Foot attack to high section)
-- **Constraints:** Buttons are disabled if the match is `PENDING`, `PAUSED`, or `ENDED`.
+Esta aplicación está pensada para ejecutarse en dispositivos móviles de los 4 jueces sentados en las esquinas del área.
 
-### UC-3.3: Record Warnings and Deductions
-- **Description:** The judge records warnings or direct deductions as indicated by the Central Referee.
-- **Outcome:** The system automatically converts 3 accumulated warnings into a 1-point deduction (Gam-jeom) as per BR-024.
+### 2.1 Autenticación y Espera (Corner Referee)
+
+- **UC-2.1.1: Login con PIN**: El juez ingresa al sistema utilizando su ID y el PIN temporal.
+- **UC-2.1.2: Conexión al Ring**: El dispositivo se asigna a su esquina y se sincroniza con el Jury President de ese Ring vía Firebase.
+- **UC-2.1.3: Sala de Espera (Standby)**: Pantalla de espera si el combate actual está en `PENDING` o no hay combate asignado.
+
+### 2.2 Puntuación en Tiempo Real (Corner Referee)
+
+- **UC-2.2.1: Bloqueo de Interfaz por Estado**: La botonera de puntos solo está activa si el web-admin tiene el estado en `ACTIVE`. Se bloquea instantáneamente mostrando un cartel central de "ESPERA" superpuesto si el combate está en `PENDING`, `PAUSED` o `ENDED`.
+- **UC-2.2.2: Registro de Puntos**: Botones para sumar puntos (+1, +2, +3) según la técnica observada (puño medio/alto, patada media/alta).
+- **UC-2.2.3: Advertencias y Descuentos**: Registro de "Warnings". El sistema convierte 3 advertencias en una deducción de 1 punto.
+- **UC-2.2.4: Envío Final**: Al finalizar el tiempo, la aplicación detiene el ingreso de datos y los puntos están sincronizados con el backend en tiempo real.
+
+---
+
+## 3. Aplicación: API (Backend)
+
+*Directorio: `apps/api`*
+
+El servidor central Node/Express que maneja la lógica de negocio y permanencia de datos.
+
+### 3.1 Procesamiento de Resultados (System)
+
+- **UC-3.1.1: Recolección Segura de Puntos**: Recibe mediante POST el puntaje de los jueces de esquina cuando el combate termina.
+- **UC-3.1.2: Consenso Mayoritario**: Identifica al ganador calculando los votos de las esquinas y resolviendo desempates técnicos.
+- **UC-3.1.3: Actualización de Estado (Status Webhook)**: Endpoint para procesar cambios forzados de estado del combate validados.
+- **UC-3.1.4: Migración a Histórico**: Una vez que un combate pasa a estado `COMPLETED`, el API puede transferir el registro desde Firebase Realtime Database hacia Firestore para tener un historial permanente y limpiar el nodo de "live_matches".
