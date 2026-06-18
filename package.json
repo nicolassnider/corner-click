@@ -1,6 +1,6 @@
 {
   "name": "corner-click",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "devDependencies": {
     "prettier": "^3.0.0",
     "syncpack": "^15.3.2",
