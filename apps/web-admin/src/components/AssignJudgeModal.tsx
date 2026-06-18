@@ -9,20 +9,22 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   judge: Judge | null;
+  judges: Judge[];
   tournamentAreas: number;
   tournamentId: string;
   onAssign: (judgeId: string, assignment: { areaId: string, cornerId: string, matchId: string }) => Promise<void>;
 }
 
-export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAreas, tournamentId, onAssign }: Props) {
+export default function AssignJudgeModal({ isOpen, onClose, judge, judges, tournamentAreas, tournamentId, onAssign }: Props) {
   const [areaId, setAreaId] = useState('1');
-  const [cornerId, setCornerId] = useState('red');
+  const [cornerId, setCornerId] = useState(CornerRole.CORNER_1 as string);
   const [matchId, setMatchId] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const [matches, setMatches] = useState<Match[]>([]);
   const [competitors, setCompetitors] = useState<Record<string, Competitor>>({});
+  const [loadingMatches, setLoadingMatches] = useState(false);
 
   const filteredMatches = useMemo(
     () => matches.filter((m) => m.areaId === areaId),
@@ -33,13 +35,14 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
   useEffect(() => {
     if (judge) {
       setAreaId(judge.currentAssignment?.areaId || '1');
-      setCornerId(judge.currentAssignment?.cornerId || CornerRole.RED);
+      setCornerId(judge.currentAssignment?.cornerId || CornerRole.CORNER_1);
       setMatchId(judge.currentAssignment?.matchId || '');
     }
   }, [judge]);
 
   useEffect(() => {
     if (isOpen && tournamentId) {
+      setLoadingMatches(true);
       Promise.all([
         getMatches(tournamentId),
         getCompetitors(tournamentId)
@@ -48,13 +51,14 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
         const compMap: Record<string, Competitor> = {};
         fetchedCompetitors.forEach(c => compMap[c.id] = c);
         setCompetitors(compMap);
-      }).catch(console.error);
+      }).catch(console.error)
+        .finally(() => setLoadingMatches(false));
     }
   }, [isOpen, tournamentId]);
 
   // Ensure match selection stays consistent with selected area
   useEffect(() => {
-    if (!matchId) return;
+    if (!matchId || loadingMatches) return;
 
     const matchInSelectedArea = matches.some(
       (m) => m.id === matchId && m.areaId === areaId
@@ -63,13 +67,25 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
     if (!matchInSelectedArea) {
       setMatchId('');
     }
-  }, [areaId, matchId, matches]);
+  }, [areaId, matchId, matches, loadingMatches]);
 
   if (!isOpen || !judge) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!matchId.trim()) return;
+
+    const existingAssignment = judges.find(j => 
+      j.id !== judge.id && 
+      j.currentAssignment?.areaId === areaId && 
+      j.currentAssignment?.cornerId === cornerId
+    );
+
+    if (existingAssignment) {
+      alert(`Cannot assign: ${existingAssignment.name} is already assigned to Area ${areaId} as ${cornerId}. Please unassign them first.`);
+      return;
+    }
+
     setSubmitting(true);
     try {
       await onAssign(judge.id!, { areaId, cornerId, matchId });
@@ -124,12 +140,9 @@ export default function AssignJudgeModal({ isOpen, onClose, judge, tournamentAre
                 onChange={(e) => setCornerId(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-gray-50 text-gray-900 font-medium"
               >
-                <option value={CornerRole.RED}>Red Corner</option>
-                <option value={CornerRole.BLUE}>Blue Corner</option>
-                <option value={CornerRole.CORNER_1}>Corner 1 (Generic)</option>
-                <option value={CornerRole.CORNER_2}>Corner 2 (Generic)</option>
-                <option value={CornerRole.CORNER_3}>Corner 3 (Generic)</option>
-                <option value={CornerRole.CORNER_4}>Corner 4 (Generic)</option>
+                <option value={CornerRole.CORNER_1}>Corner 1</option>
+                <option value={CornerRole.CORNER_2}>Corner 2</option>
+                <option value={CornerRole.CORNER_3}>Corner 3</option>
               </select>
             </div>
 

@@ -16,7 +16,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
   
-  const defaultArea = 'area-1';
+  const defaultArea = '1';
 
   useEffect(() => {
     // Load categories so we can select them in the dropdown

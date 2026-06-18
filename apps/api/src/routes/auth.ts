@@ -106,4 +106,42 @@ router.post('/pin', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Log out a judge and set their status to offline
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Logged out successfully
+ */
+router.post('/logout', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    const token = authHeader.split('Bearer ')[1];
+
+    const decodedToken = await auth.verifyIdToken(token);
+    const { tournamentId, judgeId } = decodedToken;
+
+    if (tournamentId && judgeId) {
+      await db.collection('tournaments').doc(tournamentId).collection('judges').doc(judgeId).update({
+        status: 'OFFLINE'
+      });
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error in /auth/logout:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 export default router;

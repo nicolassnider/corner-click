@@ -20,7 +20,7 @@
   "scripts": {
     "astro": "astro",
     "build": "astro build",
-    "dev": "astro dev --port 4321",
+    "dev": "astro dev --port 4321 --host",
     "preview": "astro preview"
   },
   "type": "module"

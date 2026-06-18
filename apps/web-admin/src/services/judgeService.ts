@@ -30,5 +30,19 @@ export const judgeService = {
       body: JSON.stringify(assignment)
     });
     if (!res.ok) throw new Error('Failed to assign judge');
+  },
+
+  async disconnectJudge(tournamentId: string, judgeId: string): Promise<void> {
+    const res = await fetch(`${API_URL}/api/tournaments/${tournamentId}/judges/${judgeId}/disconnect`, {
+      method: 'PUT'
+    });
+    if (!res.ok) throw new Error('Failed to disconnect judge');
+  },
+
+  async deleteJudge(tournamentId: string, judgeId: string): Promise<void> {
+    const res = await fetch(`${API_URL}/api/tournaments/${tournamentId}/judges/${judgeId}`, {
+      method: 'DELETE'
+    });
+    if (!res.ok) throw new Error('Failed to delete judge');
   }
 };

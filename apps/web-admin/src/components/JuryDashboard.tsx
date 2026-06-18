@@ -133,16 +133,32 @@ export default function JuryDashboard() {
     });
   }, [timeRemaining, status, selectedMatch?.id, isLoaded]);
 
-  // Fetch Final Scores from API when match ends
+  // Fetch Final Scores from API when match ends via SSE
   useEffect(() => {
+    let eventSource: EventSource | null = null;
+
     if (status === MatchStatus.ENDED && selectedMatch) {
-      fetch(`${API_URL}/api/matches/${selectedMatch.id}/scores`)
-        .then(res => res.json())
-        .then(data => {
-           if (data.scores) setJudgesData(data.scores);
-        })
-        .catch(err => console.error("Failed to fetch final scores:", err));
+      eventSource = new EventSource(`${API_URL}/api/matches/${selectedMatch.id}/stream-scores`);
+      
+      eventSource.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.scores) setJudgesData(data.scores);
+        } catch (err) {
+          console.error("Failed to parse SSE scores:", err);
+        }
+      };
+
+      eventSource.onerror = (err) => {
+        console.error("SSE Scores Error:", err);
+      };
     }
+
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
   }, [status, selectedMatch?.id]);
 
   useEffect(() => {
@@ -207,8 +223,21 @@ export default function JuryDashboard() {
     }
   };
 
-  const totalRed = Object.values(judgesData).reduce((acc: number, curr: ScoreData) => acc + (curr.redScore || 0), 0);
-  const totalBlue = Object.values(judgesData).reduce((acc: number, curr: ScoreData) => acc + (curr.blueScore || 0), 0);
+  let redVotes = 0;
+  let blueVotes = 0;
+  let tieVotes = 0;
+  let totalRed = 0;
+  let totalBlue = 0;
+
+  Object.values(judgesData).forEach((curr: ScoreData) => {
+    const r = curr.redScore || 0;
+    const b = curr.blueScore || 0;
+    totalRed += r;
+    totalBlue += b;
+    if (r > b) redVotes++;
+    else if (b > r) blueVotes++;
+    else tieVotes++;
+  });
 
   // Determine if a match is "startable". Both competitors must be known and not BYE.
   const isMatchStartable = selectedMatch && 
@@ -353,39 +382,76 @@ export default function JuryDashboard() {
                 </div>
               </div>
 
-              {/* Live Scores (If available) */}
-              <div className="grid grid-cols-2 gap-px bg-gray-200 border-y border-gray-200">
-                <div className="bg-red-50 p-8 flex flex-col items-center justify-center">
-                  <span className="text-red-800 font-bold uppercase tracking-widest mb-2">Red Score</span>
-                  <span className="text-6xl font-black text-red-600">{totalRed}</span>
+              {/* Live Scores & Judge Breakdown */}
+              {status === MatchStatus.ENDED && Object.keys(judgesData).length > 0 ? (
+                <div className="bg-white border-y border-gray-200 p-6">
+                  <h4 className="text-center text-gray-500 font-bold uppercase tracking-widest mb-4">Final Votes & Judge Scores</h4>
+                  <div className={`grid grid-cols-1 sm:grid-cols-2 ${Object.keys(judgesData).length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-4'} gap-4 mb-6 max-w-4xl mx-auto`}>
+                    {Object.entries(judgesData).map(([cornerId, data]: [string, any]) => {
+                      const r = data.redScore || 0;
+                      const b = data.blueScore || 0;
+                      const winnerClass = r > b ? 'border-red-500 bg-red-50' : b > r ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-gray-50';
+                      return (
+                        <div key={cornerId} className={`border-2 rounded-xl p-4 text-center ${winnerClass}`}>
+                          <div className="font-bold text-gray-700 mb-2 uppercase text-xs tracking-wider">{cornerId}</div>
+                          <div className="flex justify-between items-center px-2">
+                            <span className="text-2xl font-black text-red-600">{r}</span>
+                            <span className="text-gray-400">-</span>
+                            <span className="text-2xl font-black text-blue-600">{b}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="flex justify-center items-center space-x-12 text-center bg-gray-50 py-4 rounded-xl border border-gray-200">
+                    <div>
+                      <div className="text-red-800 font-bold uppercase tracking-widest text-sm mb-1">Red Votes</div>
+                      <div className="text-4xl font-black text-red-600">{redVotes}</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500 font-bold uppercase tracking-widest text-sm mb-1">Ties</div>
+                      <div className="text-3xl font-bold text-gray-400">{tieVotes}</div>
+                    </div>
+                    <div>
+                      <div className="text-blue-800 font-bold uppercase tracking-widest text-sm mb-1">Blue Votes</div>
+                      <div className="text-4xl font-black text-blue-600">{blueVotes}</div>
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-blue-50 p-8 flex flex-col items-center justify-center">
-                  <span className="text-blue-800 font-bold uppercase tracking-widest mb-2">Blue Score</span>
-                  <span className="text-6xl font-black text-blue-600">{totalBlue}</span>
+              ) : (
+                <div className="grid grid-cols-2 gap-px bg-gray-200 border-y border-gray-200">
+                  <div className="bg-red-50 p-8 flex flex-col items-center justify-center">
+                    <span className="text-red-800 font-bold uppercase tracking-widest mb-2">Red Points</span>
+                    <span className="text-6xl font-black text-red-600">{totalRed}</span>
+                  </div>
+                  <div className="bg-blue-50 p-8 flex flex-col items-center justify-center">
+                    <span className="text-blue-800 font-bold uppercase tracking-widest mb-2">Blue Points</span>
+                    <span className="text-6xl font-black text-blue-600">{totalBlue}</span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Match Complete / Tie Breaker Controls */}
               {status === MatchStatus.ENDED && selectedMatch.status !== MatchStatus.COMPLETED && (
                 <div className="p-6 bg-yellow-50 border-b border-yellow-200 flex flex-col items-center">
-                  <h4 className="text-lg font-black text-yellow-800 mb-4 uppercase tracking-widest">Match Ended - Action Required</h4>
-                  <div className="flex space-x-4 w-full max-w-lg">
+                  <h4 className="text-lg font-black text-yellow-800 mb-4 uppercase tracking-widest">Match Ended - Declare Winner</h4>
+                  <div className="flex space-x-4 w-full max-w-2xl">
                     <button 
                       onClick={() => handleDeclareWinner(selectedMatch.redCompetitorId)}
-                      className={`flex-1 py-3 rounded-lg font-bold text-white transition-all shadow-md ${totalRed > totalBlue ? 'bg-red-600 hover:bg-red-500 scale-105 ring-4 ring-red-300' : 'bg-red-400 hover:bg-red-500'}`}
+                      className={`flex-1 py-3 rounded-lg font-bold text-white transition-all shadow-md ${redVotes > blueVotes ? 'bg-red-600 hover:bg-red-500 scale-105 ring-4 ring-red-300' : 'bg-red-400 hover:bg-red-500'}`}
                       disabled={!selectedMatch.redCompetitorId || selectedMatch.redCompetitorId === 'BYE'}
                     >
                       Red Wins
                     </button>
                     <button 
                       onClick={handleExtraTime}
-                      className="flex-1 py-3 rounded-lg font-bold bg-yellow-500 hover:bg-yellow-400 text-white transition-all shadow-md"
+                      className={`flex-1 py-3 rounded-lg font-bold transition-all shadow-md ${redVotes === blueVotes ? 'bg-yellow-500 hover:bg-yellow-400 text-white scale-105 ring-4 ring-yellow-300' : 'bg-yellow-400 hover:bg-yellow-500 text-white'}`}
                     >
                       Extra Time (1m)
                     </button>
                     <button 
                       onClick={() => handleDeclareWinner(selectedMatch.blueCompetitorId)}
-                      className={`flex-1 py-3 rounded-lg font-bold text-white transition-all shadow-md ${totalBlue > totalRed ? 'bg-blue-600 hover:bg-blue-500 scale-105 ring-4 ring-blue-300' : 'bg-blue-400 hover:bg-blue-500'}`}
+                      className={`flex-1 py-3 rounded-lg font-bold text-white transition-all shadow-md ${blueVotes > redVotes ? 'bg-blue-600 hover:bg-blue-500 scale-105 ring-4 ring-blue-300' : 'bg-blue-400 hover:bg-blue-500'}`}
                       disabled={!selectedMatch.blueCompetitorId || selectedMatch.blueCompetitorId === 'BYE'}
                     >
                       Blue Wins
