@@ -120,6 +120,10 @@ router.post('/pin', async (req: Request, res: Response): Promise<void> => {
  */
 router.post('/logout', async (req: Request, res: Response): Promise<void> => {
   try {
+    if (!db) {
+      res.status(503).json({ error: 'Firestore not initialized' });
+      return;
+    }
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       res.status(401).json({ error: 'Unauthorized' });

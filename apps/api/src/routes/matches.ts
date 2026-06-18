@@ -167,7 +167,7 @@ router.get('/:id/scores', async (req: Request, res: Response): Promise<void> => 
       res.json({ scores: {} });
       return;
     }
-
+    const data = doc.data();
     res.json({ scores: data?.scores || {} });
   } catch (error) {
     console.error('Error fetching scores:', error);

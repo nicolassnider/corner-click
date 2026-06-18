@@ -254,7 +254,10 @@ router.put('/:id/judges/:judgeId/assign', async (req: Request, res: Response): P
  */
 router.put('/:id/judges/:judgeId/disconnect', async (req: Request, res: Response): Promise<void> => {
   try {
-    if (!db) return;
+    if (!db) {
+      res.status(503).json({ error: 'Firestore not initialized' });
+      return;
+    }
     const { id, judgeId } = req.params;
     
     await db.collection('tournaments').doc(id).collection('judges').doc(judgeId).update({
@@ -278,7 +281,10 @@ router.put('/:id/judges/:judgeId/disconnect', async (req: Request, res: Response
  */
 router.delete('/:id/judges/:judgeId', async (req: Request, res: Response): Promise<void> => {
   try {
-    if (!db) return;
+    if (!db) {
+      res.status(503).json({ error: 'Firestore not initialized' });
+      return;
+    }
     const { id, judgeId } = req.params;
     
     await db.collection('tournaments').doc(id).collection('judges').doc(judgeId).delete();
