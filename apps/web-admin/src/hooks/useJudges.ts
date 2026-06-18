@@ -1,34 +1,45 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import type { Judge } from '@corner-click/types';
 import { judgeService } from '../services/judgeService';
 
+const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
+
 export function useJudges(tournamentId: string) {
   const [judges, setJudges] = useState<Judge[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchJudges = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await judgeService.fetchJudges(tournamentId);
-      setJudges(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch judges');
-    } finally {
-      setLoading(false);
-    }
-  }, [tournamentId]);
-
   useEffect(() => {
-    fetchJudges();
-  }, [fetchJudges]);
+    if (!tournamentId) return;
+    
+    setLoading(true);
+    const eventSource = new EventSource(`${API_URL}/api/tournaments/${tournamentId}/judges/stream`);
+    
+    eventSource.onmessage = (event) => {
+      try {
+        const judgesData = JSON.parse(event.data);
+        setJudges(judgesData);
+        setLoading(false);
+      } catch (err) {
+        console.error('Failed to parse SSE data:', err);
+      }
+    };
+
+    eventSource.onerror = (err) => {
+      console.error('SSE Error:', err);
+      setError('Failed to sync judges');
+      setLoading(false);
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [tournamentId]);
 
   const addJudge = async (name: string) => {
     try {
       setError(null);
       await judgeService.addJudge(tournamentId, name);
-      await fetchJudges(); // Refresh list
     } catch (err: any) {
       setError(err.message || 'Failed to add judge');
       throw err;
@@ -39,9 +50,28 @@ export function useJudges(tournamentId: string) {
     try {
       setError(null);
       await judgeService.assignJudge(tournamentId, judgeId, assignment);
-      await fetchJudges(); // Refresh list
     } catch (err: any) {
       setError(err.message || 'Failed to assign judge');
+      throw err;
+    }
+  };
+
+  const disconnectJudge = async (judgeId: string) => {
+    try {
+      setError(null);
+      await judgeService.disconnectJudge(tournamentId, judgeId);
+    } catch (err: any) {
+      setError(err.message || 'Failed to disconnect judge');
+      throw err;
+    }
+  };
+
+  const deleteJudge = async (judgeId: string) => {
+    try {
+      setError(null);
+      await judgeService.deleteJudge(tournamentId, judgeId);
+    } catch (err: any) {
+      setError(err.message || 'Failed to delete judge');
       throw err;
     }
   };
@@ -52,6 +82,7 @@ export function useJudges(tournamentId: string) {
     error,
     addJudge,
     assignJudge,
-    refresh: fetchJudges
+    disconnectJudge,
+    deleteJudge
   };
 }

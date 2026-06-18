@@ -125,6 +125,39 @@ router.get('/:id/judges', async (req: Request, res: Response): Promise<void> => 
 
 /**
  * @swagger
+ * /tournaments/{id}/judges/stream:
+ *   get:
+ *     tags: [Judges]
+ *     summary: Stream judges real-time
+ *     description: Server-Sent Events endpoint that streams judges.
+ */
+router.get('/:id/judges/stream', (req: Request, res: Response) => {
+  if (!db) {
+    res.status(503).json({ error: 'Database not initialized' });
+    return;
+  }
+  
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  
+  const tournamentId = req.params.id as string;
+  const judgesRef = db.collection('tournaments').doc(tournamentId).collection('judges');
+  
+  const unsubscribe = judgesRef.onSnapshot(snapshot => {
+    const judges = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.write(`data: ${JSON.stringify(judges)}\n\n`);
+  }, error => {
+    console.error('SSE Error:', error);
+  });
+  
+  req.on('close', () => {
+    unsubscribe();
+  });
+});
+
+/**
+ * @swagger
  * /tournaments/{id}/judges/{judgeId}/assign:
  *   put:
  *     tags: [Judges]
@@ -172,7 +205,22 @@ router.put('/:id/judges/:judgeId/assign', async (req: Request, res: Response): P
       return;
     }
 
-    const judgeRef = db.collection('tournaments').doc(tournamentId).collection('judges').doc(judgeId);
+    const judgesRef = db.collection('tournaments').doc(tournamentId).collection('judges');
+
+    // Check if another judge is already assigned to this area and corner
+    const duplicateQuery = await judgesRef
+      .where('currentAssignment.areaId', '==', areaId)
+      .where('currentAssignment.cornerId', '==', cornerId)
+      .get();
+
+    const existingAssignment = duplicateQuery.docs.find(doc => doc.id !== judgeId);
+    if (existingAssignment) {
+      const existingName = existingAssignment.data().name || 'Another judge';
+      res.status(409).json({ error: `${existingName} is already assigned to Area ${areaId} as ${cornerId}.` });
+      return;
+    }
+
+    const judgeRef = judgesRef.doc(judgeId);
     const judgeDoc = await judgeRef.get();
 
     if (!judgeDoc.exists) {
@@ -192,6 +240,60 @@ router.put('/:id/judges/:judgeId/assign', async (req: Request, res: Response): P
     res.json({ message: 'Judge assigned successfully', currentAssignment });
   } catch (error) {
     console.error('Error assigning judge:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+/**
+ * @swagger
+ * /tournaments/{id}/judges/{judgeId}/disconnect:
+ *   put:
+ *     tags: [Judges]
+ *     summary: Force disconnect a judge
+ *     description: Unassigns the judge and sets their status to OFFLINE.
+ */
+router.put('/:id/judges/:judgeId/disconnect', async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (!db) {
+      res.status(503).json({ error: 'Firestore not initialized' });
+      return;
+    }
+    const id = req.params.id as string;
+    const judgeId = req.params.judgeId as string;
+    
+    await db.collection('tournaments').doc(id).collection('judges').doc(judgeId).update({
+      currentAssignment: null,
+      status: 'OFFLINE'
+    });
+    
+    res.json({ message: 'Judge disconnected successfully' });
+  } catch (error) {
+    console.error('Error disconnecting judge:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+/**
+ * @swagger
+ * /tournaments/{id}/judges/{judgeId}:
+ *   delete:
+ *     tags: [Judges]
+ *     summary: Delete a judge
+ */
+router.delete('/:id/judges/:judgeId', async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (!db) {
+      res.status(503).json({ error: 'Firestore not initialized' });
+      return;
+    }
+    const id = req.params.id as string;
+    const judgeId = req.params.judgeId as string;
+    
+    await db.collection('tournaments').doc(id).collection('judges').doc(judgeId).delete();
+    
+    res.json({ message: 'Judge deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting judge:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

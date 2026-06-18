@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function JudgeManager({ tournamentId, tournamentAreas }: Props) {
-  const { judges, loading, error, addJudge, assignJudge } = useJudges(tournamentId);
+  const { judges, loading, error, addJudge, assignJudge, disconnectJudge, deleteJudge } = useJudges(tournamentId);
   const [newJudgeName, setNewJudgeName] = useState('');
   const [submitting, setSubmitting] = useState(false);
   
@@ -102,12 +102,36 @@ export default function JudgeManager({ tournamentId, tournamentAreas }: Props) {
                     )}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button
-                      onClick={() => setSelectedJudge(j)}
-                      className="bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold py-2 px-4 rounded-lg transition-colors text-xs uppercase tracking-wide"
-                    >
-                      {j.currentAssignment ? 'Re-Assign' : 'Assign'}
-                    </button>
+                    <div className="flex justify-end gap-2">
+                      {j.status === JudgeStatus.ONLINE && (
+                        <button
+                          onClick={() => {
+                            if (window.confirm(`Force disconnect ${j.name}?`)) {
+                              disconnectJudge(j.id!);
+                            }
+                          }}
+                          className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-bold py-2 px-3 rounded-lg transition-colors text-xs uppercase tracking-wide"
+                        >
+                          Disconnect
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setSelectedJudge(j)}
+                        className="bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold py-2 px-4 rounded-lg transition-colors text-xs uppercase tracking-wide"
+                      >
+                        {j.currentAssignment ? 'Re-Assign' : 'Assign'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (window.confirm(`Are you sure you want to delete ${j.name}?`)) {
+                            deleteJudge(j.id!);
+                          }
+                        }}
+                        className="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-2 px-3 rounded-lg transition-colors text-xs uppercase tracking-wide"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -120,6 +144,7 @@ export default function JudgeManager({ tournamentId, tournamentAreas }: Props) {
         isOpen={!!selectedJudge}
         onClose={() => setSelectedJudge(null)}
         judge={selectedJudge}
+        judges={judges}
         tournamentAreas={tournamentAreas}
         tournamentId={tournamentId}
         onAssign={assignJudge}

@@ -53,7 +53,20 @@ export default function JudgeApp() {
         unsubFirestore = firestoreOnSnapshot(judgeRef, (docSnap) => {
           if (docSnap.exists()) {
             const data = docSnap.data();
-            setAssignment(data.currentAssignment || null);
+            if (data.status === 'OFFLINE') {
+              auth.signOut();
+              setAssignment(null);
+              setPin('');
+              setUser(null);
+            } else {
+              setAssignment(data.currentAssignment || null);
+            }
+          } else {
+            // Judge deleted
+            auth.signOut();
+            setAssignment(null);
+            setPin('');
+            setUser(null);
           }
         });
 
@@ -142,6 +155,21 @@ export default function JudgeApp() {
   }
 
   const handleLogout = async () => {
+    if (user) {
+      try {
+        const token = await user.getIdToken();
+        await fetch(`${import.meta.env.PUBLIC_API_URL}/api/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      } catch (err) {
+        console.error('Failed to logout via API', err);
+      }
+    }
+
     await auth.signOut();
     setAssignment(null);
     setPin('');
@@ -186,6 +214,7 @@ export default function JudgeApp() {
 
   return (
     <ScorePad 
+      key={`${assignment.matchId}-${assignment.cornerId}`}
       matchId={assignment.matchId} 
       cornerId={assignment.cornerId} 
       onLogout={handleLogout}

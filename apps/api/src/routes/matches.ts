@@ -167,13 +167,45 @@ router.get('/:id/scores', async (req: Request, res: Response): Promise<void> => 
       res.json({ scores: {} });
       return;
     }
-
     const data = doc.data();
     res.json({ scores: data?.scores || {} });
   } catch (error) {
     console.error('Error fetching scores:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
+});
+
+/**
+ * @swagger
+ * /matches/{id}/stream-scores:
+ *   get:
+ *     tags: [Matches]
+ *     summary: Stream match scores real-time
+ *     description: Server-Sent Events endpoint that streams match scores.
+ */
+router.get('/:id/stream-scores', (req: Request, res: Response) => {
+  if (!db) {
+    res.status(503).json({ error: 'Firestore not initialized' });
+    return;
+  }
+
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  const matchId = req.params.id as string;
+  const matchRef = db.collection('matches').doc(matchId);
+
+  const unsubscribe = matchRef.onSnapshot(doc => {
+    const data = doc.data();
+    res.write(`data: ${JSON.stringify({ scores: data?.scores || {} })}\n\n`);
+  }, error => {
+    console.error('SSE Error:', error);
+  });
+
+  req.on('close', () => {
+    unsubscribe();
+  });
 });
 
 export default router;
