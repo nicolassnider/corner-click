@@ -94,9 +94,9 @@ router.post('/pin', async (req: Request, res: Response): Promise<void> => {
       judgeName: judgeData.name
     };
 
-    log.info(`[DEBUG] Attempting to create custom token for judge: ${judgeId}`);
+    log.debug({ judgeId }, 'Creating custom token for judge');
     const customToken = await auth.createCustomToken(judgeId, customClaims);
-    log.info(`[DEBUG] Custom token created successfully. Length: ${customToken.length}`);
+    log.debug({ judgeId }, 'Custom token created successfully');
 
     res.json({ 
       token: customToken,
@@ -108,7 +108,7 @@ router.post('/pin', async (req: Request, res: Response): Promise<void> => {
     });
 
   } catch (error) {
-    log.error('Error in /auth/pin:', error);
+    log.error({ err: error }, 'Error in /auth/pin');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -207,7 +207,7 @@ router.post('/admin/login', async (req: Request, res: Response): Promise<void> =
     });
 
   } catch (error) {
-    log.error('Error in /auth/admin/login:', error);
+    log.error({ err: error }, 'Error in /auth/admin/login');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -241,7 +241,7 @@ router.post('/logout', authenticateToken, async (req: Request, res: Response): P
 
     res.json({ success: true });
   } catch (error) {
-    log.error('Error in /auth/logout:', error);
+    log.error({ err: error }, 'Error in /auth/logout');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

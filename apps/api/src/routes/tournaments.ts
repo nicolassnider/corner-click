@@ -30,7 +30,7 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
     const tournaments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     res.json(tournaments);
   } catch (error) {
-    log.error('Error fetching tournaments:', error);
+    log.error({ err: error }, 'Error fetching tournaments');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -67,7 +67,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
     }
     res.json({ id: doc.id, ...doc.data() });
   } catch (error) {
-    log.error('Error fetching tournament:', error);
+    log.error({ err: error }, 'Error fetching tournament');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -129,7 +129,7 @@ router.post('/', authenticateToken, requireAdmin, async (req: Request, res: Resp
     const docRef = await db.collection('tournaments').add(newTournament);
     res.status(201).json({ id: docRef.id, ...newTournament });
   } catch (error) {
-    log.error('Error creating tournament:', error);
+    log.error({ err: error }, 'Error creating tournament');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

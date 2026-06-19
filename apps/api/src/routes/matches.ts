@@ -1,10 +1,14 @@
 import express, { Request, Response } from 'express';
 import { createLogger } from '@corner-click/logger';
+import { db, rtdb } from '../services/firebase';
+import { authenticateToken, requireAdmin } from '../middlewares/auth';
 
 const log = createLogger('matches');
-import { db, rtdb } from '../services/firebase';
 
 const router = express.Router();
+
+/** Validate that an ID is a safe alphanumeric Firebase key (no path traversal) */
+const isSafeId = (id: string): boolean => /^[a-zA-Z0-9_-]+$/.test(id);
 
 /**
  * @swagger
@@ -81,7 +85,7 @@ router.post('/:id/status', async (req: Request, res: Response): Promise<void> =>
 
     res.json({ success: true, status });
   } catch (error) {
-    log.error('Error updating match status:', error);
+    log.error({ err: error }, 'Error updating match status');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -160,7 +164,7 @@ router.post('/:id/scores', async (req: Request, res: Response): Promise<void> =>
 
     res.json({ success: true, message: 'Scores submitted successfully' });
   } catch (error) {
-    log.error('Error submitting scores:', error);
+    log.error({ err: error }, 'Error submitting scores');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -199,7 +203,7 @@ router.get('/:id/scores', async (req: Request, res: Response): Promise<void> => 
     const data = doc.data();
     res.json({ scores: data?.scores || {} });
   } catch (error) {
-    log.error('Error fetching scores:', error);
+    log.error({ err: error }, 'Error fetching scores');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -229,7 +233,7 @@ router.get('/:id/stream-scores', (req: Request, res: Response) => {
     const data = doc.data();
     res.write(`data: ${JSON.stringify({ scores: data?.scores || {} })}\n\n`);
   }, error => {
-    log.error('SSE Error:', error);
+    log.error({ err: error }, 'SSE Error');
   });
 
   req.on('close', () => {
@@ -270,7 +274,7 @@ router.get('/:id/stream-scores', (req: Request, res: Response) => {
  *       '200':
  *         description: Winner declared successfully
  */
-router.post('/:id/winner', async (req: Request, res: Response): Promise<void> => {
+router.post('/:id/winner', authenticateToken, requireAdmin, async (req: Request, res: Response): Promise<void> => {
   try {
     if (!rtdb) {
       res.status(503).json({ error: 'Firebase RTDB not initialized' });
@@ -285,7 +289,17 @@ router.post('/:id/winner', async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    const updates: Record<string, any> = {};
+    // Sanitize IDs before using as RTDB path keys (prevent path traversal)
+    if (!isSafeId(matchId) || !isSafeId(tournamentId) || !isSafeId(winnerId)) {
+      res.status(400).json({ error: 'Invalid characters in ID fields' });
+      return;
+    }
+    if (nextMatchId && !isSafeId(nextMatchId)) {
+      res.status(400).json({ error: 'Invalid nextMatchId' });
+      return;
+    }
+
+    const updates: Record<string, string> = {};
 
     // Mark current match as completed with winner
     updates[`tournaments/${tournamentId}/matches/${matchId}/winnerId`] = winnerId;
@@ -325,7 +339,7 @@ router.post('/:id/winner', async (req: Request, res: Response): Promise<void> =>
 
     res.json({ success: true });
   } catch (error) {
-    log.error('Error declaring winner:', error);
+    log.error({ err: error }, 'Error declaring winner');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

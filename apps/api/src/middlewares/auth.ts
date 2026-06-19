@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { auth, db } from '../services/firebase';
+import { createLogger } from '@corner-click/logger';
+
+const log = createLogger('auth-middleware');
 
 /**
  * Middleware to authenticate requests using Firebase Auth.
@@ -25,7 +28,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     req.user = decodedToken;
     next();
   } catch (error) {
-    console.error('Error verifying Firebase ID token:', error);
+    log.error({ err: error }, 'Error verifying Firebase ID token');
     res.status(401).json({ error: 'Unauthorized: Invalid token' });
   }
 };
@@ -56,7 +59,7 @@ export const requireAdmin = async (req: Request, res: Response, next: NextFuncti
       res.status(403).json({ error: 'Forbidden: Admin access required' });
     }
   } catch (error) {
-    console.error('Error verifying admin status:', error);
+    log.error({ err: error }, 'Error verifying admin status');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

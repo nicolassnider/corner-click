@@ -87,7 +87,7 @@ router.post('/:id/judges', async (req: Request, res: Response): Promise<void> =>
     res.status(201).json({ id: docRef.id, ...judgeData });
 
   } catch (error) {
-    log.error('Error creating judge:', error);
+    log.error({ err: error }, 'Error creating judge');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -122,7 +122,7 @@ router.get('/:id/judges', async (req: Request, res: Response): Promise<void> => 
     
     res.json(judges);
   } catch (error) {
-    log.error('Error fetching judges:', error);
+    log.error({ err: error }, 'Error fetching judges');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -152,7 +152,7 @@ router.get('/:id/judges/stream', (req: Request, res: Response) => {
     const judges = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     res.write(`data: ${JSON.stringify(judges)}\n\n`);
   }, error => {
-    log.error('SSE Error:', error);
+    log.error({ err: error }, 'SSE Error');
   });
   
   req.on('close', () => {
@@ -243,7 +243,7 @@ router.put('/:id/judges/:judgeId/assign', async (req: Request, res: Response): P
 
     res.json({ message: 'Judge assigned successfully', currentAssignment });
   } catch (error) {
-    log.error('Error assigning judge:', error);
+    log.error({ err: error }, 'Error assigning judge');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -272,7 +272,7 @@ router.put('/:id/judges/:judgeId/disconnect', async (req: Request, res: Response
     
     res.json({ message: 'Judge disconnected successfully' });
   } catch (error) {
-    log.error('Error disconnecting judge:', error);
+    log.error({ err: error }, 'Error disconnecting judge');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -297,7 +297,7 @@ router.delete('/:id/judges/:judgeId', authenticateToken, requireAdmin, async (re
     
     res.json({ message: 'Judge deleted successfully' });
   } catch (error) {
-    log.error('Error deleting judge:', error);
+    log.error({ err: error }, 'Error deleting judge');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
