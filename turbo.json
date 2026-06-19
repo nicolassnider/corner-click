@@ -3,7 +3,19 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".astro/**", "public/**"]
+      "outputs": ["dist/**", ".astro/**", "public/**"],
+      "env": [
+        "PORT",
+        "NODE_ENV",
+        "FIREBASE_PROJECT_ID",
+        "FIREBASE_CLIENT_EMAIL",
+        "FIREBASE_PRIVATE_KEY",
+        "FIREBASE_DATABASE_URL",
+        "FIREBASE_API_KEY",
+        "SERVICE_NAME",
+        "LOG_LEVEL",
+        "PUBLIC_API_URL"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
