@@ -108,9 +108,9 @@ router.post('/', authenticateToken, requireAdmin, async (req: Request, res: Resp
       return;
     }
 
-    const { name, date, location, rings } = req.body;
+    const { name, date, location, areas, rings } = req.body;
     // We accept rings or areas for backward compatibility temporarily, but map to areas
-    const areas = req.body.areas || rings || 1;
+    const finalAreas = areas || rings || 1;
 
     if (!name) {
       res.status(400).json({ error: 'Name is required' });
@@ -121,7 +121,7 @@ router.post('/', authenticateToken, requireAdmin, async (req: Request, res: Resp
       name,
       date: date || new Date().toISOString(),
       location: location || '',
-      areas: areas,
+      areas: finalAreas,
       status: TournamentStatus.UPCOMING,
       createdAt: new Date().toISOString()
     };
@@ -228,8 +228,9 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req: Request, res:
       return;
     }
 
+    const firestoreDb = db;
     const id = req.params.id as string;
-    const docRef = db.collection('tournaments').doc(id);
+    const docRef = firestoreDb.collection('tournaments').doc(id);
     const doc = await docRef.get();
 
     if (!doc.exists) {
@@ -237,22 +238,57 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req: Request, res:
       return;
     }
 
-    // 1. Delete Firestore judges subcollection
-    const judgesSnapshot = await docRef.collection('judges').get();
-    const batch = db.batch();
-    judgesSnapshot.docs.forEach(judgeDoc => {
-      batch.delete(judgeDoc.ref);
-    });
-    // Delete main tournament document
-    batch.delete(docRef);
-    await batch.commit();
+    // 1. Get the list of match IDs from RTDB to delete associated Firestore match documents
+    const matchIds: string[] = [];
+    if (rtdb) {
+      const matchesSnap = await rtdb.ref(`tournaments/${id}/matches`).once('value');
+      const matchesData = matchesSnap.val();
+      if (matchesData) {
+        matchIds.push(...Object.keys(matchesData));
+      }
+    }
 
-    // 2. Delete RTDB data if RTDB is initialized
+    // Helper to chunk arrays for Firestore batch operations (500 limit)
+    const chunk = <T>(arr: T[], size: number): T[][] => {
+      const chunks: T[][] = [];
+      for (let i = 0; i < arr.length; i += size) {
+        chunks.push(arr.slice(i, i + size));
+      }
+      return chunks;
+    };
+
+    // 2. Delete Firestore judges subcollection in chunks of 450
+    const judgesSnapshot = await docRef.collection('judges').get();
+    const judgeChunks = chunk(judgesSnapshot.docs, 450);
+    for (const chunkDocs of judgeChunks) {
+      const batch = firestoreDb.batch();
+      chunkDocs.forEach(judgeDoc => {
+        batch.delete(judgeDoc.ref);
+      });
+      await batch.commit();
+    }
+
+    // 3. Delete Firestore match records in chunks of 450
+    if (matchIds.length > 0) {
+      const matchChunks = chunk(matchIds, 450);
+      for (const chunkIds of matchChunks) {
+        const batch = firestoreDb.batch();
+        chunkIds.forEach(mId => {
+          batch.delete(firestoreDb.collection('matches').doc(mId));
+        });
+        await batch.commit();
+      }
+    }
+
+    // 4. Delete the main tournament document in Firestore
+    await docRef.delete();
+
+    // 5. Delete RTDB data if RTDB is initialized
     if (rtdb) {
       await rtdb.ref(`tournaments/${id}`).remove();
     }
 
-    res.json({ message: 'Tournament deleted successfully' });
+    res.json({ message: 'Tournament and all associated data deleted successfully' });
   } catch (error) {
     log.error({ err: toErr(error) }, 'Error deleting tournament');
     res.status(500).json({ error: 'Internal Server Error' });

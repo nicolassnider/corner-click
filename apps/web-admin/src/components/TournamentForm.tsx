@@ -22,7 +22,7 @@ export default function TournamentForm({ initialData, onCancel, onCreated }: Pro
       setName(initialData.name || '');
       setDate(initialData.date ? initialData.date.substring(0, 10) : '');
       setLocation(initialData.location || '');
-      setAreas(initialData.areas || 1);
+      setAreas(initialData.areas || (initialData as any).rings || 1);
     } else {
       setName('');
       setDate('');
