@@ -33,13 +33,33 @@ const swaggerOptions = {
         description: `${environment} Server`,
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Firebase ID Token — obtain one from /api/auth/pin (judge) or /api/auth/admin/login (admin)',
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }],
   },
-  // Automatically parse JSDoc comments in route files
   apis: ['./src/routes/*.ts', './src/index.ts'],
 };
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
-app.use(`${apiPrefix}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Use CDN assets — locally-served static files do not work in serverless environments (Vercel)
+const swaggerUiOptions = {
+  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui.min.css',
+  customJs: [
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui-bundle.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui-standalone-preset.min.js',
+  ],
+};
+
+app.use(`${apiPrefix}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
 app.use(express.json());
 
 // HTTP request logging
