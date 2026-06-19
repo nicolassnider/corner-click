@@ -1,18 +1,18 @@
 import type { Judge } from '@corner-click/types';
+import { fetchWithAuth } from '../utils/apiClient';
 
 const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
 
 export const judgeService = {
   async fetchJudges(tournamentId: string): Promise<Judge[]> {
-    const res = await fetch(`${API_URL}/api/tournaments/${tournamentId}/judges`);
+    const res = await fetchWithAuth(`${API_URL}/api/tournaments/${tournamentId}/judges`);
     if (!res.ok) throw new Error('Failed to fetch judges');
     return res.json();
   },
 
   async addJudge(tournamentId: string, name: string): Promise<Judge> {
-    const res = await fetch(`${API_URL}/api/tournaments/${tournamentId}/judges`, {
+    const res = await fetchWithAuth(`${API_URL}/api/tournaments/${tournamentId}/judges`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })
     });
     if (!res.ok) throw new Error('Failed to add judge');
@@ -24,23 +24,22 @@ export const judgeService = {
     judgeId: string, 
     assignment: { areaId: string, cornerId: string, matchId: string }
   ): Promise<void> {
-    const res = await fetch(`${API_URL}/api/tournaments/${tournamentId}/judges/${judgeId}/assign`, {
+    const res = await fetchWithAuth(`${API_URL}/api/tournaments/${tournamentId}/judges/${judgeId}/assign`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(assignment)
     });
     if (!res.ok) throw new Error('Failed to assign judge');
   },
 
   async disconnectJudge(tournamentId: string, judgeId: string): Promise<void> {
-    const res = await fetch(`${API_URL}/api/tournaments/${tournamentId}/judges/${judgeId}/disconnect`, {
+    const res = await fetchWithAuth(`${API_URL}/api/tournaments/${tournamentId}/judges/${judgeId}/disconnect`, {
       method: 'PUT'
     });
     if (!res.ok) throw new Error('Failed to disconnect judge');
   },
 
   async deleteJudge(tournamentId: string, judgeId: string): Promise<void> {
-    const res = await fetch(`${API_URL}/api/tournaments/${tournamentId}/judges/${judgeId}`, {
+    const res = await fetchWithAuth(`${API_URL}/api/tournaments/${tournamentId}/judges/${judgeId}`, {
       method: 'DELETE'
     });
     if (!res.ok) throw new Error('Failed to delete judge');

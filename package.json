@@ -2,9 +2,12 @@
   "name": "corner-click",
   "version": "1.0.3",
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.9",
+    "@vitest/ui": "^4.1.9",
     "prettier": "^3.0.0",
     "syncpack": "^15.3.2",
-    "turbo": "^2.0.0"
+    "turbo": "^2.0.0",
+    "vitest": "^4.1.9"
   },
   "packageManager": "npm@11.9.0",
   "private": true,
@@ -14,7 +17,11 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,json,astro}\"",
     "lint": "turbo run lint",
     "lint:deps": "syncpack lint && syncpack format --check",
-    "sync-deps": "syncpack fix && syncpack format"
+    "sync-deps": "syncpack fix && syncpack format",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage"
   },
   "workspaces": [
     "apps/*",

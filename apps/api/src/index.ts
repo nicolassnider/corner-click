@@ -1,6 +1,9 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import settings from './config/settings';
+import { createLogger } from '@corner-click/logger';
+
+const log = createLogger('server');
 
 const authRoutes = require('./routes/auth').default || require('./routes/auth');
 const tournamentsRoutes = require('./routes/tournaments').default || require('./routes/tournaments');
@@ -30,20 +33,48 @@ const swaggerOptions = {
         description: `${environment} Server`,
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Firebase ID Token — obtain one from /api/auth/pin (judge) or /api/auth/admin/login (admin)',
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }],
   },
-  // Automatically parse JSDoc comments in route files
   apis: ['./src/routes/*.ts', './src/index.ts'],
 };
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
-app.use(`${apiPrefix}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Use CDN assets — locally-served static files do not work in serverless environments (Vercel)
+const swaggerUiOptions = {
+  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui.min.css',
+  customJs: [
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui-bundle.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui-standalone-preset.min.js',
+  ],
+};
+
+app.use(`${apiPrefix}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
 app.use(express.json());
+
+// HTTP request logging
+app.use((req: Request, _res, next) => {
+  log.info({ method: req.method, url: req.url }, 'incoming request');
+  next();
+});
+
+import { authenticateToken } from './middlewares/auth';
 
 // Routes
 app.use(`${apiPrefix}/auth`, authRoutes);
-app.use(`${apiPrefix}/tournaments`, tournamentsRoutes);
-app.use(`${apiPrefix}/judges`, judgesRoutes);
-app.use(`${apiPrefix}/matches`, matchesRoutes);
+app.use(`${apiPrefix}/tournaments`, authenticateToken, tournamentsRoutes);
+app.use(`${apiPrefix}/judges`, authenticateToken, judgesRoutes);
+app.use(`${apiPrefix}/matches`, authenticateToken, matchesRoutes);
 
 // Root endpoint for quick deployment verification
 app.get('/', (req: Request, res: Response) => {
@@ -68,7 +99,7 @@ app.get(`${apiPrefix}/health`, (req: Request, res: Response) => {
 
 if (!isVercel) {
   app.listen(settings.port, () => {
-    console.log(`${appName} running on port ${settings.port}`);
+    log.info({ port: settings.port, env: environment }, `${appName} running`);
   });
 }
 

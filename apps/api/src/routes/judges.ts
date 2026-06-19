@@ -1,5 +1,9 @@
 import express, { Request, Response } from 'express';
+import { createLogger, toErr } from '@corner-click/logger';
+
+const log = createLogger('judges');
 import { db } from '../services/firebase';
+import { authenticateToken, requireAdmin } from '../middlewares/auth';
 
 const router = express.Router();
 
@@ -83,7 +87,7 @@ router.post('/:id/judges', async (req: Request, res: Response): Promise<void> =>
     res.status(201).json({ id: docRef.id, ...judgeData });
 
   } catch (error) {
-    console.error('Error creating judge:', error);
+    log.error({ err: toErr(error) }, 'Error creating judge');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -118,7 +122,7 @@ router.get('/:id/judges', async (req: Request, res: Response): Promise<void> => 
     
     res.json(judges);
   } catch (error) {
-    console.error('Error fetching judges:', error);
+    log.error({ err: toErr(error) }, 'Error fetching judges');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -148,7 +152,7 @@ router.get('/:id/judges/stream', (req: Request, res: Response) => {
     const judges = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     res.write(`data: ${JSON.stringify(judges)}\n\n`);
   }, error => {
-    console.error('SSE Error:', error);
+    log.error({ err: toErr(error) }, 'SSE Error');
   });
   
   req.on('close', () => {
@@ -239,7 +243,7 @@ router.put('/:id/judges/:judgeId/assign', async (req: Request, res: Response): P
 
     res.json({ message: 'Judge assigned successfully', currentAssignment });
   } catch (error) {
-    console.error('Error assigning judge:', error);
+    log.error({ err: toErr(error) }, 'Error assigning judge');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -268,7 +272,7 @@ router.put('/:id/judges/:judgeId/disconnect', async (req: Request, res: Response
     
     res.json({ message: 'Judge disconnected successfully' });
   } catch (error) {
-    console.error('Error disconnecting judge:', error);
+    log.error({ err: toErr(error) }, 'Error disconnecting judge');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -280,7 +284,7 @@ router.put('/:id/judges/:judgeId/disconnect', async (req: Request, res: Response
  *     tags: [Judges]
  *     summary: Delete a judge
  */
-router.delete('/:id/judges/:judgeId', async (req: Request, res: Response): Promise<void> => {
+router.delete('/:id/judges/:judgeId', authenticateToken, requireAdmin, async (req: Request, res: Response): Promise<void> => {
   try {
     if (!db) {
       res.status(503).json({ error: 'Firestore not initialized' });
@@ -293,7 +297,7 @@ router.delete('/:id/judges/:judgeId', async (req: Request, res: Response): Promi
     
     res.json({ message: 'Judge deleted successfully' });
   } catch (error) {
-    console.error('Error deleting judge:', error);
+    log.error({ err: toErr(error) }, 'Error deleting judge');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

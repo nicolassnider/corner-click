@@ -21,7 +21,16 @@
     "astro": "astro",
     "build": "astro build",
     "dev": "astro dev --port 4321 --host",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "jsdom": "^29.1.1"
+  }
 }
