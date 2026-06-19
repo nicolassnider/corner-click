@@ -4,6 +4,7 @@ import JudgeManager from './JudgeManager';
 import { CompetitorManager } from './CompetitorManager';
 import { BracketManager } from './BracketManager';
 import { CategoryManager } from './CategoryManager';
+import { CategoryAdjuster } from './CategoryAdjuster';
 import { getCategories } from '../services/categoryService';
 
 interface Props {
@@ -12,7 +13,7 @@ interface Props {
 }
 
 export default function TournamentDetail({ tournament, onBack }: Props) {
-  const [activeTab, setActiveTab] = useState<'categories' | 'judges' | 'competitors' | 'brackets'>('categories');
+  const [activeTab, setActiveTab] = useState<'categories' | 'competitors' | 'adjust-categories' | 'judges' | 'brackets'>('categories');
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
   
@@ -27,6 +28,41 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
       }
     });
   }, [tournament.id, activeTab]);
+
+  const renderNavigation = () => {
+    const tabs: typeof activeTab[] = ['categories', 'competitors', 'adjust-categories', 'judges', 'brackets'];
+    const currentIndex = tabs.indexOf(activeTab);
+
+    return (
+      <div className="flex justify-between items-center w-full">
+        <button
+          disabled={activeTab === 'categories'}
+          onClick={() => {
+            if (currentIndex > 0) {
+              setActiveTab(tabs[currentIndex - 1]);
+            }
+          }}
+          className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          <svg className="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
+          Anterior
+        </button>
+        
+        <button
+          disabled={activeTab === 'brackets'}
+          onClick={() => {
+            if (currentIndex < tabs.length - 1) {
+              setActiveTab(tabs[currentIndex + 1]);
+            }
+          }}
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          Siguiente
+          <svg className="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+      </div>
+    );
+  };
 
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-8">
@@ -79,26 +115,37 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
               className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'categories' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               onClick={() => setActiveTab('categories')}
             >
-              Categorías
-            </button>
-            <button
-              className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'judges' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-              onClick={() => setActiveTab('judges')}
-            >
-              Jueces
+              1. Generar Categorías
             </button>
             <button
               className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'competitors' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               onClick={() => setActiveTab('competitors')}
             >
-              Competidores
+              2. Competidores
+            </button>
+            <button
+              className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'adjust-categories' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+              onClick={() => setActiveTab('adjust-categories')}
+            >
+              3. Ajustar Categorías
+            </button>
+            <button
+              className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'judges' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+              onClick={() => setActiveTab('judges')}
+            >
+              4. Jueces
             </button>
             <button
               className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'brackets' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               onClick={() => setActiveTab('brackets')}
             >
-              Llaves
+              5. Llaves
             </button>
+          </div>
+
+          {/* Navigation (Top) */}
+          <div className="mb-6">
+            {renderNavigation()}
           </div>
 
           {(activeTab === 'competitors' || activeTab === 'brackets') && (
@@ -121,6 +168,10 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
             <CategoryManager tournamentId={tournament.id!} />
           )}
 
+          {activeTab === 'adjust-categories' && (
+            <CategoryAdjuster tournamentId={tournament.id!} />
+          )}
+
           {activeTab === 'judges' && (
             <JudgeManager tournamentId={tournament.id!} tournamentAreas={tournament.areas || tournament.rings || 1} />
           )}
@@ -136,6 +187,11 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
               <BracketManager tournamentId={tournament.id!} categoryId={selectedCategoryId} areaId={defaultArea} />
             </div>
           )}
+
+          {/* Navigation (Bottom) */}
+          <div className="pt-6 border-t border-gray-200 mt-8">
+            {renderNavigation()}
+          </div>
         </div>
 
       </div>

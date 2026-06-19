@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Category, TournamentType } from '@corner-click/types';
-import { getCategories, generateOfficialCategories, mergeCategoriesWithFewCompetitors } from '../services/categoryService';
+import { getCategories, generateOfficialCategories } from '../services/categoryService';
 
 interface CategoryManagerProps {
   tournamentId: string;
@@ -10,7 +10,6 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ tournamentId }
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
-  const [merging, setMerging] = useState(false);
   const [selectedType, setSelectedType] = useState<TournamentType>('LOCAL_OPEN');
 
   useEffect(() => {
@@ -49,24 +48,6 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ tournamentId }
     }
   };
 
-  const handleMerge = async () => {
-    if (!confirm('Esto moverá a los competidores de categorías con menos de 4 inscritos a la siguiente categoría de peso. ¿Estás seguro?')) {
-      return;
-    }
-
-    setMerging(true);
-    try {
-      await mergeCategoriesWithFewCompetitors(tournamentId);
-      await loadCategories();
-      alert('Fusión completada.');
-    } catch (error) {
-      console.error('Failed to merge categories:', error);
-      alert('Error al fusionar categorías.');
-    } finally {
-      setMerging(false);
-    }
-  };
-
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
@@ -95,7 +76,7 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ tournamentId }
               ) : selectedType === 'WORLD_CUP' ? (
                 <ul className="list-disc pl-5 space-y-1">
                   <li>Edades: Pre-Junior (12-14), Junior (15-17), Adulto (18-35), Senior (36-45), Veterano (46+).</li>
-                  <li>Cinturones: Color (10-1 Gup) y Negros (1-6 Dan).</li>
+                  <li>Cinturones: Color (10-1 Gup) and Negros (1-6 Dan).</li>
                   <li>Total aproximado: ~130 categorías.</li>
                 </ul>
               ) : (
@@ -114,16 +95,7 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ tournamentId }
               disabled={generating}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             >
-              {generating ? 'Generando...' : '1. Generar Categorías Oficiales'}
-            </button>
-
-            <button
-              onClick={handleMerge}
-              disabled={merging || categories.length === 0}
-              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-              title="Aplica la regla de fusionar categorías con < 4 competidores"
-            >
-              {merging ? 'Fusionando...' : '2. Fusionar Categorías (< 4 competidores)'}
+              {generating ? 'Generando...' : 'Generar Categorías Oficiales'}
             </button>
           </div>
         </div>

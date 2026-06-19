@@ -109,6 +109,54 @@ router.post('/:id/judges', async (req: Request, res: Response): Promise<void> =>
  *       '200':
  *         description: List of judges
  */
+const cleanupExpiredJudges = async (tournamentId: string): Promise<void> => {
+  if (!db) return;
+  try {
+    const snapshot = await db.collection('tournaments').doc(tournamentId).collection('judges').get();
+    const now = new Date();
+    const batch = db.batch();
+    let hasUpdates = false;
+
+    snapshot.docs.forEach(doc => {
+      const data = doc.data();
+      if (data.status === 'ONLINE') {
+        const lastActive = data.lastActiveAt ? new Date(data.lastActiveAt) : (data.createdAt ? new Date(data.createdAt) : new Date(0));
+        const diffMs = now.getTime() - lastActive.getTime();
+        const diffHours = diffMs / (1000 * 60 * 60);
+
+        if (diffHours >= 24) {
+          batch.update(doc.ref, { status: 'OFFLINE', currentAssignment: null });
+          hasUpdates = true;
+        }
+      }
+    });
+
+    if (hasUpdates) {
+      await batch.commit();
+      log.info({ tournamentId }, 'Cleaned up expired judges (> 24 hours)');
+    }
+  } catch (error) {
+    log.error({ err: toErr(error), tournamentId }, 'Error running cleanupExpiredJudges');
+  }
+};
+
+/**
+ * @swagger
+ * /tournaments/{id}/judges:
+ *   get:
+ *     tags: [Judges]
+ *     summary: List judges
+ *     description: Lists all judges registered for a given tournament.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: List of judges
+ */
 router.get('/:id/judges', async (req: Request, res: Response): Promise<void> => {
   try {
     if (!db) {
@@ -116,6 +164,9 @@ router.get('/:id/judges', async (req: Request, res: Response): Promise<void> => 
       return;
     }
     const tournamentId = req.params.id as string;
+
+    // Run cleanup for expired judges before returning the list
+    await cleanupExpiredJudges(tournamentId);
 
     const snapshot = await db.collection('tournaments').doc(tournamentId).collection('judges').get();
     const judges = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -146,6 +197,10 @@ router.get('/:id/judges/stream', (req: Request, res: Response) => {
   res.setHeader('Connection', 'keep-alive');
   
   const tournamentId = req.params.id as string;
+
+  // Run cleanup in background when stream starts
+  cleanupExpiredJudges(tournamentId).catch(err => log.error({ err }, 'Error cleaning up judges in stream'));
+
   const judgesRef = db.collection('tournaments').doc(tournamentId).collection('judges');
   
   const unsubscribe = judgesRef.onSnapshot(snapshot => {

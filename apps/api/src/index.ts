@@ -5,10 +5,10 @@ import { createLogger } from '@corner-click/logger';
 
 const log = createLogger('server');
 
-const authRoutes = require('./routes/auth').default || require('./routes/auth');
-const tournamentsRoutes = require('./routes/tournaments').default || require('./routes/tournaments');
-const judgesRoutes = require('./routes/judges').default || require('./routes/judges');
-const matchesRoutes = require('./routes/matches').default || require('./routes/matches');
+import authRoutes from './routes/auth';
+import tournamentsRoutes from './routes/tournaments';
+import judgesRoutes from './routes/judges';
+import matchesRoutes from './routes/matches';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
 
@@ -73,7 +73,7 @@ import { authenticateToken } from './middlewares/auth';
 // Routes
 app.use(`${apiPrefix}/auth`, authRoutes);
 app.use(`${apiPrefix}/tournaments`, authenticateToken, tournamentsRoutes);
-app.use(`${apiPrefix}/judges`, authenticateToken, judgesRoutes);
+app.use(`${apiPrefix}/tournaments`, authenticateToken, judgesRoutes);
 app.use(`${apiPrefix}/matches`, authenticateToken, matchesRoutes);
 
 // Root endpoint for quick deployment verification

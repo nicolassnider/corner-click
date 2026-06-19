@@ -64,17 +64,8 @@ export const generateOfficialCategories = async (tournamentId: string, type: Tou
 };
 
 export const mergeCategoriesWithFewCompetitors = async (tournamentId: string): Promise<void> => {
-  // Logic: categories with < 4 competitors should be merged.
-  // The rules say "will be merged with another category". Usually this means merging with the next heavier weight class.
   const categories = await getCategories(tournamentId);
-  
-  const updates: Record<string, any> = {};
-  
-  // We need to fetch competitors for all categories to count them
-  // For this implementation, we will just simulate finding categories with < 4
-  // and merging them into the next weight class up if possible.
-  
-  // 1. Get all competitors
+
   const competitorsRef = ref(database, `tournaments/${tournamentId}/competitors`);
   const compsSnap = await get(competitorsRef);
   const allComps: any[] = [];
@@ -83,14 +74,14 @@ export const mergeCategoriesWithFewCompetitors = async (tournamentId: string): P
     Object.keys(data).forEach(k => allComps.push({ id: k, ...data[k] }));
   }
 
-  // Count per category
+  // Count competitors per category
   const counts: Record<string, number> = {};
   categories.forEach(c => counts[c.id] = 0);
   allComps.forEach(c => {
     if (counts[c.categoryId] !== undefined) counts[c.categoryId]++;
   });
 
-  // Group categories by ageGroup + gender + beltLevel to find adjacent weight classes
+  // Group by ageGroup + gender + beltLevel to find adjacent weight classes
   const groups: Record<string, Category[]> = {};
   categories.forEach(c => {
     const key = `${c.ageGroup}-${c.gender}-${c.beltLevel}`;
@@ -98,33 +89,48 @@ export const mergeCategoriesWithFewCompetitors = async (tournamentId: string): P
     groups[key].push(c);
   });
 
-  for (const key of Object.keys(groups)) {
-    const catsInGroup = groups[key];
-    // Sort logic would ideally be based on maxWeight, but here we just rely on creation order
-    // which aligns with weight progression in our generator.
-    
+  const competitorUpdates: Record<string, any> = {};
+  const categoriesToDelete: string[] = [];
+  const categoryUpdates: Record<string, any> = {};
+
+  for (const catsInGroup of Object.values(groups)) {
     for (let i = 0; i < catsInGroup.length; i++) {
       const c = catsInGroup[i];
-      if (counts[c.id] < 4 && counts[c.id] > 0) {
-        // Find next category to merge into
+      const count = counts[c.id] ?? 0;
+
+      if (count === 0) {
+        // No competitors at all — remove empty category
+        categoriesToDelete.push(c.id);
+        continue;
+      }
+
+      if (count < 4) {
         if (i + 1 < catsInGroup.length) {
           const nextC = catsInGroup[i + 1];
           // Move all competitors from c to nextC
-          const compsToMove = allComps.filter(comp => comp.categoryId === c.id);
-          for (const comp of compsToMove) {
-            updates[`tournaments/${tournamentId}/competitors/${comp.id}/categoryId`] = nextC.id;
-          }
-          // Update the nextC name to reflect the merge
-          updates[`tournaments/${tournamentId}/categories/${nextC.id}/name`] = nextC.name + ' (Merged with ' + c.weightClass + ')';
-          // Mark original as empty or remove it
-          // Wait, removing it might break references if matches are already generated, 
-          // but we shouldn't merge after matches are generated.
+          allComps
+            .filter(comp => comp.categoryId === c.id)
+            .forEach(comp => {
+              competitorUpdates[`tournaments/${tournamentId}/competitors/${comp.id}/categoryId`] = nextC.id;
+            });
+          // Update nextC name to reflect the merge
+          categoryUpdates[`tournaments/${tournamentId}/categories/${nextC.id}/name`] =
+            `${nextC.name} + ${c.weightClass}`;
+          // Delete the merged-away category
+          categoriesToDelete.push(c.id);
         }
       }
     }
   }
 
-  if (Object.keys(updates).length > 0) {
-    await update(ref(database), updates);
+  // Apply competitor and category name updates
+  const allUpdates = { ...competitorUpdates, ...categoryUpdates };
+  if (Object.keys(allUpdates).length > 0) {
+    await update(ref(database), allUpdates);
+  }
+
+  // Delete merged/empty categories
+  for (const categoryId of categoriesToDelete) {
+    await remove(ref(database, `tournaments/${tournamentId}/categories/${categoryId}`));
   }
 };

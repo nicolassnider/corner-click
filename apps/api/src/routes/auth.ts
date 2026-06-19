@@ -83,8 +83,11 @@ router.post('/pin', async (req: Request, res: Response): Promise<void> => {
     const judgeData = judgeDoc.data();
     const judgeId = judgeDoc.id;
 
-    // Optional: Update status to ONLINE
-    await judgeDoc.ref.update({ status: 'ONLINE' });
+    // Update status to ONLINE and set lastActiveAt timestamp
+    await judgeDoc.ref.update({ 
+      status: 'ONLINE',
+      lastActiveAt: new Date().toISOString()
+    });
 
     // 2. Create Custom Token with Custom Claims
     const customClaims = {

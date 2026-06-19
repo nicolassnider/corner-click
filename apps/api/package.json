@@ -36,5 +36,5 @@
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage"
   },
-  "type": "commonjs"
+  "type": "module"
 }

@@ -9,6 +9,13 @@ const log = createLogger('auth-middleware');
  * Expects an Authorization header with a Bearer token.
  */
 export const authenticateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  // Allow EventSource / SSE stream endpoints to bypass token validation
+  // since standard browser EventSource does not support sending Authorization headers.
+  if (req.path.endsWith('/stream') || req.path.endsWith('/stream-scores')) {
+    next();
+    return;
+  }
+
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
