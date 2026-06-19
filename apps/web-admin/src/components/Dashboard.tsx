@@ -12,6 +12,7 @@ import { auth } from '../lib/firebase';
 export default function Dashboard() {
   const [view, setView] = useState<'LIST' | 'FORM' | 'DETAIL'>('LIST');
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
+  const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
@@ -34,7 +35,18 @@ export default function Dashboard() {
 
   const handleBackToList = () => {
     setSelectedTournament(null);
+    setEditingTournament(null);
     setView('LIST');
+  };
+
+  const handleEdit = (t: Tournament) => {
+    setEditingTournament(t);
+    setView('FORM');
+  };
+
+  const handleCreateNew = () => {
+    setEditingTournament(null);
+    setView('FORM');
   };
 
   // Show nothing while checking auth to avoid flash of content
@@ -55,14 +67,16 @@ export default function Dashboard() {
         {view === 'LIST' && (
           <TournamentList 
             onSelect={handleSelect} 
-            onCreateNew={() => setView('FORM')} 
+            onCreateNew={handleCreateNew} 
+            onEdit={handleEdit}
           />
         )}
         
         {view === 'FORM' && (
           <TournamentForm 
-            onCancel={() => setView('LIST')} 
-            onCreated={() => setView('LIST')} 
+            initialData={editingTournament}
+            onCancel={handleBackToList} 
+            onCreated={handleBackToList} 
           />
         )}
 

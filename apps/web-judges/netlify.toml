@@ -1,0 +1,7 @@
+[build]
+  base = "../../"
+  command = "npx turbo run build --filter=apps-web-judges..."
+  publish = "apps/web-judges/dist"
+
+[build.environment]
+  NODE_VERSION = "22"

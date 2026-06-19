@@ -12,6 +12,7 @@ export interface AppSettings {
   apiPrefix: string;
   environment: string;
   isVercel: boolean;
+  isRender: boolean;
 }
 
 export interface Settings {
@@ -29,6 +30,7 @@ const settings: Settings = {
     apiPrefix: '/api',
     environment: process.env.NODE_ENV || 'development',
     isVercel: !!process.env.VERCEL,
+    isRender: !!process.env.RENDER,
   },
   firebase: {
     projectId: process.env.FIREBASE_PROJECT_ID,

@@ -80,7 +80,9 @@ app.use(`${apiPrefix}/matches`, authenticateToken, matchesRoutes);
 app.get('/', (req: Request, res: Response) => {
   res.json({
     message: `🚀 ${appName} is up and running!`,
-    environment: isVercel ? 'Production (Vercel)' : 'Local Development',
+    environment: isVercel 
+      ? 'Production (Vercel)' 
+      : (settings.app.isRender ? 'Production (Render)' : 'Local Development'),
     timestamp: new Date().toISOString(),
     docs: `${apiPrefix}/docs`
   });
@@ -92,7 +94,7 @@ app.get(`${apiPrefix}/health`, (req: Request, res: Response) => {
     status: 'ok', 
     message: `✅ ${appName} is healthy and ready to process requests`,
     firebaseConfigured: !!settings.firebase.projectId,
-    environment: isVercel ? 'Vercel' : 'Local',
+    environment: isVercel ? 'Vercel' : (settings.app.isRender ? 'Render' : 'Local'),
     uptime: process.uptime()
   });
 });

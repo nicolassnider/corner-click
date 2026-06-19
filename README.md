@@ -30,4 +30,47 @@ Corner Click strictly adheres to the official ITF Sparring Business Rules (Versi
 
 ## Getting Started
 
-*(Development setup instructions will be added shortly)*
+### Development Setup
+
+1. Clone the repository.
+2. Install dependencies at the root:
+
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables by copying `.env.example` to `.env` in `apps/api`, `apps/web-admin`, and `apps/web-judges`.
+4. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+## Deployment
+
+This project uses a monorepo setup managed by Turborepo.
+
+### Backend API (Render)
+
+The API is configured to be deployed as a Web Service on **Render** using Render Blueprints.
+
+1. Connect your repository to Render.
+2. Render will automatically detect the `render.yaml` configuration file.
+3. Configure the required environment variables in the Render Dashboard:
+   - `FIREBASE_PROJECT_ID`
+   - `FIREBASE_CLIENT_EMAIL`
+   - `FIREBASE_PRIVATE_KEY` (ensure you format newline characters properly)
+   - `FIREBASE_DATABASE_URL`
+
+### Frontend Applications (Netlify)
+
+Each web app has its own `netlify.toml` pre-configured to build from the monorepo root.
+
+To deploy `web-admin` or `web-judges` on Netlify:
+
+1. Create a new site on Netlify from Git.
+2. Set the **Base directory** to the folder of the app you are deploying (e.g. `apps/web-admin` or `apps/web-judges`).
+3. Netlify will automatically detect and apply the configuration from the corresponding `netlify.toml` in that directory.
+4. Configure the environment variables in Netlify's settings:
+   - `PUBLIC_API_URL` (points to your Render API URL, e.g., `https://corner-click-api.onrender.com`)
+   - Firebase variables (e.g., `PUBLIC_FIREBASE_API_KEY`, etc.)

@@ -1,0 +1,7 @@
+[build]
+  base = "../../"
+  command = "npx turbo run build --filter=apps-web-admin..."
+  publish = "apps/web-admin/dist"
+
+[build.environment]
+  NODE_VERSION = "22"
