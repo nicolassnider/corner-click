@@ -6,6 +6,7 @@
     "typescript": "^5.7.3"
   },
   "main": "dist/index.js",
+  "type": "module",
   "private": true,
   "scripts": {
     "build": "tsc"
