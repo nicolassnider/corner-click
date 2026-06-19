@@ -2,9 +2,9 @@ import express, { Request, Response } from 'express';
 import { createLogger, toErr } from '@corner-click/logger';
 
 const log = createLogger('auth');
-import { db, auth } from '../services/firebase';
-import { authenticateToken } from '../middlewares/auth';
-import settings from '../config/settings';
+import { db, auth } from '../services/firebase.js';
+import { authenticateToken } from '../middlewares/auth.js';
+import settings from '../config/settings.js';
 
 const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
 

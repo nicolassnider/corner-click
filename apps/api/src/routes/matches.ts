@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { createLogger, toErr } from '@corner-click/logger';
-import { db, rtdb } from '../services/firebase';
-import { authenticateToken, requireAdmin } from '../middlewares/auth';
+import { db, rtdb } from '../services/firebase.js';
+import { authenticateToken, requireAdmin } from '../middlewares/auth.js';
 
 const log = createLogger('matches');
 

@@ -2,7 +2,7 @@ import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
 import { getDatabase } from 'firebase-admin/database';
-import settings from '../config/settings';
+import settings from '../config/settings.js';
 
 if (settings.firebase.projectId && settings.firebase.privateKey && settings.firebase.clientEmail) {
   try {

@@ -2,10 +2,10 @@ import express, { Request, Response } from 'express';
 import { createLogger, toErr } from '@corner-click/logger';
 
 const log = createLogger('tournaments');
-import { db, rtdb } from '../services/firebase';
+import { db, rtdb } from '../services/firebase.js';
 import type { Tournament } from '@corner-click/types';
 import { TournamentStatus } from '@corner-click/types';
-import { authenticateToken, requireAdmin } from '../middlewares/auth';
+import { authenticateToken, requireAdmin } from '../middlewares/auth.js';
 
 const router = express.Router();
 

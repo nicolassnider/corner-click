@@ -2,8 +2,8 @@ import express, { Request, Response } from 'express';
 import { createLogger, toErr } from '@corner-click/logger';
 
 const log = createLogger('judges');
-import { db } from '../services/firebase';
-import { authenticateToken, requireAdmin } from '../middlewares/auth';
+import { db } from '../services/firebase.js';
+import { authenticateToken, requireAdmin } from '../middlewares/auth.js';
 
 const router = express.Router();
 

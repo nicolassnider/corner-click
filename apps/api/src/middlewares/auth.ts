@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { auth, db } from '../services/firebase';
+import { auth, db } from '../services/firebase.js';
 import { createLogger, toErr } from '@corner-click/logger';
 
 const log = createLogger('auth-middleware');

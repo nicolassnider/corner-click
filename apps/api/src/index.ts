@@ -1,14 +1,14 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import settings from './config/settings';
+import settings from './config/settings.js';
 import { createLogger } from '@corner-click/logger';
 
 const log = createLogger('server');
 
-import authRoutes from './routes/auth';
-import tournamentsRoutes from './routes/tournaments';
-import judgesRoutes from './routes/judges';
-import matchesRoutes from './routes/matches';
+import authRoutes from './routes/auth.js';
+import tournamentsRoutes from './routes/tournaments.js';
+import judgesRoutes from './routes/judges.js';
+import matchesRoutes from './routes/matches.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
 
@@ -68,7 +68,7 @@ app.use((req: Request, _res, next) => {
   next();
 });
 
-import { authenticateToken } from './middlewares/auth';
+import { authenticateToken } from './middlewares/auth.js';
 
 // Routes
 app.use(`${apiPrefix}/auth`, authRoutes);
