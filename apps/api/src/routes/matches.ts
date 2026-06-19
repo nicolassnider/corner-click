@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { createLogger } from '@corner-click/logger';
+import { createLogger, toErr } from '@corner-click/logger';
 import { db, rtdb } from '../services/firebase';
 import { authenticateToken, requireAdmin } from '../middlewares/auth';
 
@@ -85,7 +85,7 @@ router.post('/:id/status', async (req: Request, res: Response): Promise<void> =>
 
     res.json({ success: true, status });
   } catch (error) {
-    log.error({ err: error }, 'Error updating match status');
+    log.error({ err: toErr(error) }, 'Error updating match status');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -164,7 +164,7 @@ router.post('/:id/scores', async (req: Request, res: Response): Promise<void> =>
 
     res.json({ success: true, message: 'Scores submitted successfully' });
   } catch (error) {
-    log.error({ err: error }, 'Error submitting scores');
+    log.error({ err: toErr(error) }, 'Error submitting scores');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -203,7 +203,7 @@ router.get('/:id/scores', async (req: Request, res: Response): Promise<void> => 
     const data = doc.data();
     res.json({ scores: data?.scores || {} });
   } catch (error) {
-    log.error({ err: error }, 'Error fetching scores');
+    log.error({ err: toErr(error) }, 'Error fetching scores');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -233,7 +233,7 @@ router.get('/:id/stream-scores', (req: Request, res: Response) => {
     const data = doc.data();
     res.write(`data: ${JSON.stringify({ scores: data?.scores || {} })}\n\n`);
   }, error => {
-    log.error({ err: error }, 'SSE Error');
+    log.error({ err: toErr(error) }, 'SSE Error');
   });
 
   req.on('close', () => {
@@ -339,7 +339,7 @@ router.post('/:id/winner', authenticateToken, requireAdmin, async (req: Request,
 
     res.json({ success: true });
   } catch (error) {
-    log.error({ err: error }, 'Error declaring winner');
+    log.error({ err: toErr(error) }, 'Error declaring winner');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

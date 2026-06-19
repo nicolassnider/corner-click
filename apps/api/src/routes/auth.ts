@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { createLogger } from '@corner-click/logger';
+import { createLogger, toErr } from '@corner-click/logger';
 
 const log = createLogger('auth');
 import { db, auth } from '../services/firebase';
@@ -108,7 +108,7 @@ router.post('/pin', async (req: Request, res: Response): Promise<void> => {
     });
 
   } catch (error) {
-    log.error({ err: error }, 'Error in /auth/pin');
+    log.error({ err: toErr(error) }, 'Error in /auth/pin');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -207,7 +207,7 @@ router.post('/admin/login', async (req: Request, res: Response): Promise<void> =
     });
 
   } catch (error) {
-    log.error({ err: error }, 'Error in /auth/admin/login');
+    log.error({ err: toErr(error) }, 'Error in /auth/admin/login');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -241,7 +241,7 @@ router.post('/logout', authenticateToken, async (req: Request, res: Response): P
 
     res.json({ success: true });
   } catch (error) {
-    log.error({ err: error }, 'Error in /auth/logout');
+    log.error({ err: toErr(error) }, 'Error in /auth/logout');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

@@ -1,5 +1,5 @@
 import { ref, get, set, remove, push, update } from 'firebase/database';
-import { database } from '../lib/firebase';
+import { auth, database } from '../lib/firebase';
 import type { Match, Competitor } from '@corner-click/types';
 import { MatchStatus } from '@corner-click/types';
 
@@ -218,8 +218,6 @@ export const getMatches = async (tournamentId: string, categoryId?: string): Pro
 export const advanceWinner = async (tournamentId: string, matchId: string, winnerId: string, nextMatchId?: string): Promise<void> => {
   const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
 
-  const { getAuth } = await import('firebase/auth');
-  const auth = getAuth();
   const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
 
   const res = await fetch(`${API_URL}/api/matches/${matchId}/winner`, {

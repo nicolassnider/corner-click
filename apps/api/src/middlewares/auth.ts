@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { auth, db } from '../services/firebase';
-import { createLogger } from '@corner-click/logger';
+import { createLogger, toErr } from '@corner-click/logger';
 
 const log = createLogger('auth-middleware');
 
@@ -28,7 +28,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     req.user = decodedToken;
     next();
   } catch (error) {
-    log.error({ err: error }, 'Error verifying Firebase ID token');
+    log.error({ err: toErr(error) }, 'Error verifying Firebase ID token');
     res.status(401).json({ error: 'Unauthorized: Invalid token' });
   }
 };
@@ -59,7 +59,7 @@ export const requireAdmin = async (req: Request, res: Response, next: NextFuncti
       res.status(403).json({ error: 'Forbidden: Admin access required' });
     }
   } catch (error) {
-    log.error({ err: error }, 'Error verifying admin status');
+    log.error({ err: toErr(error) }, 'Error verifying admin status');
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

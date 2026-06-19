@@ -11,7 +11,7 @@ admins/
   {uid}/
     email: string
     createdAt: string (ISO timestamp)
-    role: string (opcional, default: "admin")
+    role: string (opcional, valor por defecto: "admin")
 ```
 
 ### Cómo registrar el primer administrador

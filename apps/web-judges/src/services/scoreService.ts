@@ -14,7 +14,12 @@ interface ScorePayload {
 
 export const submitScores = async (matchId: string, scores: ScorePayload): Promise<void> => {
   const user = auth.currentUser;
-  const token = user ? await user.getIdToken() : '';
+
+  if (!user) {
+    throw new Error('Not authenticated: please sign in before submitting scores');
+  }
+
+  const token = await user.getIdToken();
 
   const response = await fetch(`${API_URL}/api/matches/${matchId}/scores`, {
     method: 'POST',

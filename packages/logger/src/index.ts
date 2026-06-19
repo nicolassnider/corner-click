@@ -34,4 +34,14 @@ export const logger = pino(
 /** Child logger factory — adds a `module` field to every log line. */
 export const createLogger = (module: string) => logger.child({ module });
 
+/**
+ * Converts an unknown catch value to a plain object for Pino.
+ * TypeScript strict mode types catch blocks as `unknown`, but Pino
+ * requires an object as its first argument.
+ */
+export const toErr = (error: unknown): object =>
+  error instanceof Error
+    ? { message: error.message, stack: error.stack, name: error.name }
+    : { raw: String(error) };
+
 export type Logger = typeof logger;
