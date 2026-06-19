@@ -1,5 +1,5 @@
 import { ref, get, set, remove, push, update } from 'firebase/database';
-import { database } from '../lib/firebase';
+import { auth, database } from '../lib/firebase';
 import type { Match, Competitor } from '@corner-click/types';
 import { MatchStatus } from '@corner-click/types';
 
@@ -216,26 +216,21 @@ export const getMatches = async (tournamentId: string, categoryId?: string): Pro
 };
 
 export const advanceWinner = async (tournamentId: string, matchId: string, winnerId: string, nextMatchId?: string): Promise<void> => {
-  const updates: Record<string, any> = {};
-  
-  // Set winner for current match
-  updates[`tournaments/${tournamentId}/matches/${matchId}/winnerId`] = winnerId;
-  updates[`tournaments/${tournamentId}/matches/${matchId}/status`] = MatchStatus.COMPLETED;
+  const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
 
-  // If there's a next match, advance the winner
-  if (nextMatchId) {
-    // We need to fetch the next match to see if red or blue is empty
-    const nextMatchRef = ref(database, `tournaments/${tournamentId}/matches/${nextMatchId}`);
-    const nextMatchSnap = await get(nextMatchRef);
-    if (nextMatchSnap.exists()) {
-      const nextMatch = nextMatchSnap.val() as Omit<Match, 'id'>;
-      if (!nextMatch.redCompetitorId) {
-        updates[`tournaments/${tournamentId}/matches/${nextMatchId}/redCompetitorId`] = winnerId;
-      } else if (!nextMatch.blueCompetitorId) {
-        updates[`tournaments/${tournamentId}/matches/${nextMatchId}/blueCompetitorId`] = winnerId;
-      }
-    }
+  const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
+
+  const res = await fetch(`${API_URL}/api/matches/${matchId}/winner`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify({ winnerId, tournamentId, nextMatchId })
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({})) as any;
+    throw new Error(err.error || 'Failed to advance winner');
   }
-
-  await update(ref(database), updates);
 };

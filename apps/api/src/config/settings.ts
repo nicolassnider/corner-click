@@ -5,13 +5,31 @@ export interface FirebaseSettings {
   databaseURL?: string;
 }
 
+export interface AppSettings {
+  name: string;
+  version: string;
+  description: string;
+  apiPrefix: string;
+  environment: string;
+  isVercel: boolean;
+}
+
 export interface Settings {
   port: string | number;
+  app: AppSettings;
   firebase: FirebaseSettings;
 }
 
 const settings: Settings = {
   port: process.env.PORT || 4000,
+  app: {
+    name: 'Corner Click API',
+    version: '1.0.0',
+    description: 'Backend API for the Corner Click Taekwondo Scoring System',
+    apiPrefix: '/api',
+    environment: process.env.NODE_ENV || 'development',
+    isVercel: !!process.env.VERCEL,
+  },
   firebase: {
     projectId: process.env.FIREBASE_PROJECT_ID,
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,

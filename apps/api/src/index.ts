@@ -1,53 +1,106 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import settings from './config/settings';
+import { createLogger } from '@corner-click/logger';
 
-const authRoutes = require('./routes/auth').default || require('./routes/auth');
-const tournamentsRoutes = require('./routes/tournaments').default || require('./routes/tournaments');
-const judgesRoutes = require('./routes/judges').default || require('./routes/judges');
-const matchesRoutes = require('./routes/matches').default || require('./routes/matches');
+const log = createLogger('server');
+
+import authRoutes from './routes/auth';
+import tournamentsRoutes from './routes/tournaments';
+import judgesRoutes from './routes/judges';
+import matchesRoutes from './routes/matches';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
 
 const app = express();
 app.use(cors());
 
+// Extract app settings to variables to avoid magic strings
+const { name: appName, version, description, apiPrefix, environment, isVercel } = settings.app;
+
 // Configure Swagger JSDoc
 const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Corner Click API',
-      version: '1.0.0',
-      description: 'Backend API for the Corner Click Taekwondo Scoring System',
+      title: appName,
+      version: version,
+      description: description,
     },
     servers: [
       {
-        url: '/api',
-        description: 'Local Development Server',
+        url: apiPrefix,
+        description: `${environment} Server`,
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Firebase ID Token — obtain one from /api/auth/pin (judge) or /api/auth/admin/login (admin)',
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }],
   },
-  // Automatically parse JSDoc comments in route files
   apis: ['./src/routes/*.ts', './src/index.ts'],
 };
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Use CDN assets — locally-served static files do not work in serverless environments (Vercel)
+const swaggerUiOptions = {
+  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui.min.css',
+  customJs: [
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui-bundle.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui-standalone-preset.min.js',
+  ],
+};
+
+app.use(`${apiPrefix}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
 app.use(express.json());
 
-app.use('/api/auth', authRoutes);
-app.use('/api/tournaments', tournamentsRoutes);
-app.use('/api/tournaments', judgesRoutes);
-app.use('/api/matches', matchesRoutes);
+// HTTP request logging
+app.use((req: Request, _res, next) => {
+  log.info({ method: req.method, url: req.url }, 'incoming request');
+  next();
+});
 
-app.get('/api/health', (req: Request, res: Response) => {
-  res.json({ 
-    status: 'ok', 
-    firebaseConfigured: !!settings.firebase.projectId 
+import { authenticateToken } from './middlewares/auth';
+
+// Routes
+app.use(`${apiPrefix}/auth`, authRoutes);
+app.use(`${apiPrefix}/tournaments`, authenticateToken, tournamentsRoutes);
+app.use(`${apiPrefix}/tournaments`, authenticateToken, judgesRoutes);
+app.use(`${apiPrefix}/matches`, authenticateToken, matchesRoutes);
+
+// Root endpoint for quick deployment verification
+app.get('/', (req: Request, res: Response) => {
+  res.json({
+    message: `🚀 ${appName} is up and running!`,
+    environment: isVercel ? 'Production (Vercel)' : 'Local Development',
+    timestamp: new Date().toISOString(),
+    docs: `${apiPrefix}/docs`
   });
 });
 
-app.listen(settings.port, () => {
-  console.log(`Corner Click API running on port ${settings.port}`);
+// Health check endpoint
+app.get(`${apiPrefix}/health`, (req: Request, res: Response) => {
+  res.json({ 
+    status: 'ok', 
+    message: `✅ ${appName} is healthy and ready to process requests`,
+    firebaseConfigured: !!settings.firebase.projectId,
+    environment: isVercel ? 'Vercel' : 'Local',
+    uptime: process.uptime()
+  });
 });
+
+if (!isVercel) {
+  app.listen(settings.port, () => {
+    log.info({ port: settings.port, env: environment }, `${appName} running`);
+  });
+}
+
+export default app;

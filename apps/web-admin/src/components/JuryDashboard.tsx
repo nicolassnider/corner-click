@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { fetchWithAuth } from '../utils/apiClient';
 import { ref, get, set } from 'firebase/database';
 import { database } from '../lib/firebase';
 import '../styles/global.css';
@@ -45,7 +46,7 @@ export default function JuryDashboard() {
     if (cId) setSelectedCategoryId(cId);
 
     // Fetch tournaments
-    fetch(`${API_URL}/api/tournaments`)
+    fetchWithAuth(`${API_URL}/api/tournaments`)
       .then(res => res.json())
       .then(data => setTournaments(data))
       .catch(err => console.error(err));
@@ -182,7 +183,7 @@ export default function JuryDashboard() {
   const updateMatchStatus = async (newStatus: MatchStatus) => {
     if (!selectedMatch) return;
     try {
-      await fetch(`${API_URL}/api/matches/${selectedMatch.id}/status`, {
+      await fetchWithAuth(`${API_URL}/api/matches/${selectedMatch.id}/status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })

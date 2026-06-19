@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "dependencies": {
     "@astrojs/react": "^5.0.7",
+    "@corner-click/tsconfig": "0.0.1",
     "@corner-click/types": "0.0.1",
-    "@corner-click/tsconfig": "*",
     "@tailwindcss/vite": "^4.3.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
@@ -21,7 +21,16 @@
     "astro": "astro",
     "build": "astro build",
     "dev": "astro dev --port 4322",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "jsdom": "^29.1.1"
+  }
 }

@@ -4,31 +4,37 @@
   "version": "1.0.0",
   "author": "",
   "dependencies": {
+    "@corner-click/logger": "0.0.1",
     "cors": "^2.8.6",
     "express": "^4.22.2",
-    "firebase-admin": "^14.0.0",
+    "firebase-admin": "^13.10.0",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
-    "@corner-click/tsconfig": "*",
+    "@corner-click/tsconfig": "0.0.1",
     "@corner-click/types": "0.0.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.9.3",
+    "@types/supertest": "^7.2.0",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "supertest": "^7.2.2",
     "tsx": "^4.22.4",
     "typescript": "^5.7.3"
   },
   "keywords": [],
   "license": "ISC",
-  "type": "commonjs",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch --env-file=.env src/index.ts",
-    "lint": "eslint src/",
-    "start": "node dist/index.js"
-  }
+    "lint": "tsc --noEmit",
+    "start": "node dist/index.js",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "type": "module"
 }

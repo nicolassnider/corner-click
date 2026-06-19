@@ -1,0 +1,20 @@
+{
+  "name": "@corner-click/logger",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "pino": "^9.7.0",
+    "pino-pretty": "^13.0.0"
+  },
+  "devDependencies": {
+    "@corner-click/tsconfig": "0.0.1",
+    "@types/node": "^25.9.3",
+    "typescript": "^5.7.3"
+  }
+}
