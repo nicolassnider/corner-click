@@ -18,6 +18,7 @@
     "lint": "turbo run lint",
     "lint:deps": "syncpack lint && syncpack format --check",
     "sync-deps": "syncpack fix && syncpack format",
+    "start:api": "node apps/api/dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
