@@ -1,6 +1,9 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import settings from './config/settings';
+import { createLogger } from '@corner-click/logger';
+
+const log = createLogger('server');
 
 const authRoutes = require('./routes/auth').default || require('./routes/auth');
 const tournamentsRoutes = require('./routes/tournaments').default || require('./routes/tournaments');
@@ -39,6 +42,12 @@ const swaggerSpec = swaggerJSDoc(swaggerOptions);
 app.use(`${apiPrefix}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(express.json());
 
+// HTTP request logging
+app.use((req: Request, _res, next) => {
+  log.info({ method: req.method, url: req.url }, 'incoming request');
+  next();
+});
+
 import { authenticateToken } from './middlewares/auth';
 
 // Routes
@@ -70,7 +79,7 @@ app.get(`${apiPrefix}/health`, (req: Request, res: Response) => {
 
 if (!isVercel) {
   app.listen(settings.port, () => {
-    console.log(`${appName} running on port ${settings.port}`);
+    log.info({ port: settings.port, env: environment }, `${appName} running`);
   });
 }
 

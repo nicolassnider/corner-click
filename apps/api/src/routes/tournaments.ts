@@ -1,4 +1,7 @@
 import express, { Request, Response } from 'express';
+import { createLogger } from '@corner-click/logger';
+
+const log = createLogger('tournaments');
 import { db } from '../services/firebase';
 import type { Tournament } from '@corner-click/types';
 import { TournamentStatus } from '@corner-click/types';
@@ -27,7 +30,7 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
     const tournaments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     res.json(tournaments);
   } catch (error) {
-    console.error('Error fetching tournaments:', error);
+    log.error('Error fetching tournaments:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -64,7 +67,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
     }
     res.json({ id: doc.id, ...doc.data() });
   } catch (error) {
-    console.error('Error fetching tournament:', error);
+    log.error('Error fetching tournament:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -126,7 +129,7 @@ router.post('/', authenticateToken, requireAdmin, async (req: Request, res: Resp
     const docRef = await db.collection('tournaments').add(newTournament);
     res.status(201).json({ id: docRef.id, ...newTournament });
   } catch (error) {
-    console.error('Error creating tournament:', error);
+    log.error('Error creating tournament:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

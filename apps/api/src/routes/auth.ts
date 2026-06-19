@@ -1,4 +1,7 @@
 import express, { Request, Response } from 'express';
+import { createLogger } from '@corner-click/logger';
+
+const log = createLogger('auth');
 import { db, auth } from '../services/firebase';
 import { authenticateToken } from '../middlewares/auth';
 import settings from '../config/settings';
@@ -91,9 +94,9 @@ router.post('/pin', async (req: Request, res: Response): Promise<void> => {
       judgeName: judgeData.name
     };
 
-    console.log(`[DEBUG] Attempting to create custom token for judge: ${judgeId}`);
+    log.info(`[DEBUG] Attempting to create custom token for judge: ${judgeId}`);
     const customToken = await auth.createCustomToken(judgeId, customClaims);
-    console.log(`[DEBUG] Custom token created successfully. Length: ${customToken.length}`);
+    log.info(`[DEBUG] Custom token created successfully. Length: ${customToken.length}`);
 
     res.json({ 
       token: customToken,
@@ -105,7 +108,7 @@ router.post('/pin', async (req: Request, res: Response): Promise<void> => {
     });
 
   } catch (error) {
-    console.error('Error in /auth/pin:', error);
+    log.error('Error in /auth/pin:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -175,7 +178,7 @@ router.post('/admin/login', async (req: Request, res: Response): Promise<void> =
     if (!firebaseRes.ok) {
       const errorData = await firebaseRes.json() as any;
       const errorCode = errorData?.error?.message || 'INVALID_CREDENTIALS';
-      console.error(`[Auth] Firebase login failed for ${email}: ${errorCode}`);
+      log.error(`[Auth] Firebase login failed for ${email}: ${errorCode}`);
       res.status(401).json({ error: 'Invalid email or password' });
       return;
     }
@@ -204,7 +207,7 @@ router.post('/admin/login', async (req: Request, res: Response): Promise<void> =
     });
 
   } catch (error) {
-    console.error('Error in /auth/admin/login:', error);
+    log.error('Error in /auth/admin/login:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -238,7 +241,7 @@ router.post('/logout', authenticateToken, async (req: Request, res: Response): P
 
     res.json({ success: true });
   } catch (error) {
-    console.error('Error in /auth/logout:', error);
+    log.error('Error in /auth/logout:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
