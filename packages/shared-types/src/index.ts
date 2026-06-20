@@ -1,35 +1,35 @@
 export enum TournamentStatus {
-  UPCOMING = 'UPCOMING',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
+  UPCOMING = "UPCOMING",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
 }
 
 export enum Gender {
-  MALE = 'MALE',
-  FEMALE = 'FEMALE',
+  MALE = "MALE",
+  FEMALE = "FEMALE",
 }
 
 export enum JudgeStatus {
-  ONLINE = 'ONLINE',
-  OFFLINE = 'OFFLINE',
+  ONLINE = "ONLINE",
+  OFFLINE = "OFFLINE",
 }
 
 export enum MatchStatus {
-  PENDING = 'PENDING',
-  ACTIVE = 'ACTIVE',
-  PAUSED = 'PAUSED',
-  ENDED = 'ENDED',
-  COMPLETED = 'COMPLETED',
-  GOLDEN_POINT = 'GOLDEN_POINT',
+  PENDING = "PENDING",
+  ACTIVE = "ACTIVE",
+  PAUSED = "PAUSED",
+  ENDED = "ENDED",
+  COMPLETED = "COMPLETED",
+  GOLDEN_POINT = "GOLDEN_POINT",
 }
 
 export enum CornerRole {
-  RED = 'red',
-  BLUE = 'blue',
-  CORNER_1 = 'corner_1',
-  CORNER_2 = 'corner_2',
-  CORNER_3 = 'corner_3',
-  CORNER_4 = 'corner_4',
+  RED = "red",
+  BLUE = "blue",
+  CORNER_1 = "corner_1",
+  CORNER_2 = "corner_2",
+  CORNER_3 = "corner_3",
+  CORNER_4 = "corner_4",
 }
 
 export interface Tournament {
@@ -107,20 +107,55 @@ export interface Match {
     red: number;
     blue: number;
   };
+  isExtraTime?: boolean;
 }
 
-export * from './itfCategories.js';
+export * from "./itfCategories.js";
 
+export const APP_NAME = "Corner Click";
 export const APP_MOTTO = "Every Point. Every Match. Every Corner.";
 export const AUTHOR_NAME = "Nicolas Snider";
 export const AUTHOR_GITHUB = "https://github.com/nicolassnider";
-export const AUTHOR_LINKEDIN = "https://www.linkedin.com/in/nicolas-snider-7a362b39/";
+export const AUTHOR_LINKEDIN =
+  "https://www.linkedin.com/in/nicolas-snider-7a362b39/";
+export const SYSTEM_OFFICIAL_TITLE =
+  "SISTEMA OFICIAL DE CALIFICACIÓN DE LA ITF";
 
 export const calculateNetScore = (
   rawScore: number,
   warnings: number,
-  deductions: number
+  deductions: number,
 ): number => {
   return Math.max(0, rawScore - Math.floor(warnings / 3) - deductions);
 };
 
+export enum SocketEvent {
+  JOIN_AREA = "join_area",
+  JUDGE_SCORE_UPDATE = "judge_score_update",
+  MATCH_STATE = "match_state",
+  MATCH_CONTROL = "match_control",
+  JUDGES_UPDATE = "judges_update",
+  DISCONNECT = "disconnect",
+}
+
+export enum SocketRole {
+  ADMIN = "admin",
+  JUDGE = "judge",
+  SPECTATOR = "spectator",
+}
+
+export enum MatchControlAction {
+  START = "start",
+  PAUSE = "pause",
+  RESET = "reset",
+  END = "end",
+  TIMER_TICK = "timer_tick",
+  SET_MATCH = "set_match",
+  GOLDEN_POINT = "golden_point",
+}
+
+export enum ScoreUpdateType {
+  POINT = "point",
+  WARNING = "warning",
+  DEDUCTION = "deduction",
+}
