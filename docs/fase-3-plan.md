@@ -19,12 +19,14 @@ Completar el ciclo de vida del torneo: edición, eliminación, resultados histó
 Agregar dos endpoints al final del router:
 
 **`PUT /:id`** — editar torneo (nombre, fecha, ubicación, áreas)
+
 - `authenticateToken + requireAdmin`
 - Valida que el torneo exista
 - Solo actualiza los campos enviados (partial update con `update()`)
 - Retorna el torneo actualizado
 
 **`DELETE /:id`** — eliminar torneo
+
 - `authenticateToken + requireAdmin`
 - Elimina el documento en Firestore
 - Elimina todos los datos del RTDB en `tournaments/{id}` (matches, competitors)
@@ -49,6 +51,7 @@ Agregar dos endpoints al final del router:
 #### [MODIFY] `apps/api/src/routes/matches.ts`
 
 En `POST /:id/status`, cuando `status === 'ACTIVE'`:
+
 - Leer el match desde RTDB buscando `tournaments/*/matches/{matchId}`
 - Verificar que `redCompetitorId` y `blueCompetitorId` no sean `''`, `null`, o `'BYE'`
 - Si no pasa → `400 Bad Request` con mensaje claro
@@ -59,7 +62,7 @@ En `POST /:id/status`, cuando `status === 'ACTIVE'`:
 
 ### 3 — Finalización de Categoría
 
-#### [MODIFY] `apps/api/src/routes/matches.ts`
+#### [MODIFY] `apps/api/src/routes/matches.ts` (Winner & Completion Flow)
 
 En `POST /:id/winner`, después de escribir el ganador:
 
@@ -85,7 +88,7 @@ Agregar tab **"Resultados"** (solo visible cuando `tournament.status !== 'UPCOMI
 
 Vista de resultados finales con la siguiente estructura:
 
-```
+```text
 [ Selector de Categoría ]
 
 Categoría: Masculino 68kg — Cadetes
@@ -100,10 +103,12 @@ Categoría: Masculino 68kg — Cadetes
 ```
 
 **Fuentes de datos:**
+
 - **Bracket + winner**: RTDB `tournaments/{id}/matches` (filtrado por categoryId)
 - **Scores por corner**: `GET /api/matches/:id/scores` (Firestore) — endpoint ya existe
 
 **Lógica:**
+
 1. `getMatches(tournamentId, categoryId)` → matches completados ordenados por ronda
 2. Para cada match → `GET /api/matches/{matchId}/scores` → scores por corner/juez
 3. Calcular score total por corner: suma de todos los jueces de ese corner
@@ -113,24 +118,26 @@ Categoría: Masculino 68kg — Cadetes
 
 ## Orden de implementación
 
-| # | Tarea | Estimado |
-|---|---|---|
-| 1 | `PUT + DELETE /tournaments/:id` en la API | 30 min |
-| 2 | Editar/eliminar en TournamentList + TournamentForm | 45 min |
-| 3 | Validación server-side TBD en match start | 20 min |
-| 4 | Finalización de categoría (API + BracketManager) | 30 min |
-| 5 | ResultsView + tab Resultados en TournamentDetail | 60 min |
+| #   | Tarea                                              | Estimado |
+| --- | -------------------------------------------------- | -------- |
+| 1   | `PUT + DELETE /tournaments/:id` en la API          | 30 min   |
+| 2   | Editar/eliminar en TournamentList + TournamentForm | 45 min   |
+| 3   | Validación server-side TBD en match start          | 20 min   |
+| 4   | Finalización de categoría (API + BracketManager)   | 30 min   |
+| 5   | ResultsView + tab Resultados en TournamentDetail   | 60 min   |
 
 ---
 
 ## Verification Plan
 
 ### Automated
+
 - `GET /api/tournaments/:id` retorna 404 tras DELETE
 - `PUT /api/tournaments/:id` con campos parciales retorna el torneo actualizado
 - `POST /api/matches/:id/status` con `ACTIVE` y competitor vacío retorna 400
 
 ### Manual
+
 - Editar nombre/fecha de un torneo UPCOMING → refleja en la lista
 - Eliminar torneo → desaparece de la lista y datos limpiados en RTDB
 - Intentar iniciar match TBD via curl directo → 400
