@@ -49,26 +49,26 @@ firebase firestore:add admins/{uid} email="admin@cornerclick.com" createdAt="$(d
 #### Método 3: Vía Script de Node.js
 
 ```javascript
-const admin = require('firebase-admin');
-const serviceAccount = require('./service-account.json');
+const admin = require("firebase-admin");
+const serviceAccount = require("./service-account.json");
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
 });
 
 const db = admin.firestore();
 
 async function createAdmin(uid, email) {
-  await db.collection('admins').doc(uid).set({
+  await db.collection("admins").doc(uid).set({
     email,
     createdAt: new Date().toISOString(),
-    role: 'admin'
+    role: "admin",
   });
   console.log(`Admin creado con UID: ${uid}`);
 }
 
 // Usar después de crear el usuario en Authentication
-createAdmin('USER_UID_HERE', 'admin@cornerclick.com');
+createAdmin("USER_UID_HERE", "admin@cornerclick.com");
 ```
 
 ## Verificación de Admin
