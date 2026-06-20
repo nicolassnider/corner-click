@@ -1,17 +1,15 @@
 import type { Judge } from '@corner-click/types';
 import { fetchWithAuth } from '../utils/apiClient';
 
-const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
-
 export const judgeService = {
   async fetchJudges(tournamentId: string): Promise<Judge[]> {
-    const res = await fetchWithAuth(`${API_URL}/api/tournaments/${tournamentId}/judges`);
+    const res = await fetchWithAuth(`/api/tournaments/${tournamentId}/judges`);
     if (!res.ok) throw new Error('Failed to fetch judges');
     return res.json();
   },
 
   async addJudge(tournamentId: string, name: string): Promise<Judge> {
-    const res = await fetchWithAuth(`${API_URL}/api/tournaments/${tournamentId}/judges`, {
+    const res = await fetchWithAuth(`/api/tournaments/${tournamentId}/judges`, {
       method: 'POST',
       body: JSON.stringify({ name })
     });
@@ -24,7 +22,7 @@ export const judgeService = {
     judgeId: string, 
     assignment: { areaId: string, cornerId: string, matchId: string }
   ): Promise<void> {
-    const res = await fetchWithAuth(`${API_URL}/api/tournaments/${tournamentId}/judges/${judgeId}/assign`, {
+    const res = await fetchWithAuth(`/api/tournaments/${tournamentId}/judges/${judgeId}/assign`, {
       method: 'PUT',
       body: JSON.stringify(assignment)
     });
@@ -32,16 +30,17 @@ export const judgeService = {
   },
 
   async disconnectJudge(tournamentId: string, judgeId: string): Promise<void> {
-    const res = await fetchWithAuth(`${API_URL}/api/tournaments/${tournamentId}/judges/${judgeId}/disconnect`, {
+    const res = await fetchWithAuth(`/api/tournaments/${tournamentId}/judges/${judgeId}/disconnect`, {
       method: 'PUT'
     });
     if (!res.ok) throw new Error('Failed to disconnect judge');
   },
 
   async deleteJudge(tournamentId: string, judgeId: string): Promise<void> {
-    const res = await fetchWithAuth(`${API_URL}/api/tournaments/${tournamentId}/judges/${judgeId}`, {
+    const res = await fetchWithAuth(`/api/tournaments/${tournamentId}/judges/${judgeId}`, {
       method: 'DELETE'
     });
     if (!res.ok) throw new Error('Failed to delete judge');
   }
 };
+

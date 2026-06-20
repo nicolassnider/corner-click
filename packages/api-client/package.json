@@ -1,9 +1,12 @@
 {
-  "name": "@corner-click/types",
+  "name": "@corner-click/api-client",
   "version": "0.0.1",
   "devDependencies": {
     "@corner-click/tsconfig": "0.0.1",
     "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "firebase": "^10.8.0"
   },
   "main": "dist/index.js",
   "private": true,

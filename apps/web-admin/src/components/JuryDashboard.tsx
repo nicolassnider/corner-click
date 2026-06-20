@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { fetchWithAuth } from '../utils/apiClient';
-import { ref, get, set } from 'firebase/database';
-import { database } from '../lib/firebase';
 import '../styles/global.css';
 import { getCategories } from '../services/categoryService';
-import { getMatches, advanceWinner } from '../services/bracketService';
+import { getMatches } from '../services/bracketService';
 import { getCompetitors } from '../services/competitorService';
 import type { Tournament, Category, Match, Competitor } from '@corner-click/types';
 import { MatchStatus } from '@corner-click/types';
 import { getCompetitorFullName } from '../utils/competitorUtils';
+import { useActiveMatch } from '../hooks/useActiveMatch';
 import Footer from './Footer';
 
-interface ScoreData {
-  redScore: number;
-  blueScore: number;
-  redWarnings: number;
-  blueWarnings: number;
-  redDeductions: number;
-  blueDeductions: number;
+interface Toast {
+  id: string;
+  message: string;
+  type: 'success' | 'error' | 'warning' | 'info';
 }
 
 export default function JuryDashboard() {
@@ -29,13 +25,17 @@ export default function JuryDashboard() {
   const [selectedTournamentId, setSelectedTournamentId] = useState<string>('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  
+  // Custom Toast state
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const [status, setStatus] = useState<MatchStatus>(MatchStatus.PENDING);
-  const [timeRemaining, setTimeRemaining] = useState(120); // 2 minutes in seconds
-  const [judgesData, setJudgesData] = useState<Record<string, ScoreData>>({});
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
+  const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
+    const id = Math.random().toString(36).substring(2, 9);
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 4000);
+  };
 
   // Load URL params on mount
   useEffect(() => {
@@ -46,10 +46,26 @@ export default function JuryDashboard() {
     if (cId) setSelectedCategoryId(cId);
 
     // Fetch tournaments
-    fetchWithAuth(`${API_URL}/api/tournaments`)
-      .then(res => res.json())
-      .then(data => setTournaments(data))
-      .catch(err => console.error(err));
+    fetchWithAuth(`/api/tournaments`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Unauthorized or failed to load');
+        }
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) {
+          setTournaments(data);
+        } else {
+          setTournaments([]);
+          showToast('Formato de torneos inválido', 'error');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        setTournaments([]);
+        showToast('Error al cargar torneos (No autorizado o error de red)', 'error');
+      });
   }, []);
 
   // Update URL params when selection changes
@@ -69,7 +85,7 @@ export default function JuryDashboard() {
     if (selectedTournamentId) {
       Promise.all([
         getCategories(selectedTournamentId),
-        getMatches(selectedTournamentId), // Fetch all matches to see which categories are active
+        getMatches(selectedTournamentId), // Fetch all matches to see active categories
         getCompetitors(selectedTournamentId)
       ])
       .then(([fetchedCategories, allMatches, fetchedCompetitors]) => {
@@ -81,7 +97,10 @@ export default function JuryDashboard() {
         fetchedCompetitors.forEach(c => compMap[c.id] = c);
         setCompetitors(compMap);
       })
-      .catch(console.error);
+      .catch(err => {
+        console.error(err);
+        showToast('Error al cargar datos del torneo', 'error');
+      });
     } else {
       setCategories([]);
       setCompetitors({});
@@ -96,170 +115,89 @@ export default function JuryDashboard() {
           setMatches(fetchedMatches);
           setSelectedMatch(fetchedMatches[0] ?? null);
         })
-        .catch(console.error);
+        .catch(err => {
+          console.error(err);
+          showToast('Error al cargar combates', 'error');
+        });
     } else {
       setMatches([]);
       setSelectedMatch(null);
     }
   }, [selectedTournamentId, selectedCategoryId]);
 
-  // Load state from Firebase when switching matches
-  useEffect(() => {
-    if (!selectedMatch) return;
-    setIsLoaded(false);
-    const fetchState = async () => {
-      const matchRef = ref(database, `live_matches/${selectedMatch.id}`);
-      const snapshot = await get(matchRef);
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        setStatus(data.status || MatchStatus.PENDING);
-        setTimeRemaining(data.timeRemaining !== undefined ? data.timeRemaining : 120);
-      } else {
-        setStatus(selectedMatch.status || MatchStatus.PENDING);
-        setTimeRemaining(120);
-      }
-      setIsLoaded(true);
-    };
-    fetchState();
-    setJudgesData({});
-  }, [selectedMatch?.id]);
-
-  // Sync Timer to Firebase
-  useEffect(() => {
-    if (!isLoaded || !selectedMatch) return;
-    const matchRef = ref(database, `live_matches/${selectedMatch.id}`);
-    set(matchRef, {
-      timeRemaining,
-      status 
-    });
-  }, [timeRemaining, status, selectedMatch?.id, isLoaded]);
-
-  // Fetch Final Scores from API when match ends via SSE
-  useEffect(() => {
-    let eventSource: EventSource | null = null;
-
-    if (status === MatchStatus.ENDED && selectedMatch) {
-      eventSource = new EventSource(`${API_URL}/api/matches/${selectedMatch.id}/stream-scores`);
-      
-      eventSource.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.scores) setJudgesData(data.scores);
-        } catch (err) {
-          console.error("Failed to parse SSE scores:", err);
-        }
-      };
-
-      eventSource.onerror = (err) => {
-        console.error("SSE Scores Error:", err);
-      };
-    }
-
-    return () => {
-      if (eventSource) {
-        eventSource.close();
-      }
-    };
-  }, [status, selectedMatch?.id]);
-
-  useEffect(() => {
-    let interval: any = null;
-    if (status === MatchStatus.ACTIVE && timeRemaining > 0) {
-      interval = setInterval(() => {
-        setTimeRemaining((prev) => prev - 1);
-      }, 1000);
-    } else if (timeRemaining === 0 && status === MatchStatus.ACTIVE) {
-      updateMatchStatus(MatchStatus.ENDED);
-    }
-    return () => clearInterval(interval);
-  }, [status, timeRemaining]);
-
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
+  // Callback to handle matches list refresh from active match actions
+  const handleMatchesRefreshed = (updatedMatches: Match[], currentMatch: Match) => {
+    setMatches(updatedMatches);
+    setSelectedMatch(currentMatch);
   };
 
-  const updateMatchStatus = async (newStatus: MatchStatus) => {
-    if (!selectedMatch) return;
-    try {
-      await fetchWithAuth(`${API_URL}/api/matches/${selectedMatch.id}/status`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus })
-      });
-      setStatus(newStatus);
-    } catch (err) {
-      console.error("Failed to update status", err);
-    }
-  };
+  // Initialize active match controller hook
+  const {
+    status,
+    timeRemaining,
+    judgesData,
+    formatTime,
+    handleStart,
+    handlePause,
+    handleEnd,
+    handleExtraTime,
+    handleGoldenPoint,
+    handleDeclareWinner,
+    redVotes,
+    blueVotes,
+    tieVotes,
+    totalRed,
+    totalBlue,
+    isMatchStartable
+  } = useActiveMatch(selectedMatch, selectedTournamentId, selectedCategoryId, handleMatchesRefreshed, showToast);
 
-  const handleStart = () => updateMatchStatus(MatchStatus.ACTIVE);
-  const handlePause = () => updateMatchStatus(MatchStatus.PAUSED);
-  const handleEnd = () => updateMatchStatus(MatchStatus.ENDED);
-  const handleExtraTime = () => {
-    setTimeRemaining(60);
-    updateMatchStatus(MatchStatus.ACTIVE);
-  };
-
-  const handleDeclareWinner = async (winnerId: string) => {
-    if (!selectedMatch) return;
-    try {
-      await advanceWinner(selectedTournamentId, selectedMatch.id, winnerId, selectedMatch.nextMatchId || undefined);
-      // Refresh matches
-      const updatedMatches = await getMatches(selectedTournamentId, selectedCategoryId);
-      setMatches(updatedMatches);
-      
-      // Update selected match to reflect the winner locally
-      const updatedSelectedMatch = updatedMatches.find(m => m.id === selectedMatch.id);
-      if (updatedSelectedMatch) {
-        setSelectedMatch(updatedSelectedMatch);
-        setStatus(MatchStatus.ENDED); // Force ENDED status view on top instead of ACTIVE
-      }
-      
-      alert('Winner declared and bracket updated!');
-    } catch (err) {
-      console.error(err);
-      alert('Failed to advance winner');
-    }
-  };
-
-  let redVotes = 0;
-  let blueVotes = 0;
-  let tieVotes = 0;
-  let totalRed = 0;
-  let totalBlue = 0;
-
-  Object.values(judgesData).forEach((curr: ScoreData) => {
-    const r = curr.redScore || 0;
-    const b = curr.blueScore || 0;
-    totalRed += r;
-    totalBlue += b;
-    if (r > b) redVotes++;
-    else if (b > r) blueVotes++;
-    else tieVotes++;
-  });
-
-  // Determine if a match is "startable". Both competitors must be known and not BYE.
-  const isMatchStartable = selectedMatch && 
-    selectedMatch.redCompetitorId && selectedMatch.redCompetitorId !== 'BYE' &&
-    selectedMatch.blueCompetitorId && selectedMatch.blueCompetitorId !== 'BYE';
+  // Derive final vote percentage for the visual bar comparison
+  const totalVotes = redVotes + blueVotes + tieVotes;
+  const redPct = totalVotes > 0 ? (redVotes / totalVotes) * 100 : 0;
+  const bluePct = totalVotes > 0 ? (blueVotes / totalVotes) * 100 : 0;
+  const tiePct = totalVotes > 0 ? (tieVotes / totalVotes) * 100 : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans flex flex-col">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col selection:bg-blue-500 selection:text-white relative overflow-x-hidden">
+      
+      {/* Dynamic Background Glows */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-red-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-10 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+
+      {/* Floating Toast Notification Container */}
+      <div className="fixed bottom-5 right-5 z-[9999] flex flex-col gap-2 max-w-sm w-full">
+        {toasts.map(t => (
+          <div
+            key={t.id}
+            className={`p-4 rounded-xl border shadow-xl flex items-center gap-3 animate-slide-in backdrop-blur-md transition-all duration-300 ${
+              t.type === 'success' ? 'bg-emerald-950/80 border-emerald-500/30 text-emerald-300' :
+              t.type === 'error' ? 'bg-rose-950/80 border-rose-500/30 text-rose-300' :
+              t.type === 'warning' ? 'bg-amber-950/80 border-amber-500/30 text-amber-300' :
+              'bg-slate-900/90 border-slate-700/50 text-slate-200'
+            }`}
+          >
+            <span className="text-xl">
+              {t.type === 'success' ? '✨' : t.type === 'error' ? '⚠️' : t.type === 'warning' ? '🔥' : 'ℹ️'}
+            </span>
+            <div className="flex-1 text-sm font-semibold">{t.message}</div>
+            <button onClick={() => setToasts(prev => prev.filter(item => item.id !== t.id))} className="text-slate-400 hover:text-slate-200 font-bold ml-auto">&times;</button>
+          </div>
+        ))}
+      </div>
+
       {/* Top Navbar */}
-      <nav className="bg-gray-900 text-white shadow-xl py-4 px-8 sticky top-0 z-50">
+      <nav className="bg-slate-900/60 backdrop-blur-md border-b border-slate-800 text-white shadow-xl py-4 px-8 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <a href="/" className="flex items-center cursor-pointer hover:opacity-80 transition-opacity" title="Volver al inicio">
+          <a href="/" className="flex items-center cursor-pointer hover:opacity-90 transition-opacity" title="Volver al inicio">
             <svg className="w-8 h-8 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-            <span className="text-2xl font-black tracking-tight">CORNER<span className="text-blue-500">CLICK</span></span>
-            <span className="ml-4 pl-4 border-l border-gray-700 text-gray-400 font-semibold tracking-widest text-sm hidden sm:inline">LIVE MATCH CONTROL</span>
+            <span className="text-2xl font-black tracking-tight uppercase">CORNER<span className="text-blue-500">CLICK</span></span>
+            <span className="ml-4 pl-4 border-l border-slate-800 text-slate-400 font-semibold tracking-widest text-xs hidden sm:inline">JURY CONTROL ROOM</span>
           </a>
-          <div className="flex space-x-4">
+          <div className="flex flex-wrap gap-3 items-center justify-center">
             <select 
               value={selectedTournamentId}
               onChange={(e) => setSelectedTournamentId(e.target.value)}
-              className="bg-gray-800 text-white px-3 py-2 rounded-md border border-gray-700"
+              className="bg-slate-950 text-slate-200 px-3 py-2 rounded-lg border border-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium transition-all"
             >
               <option value="">Select Tournament...</option>
               {tournaments.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
@@ -268,65 +206,75 @@ export default function JuryDashboard() {
             <select 
               value={selectedCategoryId}
               onChange={(e) => setSelectedCategoryId(e.target.value)}
-              className="bg-gray-800 text-white px-3 py-2 rounded-md border border-gray-700"
+              className="bg-slate-950 text-slate-200 px-3 py-2 rounded-lg border border-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium transition-all"
               disabled={!selectedTournamentId}
             >
               <option value="">Select Category...</option>
               {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
 
-            <span className="bg-gray-800 text-gray-300 py-2 px-4 rounded-full text-sm font-bold border border-gray-700">Ring 1 - Jury</span>
+            <span className="bg-slate-800/80 border border-slate-700 text-slate-300 py-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-wider">
+              Area 1 - Jury
+            </span>
           </div>
         </div>
       </nav>
 
-      <main className="flex-1 max-w-7xl w-full mx-auto p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Left Sidebar: Match Queue */}
         <aside className="lg:col-span-1 space-y-6 order-2 lg:order-1">
-          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-full">
-            <h2 className="text-xl font-extrabold text-gray-800 mb-6 tracking-tight">Matches</h2>
+          <div className="bg-slate-900/40 backdrop-blur-xl p-6 rounded-2xl border border-slate-800/80 shadow-2xl h-full flex flex-col">
+            <h2 className="text-xl font-extrabold text-slate-200 mb-6 tracking-tight flex items-center gap-2">
+              <span>📅</span> Matches Queue
+            </h2>
             {!selectedCategoryId ? (
-              <p className="text-gray-500">Select a tournament and category to load matches.</p>
+              <p className="text-slate-500 text-sm italic">Select a tournament and category to load matches.</p>
             ) : matches.length === 0 ? (
-              <p className="text-gray-500">No matches found for this category.</p>
+              <p className="text-slate-500 text-sm italic">No matches found for this category.</p>
             ) : (
-              <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+              <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2 flex-1 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
                 {matches.map(match => (
                   <div 
                     key={match.id} 
                     className={`p-4 rounded-xl cursor-pointer transition-all border-2 ${
                       selectedMatch?.id === match.id 
-                        ? 'border-blue-500 bg-blue-50 shadow-md transform scale-105' 
-                        : 'border-transparent bg-gray-50 hover:bg-gray-100 hover:border-gray-200'
+                        ? 'border-blue-500 bg-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.15)] transform scale-[1.02]' 
+                        : 'border-slate-800 bg-slate-900/30 hover:bg-slate-900/60 hover:border-slate-700'
                     }`}
                     onClick={() => setSelectedMatch(match)}
                   >
-                    <div className="flex justify-between items-start mb-1">
-                      <div className={`text-sm font-bold ${selectedMatch?.id === match.id ? 'text-blue-700' : 'text-gray-600'}`}>
-                        Round {match.round} {match.winnerId ? '(Completed)' : ''}
-                      </div>
-                      <div className="text-xs text-gray-400 font-mono tracking-tighter" title="Match ID">
-                        {match.id}
-                      </div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className={`text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded ${selectedMatch?.id === match.id ? 'bg-blue-500/20 text-blue-400' : 'bg-slate-800 text-slate-400'}`}>
+                        Round {match.round} {match.winnerId ? '✓' : ''}
+                      </span>
+                      <span className="text-[10px] text-slate-600 font-mono tracking-tighter" title="Match ID">
+                        #{match.id.substring(0, 8)}
+                      </span>
                     </div>
-                    <div className="font-semibold text-lg flex items-center justify-between">
-                      <span className={`text-red-600 truncate max-w-[45%] ${match.winnerId === match.redCompetitorId ? 'font-black underline' : ''}`}>
+                    <div className="font-semibold text-sm flex items-center justify-between gap-2">
+                      <span className={`text-rose-400 truncate max-w-[45%] ${match.winnerId === match.redCompetitorId ? 'font-black underline decoration-2' : ''}`}>
                         {getCompetitorFullName(match.redCompetitorId, competitors)}
                       </span>
-                      <span className="text-gray-400 text-xs uppercase tracking-widest px-2">vs</span>
-                      <span className={`text-blue-600 truncate max-w-[45%] text-right ${match.winnerId === match.blueCompetitorId ? 'font-black underline' : ''}`}>
+                      <span className="text-slate-600 text-[10px] uppercase font-bold tracking-widest shrink-0">vs</span>
+                      <span className={`text-blue-400 truncate max-w-[45%] text-right ${match.winnerId === match.blueCompetitorId ? 'font-black underline decoration-2' : ''}`}>
                         {getCompetitorFullName(match.blueCompetitorId, competitors)}
                       </span>
                     </div>
-                    <div className="mt-3">
-                      <span className={`text-xs font-bold px-2 py-1 rounded-md ${
-                        match.status === MatchStatus.COMPLETED ? 'bg-gray-200 text-gray-600' : 
-                        match.status === MatchStatus.ACTIVE ? 'bg-green-100 text-green-700' : 
-                        'bg-yellow-100 text-yellow-700'
+                    <div className="mt-3 flex justify-between items-center">
+                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-md tracking-wider uppercase ${
+                        match.status === MatchStatus.COMPLETED ? 'bg-slate-800 text-slate-400' : 
+                        match.status === MatchStatus.ACTIVE ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 
+                        match.status === MatchStatus.GOLDEN_POINT ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
+                        'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
                       }`}>
                         {match.status}
                       </span>
+                      {match.winnerId && (
+                        <span className="text-[10px] font-bold text-slate-500">
+                          Winner Declared
+                        </span>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -336,168 +284,247 @@ export default function JuryDashboard() {
         </aside>
 
         {/* Right Main Area: Timer & Controls */}
-        <section className="lg:col-span-2 order-1 lg:order-2">
+        <section className="lg:col-span-2 order-1 lg:order-2 flex flex-col">
           {!selectedMatch ? (
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-xl flex items-center justify-center h-full min-h-[400px]">
-              <p className="text-gray-400 text-xl font-bold">Select a match to control</p>
+            <div className="bg-slate-900/20 backdrop-blur-xl rounded-2xl border border-slate-800 shadow-2xl flex flex-col items-center justify-center p-12 min-h-[450px] flex-grow text-center">
+              <span className="text-6xl mb-4 animate-bounce">⚡</span>
+              <p className="text-slate-400 text-lg font-bold">Select a match from the queue to start control operations.</p>
+              <p className="text-slate-600 text-sm mt-1">Make sure you have selected a tournament and active category first.</p>
             </div>
           ) : (
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-xl overflow-hidden flex flex-col h-full">
+            <div className="bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-800/80 shadow-2xl overflow-hidden flex flex-col h-full flex-grow">
               
               {/* Match Header */}
-              <div className="bg-gray-900 p-8 text-center relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+              <div className="bg-slate-900/80 border-b border-slate-800 p-8 text-center relative overflow-hidden shrink-0">
+                <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
                 
-                {/* Status Badge */}
-                <div className="absolute top-4 left-4">
-                  <span className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest ${
-                    status === MatchStatus.ACTIVE ? 'bg-green-500 text-white shadow-[0_0_15px_rgba(34,197,94,0.5)] animate-pulse' :
-                    status === MatchStatus.PAUSED ? 'bg-yellow-500 text-white' :
-                    status === MatchStatus.ENDED || selectedMatch.status === MatchStatus.COMPLETED ? 'bg-gray-500 text-white' :
-                    'bg-blue-500 text-white'
-                  }`}>
-                    {selectedMatch.status === MatchStatus.COMPLETED ? 'COMPLETED' : status}
-                  </span>
-                </div>
-
-                <div className="relative z-10 flex justify-center items-center space-x-8 mt-4">
-                  <div className="text-right flex-1">
-                    <h3 className="text-4xl font-black text-red-500 tracking-tight">{getCompetitorFullName(selectedMatch.redCompetitorId, competitors)}</h3>
-                  </div>
-                  <div className="text-gray-500 font-black italic flex flex-col items-center mx-4">
-                    <span className="text-2xl">VS</span>
-                    <span className="text-xs font-normal mt-2 text-gray-400 bg-gray-800 px-3 py-1 rounded-full border border-gray-700 tracking-widest font-mono">
-                      ID: {selectedMatch.id}
+                {/* Header Status Bar */}
+                <div className="flex justify-between items-center mb-6">
+                  {/* Status Badge */}
+                  <div>
+                    <span className={`px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest border ${
+                      status === MatchStatus.ACTIVE ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.2)] animate-pulse' :
+                      status === MatchStatus.GOLDEN_POINT ? 'bg-amber-500/10 text-amber-400 border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.2)] animate-pulse' :
+                      status === MatchStatus.PAUSED ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/40' :
+                      status === MatchStatus.ENDED || selectedMatch.status === MatchStatus.COMPLETED ? 'bg-slate-800 text-slate-400 border-slate-700' :
+                      'bg-blue-500/10 text-blue-400 border-blue-500/40'
+                    }`}>
+                      {selectedMatch.status === MatchStatus.COMPLETED ? 'COMPLETED' : status}
                     </span>
                   </div>
-                  <div className="text-left flex-1">
-                    <h3 className="text-4xl font-black text-blue-500 tracking-tight">{getCompetitorFullName(selectedMatch.blueCompetitorId, competitors)}</h3>
+
+                  {/* TV Projector View link */}
+                  <button
+                    onClick={() => window.open(`/area/${selectedMatch.areaId}/tv`, '_blank')}
+                    className="flex items-center gap-2 bg-slate-850 hover:bg-slate-800 text-slate-350 hover:text-slate-100 border border-slate-800 hover:border-slate-700 rounded-lg px-3 py-1.5 text-xs font-bold uppercase transition-all shadow-md active:scale-95"
+                    title="Open Spectator screen for TV display/projectors"
+                  >
+                    <span>📺</span> Spectator View (TV)
+                  </button>
+                </div>
+
+                <div className="relative z-10 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mt-2">
+                  <div className="text-center md:text-right flex-1 min-w-0">
+                    <h3 className="text-2xl md:text-3xl font-black text-rose-500 tracking-tight truncate uppercase">
+                      {getCompetitorFullName(selectedMatch.redCompetitorId, competitors)}
+                    </h3>
+                    <span className="text-[10px] uppercase font-bold text-rose-700 tracking-widest block mt-0.5">RED CORNER</span>
+                  </div>
+                  <div className="text-slate-600 font-black italic flex flex-col items-center mx-2 shrink-0">
+                    <span className="text-lg bg-slate-850 border border-slate-800 text-slate-500 px-3 py-0.5 rounded-full not-italic tracking-wider text-xs uppercase">VS</span>
+                    <span className="text-[9px] font-mono mt-1 text-slate-500">
+                      ID: {selectedMatch.id.substring(0, 12)}
+                    </span>
+                  </div>
+                  <div className="text-center md:text-left flex-1 min-w-0">
+                    <h3 className="text-2xl md:text-3xl font-black text-blue-500 tracking-tight truncate uppercase">
+                      {getCompetitorFullName(selectedMatch.blueCompetitorId, competitors)}
+                    </h3>
+                    <span className="text-[10px] uppercase font-bold text-blue-700 tracking-widest block mt-0.5">BLUE CORNER</span>
                   </div>
                 </div>
 
-                {/* Timer Display */}
-                <div className="mt-12 mb-4">
-                  <div className={`font-mono text-8xl font-black tracking-tighter ${status === MatchStatus.ACTIVE ? 'text-white' : 'text-gray-400'}`}>
-                    {formatTime(timeRemaining)}
+                {/* Digital Timer Panel */}
+                <div className="mt-8 mb-2 flex justify-center">
+                  <div className="bg-slate-950/60 border border-slate-850 px-8 py-3 rounded-2xl shadow-inner inline-flex items-center">
+                    <div 
+                      className={`font-mono text-7xl md:text-8xl font-black tracking-tighter transition-all duration-300 ${
+                        status === MatchStatus.ACTIVE 
+                          ? 'text-emerald-400 drop-shadow-[0_0_20px_rgba(52,211,153,0.4)] animate-pulse' 
+                          : status === MatchStatus.GOLDEN_POINT
+                          ? 'text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.4)]'
+                          : 'text-slate-500'
+                      }`}
+                    >
+                      {formatTime(timeRemaining)}
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Live Scores & Judge Breakdown */}
               {status === MatchStatus.ENDED && Object.keys(judgesData).length > 0 ? (
-                <div className="bg-white border-y border-gray-200 p-6">
-                  <h4 className="text-center text-gray-500 font-bold uppercase tracking-widest mb-4">Final Votes & Judge Scores</h4>
-                  <div className={`grid grid-cols-1 sm:grid-cols-2 ${Object.keys(judgesData).length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-4'} gap-4 mb-6 max-w-4xl mx-auto`}>
+                <div className="bg-slate-950/60 border-y border-slate-800/80 p-6 flex-1 flex flex-col justify-center">
+                  <h4 className="text-center text-slate-400 font-bold uppercase tracking-widest text-xs mb-5">
+                    🏁 FINAL JUDGES CONSENSUS BREAKDOWN
+                  </h4>
+                  
+                  {/* Detailed Judge Scorecards */}
+                  <div className={`grid grid-cols-1 sm:grid-cols-2 ${Object.keys(judgesData).length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-4'} gap-4 mb-6 max-w-4xl mx-auto w-full`}>
                     {Object.entries(judgesData).map(([cornerId, data]: [string, any]) => {
-                      const r = data.redScore || 0;
-                      const b = data.blueScore || 0;
-                      const winnerClass = r > b ? 'border-red-500 bg-red-50' : b > r ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-gray-50';
+                      const r = (data.redScore || 0) - Math.floor((data.redWarnings || 0) / 3) - (data.redDeductions || 0);
+                      const b = (data.blueScore || 0) - Math.floor((data.blueWarnings || 0) / 3) - (data.blueDeductions || 0);
+                      const winnerClass = r > b 
+                        ? 'border-rose-900/60 bg-rose-950/20 shadow-[inset_0_0_15px_rgba(244,63,94,0.05)]' 
+                        : b > r 
+                        ? 'border-blue-900/60 bg-blue-950/20 shadow-[inset_0_0_15px_rgba(59,130,246,0.05)]' 
+                        : 'border-slate-850 bg-slate-900/20';
                       return (
-                        <div key={cornerId} className={`border-2 rounded-xl p-4 text-center ${winnerClass}`}>
-                          <div className="font-bold text-gray-700 mb-2 uppercase text-xs tracking-wider">{cornerId}</div>
+                        <div key={cornerId} className={`border rounded-xl p-4 text-center transition-all ${winnerClass}`}>
+                          <div className="font-bold text-slate-400 mb-2 uppercase text-[10px] tracking-widest">{cornerId}</div>
                           <div className="flex justify-between items-center px-2">
-                            <span className="text-2xl font-black text-red-600">{r}</span>
-                            <span className="text-gray-400">-</span>
-                            <span className="text-2xl font-black text-blue-600">{b}</span>
+                            <div className="flex flex-col items-center">
+                              <span className="text-2xl font-black text-rose-500">{r}</span>
+                              <span className="text-[8px] text-slate-500">({data.redScore || 0} / {data.redWarnings || 0}W / {data.redDeductions || 0}D)</span>
+                            </div>
+                            <span className="text-slate-700 font-bold px-2">vs</span>
+                            <div className="flex flex-col items-center">
+                              <span className="text-2xl font-black text-blue-500">{b}</span>
+                              <span className="text-[8px] text-slate-500">({data.blueScore || 0} / {data.blueWarnings || 0}W / {data.blueDeductions || 0}D)</span>
+                            </div>
                           </div>
                         </div>
                       );
                     })}
                   </div>
-                  <div className="flex justify-center items-center space-x-12 text-center bg-gray-50 py-4 rounded-xl border border-gray-200">
-                    <div>
-                      <div className="text-red-800 font-bold uppercase tracking-widest text-sm mb-1">Red Votes</div>
-                      <div className="text-4xl font-black text-red-600">{redVotes}</div>
+
+                  {/* Visual Vote Comparison Bars */}
+                  <div className="bg-slate-900/40 border border-slate-850 p-6 rounded-2xl max-w-2xl mx-auto w-full">
+                    <div className="flex justify-between items-center mb-3 text-xs font-bold uppercase tracking-wider">
+                      <span className="text-rose-500">Red Corner ({redVotes})</span>
+                      <span className="text-slate-500">Ties ({tieVotes})</span>
+                      <span className="text-blue-500">Blue Corner ({blueVotes})</span>
                     </div>
-                    <div>
-                      <div className="text-gray-500 font-bold uppercase tracking-widest text-sm mb-1">Ties</div>
-                      <div className="text-3xl font-bold text-gray-400">{tieVotes}</div>
-                    </div>
-                    <div>
-                      <div className="text-blue-800 font-bold uppercase tracking-widest text-sm mb-1">Blue Votes</div>
-                      <div className="text-4xl font-black text-blue-600">{blueVotes}</div>
+
+                    {/* Progress Bar Track */}
+                    <div className="h-4 bg-slate-950 rounded-full overflow-hidden flex border border-slate-800">
+                      {totalVotes === 0 ? (
+                        <div className="w-full bg-slate-850 text-[10px] text-slate-500 flex items-center justify-center uppercase font-bold tracking-widest">
+                          No votes recorded
+                        </div>
+                      ) : (
+                        <>
+                          <div 
+                            style={{ width: `${redPct}%` }} 
+                            className="bg-gradient-to-r from-rose-600 to-rose-500 transition-all duration-500 shadow-[0_0_10px_rgba(244,63,94,0.4)]"
+                            title={`Red Corner: ${redVotes} votes (${redPct.toFixed(1)}%)`}
+                          />
+                          <div 
+                            style={{ width: `${tiePct}%` }} 
+                            className="bg-slate-700 transition-all duration-500"
+                            title={`Ties: ${tieVotes} votes (${tiePct.toFixed(1)}%)`}
+                          />
+                          <div 
+                            style={{ width: `${bluePct}%` }} 
+                            className="bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500 shadow-[0_0_10px_rgba(59,130,246,0.4)]"
+                            title={`Blue Corner: ${blueVotes} votes (${bluePct.toFixed(1)}%)`}
+                          />
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-px bg-gray-200 border-y border-gray-200">
-                  <div className="bg-red-50 p-8 flex flex-col items-center justify-center">
-                    <span className="text-red-800 font-bold uppercase tracking-widest mb-2">Red Points</span>
-                    <span className="text-6xl font-black text-red-600">{totalRed}</span>
+                <div className="grid grid-cols-2 gap-px bg-slate-800 border-y border-slate-800 flex-grow shrink-0">
+                  <div className="bg-rose-950/5 p-8 flex flex-col items-center justify-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-rose-500/2 blur-[80px] pointer-events-none" />
+                    <span className="text-rose-500/80 font-black uppercase tracking-widest text-xs mb-2">Red Points Accumulation</span>
+                    <span className="text-6xl md:text-7xl font-black text-rose-500 tracking-tight drop-shadow-[0_0_15px_rgba(244,63,94,0.15)]">{totalRed}</span>
                   </div>
-                  <div className="bg-blue-50 p-8 flex flex-col items-center justify-center">
-                    <span className="text-blue-800 font-bold uppercase tracking-widest mb-2">Blue Points</span>
-                    <span className="text-6xl font-black text-blue-600">{totalBlue}</span>
+                  <div className="bg-blue-950/5 p-8 flex flex-col items-center justify-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-500/2 blur-[80px] pointer-events-none" />
+                    <span className="text-blue-500/80 font-black uppercase tracking-widest text-xs mb-2">Blue Points Accumulation</span>
+                    <span className="text-6xl md:text-7xl font-black text-blue-500 tracking-tight drop-shadow-[0_0_15px_rgba(59,130,246,0.15)]">{totalBlue}</span>
                   </div>
                 </div>
               )}
 
               {/* Match Complete / Tie Breaker Controls */}
               {status === MatchStatus.ENDED && selectedMatch.status !== MatchStatus.COMPLETED && (
-                <div className="p-6 bg-yellow-50 border-b border-yellow-200 flex flex-col items-center">
-                  <h4 className="text-lg font-black text-yellow-800 mb-4 uppercase tracking-widest">Match Ended - Declare Winner</h4>
-                  <div className="flex space-x-4 w-full max-w-2xl">
+                <div className="p-6 bg-slate-900 border-t border-slate-800 shrink-0 flex flex-col items-center">
+                  <h4 className="text-xs font-black text-amber-500/90 mb-4 uppercase tracking-widest flex items-center gap-1.5">
+                    <span>⚡</span> DECIDE TO DECLARE WINNER OR START EXTRA TIME
+                  </h4>
+                  <div className="flex flex-col sm:flex-row gap-4 w-full max-w-3xl">
                     <button 
                       onClick={() => handleDeclareWinner(selectedMatch.redCompetitorId)}
-                      className={`flex-1 py-3 rounded-lg font-bold text-white transition-all shadow-md ${redVotes > blueVotes ? 'bg-red-600 hover:bg-red-500 scale-105 ring-4 ring-red-300' : 'bg-red-400 hover:bg-red-500'}`}
+                      className={`flex-1 py-3.5 rounded-xl font-bold text-white transition-all shadow-md active:scale-95 cursor-pointer text-sm ${redVotes > blueVotes ? 'bg-rose-600 hover:bg-rose-500 hover:shadow-[0_0_20px_rgba(225,29,72,0.4)] scale-[1.02] border-2 border-rose-400' : 'bg-rose-850 hover:bg-rose-750 text-rose-300 border border-rose-800/40'}`}
                       disabled={!selectedMatch.redCompetitorId || selectedMatch.redCompetitorId === 'BYE'}
                     >
-                      Red Wins
+                      Red Corner Wins
                     </button>
-                    <button 
-                      onClick={handleExtraTime}
-                      className={`flex-1 py-3 rounded-lg font-bold transition-all shadow-md ${redVotes === blueVotes ? 'bg-yellow-500 hover:bg-yellow-400 text-white scale-105 ring-4 ring-yellow-300' : 'bg-yellow-400 hover:bg-yellow-500 text-white'}`}
-                    >
-                      Extra Time (1m)
-                    </button>
+                    <div className="flex flex-row sm:flex-col gap-2 flex-1 justify-center">
+                      <button 
+                        onClick={handleExtraTime}
+                        className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all shadow bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:border-amber-500/60 active:scale-95 cursor-pointer`}
+                      >
+                        ⏱️ Extra Time (1m)
+                      </button>
+                      <button 
+                        onClick={handleGoldenPoint}
+                        className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all shadow bg-yellow-500/15 hover:bg-yellow-500/25 text-yellow-300 border border-yellow-500/40 hover:border-yellow-500/70 active:scale-95 cursor-pointer`}
+                      >
+                        ⚡ Golden Point
+                      </button>
+                    </div>
                     <button 
                       onClick={() => handleDeclareWinner(selectedMatch.blueCompetitorId)}
-                      className={`flex-1 py-3 rounded-lg font-bold text-white transition-all shadow-md ${blueVotes > redVotes ? 'bg-blue-600 hover:bg-blue-500 scale-105 ring-4 ring-blue-300' : 'bg-blue-400 hover:bg-blue-500'}`}
+                      className={`flex-1 py-3.5 rounded-xl font-bold text-white transition-all shadow-md active:scale-95 cursor-pointer text-sm ${blueVotes > redVotes ? 'bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] scale-[1.02] border-2 border-blue-400' : 'bg-blue-850 hover:bg-blue-750 text-blue-300 border border-blue-800/40'}`}
                       disabled={!selectedMatch.blueCompetitorId || selectedMatch.blueCompetitorId === 'BYE'}
                     >
-                      Blue Wins
+                      Blue Corner Wins
                     </button>
                   </div>
                 </div>
               )}
 
               {/* Action Buttons */}
-              <div className="p-8 bg-gray-50 flex justify-center space-x-6 mt-auto">
+              <div className="p-8 bg-slate-900/60 border-t border-slate-800 flex flex-wrap justify-center gap-4 mt-auto shrink-0">
                 <button 
-                  className={`px-8 py-4 rounded-xl font-black text-xl tracking-wide uppercase transition-all shadow-lg flex-1 max-w-xs ${
+                  className={`px-8 py-4 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
                     status === MatchStatus.ACTIVE || status === MatchStatus.ENDED || selectedMatch.status === MatchStatus.COMPLETED || !isMatchStartable
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none' 
-                      : 'bg-green-500 hover:bg-green-400 text-white hover:-translate-y-1 hover:shadow-green-500/30'
+                      ? 'bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850' 
+                      : 'bg-emerald-600 hover:bg-emerald-500 text-white hover:-translate-y-0.5 hover:shadow-emerald-500/20 active:scale-95 border border-emerald-500/30'
                   }`}
                   onClick={handleStart}
                   disabled={status === MatchStatus.ACTIVE || status === MatchStatus.ENDED || selectedMatch.status === MatchStatus.COMPLETED || !isMatchStartable}
                   title={!isMatchStartable ? 'Cannot start a match with TBD or BYE' : ''}
                 >
-                  {status === MatchStatus.PAUSED ? 'Resume' : 'Start'}
+                  {status === MatchStatus.PAUSED ? '▶️ Resume' : '🏁 Start Combat'}
                 </button>
                 
                 <button 
-                  className={`px-8 py-4 rounded-xl font-black text-xl tracking-wide uppercase transition-all shadow-lg flex-1 max-w-xs ${
+                  className={`px-8 py-4 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
                     status !== MatchStatus.ACTIVE || selectedMatch.status === MatchStatus.COMPLETED || !isMatchStartable
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none' 
-                      : 'bg-yellow-500 hover:bg-yellow-400 text-white hover:-translate-y-1 hover:shadow-yellow-500/30'
+                      ? 'bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850' 
+                      : 'bg-yellow-600 hover:bg-yellow-500 text-white hover:-translate-y-0.5 hover:shadow-yellow-500/20 active:scale-95 border border-yellow-500/30'
                   }`}
                   onClick={handlePause}
                   disabled={status !== MatchStatus.ACTIVE || selectedMatch.status === MatchStatus.COMPLETED || !isMatchStartable}
                 >
-                  Pause
+                  ⏸️ Pause
                 </button>
 
                 <button 
-                  className={`px-8 py-4 rounded-xl font-black text-xl tracking-wide uppercase transition-all shadow-lg flex-1 max-w-xs ${
+                  className={`px-8 py-4 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
                     status === MatchStatus.ENDED || selectedMatch.status === MatchStatus.COMPLETED || !isMatchStartable
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none' 
-                      : 'bg-gray-900 hover:bg-gray-800 text-white hover:-translate-y-1 hover:shadow-gray-900/30'
+                      ? 'bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850' 
+                      : 'bg-slate-800 hover:bg-slate-700 text-slate-100 hover:-translate-y-0.5 hover:shadow-slate-800/20 active:scale-95 border border-slate-750'
                   }`}
                   onClick={handleEnd}
                   disabled={status === MatchStatus.ENDED || selectedMatch.status === MatchStatus.COMPLETED || !isMatchStartable}
                 >
-                  End Match
+                  🛑 Stop Match
                 </button>
               </div>
             </div>

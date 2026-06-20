@@ -20,6 +20,7 @@ export enum MatchStatus {
   PAUSED = 'PAUSED',
   ENDED = 'ENDED',
   COMPLETED = 'COMPLETED',
+  GOLDEN_POINT = 'GOLDEN_POINT',
 }
 
 export enum CornerRole {

@@ -10,6 +10,10 @@ export default defineConfig({
   integrations: [react()],
 
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    build: {
+      target: ['es2015', 'chrome58', 'safari11'],
+      cssTarget: ['chrome58']
+    }
   }
 });

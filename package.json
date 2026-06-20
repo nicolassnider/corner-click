@@ -17,12 +17,12 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,json,astro}\"",
     "lint": "turbo run lint",
     "lint:deps": "syncpack lint && syncpack format --check",
-    "sync-deps": "syncpack fix && syncpack format",
     "start:api": "node apps/api/dist/index.js",
+    "sync-deps": "syncpack fix && syncpack format",
     "test": "vitest run",
-    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage"
+    "test:watch": "vitest"
   },
   "workspaces": [
     "apps/*",

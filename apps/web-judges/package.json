@@ -5,6 +5,7 @@
     "@astrojs/react": "^5.0.7",
     "@corner-click/tsconfig": "0.0.1",
     "@corner-click/types": "0.0.1",
+    "@corner-click/api-client": "0.0.1",
     "@tailwindcss/vite": "^4.3.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
@@ -13,6 +14,12 @@
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "tailwindcss": "^4.3.1"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "jsdom": "^29.1.1"
   },
   "engines": {
     "node": ">=22.12.0"
@@ -23,14 +30,8 @@
     "dev": "astro dev --port 4321 --host",
     "preview": "astro preview",
     "test": "vitest",
-    "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:run": "vitest run"
   },
-  "type": "module",
-  "devDependencies": {
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^14.6.1",
-    "jsdom": "^29.1.1"
-  }
+  "type": "module"
 }

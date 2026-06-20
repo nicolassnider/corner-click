@@ -1,5 +1,6 @@
 import { ref, get, set, remove, push, update } from 'firebase/database';
-import { auth, database } from '../lib/firebase';
+import { database } from '../lib/firebase';
+import { fetchWithAuth } from '../utils/apiClient';
 import type { Match, Competitor } from '@corner-click/types';
 import { MatchStatus } from '@corner-click/types';
 
@@ -168,7 +169,7 @@ export const generateBracket = async (tournamentId: string, categoryId: string, 
         areaId,
         status,
         round,
-        nextMatchId: nextMatchIds[Math.floor(i / 2)] || null,
+        nextMatchId: nextMatchIds[Math.floor(i / 2)] || undefined,
         redCompetitorId: redId,
         blueCompetitorId: blueId,
         winnerId,
@@ -216,16 +217,8 @@ export const getMatches = async (tournamentId: string, categoryId?: string): Pro
 };
 
 export const advanceWinner = async (tournamentId: string, matchId: string, winnerId: string, nextMatchId?: string): Promise<void> => {
-  const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
-
-  const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
-
-  const res = await fetch(`${API_URL}/api/matches/${matchId}/winner`, {
+  const res = await fetchWithAuth(`/api/matches/${matchId}/winner`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
-    },
     body: JSON.stringify({ winnerId, tournamentId, nextMatchId })
   });
 

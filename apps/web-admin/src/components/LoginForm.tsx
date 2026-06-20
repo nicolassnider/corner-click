@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../lib/firebase';
-
-const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
+import { fetchWithAuth } from '../utils/apiClient';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
@@ -25,9 +24,8 @@ export default function LoginForm() {
 
     try {
       // Call our API — credentials never go directly to Firebase from the browser
-      const res = await fetch(`${API_URL}/api/auth/admin/login`, {
+      const res = await fetchWithAuth(`/api/auth/admin/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
 

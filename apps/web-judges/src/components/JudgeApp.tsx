@@ -3,6 +3,7 @@ import { onAuthStateChanged, signInWithCustomToken } from 'firebase/auth';
 import type { User } from 'firebase/auth';
 import { doc as firestoreDoc, onSnapshot as firestoreOnSnapshot } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
+import { fetchWithAuth } from '../utils/apiClient';
 import ScorePad from './ScorePad';
 import { APP_MOTTO, AUTHOR_NAME, AUTHOR_GITHUB, AUTHOR_LINKEDIN } from '@corner-click/types';
 import '../styles/global.css';
@@ -87,9 +88,8 @@ export default function JudgeApp() {
     setError('');
     
     try {
-      const response = await fetch(`${import.meta.env.PUBLIC_API_URL}/api/auth/pin`, {
+      const response = await fetchWithAuth(`/api/auth/pin`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pin })
       });
 
@@ -123,11 +123,17 @@ export default function JudgeApp() {
           <p className="text-gray-400 text-center font-medium">Ingresa tu PIN Personal</p>
           
           <input 
-            type="number" 
+            type="text" 
+            inputMode="numeric"
+            pattern="[0-9]{4,6}"
             value={pin}
-            onChange={(e) => setPin(e.target.value)}
-            placeholder="****"
-            maxLength={6}
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, '');
+              if (val.length <= 6) {
+                setPin(val);
+              }
+            }}
+            placeholder="••••"
             required
             autoFocus
             className="p-4 text-3xl text-center rounded-xl border border-gray-700 bg-gray-950 text-white focus:outline-none focus:ring-4 focus:ring-blue-500 transition-all font-bold tracking-widest"
@@ -135,7 +141,11 @@ export default function JudgeApp() {
           
           {error && <div className="text-red-500 text-center font-bold bg-red-500/10 py-2 rounded-lg">{error}</div>}
           
-          <button type="submit" className="mt-4 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xl py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-95">
+          <button 
+            type="submit" 
+            disabled={pin.length < 4}
+            className="mt-4 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-extrabold text-xl py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-95"
+          >
             INGRESAR
           </button>
         </form>
@@ -157,13 +167,8 @@ export default function JudgeApp() {
   const handleLogout = async () => {
     if (user) {
       try {
-        const token = await user.getIdToken();
-        await fetch(`${import.meta.env.PUBLIC_API_URL}/api/auth/logout`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+        await fetchWithAuth(`/api/auth/logout`, {
+          method: 'POST'
         });
       } catch (err) {
         console.error('Failed to logout via API', err);

@@ -33,6 +33,9 @@ export default function ScorePad({ matchId, cornerId, onLogout }: ScorePadProps)
     return () => unsubscribe();
   }, [matchId]);
 
+  const displayRedScore = redScore - Math.floor(redWarnings / 3) - redDeductions;
+  const displayBlueScore = blueScore - Math.floor(blueWarnings / 3) - blueDeductions;
+
   useEffect(() => {
     if (matchStatus === MatchStatus.ENDED) {
       submitScores(matchId, {
@@ -45,51 +48,48 @@ export default function ScorePad({ matchId, cornerId, onLogout }: ScorePadProps)
         blueDeductions
       }).catch(err => console.error("Failed to submit scores:", err));
     }
-  }, [matchStatus]); // Only trigger when matchStatus changes, the state variables will be captured from the closure (they are updated synchronously)
+  }, [matchStatus]);
 
-
+  // Sync scores in real-time to Firebase RTDB for Jury and Spectator view
   useEffect(() => {
-    if (redWarnings >= 3) {
-      setRedDeductions(prev => prev + 1);
-      setRedWarnings(0);
-      setRedScore(prev => prev - 1);
+    if (matchStatus === MatchStatus.ACTIVE || matchStatus === MatchStatus.GOLDEN_POINT) {
+      const scoreRef = ref(database, `live_matches/${matchId}/scores/${cornerId}`);
+      set(scoreRef, {
+        redScore,
+        blueScore,
+        redWarnings,
+        blueWarnings,
+        redDeductions,
+        blueDeductions
+      }).catch(err => console.error("Failed to sync live scores:", err));
     }
-  }, [redWarnings]);
-
-  useEffect(() => {
-    if (blueWarnings >= 3) {
-      setBlueDeductions(prev => prev + 1);
-      setBlueWarnings(0);
-      setBlueScore(prev => prev - 1);
-    }
-  }, [blueWarnings]);
+  }, [redScore, blueScore, redWarnings, blueWarnings, redDeductions, blueDeductions, matchStatus]);
 
   const handleScore = (e: React.MouseEvent<HTMLButtonElement>, color: CornerRole, points: number) => {
     e.currentTarget.blur();
-    if (matchStatus !== MatchStatus.ACTIVE) return;
+    if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) return;
     if (color === CornerRole.RED) setRedScore(prev => prev + points);
     if (color === CornerRole.BLUE) setBlueScore(prev => prev + points);
   };
 
   const handleWarning = (e: React.MouseEvent<HTMLButtonElement>, color: CornerRole) => {
     e.currentTarget.blur();
-    if (matchStatus !== MatchStatus.ACTIVE) return;
+    if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) return;
     if (color === CornerRole.RED) setRedWarnings(prev => prev + 1);
     if (color === CornerRole.BLUE) setBlueWarnings(prev => prev + 1);
   };
 
   const handleDeduction = (e: React.MouseEvent<HTMLButtonElement>, color: CornerRole) => {
     e.currentTarget.blur();
-    if (matchStatus !== MatchStatus.ACTIVE) return;
+    if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) return;
     if (color === CornerRole.RED) {
       setRedDeductions(prev => prev + 1);
-      setRedScore(prev => prev - 1);
     }
     if (color === CornerRole.BLUE) {
       setBlueDeductions(prev => prev + 1);
-      setBlueScore(prev => prev - 1);
     }
   };
+
 
   return (
     <div className="flex flex-col h-[100dvh] w-screen bg-gray-950 overflow-hidden text-white font-sans touch-manipulation select-none relative">
@@ -113,7 +113,7 @@ export default function ScorePad({ matchId, cornerId, onLogout }: ScorePadProps)
           {/* Red Score */}
           <div className="flex flex-col items-center w-1/3">
             <span className="text-rose-500 font-extrabold tracking-widest text-[10px] mb-1">ROJO</span>
-            <span className="text-5xl font-black tabular-nums text-rose-500 drop-shadow-md">{redScore}</span>
+            <span className="text-5xl font-black tabular-nums text-rose-500 drop-shadow-md">{displayRedScore}</span>
             <div className="flex gap-1 text-[9px] uppercase text-rose-300 font-bold mt-1 bg-rose-950/50 px-2 py-0.5 rounded-full">
               <span>W:{redWarnings}</span>
               <span>D:{redDeductions}</span>
@@ -125,7 +125,7 @@ export default function ScorePad({ matchId, cornerId, onLogout }: ScorePadProps)
           {/* Blue Score */}
           <div className="flex flex-col items-center w-1/3">
             <span className="text-indigo-400 font-extrabold tracking-widest text-[10px] mb-1">AZUL</span>
-            <span className="text-5xl font-black tabular-nums text-indigo-400 drop-shadow-md">{blueScore}</span>
+            <span className="text-5xl font-black tabular-nums text-indigo-400 drop-shadow-md">{displayBlueScore}</span>
             <div className="flex gap-1 text-[9px] uppercase text-indigo-300 font-bold mt-1 bg-indigo-950/50 px-2 py-0.5 rounded-full">
               <span>W:{blueWarnings}</span>
               <span>D:{blueDeductions}</span>
@@ -138,7 +138,7 @@ export default function ScorePad({ matchId, cornerId, onLogout }: ScorePadProps)
       <div className="flex-1 flex w-full relative z-10">
         
         {/* Overlay when scoring is disabled */}
-        {matchStatus !== MatchStatus.ACTIVE && (
+        {matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT && (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-sm">
             <div className="bg-yellow-500 text-black px-6 py-4 rounded-2xl shadow-2xl flex flex-col items-center border-4 border-yellow-400 animate-pulse">
               <svg className="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
