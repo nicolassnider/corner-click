@@ -3,6 +3,7 @@ import { ref, get, set, onValue } from 'firebase/database';
 import { database } from '../lib/firebase';
 import { fetchWithAuth } from '../utils/apiClient';
 import { getMatches, advanceWinner } from '../services/bracketService';
+import { connectSocket, disconnectSocket, getSocket } from '../lib/socketClient';
 import type { Match, Competitor } from '@corner-click/types';
 import { MatchStatus } from '@corner-click/types';
 
@@ -26,6 +27,18 @@ export const useActiveMatch = (
   const [timeRemaining, setTimeRemaining] = useState(120); // 2 minutes in seconds
   const [judgesData, setJudgesData] = useState<Record<string, ScoreData>>({});
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const [firebaseConnected, setFirebaseConnected] = useState(true);
+  const useLocal = !firebaseConnected;
+
+  // Track Firebase connection state
+  useEffect(() => {
+    const connectedRef = ref(database, '.info/connected');
+    const unsubscribe = onValue(connectedRef, (snap) => {
+      setFirebaseConnected(snap.val() === true);
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Consolidate Judge votes (calculated on every render from state)
   let redVotes = 0;
@@ -58,6 +71,26 @@ export const useActiveMatch = (
 
   const updateMatchStatus = async (newStatus: MatchStatus) => {
     if (!selectedMatch) return;
+
+    if (useLocal) {
+      setStatus(newStatus);
+      const socket = getSocket();
+      socket.emit('match_control', {
+        areaId: selectedMatch.areaId,
+        matchId: selectedMatch.id,
+        action: newStatus === MatchStatus.ACTIVE 
+          ? 'start' 
+          : newStatus === MatchStatus.PAUSED 
+            ? 'pause' 
+            : newStatus === MatchStatus.GOLDEN_POINT 
+              ? 'golden_point' 
+              : 'end',
+        matchData: { status: newStatus }
+      });
+      showToast?.(`[LOCAL] Estado del combate: ${newStatus}`, 'info');
+      return;
+    }
+
     try {
       await fetchWithAuth(`/api/matches/${selectedMatch.id}/status`, {
         method: 'POST',
@@ -86,6 +119,32 @@ export const useActiveMatch = (
 
   const handleDeclareWinner = async (winnerId: string) => {
     if (!selectedMatch) return;
+
+    if (useLocal) {
+      // Buffer the result to localStorage for later synchronization
+      const buffer = JSON.parse(localStorage.getItem('offline_matches_buffer') || '[]');
+      buffer.push({
+        matchId: selectedMatch.id,
+        winnerId,
+        nextMatchId: selectedMatch.nextMatchId,
+        tournamentId: selectedTournamentId,
+        categoryId: selectedCategoryId,
+        scores: judgesData
+      });
+      localStorage.setItem('offline_matches_buffer', JSON.stringify(buffer));
+      showToast?.('Combate guardado en el buffer local (Sin conexión).', 'warning');
+
+      setStatus(MatchStatus.ENDED);
+      const socket = getSocket();
+      socket.emit('match_control', {
+        areaId: selectedMatch.areaId,
+        matchId: selectedMatch.id,
+        action: 'end',
+        matchData: { winnerId, status: MatchStatus.COMPLETED }
+      });
+      return;
+    }
+
     try {
       await advanceWinner(selectedTournamentId, selectedMatch.id, winnerId, selectedMatch.nextMatchId || undefined);
       const updatedMatches = await getMatches(selectedTournamentId, selectedCategoryId);
@@ -103,9 +162,39 @@ export const useActiveMatch = (
     }
   };
 
-  // Load state from Firebase when switching matches
+  // Connect/Sync with Local Socket fallback
   useEffect(() => {
-    if (!selectedMatch) return;
+    if (!useLocal || !selectedMatch) return;
+
+    const socket = connectSocket(selectedMatch.areaId, 'admin');
+
+    // Announce active match to socket server
+    socket.emit('match_control', {
+      areaId: selectedMatch.areaId,
+      matchId: selectedMatch.id,
+      action: 'set_match',
+      matchData: selectedMatch,
+      timerValue: timeRemaining
+    });
+
+    socket.on('match_state', (state: any) => {
+      if (state && state.match && state.match.id === selectedMatch.id) {
+        setStatus(state.match.status);
+        setTimeRemaining(state.timer);
+        if (state.scores) {
+          setJudgesData(state.scores);
+        }
+      }
+    });
+
+    return () => {
+      disconnectSocket();
+    };
+  }, [useLocal, selectedMatch?.id]);
+
+  // Load state from Firebase when switching matches (Online only)
+  useEffect(() => {
+    if (!selectedMatch || useLocal) return;
     setIsLoaded(false);
     const fetchState = async () => {
       const matchRef = ref(database, `live_matches/${selectedMatch.id}`);
@@ -122,21 +211,21 @@ export const useActiveMatch = (
     };
     fetchState();
     setJudgesData({});
-  }, [selectedMatch?.id]);
+  }, [selectedMatch?.id, useLocal]);
 
-  // Sync Timer to Firebase
+  // Sync Timer to Firebase (Online only)
   useEffect(() => {
-    if (!isLoaded || !selectedMatch) return;
+    if (!isLoaded || !selectedMatch || useLocal) return;
     const matchRef = ref(database, `live_matches/${selectedMatch.id}`);
     set(matchRef, {
       timeRemaining,
       status 
     });
-  }, [timeRemaining, status, selectedMatch?.id, isLoaded]);
+  }, [timeRemaining, status, selectedMatch?.id, isLoaded, useLocal]);
 
-  // Sync Active Match ID for this Area to RTDB for Public TV View
+  // Sync Active Match ID for Area (Online only)
   useEffect(() => {
-    if (!selectedMatch) return;
+    if (!selectedMatch || useLocal) return;
     const areaMatchRef = ref(database, `live_matches_by_area/${selectedMatch.areaId}`);
     set(areaMatchRef, {
       matchId: selectedMatch.id,
@@ -146,11 +235,11 @@ export const useActiveMatch = (
       blueCompetitorId: selectedMatch.blueCompetitorId,
       round: selectedMatch.round || 1
     });
-  }, [selectedMatch?.id]);
+  }, [selectedMatch?.id, useLocal]);
 
-  // Listen to live scores in RTDB (real-time during match and at the end)
+  // Listen to live scores in Firebase (Online only)
   useEffect(() => {
-    if (!selectedMatch) return;
+    if (!selectedMatch || useLocal) return;
     const scoresRef = ref(database, `live_matches/${selectedMatch.id}/scores`);
     const unsubscribe = onValue(scoresRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -160,7 +249,56 @@ export const useActiveMatch = (
       }
     });
     return () => unsubscribe();
-  }, [selectedMatch?.id]);
+  }, [selectedMatch?.id, useLocal]);
+
+  // Offline deferred sync to cloud when connection is restored
+  useEffect(() => {
+    if (firebaseConnected && isLoaded) {
+      const bufferRaw = localStorage.getItem('offline_matches_buffer');
+      if (bufferRaw) {
+        const buffer = JSON.parse(bufferRaw);
+        if (buffer.length > 0) {
+          showToast?.(`¡Conexión recuperada! Sincronizando ${buffer.length} combates...`, 'info');
+          
+          const syncBuffer = async () => {
+            for (const item of buffer) {
+              try {
+                // Post all individual corner scores
+                for (const [cornerId, score] of Object.entries(item.scores)) {
+                  await fetchWithAuth(`/api/matches/${item.matchId}/scores`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                      cornerId,
+                      ...score
+                    })
+                  });
+                }
+                
+                // Declare winner & advance bracket
+                await advanceWinner(item.tournamentId, item.matchId, item.winnerId, item.nextMatchId || undefined);
+              } catch (e) {
+                console.error("Failed to sync offline match:", e);
+              }
+            }
+            
+            localStorage.removeItem('offline_matches_buffer');
+            showToast?.('¡Sincronización de nube completada!', 'success');
+            
+            // Refresh parent matches
+            getMatches(selectedTournamentId, selectedCategoryId).then(updatedMatches => {
+              if (selectedMatch) {
+                const updatedSelectedMatch = updatedMatches.find(m => m.id === selectedMatch.id);
+                if (updatedSelectedMatch) {
+                  onMatchesRefreshed(updatedMatches, updatedSelectedMatch);
+                }
+              }
+            });
+          };
+          syncBuffer();
+        }
+      }
+    }
+  }, [firebaseConnected, isLoaded, selectedTournamentId, selectedCategoryId]);
 
   // Auto-declare winner during Golden Point when consensus is reached
   useEffect(() => {
@@ -181,13 +319,25 @@ export const useActiveMatch = (
     let interval: any = null;
     if (status === MatchStatus.ACTIVE && timeRemaining > 0) {
       interval = setInterval(() => {
-        setTimeRemaining((prev) => prev - 1);
+        setTimeRemaining((prev) => {
+          const next = prev - 1;
+          if (useLocal && selectedMatch) {
+            const socket = getSocket();
+            socket.emit('match_control', {
+              areaId: selectedMatch.areaId,
+              matchId: selectedMatch.id,
+              action: 'timer_tick',
+              timerValue: next
+            });
+          }
+          return next;
+        });
       }, 1000);
     } else if (timeRemaining === 0 && status === MatchStatus.ACTIVE) {
       updateMatchStatus(MatchStatus.ENDED);
     }
     return () => clearInterval(interval);
-  }, [status, timeRemaining]);
+  }, [status, timeRemaining, useLocal, selectedMatch?.id]);
 
   return {
     status,
@@ -195,7 +345,7 @@ export const useActiveMatch = (
     timeRemaining,
     setTimeRemaining,
     judgesData,
-    isLoaded,
+    isLoaded: isLoaded || useLocal,
     formatTime,
     handleStart,
     handlePause,
@@ -208,6 +358,8 @@ export const useActiveMatch = (
     tieVotes,
     totalRed,
     totalBlue,
-    isMatchStartable
+    isMatchStartable,
+    firebaseConnected
   };
 };
+

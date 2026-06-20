@@ -3,16 +3,28 @@ import { ref, onValue, set } from 'firebase/database';
 import { database } from '../lib/firebase';
 import { MatchStatus, CornerRole, calculateNetScore } from '@corner-click/types';
 import { submitScores } from '../services/scoreService';
+import { connectSocket, disconnectSocket, getSocket } from '../lib/socketClient';
 import '../styles/global.css';
 
 interface ScorePadProps {
   matchId: string;
   cornerId: string;
+  areaId?: string;
+  judgeId?: string;
+  judgeName?: string;
   onLogout?: () => void;
   isOffline?: boolean;
 }
 
-export default function ScorePad({ matchId, cornerId, onLogout, isOffline = false }: ScorePadProps) {
+export default function ScorePad({
+  matchId,
+  cornerId,
+  areaId = '1',
+  judgeId = 'offline-judge-id',
+  judgeName = 'Juez Offline',
+  onLogout,
+  isOffline = false,
+}: ScorePadProps) {
   const [redScore, setRedScore] = useState(0);
   const [blueScore, setBlueScore] = useState(0);
   
@@ -35,8 +47,48 @@ export default function ScorePad({ matchId, cornerId, onLogout, isOffline = fals
     }
   }, []);
 
+  const [firebaseConnected, setFirebaseConnected] = useState(true);
+  const useLocal = isOffline || !firebaseConnected;
+
+  // Track Firebase connection state
   useEffect(() => {
-    if (isOffline) return;
+    if (isOffline) {
+      setFirebaseConnected(false);
+      return;
+    }
+    const connectedRef = ref(database, '.info/connected');
+    const unsubscribe = onValue(connectedRef, (snap) => {
+      setFirebaseConnected(snap.val() === true);
+    });
+    return () => unsubscribe();
+  }, [isOffline]);
+
+  // Connect to local WebSocket fallback if offline
+  useEffect(() => {
+    if (!useLocal) return;
+
+    const socket = connectSocket(
+      areaId,
+      'judge',
+      judgeId,
+      judgeName,
+      cornerId
+    );
+
+    socket.on('match_state', (state: any) => {
+      if (state && state.match && state.match.id === matchId) {
+        setMatchStatus(state.match.status);
+      }
+    });
+
+    return () => {
+      disconnectSocket();
+    };
+  }, [useLocal, matchId, areaId, judgeId, judgeName, cornerId]);
+
+  // Live match status sync (Firebase)
+  useEffect(() => {
+    if (useLocal) return;
     const statusRef = ref(database, `live_matches/${matchId}/status`);
     const unsubscribe = onValue(statusRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -44,13 +96,13 @@ export default function ScorePad({ matchId, cornerId, onLogout, isOffline = fals
       }
     });
     return () => unsubscribe();
-  }, [matchId, isOffline]);
+  }, [matchId, useLocal]);
 
   const displayRedScore = calculateNetScore(redScore, redWarnings, redDeductions);
   const displayBlueScore = calculateNetScore(blueScore, blueWarnings, blueDeductions);
 
   useEffect(() => {
-    if (isOffline) return;
+    // Send final scores when match ends (dynamic apiClient targets the active API)
     if (matchStatus === MatchStatus.ENDED) {
       submitScores(matchId, {
         cornerId,
@@ -62,11 +114,11 @@ export default function ScorePad({ matchId, cornerId, onLogout, isOffline = fals
         blueDeductions
       }).catch(err => console.error("Failed to submit scores:", err));
     }
-  }, [matchStatus, isOffline]);
+  }, [matchStatus, matchId, cornerId, redScore, blueScore, redWarnings, blueWarnings, redDeductions, blueDeductions]);
 
-  // Sync scores in real-time to Firebase RTDB for Jury and Spectator view
+  // Sync scores in real-time to Firebase RTDB for Jury and Spectator view (only when online)
   useEffect(() => {
-    if (isOffline) return;
+    if (useLocal) return;
     if (matchStatus === MatchStatus.ACTIVE || matchStatus === MatchStatus.GOLDEN_POINT) {
       const scoreRef = ref(database, `live_matches/${matchId}/scores/${cornerId}`);
       set(scoreRef, {
@@ -78,27 +130,62 @@ export default function ScorePad({ matchId, cornerId, onLogout, isOffline = fals
         blueDeductions
       }).catch(err => console.error("Failed to sync live scores:", err));
     }
-  }, [redScore, blueScore, redWarnings, blueWarnings, redDeductions, blueDeductions, matchStatus, isOffline]);
+  }, [redScore, blueScore, redWarnings, blueWarnings, redDeductions, blueDeductions, matchStatus, useLocal, matchId, cornerId]);
 
   const handleScore = (color: CornerRole, points: number) => {
     if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) return;
+    
     if (color === CornerRole.RED) setRedScore(prev => prev + points);
     if (color === CornerRole.BLUE) setBlueScore(prev => prev + points);
+
+    if (useLocal) {
+      const socket = getSocket();
+      socket.emit('judge_score_update', {
+        areaId,
+        matchId,
+        judgeId,
+        corner: color === CornerRole.RED ? 'red' : 'blue',
+        type: 'point',
+        value: points
+      });
+    }
   };
 
   const handleWarning = (color: CornerRole) => {
     if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) return;
+    
     if (color === CornerRole.RED) setRedWarnings(prev => prev + 1);
     if (color === CornerRole.BLUE) setBlueWarnings(prev => prev + 1);
+
+    if (useLocal) {
+      const socket = getSocket();
+      socket.emit('judge_score_update', {
+        areaId,
+        matchId,
+        judgeId,
+        corner: color === CornerRole.RED ? 'red' : 'blue',
+        type: 'warning',
+        value: 1
+      });
+    }
   };
 
   const handleDeduction = (color: CornerRole) => {
     if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) return;
-    if (color === CornerRole.RED) {
-      setRedDeductions(prev => prev + 1);
-    }
-    if (color === CornerRole.BLUE) {
-      setBlueDeductions(prev => prev + 1);
+    
+    if (color === CornerRole.RED) setRedDeductions(prev => prev + 1);
+    if (color === CornerRole.BLUE) setBlueDeductions(prev => prev + 1);
+
+    if (useLocal) {
+      const socket = getSocket();
+      socket.emit('judge_score_update', {
+        areaId,
+        matchId,
+        judgeId,
+        corner: color === CornerRole.RED ? 'red' : 'blue',
+        type: 'deduction',
+        value: 1
+      });
     }
   };
 

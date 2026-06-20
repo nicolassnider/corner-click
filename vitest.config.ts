@@ -22,6 +22,7 @@ export default defineConfig({
       'dist',
       '.turbo',
       '**/node_modules/**',
+      '**/dist/**',
     ],
   },
   resolve: {

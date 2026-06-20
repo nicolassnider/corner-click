@@ -2,6 +2,10 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import settings from './config/settings.js';
 import { createLogger } from '@corner-click/logger';
+import { createServer } from 'http';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { initSocketService } from './services/socketService.js';
 
 const log = createLogger('server');
 
@@ -15,8 +19,15 @@ import swaggerJSDoc from 'swagger-jsdoc';
 const app = express();
 app.use(cors());
 
+const httpServer = createServer(app);
+initSocketService(httpServer);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Extract app settings to variables to avoid magic strings
 const { name: appName, version, description, apiPrefix, environment, isVercel } = settings.app;
+
 
 // Configure Swagger JSDoc
 const swaggerOptions = {
@@ -99,10 +110,26 @@ app.get(`${apiPrefix}/health`, (req: Request, res: Response) => {
   });
 });
 
+// Expose built web-admin and web-judges frontends for local network fallback
+const adminDistPath = path.resolve(__dirname, '../../web-admin/dist');
+const judgesDistPath = path.resolve(__dirname, '../../web-judges/dist');
+
+app.use('/admin', express.static(adminDistPath));
+app.use('/judges', express.static(judgesDistPath));
+
+// Fallback for SPA routing
+app.get('/admin/*', (_req, res) => {
+  res.sendFile(path.join(adminDistPath, 'index.html'));
+});
+app.get('/judges/*', (_req, res) => {
+  res.sendFile(path.join(judgesDistPath, 'index.html'));
+});
+
 if (!isVercel) {
-  app.listen(settings.port, () => {
+  httpServer.listen(settings.port, () => {
     log.info({ port: settings.port, env: environment }, `${appName} running`);
   });
 }
 
 export default app;
+

@@ -148,7 +148,8 @@ export default function JuryDashboard() {
     tieVotes,
     totalRed,
     totalBlue,
-    isMatchStartable
+    isMatchStartable,
+    firebaseConnected
   } = useActiveMatch(selectedMatch, selectedTournamentId, selectedCategoryId, handleMatchesRefreshed, showToast);
 
   // Derive final vote percentage for the visual bar comparison
@@ -216,6 +217,15 @@ export default function JuryDashboard() {
             <span className="bg-slate-800/80 border border-slate-700 text-slate-300 py-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-wider">
               Area 1 - Jury
             </span>
+            {firebaseConnected ? (
+              <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 py-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ONLINE
+              </span>
+            ) : (
+              <span className="bg-amber-500/20 text-amber-400 border border-amber-500/30 py-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 animate-pulse">
+                <span className="w-2 h-2 rounded-full bg-amber-400"></span> OFFLINE FALLBACK
+              </span>
+            )}
           </div>
         </div>
       </nav>

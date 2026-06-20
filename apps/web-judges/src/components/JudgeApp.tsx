@@ -285,6 +285,9 @@ export default function JudgeApp() {
       key={`${assignment.matchId}-${assignment.cornerId}`}
       matchId={assignment.matchId} 
       cornerId={assignment.cornerId} 
+      areaId={assignment.areaId}
+      judgeId={user?.uid || 'offline-judge-id'}
+      judgeName={judgeName}
       onLogout={handleLogout}
       isOffline={assignment.tournamentId === 'offline-tournament'}
     />

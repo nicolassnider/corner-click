@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ref, onValue, get } from 'firebase/database';
 import { database } from '../lib/firebase';
+import { connectSocket, disconnectSocket, getSocket } from '../lib/socketClient';
 import { MatchStatus, AUTHOR_NAME, APP_MOTTO, calculateNetScore } from '@corner-click/types';
 import '../styles/global.css';
 
@@ -35,8 +36,50 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
   const [categoryName, setCategoryName] = useState<string>('');
   const [judgesData, setJudgesData] = useState<Record<string, ScoreData>>({});
 
-  // 1. Listen to active match of the Area
+  const [firebaseConnected, setFirebaseConnected] = useState(true);
+  const useLocal = !firebaseConnected;
+
+  // Track Firebase connection state
   useEffect(() => {
+    const connectedRef = ref(database, '.info/connected');
+    const unsubscribe = onValue(connectedRef, (snap) => {
+      setFirebaseConnected(snap.val() === true);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Connect to local WebSocket fallback if offline
+  useEffect(() => {
+    if (!useLocal) return;
+
+    const socket = connectSocket(areaId, 'spectator');
+
+    socket.on('match_state', (state: any) => {
+      if (state && state.match) {
+        setActiveMatch({
+          matchId: state.match.id,
+          tournamentId: state.match.tournamentId,
+          categoryId: state.match.categoryId,
+          redCompetitorId: state.match.redCompetitorId,
+          blueCompetitorId: state.match.blueCompetitorId,
+          round: state.match.round || 1
+        });
+        setTimeRemaining(state.timer);
+        setMatchStatus(state.match.status);
+        if (state.scores) {
+          setJudgesData(state.scores);
+        }
+      }
+    });
+
+    return () => {
+      disconnectSocket();
+    };
+  }, [useLocal, areaId]);
+
+  // 1. Listen to active match of the Area (Online only)
+  useEffect(() => {
+    if (useLocal) return;
     const areaMatchRef = ref(database, `live_matches_by_area/${areaId}`);
     
     const unsubscribe = onValue(areaMatchRef, async (snapshot) => {
@@ -72,11 +115,11 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
     });
 
     return () => unsubscribe();
-  }, [areaId]);
+  }, [areaId, useLocal]);
 
-  // 2. Listen to live match status, timer and scores from Firebase RTDB in real-time
+  // 2. Listen to live match status, timer and scores from Firebase RTDB in real-time (Online only)
   useEffect(() => {
-    if (!activeMatch) return;
+    if (useLocal || !activeMatch) return;
 
     const liveMatchRef = ref(database, `live_matches/${activeMatch.matchId}`);
     
@@ -94,10 +137,11 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
     });
 
     return () => unsubscribe();
-  }, [activeMatch?.matchId]);
+  }, [activeMatch?.matchId, useLocal]);
 
-  // 3. Listen to score streams when match ends
+  // 3. Listen to score streams when match ends (Online only)
   useEffect(() => {
+    if (useLocal) return;
     let eventSource: EventSource | null = null;
     setJudgesData({});
 
@@ -119,7 +163,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
     return () => {
       if (eventSource) eventSource.close();
     };
-  }, [activeMatch?.matchId, matchStatus]);
+  }, [activeMatch?.matchId, matchStatus, useLocal]);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
