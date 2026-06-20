@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import type { Judge } from '@corner-click/types';
-import { judgeService } from '../services/judgeService';
+import { useState, useEffect } from "react";
+import type { Judge } from "@corner-click/types";
+import { judgeService } from "../services/judgeService";
 
-const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
+const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:4000";
 
 export function useJudges(tournamentId: string) {
   const [judges, setJudges] = useState<Judge[]>([]);
@@ -11,23 +11,25 @@ export function useJudges(tournamentId: string) {
 
   useEffect(() => {
     if (!tournamentId) return;
-    
+
     setLoading(true);
-    const eventSource = new EventSource(`${API_URL}/api/tournaments/${tournamentId}/judges/stream`);
-    
+    const eventSource = new EventSource(
+      `${API_URL}/api/tournaments/${tournamentId}/judges/stream`,
+    );
+
     eventSource.onmessage = (event) => {
       try {
         const judgesData = JSON.parse(event.data);
         setJudges(judgesData);
         setLoading(false);
       } catch (err) {
-        console.error('Failed to parse SSE data:', err);
+        console.error("Failed to parse SSE data:", err);
       }
     };
 
     eventSource.onerror = (err) => {
-      console.error('SSE Error:', err);
-      setError('Failed to sync judges');
+      console.error("SSE Error:", err);
+      setError("Failed to sync judges");
       setLoading(false);
     };
 
@@ -41,17 +43,20 @@ export function useJudges(tournamentId: string) {
       setError(null);
       await judgeService.addJudge(tournamentId, name);
     } catch (err: any) {
-      setError(err.message || 'Failed to add judge');
+      setError(err.message || "Failed to add judge");
       throw err;
     }
   };
 
-  const assignJudge = async (judgeId: string, assignment: { areaId: string, cornerId: string, matchId: string }) => {
+  const assignJudge = async (
+    judgeId: string,
+    assignment: { areaId: string; cornerId: string; matchId: string },
+  ) => {
     try {
       setError(null);
       await judgeService.assignJudge(tournamentId, judgeId, assignment);
     } catch (err: any) {
-      setError(err.message || 'Failed to assign judge');
+      setError(err.message || "Failed to assign judge");
       throw err;
     }
   };
@@ -61,7 +66,7 @@ export function useJudges(tournamentId: string) {
       setError(null);
       await judgeService.disconnectJudge(tournamentId, judgeId);
     } catch (err: any) {
-      setError(err.message || 'Failed to disconnect judge');
+      setError(err.message || "Failed to disconnect judge");
       throw err;
     }
   };
@@ -71,7 +76,7 @@ export function useJudges(tournamentId: string) {
       setError(null);
       await judgeService.deleteJudge(tournamentId, judgeId);
     } catch (err: any) {
-      setError(err.message || 'Failed to delete judge');
+      setError(err.message || "Failed to delete judge");
       throw err;
     }
   };
@@ -83,6 +88,6 @@ export function useJudges(tournamentId: string) {
     addJudge,
     assignJudge,
     disconnectJudge,
-    deleteJudge
+    deleteJudge,
   };
 }

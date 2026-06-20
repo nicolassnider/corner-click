@@ -1,52 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../lib/firebase';
-import { fetchWithAuth } from '../utils/apiClient';
+import React, { useState, useEffect } from "react";
+import { signInWithCustomToken, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../lib/firebase";
+import { fetchWithAuth } from "../utils/apiClient";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   // If already logged in, go to dashboard
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
-      if (u) window.location.href = '/';
+      if (u) window.location.href = "/";
     });
     return () => unsub();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
       // Call our API — credentials never go directly to Firebase from the browser
       const res = await fetchWithAuth(`/api/auth/admin/login`, {
-        method: 'POST',
-        body: JSON.stringify({ email, password })
+        method: "POST",
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
         if (res.status === 403) {
-          setError('Acceso denegado: no eres administrador.');
+          setError("Acceso denegado: no eres administrador.");
         } else if (res.status === 401) {
-          setError('Credenciales inválidas. Verifica tu email y contraseña.');
+          setError("Credenciales inválidas. Verifica tu email y contraseña.");
         } else {
-          setError(data.error || 'Error al iniciar sesión');
+          setError(data.error || "Error al iniciar sesión");
         }
         return;
       }
 
       // Sign in with the custom token returned by the API
       await signInWithCustomToken(auth, data.token);
-      window.location.href = '/';
+      window.location.href = "/";
     } catch (err: any) {
-      setError('Error de conexión. Verifica que el servidor esté activo.');
+      setError("Error de conexión. Verifica que el servidor esté activo.");
     } finally {
       setLoading(false);
     }
@@ -58,8 +58,18 @@ export default function LoginForm() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/40 mb-4">
-            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            <svg
+              className="w-10 h-10 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2.5"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
             </svg>
           </div>
           <h1 className="text-3xl font-black text-white mb-2">
@@ -71,10 +81,13 @@ export default function LoginForm() {
         {/* Login Form */}
         <div className="bg-[#121A2F] rounded-2xl p-8 border border-white/10 shadow-2xl">
           <h2 className="text-xl font-bold text-white mb-6">Iniciar Sesión</h2>
-          
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-300 mb-2"
+              >
                 Email
               </label>
               <input
@@ -89,7 +102,10 @@ export default function LoginForm() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-300 mb-2"
+              >
                 Contraseña
               </label>
               <input
@@ -114,7 +130,7 @@ export default function LoginForm() {
               disabled={loading}
               className="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#121A2F] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-500/25"
             >
-              {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+              {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
             </button>
           </form>
         </div>

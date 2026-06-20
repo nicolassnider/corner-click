@@ -1,23 +1,31 @@
 ---
-import PublicScoreboard from '../../../components/PublicScoreboard.tsx';
-import '../../../styles/global.css';
+import PublicScoreboard from "../../../components/PublicScoreboard.tsx";
+import "../../../styles/global.css";
 
 export function getStaticPaths() {
-  return Array.from({ length: 10 }, (_, i) => ({
-    params: { areaId: String(i + 1) }
+  const numericPaths = Array.from({ length: 10 }, (_, i) => ({
+    params: { areaId: String(i + 1) },
   }));
+  const prefixPaths = Array.from({ length: 10 }, (_, i) => ({
+    params: { areaId: `area-${i + 1}` },
+  }));
+  return [...numericPaths, ...prefixPaths];
 }
 
 const { areaId } = Astro.params;
 ---
+
 <html lang="en" class="bg-slate-950 overflow-hidden h-screen w-screen">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Corner Click - Public TV Scoreboard (Area {areaId})</title>
-	</head>
-	<body class="bg-slate-950 overflow-hidden h-screen w-screen">
-		{areaId && <PublicScoreboard areaId={areaId} client:load />}
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Corner Click - Public TV Scoreboard (Area {areaId}</title></head
+  >)
+
+  <body class="bg-slate-950 overflow-hidden h-screen w-screen">
+    {areaId && <PublicScoreboard areaId={areaId} client:load />}
+  </body>
+
+
 </html>
