@@ -1,23 +1,26 @@
 ---
-import JudgeApp from '../components/JudgeApp.tsx';
+import JudgeApp from "../components/JudgeApp.tsx";
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Corner Click - Judge Scoring</title>
-		<style>
-			/* Prevent pull-to-refresh on mobile */
-			body {
-				overscroll-behavior-y: contain;
-				margin: 0;
-			}
-		</style>
-	</head>
-	<body>
-		<JudgeApp client:only="react" />
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <title>Corner Click - Judge Scoring</title>
+    <style>
+      /* Prevent pull-to-refresh on mobile */
+      body {
+        overscroll-behavior-y: contain;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <JudgeApp client:only="react" />
+  </body>
 </html>

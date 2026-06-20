@@ -1,4 +1,4 @@
-import { fetchWithAuth } from '../utils/apiClient';
+import { fetchWithAuth } from "../utils/apiClient";
 
 interface ScorePayload {
   cornerId: string;
@@ -10,14 +10,16 @@ interface ScorePayload {
   blueDeductions: number;
 }
 
-export const submitScores = async (matchId: string, scores: ScorePayload): Promise<void> => {
+export const submitScores = async (
+  matchId: string,
+  scores: ScorePayload,
+): Promise<void> => {
   const response = await fetchWithAuth(`/api/matches/${matchId}/scores`, {
-    method: 'POST',
-    body: JSON.stringify(scores)
+    method: "POST",
+    body: JSON.stringify(scores),
   });
 
   if (!response.ok) {
-    throw new Error('Failed to submit scores');
+    throw new Error("Failed to submit scores");
   }
 };
-

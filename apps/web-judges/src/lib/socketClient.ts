@@ -1,5 +1,6 @@
-import { io, Socket } from 'socket.io-client';
-import { API_URL } from '../utils/apiClient';
+import { io, Socket } from "socket.io-client";
+import { API_URL } from "../utils/apiClient";
+import { SocketEvent, SocketRole } from "@corner-click/types";
 
 let socket: Socket | null = null;
 
@@ -7,7 +8,7 @@ export const getSocket = (): Socket => {
   if (!socket) {
     socket = io(API_URL, {
       autoConnect: false,
-      transports: ['websocket'],
+      transports: ["websocket"],
     });
   }
   return socket;
@@ -15,17 +16,17 @@ export const getSocket = (): Socket => {
 
 export const connectSocket = (
   areaId: string,
-  role: 'admin' | 'judge' | 'spectator',
+  role: SocketRole,
   judgeId?: string,
   judgeName?: string,
-  corner?: string
+  corner?: string,
 ) => {
   const s = getSocket();
   if (!s.connected) {
     s.connect();
   }
 
-  s.emit('join_area', {
+  s.emit(SocketEvent.JOIN_AREA, {
     areaId,
     role,
     judgeId,
