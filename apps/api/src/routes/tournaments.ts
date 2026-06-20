@@ -1,11 +1,11 @@
-import express, { Request, Response } from 'express';
-import { createLogger, toErr } from '@corner-click/logger';
+import express, { Request, Response } from "express";
+import { createLogger, toErr } from "@corner-click/logger";
 
-const log = createLogger('tournaments');
-import { db, rtdb } from '../services/firebase.js';
-import type { Tournament } from '@corner-click/types';
-import { TournamentStatus } from '@corner-click/types';
-import { authenticateToken, requireAdmin } from '../middlewares/auth.js';
+const log = createLogger("tournaments");
+import { db, rtdb } from "../services/firebase.js";
+import type { Tournament } from "@corner-click/types";
+import { TournamentStatus } from "@corner-click/types";
+import { authenticateToken, requireAdmin } from "../middlewares/auth.js";
 
 const router = express.Router();
 
@@ -19,19 +19,22 @@ const router = express.Router();
  *       '200':
  *         description: OK
  */
-router.get('/', async (req: Request, res: Response): Promise<void> => {
+router.get("/", async (req: Request, res: Response): Promise<void> => {
   try {
     if (!db) {
-      res.status(503).json({ error: 'Database not initialized' });
+      res.status(503).json({ error: "Database not initialized" });
       return;
     }
 
-    const snapshot = await db.collection('tournaments').get();
-    const tournaments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const snapshot = await db.collection("tournaments").get();
+    const tournaments = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
     res.json(tournaments);
   } catch (error) {
-    log.error({ err: toErr(error) }, 'Error fetching tournaments');
-    res.status(500).json({ error: 'Internal Server Error' });
+    log.error({ err: toErr(error) }, "Error fetching tournaments");
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -53,22 +56,25 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
  *       '404':
  *         description: Tournament not found
  */
-router.get('/:id', async (req: Request, res: Response): Promise<void> => {
+router.get("/:id", async (req: Request, res: Response): Promise<void> => {
   try {
     if (!db) {
-      res.status(503).json({ error: 'Database not initialized' });
+      res.status(503).json({ error: "Database not initialized" });
       return;
     }
 
-    const doc = await db.collection('tournaments').doc(req.params.id as string).get();
+    const doc = await db
+      .collection("tournaments")
+      .doc(req.params.id as string)
+      .get();
     if (!doc.exists) {
-      res.status(404).json({ error: 'Tournament not found' });
+      res.status(404).json({ error: "Tournament not found" });
       return;
     }
     res.json({ id: doc.id, ...doc.data() });
   } catch (error) {
-    log.error({ err: toErr(error) }, 'Error fetching tournament');
-    res.status(500).json({ error: 'Internal Server Error' });
+    log.error({ err: toErr(error) }, "Error fetching tournament");
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -101,38 +107,43 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
  *       '201':
  *         description: Created
  */
-router.post('/', authenticateToken, requireAdmin, async (req: Request, res: Response): Promise<void> => {
-  try {
-    if (!db) {
-      res.status(503).json({ error: 'Database not initialized' });
-      return;
+router.post(
+  "/",
+  authenticateToken,
+  requireAdmin,
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      if (!db) {
+        res.status(503).json({ error: "Database not initialized" });
+        return;
+      }
+
+      const { name, date, location, areas, rings } = req.body;
+      // We accept rings or areas for backward compatibility temporarily, but map to areas
+      const finalAreas = areas || rings || 1;
+
+      if (!name) {
+        res.status(400).json({ error: "Name is required" });
+        return;
+      }
+
+      const newTournament: Omit<Tournament, "id"> = {
+        name,
+        date: date || new Date().toISOString(),
+        location: location || "",
+        areas: finalAreas,
+        status: TournamentStatus.UPCOMING,
+        createdAt: new Date().toISOString(),
+      };
+
+      const docRef = await db.collection("tournaments").add(newTournament);
+      res.status(201).json({ id: docRef.id, ...newTournament });
+    } catch (error) {
+      log.error({ err: toErr(error) }, "Error creating tournament");
+      res.status(500).json({ error: "Internal Server Error" });
     }
-
-    const { name, date, location, areas, rings } = req.body;
-    // We accept rings or areas for backward compatibility temporarily, but map to areas
-    const finalAreas = areas || rings || 1;
-
-    if (!name) {
-      res.status(400).json({ error: 'Name is required' });
-      return;
-    }
-
-    const newTournament: Omit<Tournament, 'id'> = {
-      name,
-      date: date || new Date().toISOString(),
-      location: location || '',
-      areas: finalAreas,
-      status: TournamentStatus.UPCOMING,
-      createdAt: new Date().toISOString()
-    };
-
-    const docRef = await db.collection('tournaments').add(newTournament);
-    res.status(201).json({ id: docRef.id, ...newTournament });
-  } catch (error) {
-    log.error({ err: toErr(error) }, 'Error creating tournament');
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+  },
+);
 
 /**
  * @swagger
@@ -170,38 +181,43 @@ router.post('/', authenticateToken, requireAdmin, async (req: Request, res: Resp
  *       '404':
  *         description: Tournament not found
  */
-router.put('/:id', authenticateToken, requireAdmin, async (req: Request, res: Response): Promise<void> => {
-  try {
-    if (!db) {
-      res.status(503).json({ error: 'Database not initialized' });
-      return;
+router.put(
+  "/:id",
+  authenticateToken,
+  requireAdmin,
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      if (!db) {
+        res.status(503).json({ error: "Database not initialized" });
+        return;
+      }
+
+      const id = req.params.id as string;
+      const docRef = db.collection("tournaments").doc(id);
+      const doc = await docRef.get();
+
+      if (!doc.exists) {
+        res.status(404).json({ error: "Tournament not found" });
+        return;
+      }
+
+      const { name, date, location, areas, status } = req.body;
+      const updates: Partial<Tournament> = {};
+
+      if (name !== undefined) updates.name = name;
+      if (date !== undefined) updates.date = date;
+      if (location !== undefined) updates.location = location;
+      if (areas !== undefined) updates.areas = areas;
+      if (status !== undefined) updates.status = status;
+
+      await docRef.update(updates);
+      res.json({ id, ...doc.data(), ...updates });
+    } catch (error) {
+      log.error({ err: toErr(error) }, "Error updating tournament");
+      res.status(500).json({ error: "Internal Server Error" });
     }
-
-    const id = req.params.id as string;
-    const docRef = db.collection('tournaments').doc(id);
-    const doc = await docRef.get();
-
-    if (!doc.exists) {
-      res.status(404).json({ error: 'Tournament not found' });
-      return;
-    }
-
-    const { name, date, location, areas, status } = req.body;
-    const updates: Partial<Tournament> = {};
-
-    if (name !== undefined) updates.name = name;
-    if (date !== undefined) updates.date = date;
-    if (location !== undefined) updates.location = location;
-    if (areas !== undefined) updates.areas = areas;
-    if (status !== undefined) updates.status = status;
-
-    await docRef.update(updates);
-    res.json({ id, ...doc.data(), ...updates });
-  } catch (error) {
-    log.error({ err: toErr(error) }, 'Error updating tournament');
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+  },
+);
 
 /**
  * @swagger
@@ -221,78 +237,87 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: Request, res: Re
  *       '404':
  *         description: Tournament not found
  */
-router.delete('/:id', authenticateToken, requireAdmin, async (req: Request, res: Response): Promise<void> => {
-  try {
-    if (!db) {
-      res.status(503).json({ error: 'Database not initialized' });
-      return;
-    }
-
-    const firestoreDb = db;
-    const id = req.params.id as string;
-    const docRef = firestoreDb.collection('tournaments').doc(id);
-    const doc = await docRef.get();
-
-    if (!doc.exists) {
-      res.status(404).json({ error: 'Tournament not found' });
-      return;
-    }
-
-    // 1. Get the list of match IDs from RTDB to delete associated Firestore match documents
-    const matchIds: string[] = [];
-    if (rtdb) {
-      const matchesSnap = await rtdb.ref(`tournaments/${id}/matches`).once('value');
-      const matchesData = matchesSnap.val();
-      if (matchesData) {
-        matchIds.push(...Object.keys(matchesData));
+router.delete(
+  "/:id",
+  authenticateToken,
+  requireAdmin,
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      if (!db) {
+        res.status(503).json({ error: "Database not initialized" });
+        return;
       }
-    }
 
-    // Helper to chunk arrays for Firestore batch operations (500 limit)
-    const chunk = <T>(arr: T[], size: number): T[][] => {
-      const chunks: T[][] = [];
-      for (let i = 0; i < arr.length; i += size) {
-        chunks.push(arr.slice(i, i + size));
+      const firestoreDb = db;
+      const id = req.params.id as string;
+      const docRef = firestoreDb.collection("tournaments").doc(id);
+      const doc = await docRef.get();
+
+      if (!doc.exists) {
+        res.status(404).json({ error: "Tournament not found" });
+        return;
       }
-      return chunks;
-    };
 
-    // 2. Delete Firestore judges subcollection in chunks of 450
-    const judgesSnapshot = await docRef.collection('judges').get();
-    const judgeChunks = chunk(judgesSnapshot.docs, 450);
-    for (const chunkDocs of judgeChunks) {
-      const batch = firestoreDb.batch();
-      chunkDocs.forEach(judgeDoc => {
-        batch.delete(judgeDoc.ref);
-      });
-      await batch.commit();
-    }
+      // 1. Get the list of match IDs from RTDB to delete associated Firestore match documents
+      const matchIds: string[] = [];
+      if (rtdb) {
+        const matchesSnap = await rtdb
+          .ref(`tournaments/${id}/matches`)
+          .once("value");
+        const matchesData = matchesSnap.val();
+        if (matchesData) {
+          matchIds.push(...Object.keys(matchesData));
+        }
+      }
 
-    // 3. Delete Firestore match records in chunks of 450
-    if (matchIds.length > 0) {
-      const matchChunks = chunk(matchIds, 450);
-      for (const chunkIds of matchChunks) {
+      // Helper to chunk arrays for Firestore batch operations (500 limit)
+      const chunk = <T>(arr: T[], size: number): T[][] => {
+        const chunks: T[][] = [];
+        for (let i = 0; i < arr.length; i += size) {
+          chunks.push(arr.slice(i, i + size));
+        }
+        return chunks;
+      };
+
+      // 2. Delete Firestore judges subcollection in chunks of 450
+      const judgesSnapshot = await docRef.collection("judges").get();
+      const judgeChunks = chunk(judgesSnapshot.docs, 450);
+      for (const chunkDocs of judgeChunks) {
         const batch = firestoreDb.batch();
-        chunkIds.forEach(mId => {
-          batch.delete(firestoreDb.collection('matches').doc(mId));
+        chunkDocs.forEach((judgeDoc) => {
+          batch.delete(judgeDoc.ref);
         });
         await batch.commit();
       }
+
+      // 3. Delete Firestore match records in chunks of 450
+      if (matchIds.length > 0) {
+        const matchChunks = chunk(matchIds, 450);
+        for (const chunkIds of matchChunks) {
+          const batch = firestoreDb.batch();
+          chunkIds.forEach((mId) => {
+            batch.delete(firestoreDb.collection("matches").doc(mId));
+          });
+          await batch.commit();
+        }
+      }
+
+      // 4. Delete the main tournament document in Firestore
+      await docRef.delete();
+
+      // 5. Delete RTDB data if RTDB is initialized
+      if (rtdb) {
+        await rtdb.ref(`tournaments/${id}`).remove();
+      }
+
+      res.json({
+        message: "Tournament and all associated data deleted successfully",
+      });
+    } catch (error) {
+      log.error({ err: toErr(error) }, "Error deleting tournament");
+      res.status(500).json({ error: "Internal Server Error" });
     }
-
-    // 4. Delete the main tournament document in Firestore
-    await docRef.delete();
-
-    // 5. Delete RTDB data if RTDB is initialized
-    if (rtdb) {
-      await rtdb.ref(`tournaments/${id}`).remove();
-    }
-
-    res.json({ message: 'Tournament and all associated data deleted successfully' });
-  } catch (error) {
-    log.error({ err: toErr(error) }, 'Error deleting tournament');
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+  },
+);
 
 export default router;

@@ -1,10 +1,14 @@
-import { initializeApp, cert, getApps } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-import { getAuth } from 'firebase-admin/auth';
-import { getDatabase } from 'firebase-admin/database';
-import settings from '../config/settings.js';
+import { initializeApp, cert, getApps } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
+import { getDatabase } from "firebase-admin/database";
+import settings from "../config/settings.js";
 
-if (settings.firebase.projectId && settings.firebase.privateKey && settings.firebase.clientEmail) {
+if (
+  settings.firebase.projectId &&
+  settings.firebase.privateKey &&
+  settings.firebase.clientEmail
+) {
   try {
     initializeApp({
       credential: cert({
@@ -12,14 +16,16 @@ if (settings.firebase.projectId && settings.firebase.privateKey && settings.fire
         clientEmail: settings.firebase.clientEmail,
         privateKey: settings.firebase.privateKey,
       }),
-      databaseURL: settings.firebase.databaseURL
+      databaseURL: settings.firebase.databaseURL,
     });
-    console.log('Firebase Admin initialized successfully.');
+    console.log("Firebase Admin initialized successfully.");
   } catch (err: any) {
-    console.error('Error initializing Firebase Admin:', err.message);
+    console.error("Error initializing Firebase Admin:", err.message);
   }
 } else {
-  console.warn('⚠️  Firebase Admin initialization skipped due to missing credentials.');
+  console.warn(
+    "⚠️  Firebase Admin initialization skipped due to missing credentials.",
+  );
 }
 
 export const db = getApps().length > 0 ? getFirestore() : null;
