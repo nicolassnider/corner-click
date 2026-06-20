@@ -1,43 +1,34 @@
-# Astro Starter Kit: Minimal
+# Corner Click - Web Admin & Organizers App
 
-```sh
-npm create astro@latest -- --template minimal
+This is the **Corner Click Admin & Organizers Application** (`apps/web-admin`), a comprehensive administrative console built for Organizers, Jury members, and Spectator TV displays.
+
+## Core Features
+
+- **Jury Dashboard (`/live`):** A dark sports-themed dashboard for the Central Jury Table. Provides live round timers, automated custom toast warnings, judge consensus vote comparison bars, and tie-breaking options.
+- **Dynamic TV Spectator View (`/area/[areaId]/tv`):** A high-contrast digital scoreboard optimized for public projectors and TVs.
+  - **Overscan Margins (5% Safe Zone):** Elements are safe-zone padded (`p-[4vh] px-[4vw]`) to prevent clipping on physical Smart TVs.
+  - **Closed Scoreboard Mode:** Real-time judge votes remain hidden and set to a dimmed `0` ("MARCADOR CERRADO") during active rounds to prevent bias. They instantly light up in glowing Red and Blue neon consensus vote counts once the match is declared `ENDED` or `COMPLETED`.
+  - **Real-time Live Sync:** Collects live score streams directly from Firebase RTDB `/live_matches` as judges score.
+- **Bracket Management:** Organizer dashboard for automatically seeding bracket nodes, handling byes, and publishing upcoming fights.
+- **Admin Authentication:** Secure email/password login integrated with custom Admin roles.
+
+## Technical Architecture
+
+- **Astro:** Pages routing framework. Dynamically pre-renders dynamic TV routes `/area/[1-10]/tv` at build time.
+- **React:** Powers the Organizer login, the interactive Bracket editor, the Jury controller (`JuryDashboard.tsx`), and the Spectator Scoreboard (`PublicScoreboard.tsx`).
+- **Firebase Realtime Database:** Handles live match statuses, timer ticks, and score streams.
+- **Firebase Firestore:** Persists brackets, category configurations, competitor listings, and judge assignments.
+
+## Development
+
+Run the development server from the monorepo root:
+
+```bash
+npm run dev --workspace=apps-web-admin
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Or run dev on all workspaces at once:
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```bash
+npm run dev
 ```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).

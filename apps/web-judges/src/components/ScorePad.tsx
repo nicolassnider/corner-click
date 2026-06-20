@@ -9,9 +9,10 @@ interface ScorePadProps {
   matchId: string;
   cornerId: string;
   onLogout?: () => void;
+  isOffline?: boolean;
 }
 
-export default function ScorePad({ matchId, cornerId, onLogout }: ScorePadProps) {
+export default function ScorePad({ matchId, cornerId, onLogout, isOffline = false }: ScorePadProps) {
   const [redScore, setRedScore] = useState(0);
   const [blueScore, setBlueScore] = useState(0);
   
@@ -21,9 +22,21 @@ export default function ScorePad({ matchId, cornerId, onLogout }: ScorePadProps)
   const [redDeductions, setRedDeductions] = useState(0);
   const [blueDeductions, setBlueDeductions] = useState(0);
 
-  const [matchStatus, setMatchStatus] = useState<MatchStatus>(MatchStatus.PENDING);
+  const [matchStatus, setMatchStatus] = useState<MatchStatus>(
+    isOffline ? MatchStatus.ACTIVE : MatchStatus.PENDING
+  );
+
+  // Force window scroll back to top on mount to fix mobile keyboard layout offsets
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.body.scrollTop = 0;
+    if (document.documentElement) {
+      document.documentElement.scrollTop = 0;
+    }
+  }, []);
 
   useEffect(() => {
+    if (isOffline) return;
     const statusRef = ref(database, `live_matches/${matchId}/status`);
     const unsubscribe = onValue(statusRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -31,12 +44,13 @@ export default function ScorePad({ matchId, cornerId, onLogout }: ScorePadProps)
       }
     });
     return () => unsubscribe();
-  }, [matchId]);
+  }, [matchId, isOffline]);
 
   const displayRedScore = redScore - Math.floor(redWarnings / 3) - redDeductions;
   const displayBlueScore = blueScore - Math.floor(blueWarnings / 3) - blueDeductions;
 
   useEffect(() => {
+    if (isOffline) return;
     if (matchStatus === MatchStatus.ENDED) {
       submitScores(matchId, {
         cornerId,
@@ -48,10 +62,11 @@ export default function ScorePad({ matchId, cornerId, onLogout }: ScorePadProps)
         blueDeductions
       }).catch(err => console.error("Failed to submit scores:", err));
     }
-  }, [matchStatus]);
+  }, [matchStatus, isOffline]);
 
   // Sync scores in real-time to Firebase RTDB for Jury and Spectator view
   useEffect(() => {
+    if (isOffline) return;
     if (matchStatus === MatchStatus.ACTIVE || matchStatus === MatchStatus.GOLDEN_POINT) {
       const scoreRef = ref(database, `live_matches/${matchId}/scores/${cornerId}`);
       set(scoreRef, {
@@ -63,24 +78,21 @@ export default function ScorePad({ matchId, cornerId, onLogout }: ScorePadProps)
         blueDeductions
       }).catch(err => console.error("Failed to sync live scores:", err));
     }
-  }, [redScore, blueScore, redWarnings, blueWarnings, redDeductions, blueDeductions, matchStatus]);
+  }, [redScore, blueScore, redWarnings, blueWarnings, redDeductions, blueDeductions, matchStatus, isOffline]);
 
-  const handleScore = (e: React.MouseEvent<HTMLButtonElement>, color: CornerRole, points: number) => {
-    e.currentTarget.blur();
+  const handleScore = (color: CornerRole, points: number) => {
     if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) return;
     if (color === CornerRole.RED) setRedScore(prev => prev + points);
     if (color === CornerRole.BLUE) setBlueScore(prev => prev + points);
   };
 
-  const handleWarning = (e: React.MouseEvent<HTMLButtonElement>, color: CornerRole) => {
-    e.currentTarget.blur();
+  const handleWarning = (color: CornerRole) => {
     if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) return;
     if (color === CornerRole.RED) setRedWarnings(prev => prev + 1);
     if (color === CornerRole.BLUE) setBlueWarnings(prev => prev + 1);
   };
 
-  const handleDeduction = (e: React.MouseEvent<HTMLButtonElement>, color: CornerRole) => {
-    e.currentTarget.blur();
+  const handleDeduction = (color: CornerRole) => {
     if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) return;
     if (color === CornerRole.RED) {
       setRedDeductions(prev => prev + 1);
@@ -90,13 +102,22 @@ export default function ScorePad({ matchId, cornerId, onLogout }: ScorePadProps)
     }
   };
 
-
   return (
-    <div className="flex flex-col h-[100dvh] w-screen bg-gray-950 overflow-hidden text-white font-sans touch-manipulation select-none relative">
+    <div 
+      className="flex flex-col h-[100dvh] w-screen bg-gray-950 overflow-hidden text-white font-sans touch-manipulation select-none relative"
+      onTouchStart={() => {}} /* Enables CSS :active styling on iOS Safari */
+    >
 
       {/* Top Bar */}
       <div className="flex justify-between items-center px-4 py-2 bg-gray-950 border-b border-gray-800 z-30">
-        <span className="text-gray-500 font-black tracking-widest uppercase text-[10px]">CORNER CLICK</span>
+        <div className="flex items-center gap-2">
+          <span className="text-gray-500 font-black tracking-widest uppercase text-[10px]">CORNER CLICK</span>
+          {isOffline && (
+            <span className="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[8px] font-black uppercase px-2 py-0.5 rounded tracking-widest">
+              OFFLINE
+            </span>
+          )}
+        </div>
         {onLogout && (
           <button 
             onClick={onLogout}
@@ -150,24 +171,39 @@ export default function ScorePad({ matchId, cornerId, onLogout }: ScorePadProps)
         
         {/* RED CONTROLS (LEFT HALF) */}
         <div className="flex-1 flex flex-col p-1 gap-1 bg-gradient-to-br from-rose-950/40 to-gray-900/50 border-r-2 border-gray-900">
-          <button onClick={(e) => handleScore(e, CornerRole.RED, 1)} className="flex-[3] bg-rose-600 active:bg-rose-500 text-white rounded-xl flex flex-col items-center justify-center shadow-lg shadow-rose-900/20 active:scale-95 transition-all">
+          <button 
+            onClick={() => handleScore(CornerRole.RED, 1)}
+            className="flex-[3] bg-rose-600 text-white rounded-xl flex flex-col items-center justify-center shadow-lg shadow-rose-900/20 score-btn"
+          >
             <span className="text-5xl font-black">+1</span>
             <span className="text-[10px] font-bold uppercase opacity-80 mt-1">Mano</span>
           </button>
-          <button onClick={(e) => handleScore(e, CornerRole.RED, 2)} className="flex-[3] bg-rose-600 active:bg-rose-500 text-white rounded-xl flex flex-col items-center justify-center shadow-lg shadow-rose-900/20 active:scale-95 transition-all">
+          <button 
+            onClick={() => handleScore(CornerRole.RED, 2)}
+            className="flex-[3] bg-rose-600 text-white rounded-xl flex flex-col items-center justify-center shadow-lg shadow-rose-900/20 score-btn"
+          >
             <span className="text-5xl font-black">+2</span>
             <span className="text-[10px] font-bold uppercase opacity-80 mt-1">Patada M</span>
           </button>
-          <button onClick={(e) => handleScore(e, CornerRole.RED, 3)} className="flex-[3] bg-rose-600 active:bg-rose-500 text-white rounded-xl flex flex-col items-center justify-center shadow-lg shadow-rose-900/20 active:scale-95 transition-all">
+          <button 
+            onClick={() => handleScore(CornerRole.RED, 3)}
+            className="flex-[3] bg-rose-600 text-white rounded-xl flex flex-col items-center justify-center shadow-lg shadow-rose-900/20 score-btn"
+          >
             <span className="text-5xl font-black">+3</span>
             <span className="text-[10px] font-bold uppercase opacity-80 mt-1">Patada A</span>
           </button>
           
           <div className="flex gap-1 mt-1 flex-[1]">
-            <button onClick={(e) => handleWarning(e, CornerRole.RED)} className="flex-1 bg-yellow-600 active:bg-yellow-500 text-yellow-50 rounded-lg font-bold uppercase tracking-wider shadow active:scale-95 transition-transform flex flex-col items-center justify-center text-[10px]">
+            <button 
+              onClick={() => handleWarning(CornerRole.RED)}
+              className="flex-1 bg-yellow-600 text-yellow-50 rounded-lg font-bold uppercase tracking-wider shadow flex flex-col items-center justify-center text-[10px] score-btn"
+            >
               Warn
             </button>
-            <button onClick={(e) => handleDeduction(e, CornerRole.RED)} className="flex-1 bg-gray-900 active:bg-rose-900 border border-rose-900/50 text-rose-400 rounded-lg font-bold uppercase tracking-wider shadow active:scale-95 transition-transform flex flex-col items-center justify-center text-[10px]">
+            <button 
+              onClick={() => handleDeduction(CornerRole.RED)}
+              className="flex-1 bg-gray-900 border border-rose-900/50 text-rose-400 rounded-lg font-bold uppercase tracking-wider shadow flex flex-col items-center justify-center text-[10px] score-btn"
+            >
               Deduct
             </button>
           </div>
@@ -175,24 +211,39 @@ export default function ScorePad({ matchId, cornerId, onLogout }: ScorePadProps)
 
         {/* BLUE CONTROLS (RIGHT HALF) */}
         <div className="flex-1 flex flex-col p-1 gap-1 bg-gradient-to-tr from-indigo-950/40 to-gray-900/50">
-          <button onClick={(e) => handleScore(e, CornerRole.BLUE, 1)} className="flex-[3] bg-indigo-600 active:bg-indigo-500 text-white rounded-xl flex flex-col items-center justify-center shadow-lg shadow-indigo-900/20 active:scale-95 transition-all">
+          <button 
+            onClick={() => handleScore(CornerRole.BLUE, 1)}
+            className="flex-[3] bg-indigo-600 text-white rounded-xl flex flex-col items-center justify-center shadow-lg shadow-indigo-900/20 score-btn"
+          >
             <span className="text-5xl font-black">+1</span>
             <span className="text-[10px] font-bold uppercase opacity-80 mt-1">Mano</span>
           </button>
-          <button onClick={(e) => handleScore(e, CornerRole.BLUE, 2)} className="flex-[3] bg-indigo-600 active:bg-indigo-500 text-white rounded-xl flex flex-col items-center justify-center shadow-lg shadow-indigo-900/20 active:scale-95 transition-all">
+          <button 
+            onClick={() => handleScore(CornerRole.BLUE, 2)}
+            className="flex-[3] bg-indigo-600 text-white rounded-xl flex flex-col items-center justify-center shadow-lg shadow-indigo-900/20 score-btn"
+          >
             <span className="text-5xl font-black">+2</span>
             <span className="text-[10px] font-bold uppercase opacity-80 mt-1">Patada M</span>
           </button>
-          <button onClick={(e) => handleScore(e, CornerRole.BLUE, 3)} className="flex-[3] bg-indigo-600 active:bg-indigo-500 text-white rounded-xl flex flex-col items-center justify-center shadow-lg shadow-indigo-900/20 active:scale-95 transition-all">
+          <button 
+            onClick={() => handleScore(CornerRole.BLUE, 3)}
+            className="flex-[3] bg-indigo-600 text-white rounded-xl flex flex-col items-center justify-center shadow-lg shadow-indigo-900/20 score-btn"
+          >
             <span className="text-5xl font-black">+3</span>
             <span className="text-[10px] font-bold uppercase opacity-80 mt-1">Patada A</span>
           </button>
           
           <div className="flex gap-1 mt-1 flex-[1]">
-            <button onClick={(e) => handleWarning(e, CornerRole.BLUE)} className="flex-1 bg-yellow-600 active:bg-yellow-500 text-yellow-50 rounded-lg font-bold uppercase tracking-wider shadow active:scale-95 transition-transform flex flex-col items-center justify-center text-[10px]">
+            <button 
+              onClick={() => handleWarning(CornerRole.BLUE)}
+              className="flex-1 bg-yellow-600 text-yellow-50 rounded-lg font-bold uppercase tracking-wider shadow flex flex-col items-center justify-center text-[10px] score-btn"
+            >
               Warn
             </button>
-            <button onClick={(e) => handleDeduction(e, CornerRole.BLUE)} className="flex-1 bg-gray-900 active:bg-indigo-900 border border-indigo-900/50 text-indigo-400 rounded-lg font-bold uppercase tracking-wider shadow active:scale-95 transition-transform flex flex-col items-center justify-center text-[10px]">
+            <button 
+              onClick={() => handleDeduction(CornerRole.BLUE)}
+              className="flex-1 bg-gray-900 border border-indigo-900/50 text-indigo-400 rounded-lg font-bold uppercase tracking-wider shadow flex flex-col items-center justify-center text-[10px] score-btn"
+            >
               Deduct
             </button>
           </div>

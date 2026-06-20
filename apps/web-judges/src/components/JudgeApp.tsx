@@ -52,6 +52,7 @@ export default function JudgeApp() {
 
         const judgeRef = firestoreDoc(db, 'tournaments', tournamentId, 'judges', judgeId);
         unsubFirestore = firestoreOnSnapshot(judgeRef, (docSnap) => {
+          setError(''); // Reset any past errors
           if (docSnap.exists()) {
             const data = docSnap.data();
             if (data.status === 'OFFLINE') {
@@ -69,6 +70,9 @@ export default function JudgeApp() {
             setPin('');
             setUser(null);
           }
+        }, (err) => {
+          console.error("Firestore onSnapshot error:", err);
+          setError("Error de base de datos (Firestore): " + err.message);
         });
 
         setLoading(false);
@@ -87,6 +91,50 @@ export default function JudgeApp() {
     e.preventDefault();
     setError('');
     
+    if (pin === '9999') {
+      // Local Offline Mock mode activation
+      setJudgeName('Juez Offline (PIN 9999)');
+      setAssignment({
+        tournamentId: 'offline-tournament',
+        areaId: '1',
+        cornerId: 'corner_1',
+        matchId: 'offline-match'
+      });
+      setUser({
+        uid: 'offline-judge-uid',
+        emailVerified: true,
+        isAnonymous: true,
+        providerId: 'custom',
+        getIdToken: () => Promise.resolve('offline-token'),
+        getIdTokenResult: () => Promise.resolve({
+          authTime: '',
+          claims: {
+            tournamentId: 'offline-tournament',
+            judgeId: 'offline-judge-id',
+            judgeName: 'Juez Offline (PIN 9999)'
+          },
+          expirationTime: '',
+          issuedAtTime: '',
+          signInProvider: '',
+          signInSecondFactor: '',
+          token: ''
+        }),
+        phoneNumber: null,
+        photoURL: null,
+        displayName: 'Juez Offline',
+        email: 'offline@corner.click',
+        metadata: {},
+        providerData: [],
+        refreshToken: '',
+        tenantId: null,
+        delete: () => Promise.resolve(),
+        reload: () => Promise.resolve(),
+        toJSON: () => ({})
+      } as any);
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetchWithAuth(`/api/auth/pin`, {
         method: 'POST',
@@ -103,6 +151,29 @@ export default function JudgeApp() {
     } catch (err: any) {
       setError(err.message);
     }
+  };
+
+  const handleLogout = async () => {
+    if (pin === '9999') {
+      setAssignment(null);
+      setPin('');
+      setUser(null);
+      return;
+    }
+
+    if (user) {
+      try {
+        await fetchWithAuth(`/api/auth/logout`, {
+          method: 'POST'
+        });
+      } catch (err) {
+        console.error('Failed to logout via API', err);
+      }
+    }
+
+    await auth.signOut();
+    setAssignment(null);
+    setPin('');
   };
 
   if (loading) {
@@ -164,21 +235,7 @@ export default function JudgeApp() {
     );
   }
 
-  const handleLogout = async () => {
-    if (user) {
-      try {
-        await fetchWithAuth(`/api/auth/logout`, {
-          method: 'POST'
-        });
-      } catch (err) {
-        console.error('Failed to logout via API', err);
-      }
-    }
 
-    await auth.signOut();
-    setAssignment(null);
-    setPin('');
-  };
 
   if (!assignment) {
     return (
@@ -195,6 +252,12 @@ export default function JudgeApp() {
             <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce [animation-delay:300ms]"></div>
           </div>
         </div>
+        
+        {error && (
+          <div className="mt-6 p-4 text-red-400 text-sm font-bold bg-red-950/30 border border-red-900/50 rounded-xl max-w-lg w-full">
+            {error}
+          </div>
+        )}
         
         <button 
           onClick={handleLogout}
@@ -223,6 +286,7 @@ export default function JudgeApp() {
       matchId={assignment.matchId} 
       cornerId={assignment.cornerId} 
       onLogout={handleLogout}
+      isOffline={assignment.tournamentId === 'offline-tournament'}
     />
   );
 }

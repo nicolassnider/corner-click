@@ -1,8 +1,8 @@
+# Corner Click
+
 <div align="center">
   <img src="documentos/portada02.png" alt="Corner Click Portada" width="100%" />
 </div>
-
-# Corner Click
 
 Corner Click is a comprehensive web application designed for managing ITF Taekwondo tournaments. It empowers organizers to seamlessly create tournament brackets, list upcoming matches, and provides a highly responsive, real-time scoring interface for judges.
 
@@ -11,10 +11,11 @@ Corner Click is a comprehensive web application designed for managing ITF Taekwo
 - **Bracket Management:** Automatically and manually generate tournament brackets (llaves) with support for seeding and byes.
 - **Match Listing:** Keep track of all matches, their statuses (pending, active, completed), and assigned areas.
 - **Live Scoring Interface:** A real-time, low-latency dashboard for Corner Referees to award points (1, 2, or 3) and record warnings or deductions, fully compliant with ITF Official Competition Rules.
-- **TV Spectator View:** High-visibility, full-screen read-only scoreboard for public projectors, showing live scores, digital neon timers, and real-time warnings per area.
+- **TV Spectator View:** High-visibility, full-screen read-only scoreboard for public projectors. Features a **5% Safe Zone (Overscan)** layout margin for physical TV monitors.
+- **Closed Scoreboard Mode:** TV displays remain locked ("Marcador Cerrado") during active rounds to prevent bias, automatically unlocking and glowing in Red/Blue neon values once the round ends.
 - **Golden Point Automation:** Automated tie-breaker mode that tracks judges' clicks and instantly declares the winner once a consensus majority is reached.
 - **Role-Based Access Control:** Secure access separated by roles (Admin, Organizer, Jury, Judge).
-- **Frictionless Judge Login:** Judges log in instantly using temporary PIN codes generated for specific areas and corners, avoiding the need for complex account creation on tournament day.
+- **Frictionless Judge Login & Offline Mode (PIN 9999):** Judges log in instantly using temporary PIN codes. PIN `9999` activates a local offline mockup mode that works in memory, bypassing all server/database dependencies.
 - **Internationalization (i18n):** Built from the ground up to support multiple languages.
 
 ## Technology Stack
