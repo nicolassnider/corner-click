@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ref, onValue, set } from 'firebase/database';
 import { database } from '../lib/firebase';
-import { MatchStatus, CornerRole } from '@corner-click/types';
+import { MatchStatus, CornerRole, calculateNetScore } from '@corner-click/types';
 import { submitScores } from '../services/scoreService';
 import '../styles/global.css';
 
@@ -46,8 +46,8 @@ export default function ScorePad({ matchId, cornerId, onLogout, isOffline = fals
     return () => unsubscribe();
   }, [matchId, isOffline]);
 
-  const displayRedScore = redScore - Math.floor(redWarnings / 3) - redDeductions;
-  const displayBlueScore = blueScore - Math.floor(blueWarnings / 3) - blueDeductions;
+  const displayRedScore = calculateNetScore(redScore, redWarnings, redDeductions);
+  const displayBlueScore = calculateNetScore(blueScore, blueWarnings, blueDeductions);
 
   useEffect(() => {
     if (isOffline) return;

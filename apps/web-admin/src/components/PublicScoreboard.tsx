@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ref, onValue, get } from 'firebase/database';
 import { database } from '../lib/firebase';
-import { MatchStatus, AUTHOR_NAME, APP_MOTTO } from '@corner-click/types';
+import { MatchStatus, AUTHOR_NAME, APP_MOTTO, calculateNetScore } from '@corner-click/types';
 import '../styles/global.css';
 
 interface PublicScoreboardProps {
@@ -135,8 +135,8 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
   let totalBlue = 0;
 
   Object.values(judgesData).forEach((curr) => {
-    const r = (curr.redScore || 0) - Math.floor((curr.redWarnings || 0) / 3) - (curr.redDeductions || 0);
-    const b = (curr.blueScore || 0) - Math.floor((curr.blueWarnings || 0) / 3) - (curr.blueDeductions || 0);
+    const r = calculateNetScore(curr.redScore || 0, curr.redWarnings || 0, curr.redDeductions || 0);
+    const b = calculateNetScore(curr.blueScore || 0, curr.blueWarnings || 0, curr.blueDeductions || 0);
     totalRed += r;
     totalBlue += b;
     if (r > b) redVotes++;

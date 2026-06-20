@@ -5,7 +5,7 @@ import { getCategories } from '../services/categoryService';
 import { getMatches } from '../services/bracketService';
 import { getCompetitors } from '../services/competitorService';
 import type { Tournament, Category, Match, Competitor } from '@corner-click/types';
-import { MatchStatus } from '@corner-click/types';
+import { MatchStatus, calculateNetScore } from '@corner-click/types';
 import { getCompetitorFullName } from '../utils/competitorUtils';
 import { useActiveMatch } from '../hooks/useActiveMatch';
 import Footer from './Footer';
@@ -372,8 +372,8 @@ export default function JuryDashboard() {
                   {/* Detailed Judge Scorecards */}
                   <div className={`grid grid-cols-1 sm:grid-cols-2 ${Object.keys(judgesData).length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-4'} gap-4 mb-6 max-w-4xl mx-auto w-full`}>
                     {Object.entries(judgesData).map(([cornerId, data]: [string, any]) => {
-                      const r = (data.redScore || 0) - Math.floor((data.redWarnings || 0) / 3) - (data.redDeductions || 0);
-                      const b = (data.blueScore || 0) - Math.floor((data.blueWarnings || 0) / 3) - (data.blueDeductions || 0);
+                      const r = calculateNetScore(data.redScore || 0, data.redWarnings || 0, data.redDeductions || 0);
+                      const b = calculateNetScore(data.blueScore || 0, data.blueWarnings || 0, data.blueDeductions || 0);
                       const winnerClass = r > b 
                         ? 'border-rose-900/60 bg-rose-950/20 shadow-[inset_0_0_15px_rgba(244,63,94,0.05)]' 
                         : b > r 
