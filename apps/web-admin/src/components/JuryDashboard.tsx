@@ -78,7 +78,10 @@ export default function JuryDashboard() {
         })
         .then((data) => {
           if (Array.isArray(data)) {
-            setTournaments(data);
+            const activeTournaments = data.filter(
+              (t: any) => t.status !== "COMPLETED",
+            );
+            setTournaments(activeTournaments);
           } else {
             setTournaments([]);
             showToast("Formato de torneos inválido", "error");
@@ -303,7 +306,7 @@ export default function JuryDashboard() {
               title="Select Category"
               value={selectedCategoryId}
               onChange={(e) => setSelectedCategoryId(e.target.value)}
-              className="bg-slate-950 text-slate-200 px-3 py-2 rounded-lg border border-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium transition-all w-full sm:w-52 min-w-[200px]"
+              className="bg-slate-950 text-slate-200 px-3 py-2 rounded-lg border border-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium transition-all w-full sm:w-52 min-w-[200px] disabled:opacity-50 disabled:bg-slate-900 disabled:text-slate-500 disabled:border-slate-850 disabled:cursor-not-allowed"
               disabled={!selectedTournamentId || categories.length === 0}
             >
               {selectedTournamentId && categories.length === 0 ? (
@@ -336,11 +339,11 @@ export default function JuryDashboard() {
         </div>
       </nav>
 
-      <main className="flex-1 max-w-[95vw] 2xl:max-w-[1700px] w-full mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <main className="flex-1 max-w-[95vw] 2xl:max-w-[1700px] w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Sidebar: Match Queue */}
-        <aside className="lg:col-span-1 space-y-6 order-2 lg:order-1">
-          <div className="bg-slate-900/40 backdrop-blur-xl p-6 rounded-2xl border border-slate-800/80 shadow-2xl h-full flex flex-col">
-            <h2 className="text-xl font-extrabold text-slate-200 mb-6 tracking-tight flex items-center gap-2">
+        <aside className="lg:col-span-1 space-y-4 order-2 lg:order-1">
+          <div className="bg-slate-900/40 backdrop-blur-xl p-4 rounded-2xl border border-slate-800/80 shadow-2xl h-full flex flex-col">
+            <h2 className="text-lg font-extrabold text-slate-200 mb-4 tracking-tight flex items-center gap-2">
               <span>📅</span> Matches Queue
             </h2>
             {!selectedTournamentId ? (
@@ -360,7 +363,7 @@ export default function JuryDashboard() {
                 No matches found for this category.
               </p>
             ) : (
-              <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2 flex-1 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
+              <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 flex-1 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
                 {matches.map((match) => {
                   const isCurrent = selectedMatch?.id === match.id;
                   const displayStatus = isCurrent ? status : match.status;
@@ -371,14 +374,14 @@ export default function JuryDashboard() {
                   return (
                     <div
                       key={match.id}
-                      className={`p-4 rounded-xl cursor-pointer transition-all border-2 ${
+                      className={`p-3 rounded-xl cursor-pointer transition-all border-2 ${
                         isCurrent
                           ? "border-blue-500 bg-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.15)] transform scale-[1.02]"
                           : "border-slate-800 bg-slate-900/30 hover:bg-slate-900/60 hover:border-slate-700"
                       }`}
                       onClick={() => setSelectedMatch(match)}
                     >
-                      <div className="flex justify-between items-center mb-2">
+                      <div className="flex justify-between items-center mb-1">
                         <span
                           className={`text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded ${isCurrent ? "bg-blue-500/20 text-blue-400" : "bg-slate-800 text-slate-400"}`}
                         >
@@ -456,11 +459,11 @@ export default function JuryDashboard() {
           ) : (
             <div className="bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-800/80 shadow-2xl overflow-hidden flex flex-col h-full flex-grow">
               {/* Match Header */}
-              <div className="bg-slate-900/80 border-b border-slate-800 p-8 text-center relative overflow-hidden shrink-0">
+              <div className="bg-slate-900/80 border-b border-slate-800 p-4 md:p-6 text-center relative overflow-hidden shrink-0">
                 <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
 
                 {/* Header Status Bar */}
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex justify-between items-center mb-4">
                   {/* Status Badge */}
                   <div>
                     <span
@@ -529,10 +532,10 @@ export default function JuryDashboard() {
                 </div>
 
                 {/* Digital Timer Panel */}
-                <div className="mt-8 mb-2 flex justify-center">
-                  <div className="bg-slate-950/60 border border-slate-850 px-8 py-3 rounded-2xl shadow-inner inline-flex items-center">
+                <div className="mt-4 mb-1 flex justify-center">
+                  <div className="bg-slate-950/60 border border-slate-850 px-6 py-2 rounded-xl shadow-inner inline-flex items-center">
                     <div
-                      className={`font-mono text-7xl md:text-8xl font-black tracking-tighter transition-all duration-300 ${
+                      className={`font-mono text-5xl md:text-6xl font-black tracking-tighter transition-all duration-300 ${
                         status === MatchStatus.ACTIVE
                           ? "text-emerald-400 drop-shadow-[0_0_20px_rgba(52,211,153,0.4)] animate-pulse"
                           : status === MatchStatus.GOLDEN_POINT
@@ -659,21 +662,21 @@ export default function JuryDashboard() {
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-px bg-slate-800 border-y border-slate-800 flex-grow shrink-0">
-                  <div className="bg-rose-950/5 p-8 flex flex-col items-center justify-center relative overflow-hidden">
+                  <div className="bg-rose-950/5 p-4 md:p-6 flex flex-col items-center justify-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-rose-500/2 blur-[80px] pointer-events-none" />
-                    <span className="text-rose-500/80 font-black uppercase tracking-widest text-xs mb-2">
+                    <span className="text-rose-500/80 font-black uppercase tracking-widest text-[10px] mb-1">
                       Red Points Accumulation
                     </span>
-                    <span className="text-6xl md:text-7xl font-black text-rose-500 tracking-tight drop-shadow-[0_0_15px_rgba(244,63,94,0.15)]">
+                    <span className="text-5xl md:text-6xl font-black text-rose-500 tracking-tight drop-shadow-[0_0_15px_rgba(244,63,94,0.15)]">
                       {totalRed}
                     </span>
                   </div>
-                  <div className="bg-blue-950/5 p-8 flex flex-col items-center justify-center relative overflow-hidden">
+                  <div className="bg-blue-950/5 p-4 md:p-6 flex flex-col items-center justify-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-500/2 blur-[80px] pointer-events-none" />
-                    <span className="text-blue-500/80 font-black uppercase tracking-widest text-xs mb-2">
+                    <span className="text-blue-500/80 font-black uppercase tracking-widest text-[10px] mb-1">
                       Blue Points Accumulation
                     </span>
-                    <span className="text-6xl md:text-7xl font-black text-blue-500 tracking-tight drop-shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+                    <span className="text-5xl md:text-6xl font-black text-blue-500 tracking-tight drop-shadow-[0_0_15px_rgba(59,130,246,0.15)]">
                       {totalBlue}
                     </span>
                   </div>
@@ -732,9 +735,9 @@ export default function JuryDashboard() {
                 )}
 
               {/* Action Buttons */}
-              <div className="p-8 bg-slate-900/60 border-t border-slate-800 flex flex-wrap justify-center gap-4 mt-auto shrink-0">
+              <div className="p-4 md:p-6 bg-slate-900/60 border-t border-slate-800 flex flex-wrap justify-center gap-4 mt-auto shrink-0">
                 <button
-                  className={`px-8 py-4 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
+                  className={`px-6 py-3 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
                     status === MatchStatus.ACTIVE ||
                     status === MatchStatus.GOLDEN_POINT ||
                     status === MatchStatus.ENDED ||
@@ -763,7 +766,7 @@ export default function JuryDashboard() {
                 </button>
 
                 <button
-                  className={`px-8 py-4 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
+                  className={`px-6 py-3 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
                     !(
                       status === MatchStatus.ACTIVE ||
                       status === MatchStatus.GOLDEN_POINT
@@ -787,7 +790,7 @@ export default function JuryDashboard() {
                 </button>
 
                 <button
-                  className={`px-8 py-4 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
+                  className={`px-6 py-3 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
                     status === MatchStatus.ENDED ||
                     selectedMatch.status === MatchStatus.COMPLETED ||
                     !isMatchStartable

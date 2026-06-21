@@ -8,10 +8,12 @@ import { getCompetitors } from "../services/competitorService";
 
 interface CategoryAdjusterProps {
   tournamentId: string;
+  isReadOnly?: boolean;
 }
 
 export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
   tournamentId,
+  isReadOnly = false,
 }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [competitors, setCompetitors] = useState<Competitor[]>([]);
@@ -79,25 +81,29 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold text-gray-900">
-            Ajuste y Fusión de Categorías
-          </h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Revisa la distribución de competidores. Fusiona automáticamente
-            categorías con menos de 4 inscritos para asegurar llaves
-            competitivas.
-          </p>
+      {!isReadOnly && (
+        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">
+              Ajuste y Fusión de Categorías
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">
+              Revisa la distribución de competidores. Fusiona automáticamente
+              categorías con menos de 4 inscritos para asegurar llaves
+              competitivas.
+            </p>
+          </div>
+          <button
+            onClick={handleMerge}
+            disabled={merging || categories.length === 0}
+            className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-sm font-bold rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-colors whitespace-nowrap"
+          >
+            {merging
+              ? "Fusionando..."
+              : "Fusionar Categorías (< 4 competidores)"}
+          </button>
         </div>
-        <button
-          onClick={handleMerge}
-          disabled={merging || categories.length === 0}
-          className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-sm font-bold rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-colors whitespace-nowrap"
-        >
-          {merging ? "Fusionando..." : "Fusionar Categorías (< 4 competidores)"}
-        </button>
-      </div>
+      )}
 
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

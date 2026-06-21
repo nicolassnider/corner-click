@@ -13,6 +13,7 @@ interface CompetitorManagerProps {
   categoryId: string;
   categories: Category[];
   onCategoryChange: (id: string) => void;
+  isReadOnly?: boolean;
 }
 
 export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
@@ -20,6 +21,7 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
   categoryId,
   categories,
   onCategoryChange,
+  isReadOnly = false,
 }) => {
   const [competitors, setCompetitors] = useState<Competitor[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -85,24 +87,40 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
     if (!confirm("Generar 8 competidores aleatorios para esta categoría?"))
       return;
     setLoading(true);
-    const firstNames = [
+    const currentCategory = categories.find((c) => c.id === categoryId);
+    const targetGender = currentCategory?.gender || "MALE";
+
+    const maleNames = [
       "Liam",
-      "Emma",
       "Noah",
-      "Olivia",
       "Oliver",
-      "Ava",
       "Elijah",
-      "Charlotte",
       "Mateo",
-      "Sophia",
       "Lucas",
-      "Mia",
       "Hugo",
-      "Lucia",
       "Martin",
-      "Martina",
+      "Benjamin",
+      "James",
+      "Alexander",
+      "Daniel",
     ];
+    const femaleNames = [
+      "Emma",
+      "Olivia",
+      "Ava",
+      "Charlotte",
+      "Sophia",
+      "Mia",
+      "Lucia",
+      "Martina",
+      "Isabella",
+      "Amelia",
+      "Harper",
+      "Evelyn",
+    ];
+
+    const namesList = targetGender === "FEMALE" ? femaleNames : maleNames;
+
     const lastNames = [
       "Smith",
       "Johnson",
@@ -131,11 +149,11 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
 
     const mockCompetitors = Array.from({ length: 8 }).map(() => ({
       categoryId,
-      firstName: firstNames[Math.floor(Math.random() * firstNames.length)],
+      firstName: namesList[Math.floor(Math.random() * namesList.length)],
       lastName: lastNames[Math.floor(Math.random() * lastNames.length)],
       club: clubs[Math.floor(Math.random() * clubs.length)],
       country: countries[Math.floor(Math.random() * countries.length)],
-      gender: "MALE" as const,
+      gender: targetGender,
       birthDate: "2005-05-15",
       weight: 70,
       belt: "1º – 3º Dan",
@@ -170,7 +188,7 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
         <h2 className="text-xl font-bold">
           Competitors ({competitors.length})
         </h2>
-        {!isFormOpen && (
+        {!isFormOpen && !isReadOnly && (
           <div className="flex space-x-2">
             <button
               onClick={generateMockCompetitors}
@@ -225,9 +243,11 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Seeded
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+                {!isReadOnly && (
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -251,23 +271,25 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
                       <span className="text-gray-400">-</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={() => {
-                        setEditingCompetitor(comp);
-                        setIsFormOpen(true);
-                      }}
-                      className="text-indigo-600 hover:text-indigo-900 mr-4"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(comp.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      Delete
-                    </button>
-                  </td>
+                  {!isReadOnly && (
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button
+                        onClick={() => {
+                          setEditingCompetitor(comp);
+                          setIsFormOpen(true);
+                        }}
+                        className="text-indigo-600 hover:text-indigo-900 mr-4"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(comp.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

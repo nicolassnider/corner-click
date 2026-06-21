@@ -11,12 +11,14 @@ interface BracketManagerProps {
   tournamentId: string;
   categoryId: string;
   areaId: string;
+  isReadOnly?: boolean;
 }
 
 export const BracketManager: React.FC<BracketManagerProps> = ({
   tournamentId,
   categoryId,
   areaId,
+  isReadOnly = false,
 }) => {
   const [matches, setMatches] = useState<Match[]>([]);
   const [competitors, setCompetitors] = useState<Competitor[]>([]);
@@ -101,18 +103,114 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
 
   const maxRounds = Math.max(...Object.keys(rounds).map(Number), 0);
 
+  // Calculate Podium (1st, 2nd, and sharing 3rd places)
+  const finalMatch = matches.find((m) => !m.nextMatchId);
+  const isFinalCompleted =
+    finalMatch && finalMatch.status === "COMPLETED" && finalMatch.winnerId;
+
+  let firstPlace: string | null = null;
+  let secondPlace: string | null = null;
+  const thirdPlaces: string[] = [];
+
+  if (isFinalCompleted && finalMatch) {
+    firstPlace = finalMatch.winnerId;
+    secondPlace =
+      finalMatch.winnerId === finalMatch.redCompetitorId
+        ? finalMatch.blueCompetitorId
+        : finalMatch.redCompetitorId;
+
+    // The two semi-finals point to the final match's ID
+    const semiFinals = matches.filter((m) => m.nextMatchId === finalMatch.id);
+    semiFinals.forEach((sf) => {
+      if (sf.status === "COMPLETED" && sf.winnerId) {
+        const loserId =
+          sf.winnerId === sf.redCompetitorId
+            ? sf.blueCompetitorId
+            : sf.redCompetitorId;
+        if (loserId && loserId !== "BYE") {
+          thirdPlaces.push(loserId);
+        }
+      }
+    });
+  }
+
   return (
     <div className="mt-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">Tournament Bracket</h2>
-        <button
-          onClick={handleGenerateBracket}
-          disabled={generating}
-          className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50"
-        >
-          {generating ? "Generating..." : "Generate Bracket"}
-        </button>
+        {!isReadOnly && (
+          <button
+            onClick={handleGenerateBracket}
+            disabled={generating}
+            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50"
+          >
+            {generating ? "Generating..." : "Generate Bracket"}
+          </button>
+        )}
       </div>
+
+      {isFinalCompleted && (
+        <div className="bg-gradient-to-r from-amber-500/10 via-yellow-600/5 to-amber-500/10 border-2 border-amber-500/30 p-6 rounded-2xl mb-8 shadow-lg max-w-4xl mx-auto text-center backdrop-blur-sm">
+          <h3 className="text-xl font-black text-amber-500 uppercase tracking-widest mb-6 flex items-center justify-center gap-2">
+            <span>🏆</span> Podio Final de la Categoría
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end mt-4">
+            {/* 2nd Place */}
+            <div className="bg-slate-900/40 border border-slate-800 p-5 rounded-xl flex flex-col items-center order-2 md:order-1 h-36 justify-center">
+              <span className="text-2xl mb-1">🥈</span>
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                2º Puesto
+              </span>
+              <span className="text-sm font-black text-slate-200 mt-2 truncate w-full">
+                {secondPlace ? getCompetitorName(secondPlace) : "Unknown"}
+              </span>
+              <span className="text-xs text-slate-500 italic mt-0.5">
+                {secondPlace &&
+                  competitors.find((c) => c.id === secondPlace)?.club}
+              </span>
+            </div>
+
+            {/* 1st Place */}
+            <div className="bg-amber-950/20 border-2 border-amber-500/40 p-6 rounded-2xl flex flex-col items-center order-1 md:order-2 h-44 justify-center shadow-lg shadow-amber-500/5 transform scale-105">
+              <span className="text-4xl mb-1 animate-bounce">👑</span>
+              <span className="text-xs font-black text-amber-400 uppercase tracking-widest">
+                1º Puesto - Campeón
+              </span>
+              <span className="text-base font-black text-amber-300 mt-2 truncate w-full">
+                {firstPlace ? getCompetitorName(firstPlace) : "Unknown"}
+              </span>
+              <span className="text-xs text-amber-500 font-bold mt-0.5">
+                {firstPlace &&
+                  competitors.find((c) => c.id === firstPlace)?.club}
+              </span>
+            </div>
+
+            {/* 3rd Place */}
+            <div className="bg-slate-900/40 border border-slate-800 p-5 rounded-xl flex flex-col items-center order-3 h-36 justify-center">
+              <span className="text-2xl mb-1">🥉</span>
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                3º Puesto (Compartido)
+              </span>
+              <div className="flex flex-col gap-1 mt-2 w-full">
+                {thirdPlaces.length > 0 ? (
+                  thirdPlaces.map((tpId) => (
+                    <div key={tpId} className="flex flex-col items-center">
+                      <span className="text-xs font-black text-slate-200 truncate w-full">
+                        {getCompetitorName(tpId)}
+                      </span>
+                      <span className="text-[10px] text-slate-500 italic">
+                        {competitors.find((c) => c.id === tpId)?.club}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <span className="text-xs text-slate-500">No definido</span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {matches.length === 0 ? (
         <p className="text-gray-500 text-center py-8 bg-gray-50 rounded-lg">
@@ -167,7 +265,8 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
                         </div>
                         {m.status !== "COMPLETED" &&
                           m.redCompetitorId &&
-                          m.redCompetitorId !== "BYE" && (
+                          m.redCompetitorId !== "BYE" &&
+                          !isReadOnly && (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -203,7 +302,8 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
                         </div>
                         {m.status !== "COMPLETED" &&
                           m.blueCompetitorId &&
-                          m.blueCompetitorId !== "BYE" && (
+                          m.blueCompetitorId !== "BYE" &&
+                          !isReadOnly && (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();

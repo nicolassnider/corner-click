@@ -30,6 +30,7 @@ interface AreaMatchData {
   redCompetitorId: string;
   blueCompetitorId: string;
   round: number;
+  nextMatchId?: string | null;
 }
 
 interface ScoreData {
@@ -111,6 +112,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
           redCompetitorId: state.match.redCompetitorId,
           blueCompetitorId: state.match.blueCompetitorId,
           round: state.match.round || 1,
+          nextMatchId: state.match.nextMatchId || null,
         });
         setTimeRemaining(state.timer);
         setMatchStatus(state.match.status);
@@ -355,8 +357,16 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
               ? areaId.replace(/area-/i, "")
               : areaId}
           </span>
-          <div className="text-sm sm:text-lg text-slate-400 mt-2.5 font-bold tracking-wider">
-            {LABELS.ROUND} {activeMatch.round}
+          <div className="text-sm sm:text-lg mt-2.5 font-bold tracking-wider">
+            {!activeMatch.nextMatchId ? (
+              <span className="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-4 py-1.5 rounded-full text-xs uppercase animate-pulse shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+                🏆 Por el Campeonato
+              </span>
+            ) : (
+              <span className="text-slate-400">
+                {LABELS.ROUND} {activeMatch.round}
+              </span>
+            )}
           </div>
         </div>
       </header>

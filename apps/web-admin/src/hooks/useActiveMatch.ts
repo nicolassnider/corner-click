@@ -187,7 +187,7 @@ export const useActiveMatch = (
         "warning",
       );
 
-      setStatus(MatchStatus.ENDED);
+      setStatus(MatchStatus.COMPLETED);
       setIsExtraTime(false);
       const socket = getSocket();
       socket.emit(SocketEvent.MATCH_CONTROL, {
@@ -220,7 +220,7 @@ export const useActiveMatch = (
       );
       if (updatedSelectedMatch) {
         onMatchesRefreshed(updatedMatches, updatedSelectedMatch);
-        setStatus(MatchStatus.ENDED);
+        setStatus(MatchStatus.COMPLETED);
       }
 
       showToast?.("¡Ganador declarado y llave actualizada!", "success");
@@ -331,6 +331,7 @@ export const useActiveMatch = (
       redCompetitorId: selectedMatch.redCompetitorId,
       blueCompetitorId: selectedMatch.blueCompetitorId,
       round: selectedMatch.round || 1,
+      nextMatchId: selectedMatch.nextMatchId || null,
     });
   }, [selectedMatch?.id, useLocal]);
 

@@ -7,9 +7,14 @@ import AssignJudgeModal from "./AssignJudgeModal";
 interface Props {
   tournamentId: string;
   tournamentAreas: number;
+  isReadOnly?: boolean;
 }
 
-export default function JudgeManager({ tournamentId, tournamentAreas }: Props) {
+export default function JudgeManager({
+  tournamentId,
+  tournamentAreas,
+  isReadOnly = false,
+}: Props) {
   const {
     judges,
     loading,
@@ -58,26 +63,28 @@ export default function JudgeManager({ tournamentId, tournamentAreas }: Props) {
         </div>
       )}
 
-      <form
-        onSubmit={handleAddJudge}
-        className="flex gap-4 mb-8 bg-gray-50 p-4 rounded-lg border border-gray-200"
-      >
-        <input
-          type="text"
-          placeholder="Enter Judge Full Name"
-          value={newJudgeName}
-          onChange={(e) => setNewJudgeName(e.target.value)}
-          className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-gray-900 font-medium"
-          required
-        />
-        <button
-          type="submit"
-          disabled={submitting}
-          className="bg-gray-900 hover:bg-black text-white font-bold py-3 px-8 rounded-lg shadow disabled:opacity-50 transition-colors"
+      {!isReadOnly && (
+        <form
+          onSubmit={handleAddJudge}
+          className="flex gap-4 mb-8 bg-gray-50 p-4 rounded-lg border border-gray-200"
         >
-          {submitting ? "Adding..." : "Register Judge"}
-        </button>
-      </form>
+          <input
+            type="text"
+            placeholder="Enter Judge Full Name"
+            value={newJudgeName}
+            onChange={(e) => setNewJudgeName(e.target.value)}
+            className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-gray-900 font-medium"
+            required
+          />
+          <button
+            type="submit"
+            disabled={submitting}
+            className="bg-gray-900 hover:bg-black text-white font-bold py-3 px-8 rounded-lg shadow disabled:opacity-50 transition-colors"
+          >
+            {submitting ? "Adding..." : "Register Judge"}
+          </button>
+        </form>
+      )}
 
       <div className="overflow-x-auto">
         <table className="min-w-full text-left text-sm whitespace-nowrap">
@@ -87,7 +94,11 @@ export default function JudgeManager({ tournamentId, tournamentAreas }: Props) {
               <th className="px-6 py-4">Personal PIN</th>
               <th className="px-6 py-4">Status</th>
               <th className="px-6 py-4">Assignment</th>
-              <th className="px-6 py-4 rounded-tr-lg text-right">Actions</th>
+              {!isReadOnly ? (
+                <th className="px-6 py-4 rounded-tr-lg text-right">Actions</th>
+              ) : (
+                <th className="px-6 py-4 rounded-tr-lg"></th>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -143,42 +154,48 @@ export default function JudgeManager({ tournamentId, tournamentAreas }: Props) {
                       </span>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      {j.status === JudgeStatus.ONLINE && (
+                  {!isReadOnly ? (
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex justify-end gap-2">
+                        {j.status === JudgeStatus.ONLINE && (
+                          <button
+                            onClick={() => {
+                              if (
+                                window.confirm(`Force disconnect ${j.name}?`)
+                              ) {
+                                disconnectJudge(j.id!);
+                              }
+                            }}
+                            className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-bold py-2 px-3 rounded-lg transition-colors text-xs uppercase tracking-wide"
+                          >
+                            Disconnect
+                          </button>
+                        )}
+                        <button
+                          onClick={() => setSelectedJudge(j)}
+                          className="bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold py-2 px-4 rounded-lg transition-colors text-xs uppercase tracking-wide"
+                        >
+                          {j.currentAssignment ? "Re-Assign" : "Assign"}
+                        </button>
                         <button
                           onClick={() => {
-                            if (window.confirm(`Force disconnect ${j.name}?`)) {
-                              disconnectJudge(j.id!);
+                            if (
+                              window.confirm(
+                                `Are you sure you want to delete ${j.name}?`,
+                              )
+                            ) {
+                              deleteJudge(j.id!);
                             }
                           }}
-                          className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-bold py-2 px-3 rounded-lg transition-colors text-xs uppercase tracking-wide"
+                          className="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-2 px-3 rounded-lg transition-colors text-xs uppercase tracking-wide"
                         >
-                          Disconnect
+                          Delete
                         </button>
-                      )}
-                      <button
-                        onClick={() => setSelectedJudge(j)}
-                        className="bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold py-2 px-4 rounded-lg transition-colors text-xs uppercase tracking-wide"
-                      >
-                        {j.currentAssignment ? "Re-Assign" : "Assign"}
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (
-                            window.confirm(
-                              `Are you sure you want to delete ${j.name}?`,
-                            )
-                          ) {
-                            deleteJudge(j.id!);
-                          }
-                        }}
-                        className="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-2 px-3 rounded-lg transition-colors text-xs uppercase tracking-wide"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
+                      </div>
+                    </td>
+                  ) : (
+                    <td className="px-6 py-4"></td>
+                  )}
                 </tr>
               ))
             )}

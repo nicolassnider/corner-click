@@ -158,6 +158,17 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
         </a>
       </div>
 
+      {tournament.status === "COMPLETED" && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 px-6 py-4 rounded-xl flex items-center gap-3 shadow-sm mb-4">
+          <span className="text-xl">⚠️</span>
+          <span className="font-semibold text-sm">
+            Este torneo ha finalizado y está en modo de solo lectura. No se
+            permiten realizar modificaciones en las categorías, competidores,
+            jueces o llaves.
+          </span>
+        </div>
+      )}
+
       {/* Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Quick Stats */}
@@ -247,17 +258,24 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           )}
 
           {activeTab === "categories" && (
-            <CategoryManager tournamentId={tournament.id!} />
+            <CategoryManager
+              tournamentId={tournament.id!}
+              isReadOnly={tournament.status === "COMPLETED"}
+            />
           )}
 
           {activeTab === "adjust-categories" && (
-            <CategoryAdjuster tournamentId={tournament.id!} />
+            <CategoryAdjuster
+              tournamentId={tournament.id!}
+              isReadOnly={tournament.status === "COMPLETED"}
+            />
           )}
 
           {activeTab === "judges" && (
             <JudgeManager
               tournamentId={tournament.id!}
               tournamentAreas={tournament.areas || 1}
+              isReadOnly={tournament.status === "COMPLETED"}
             />
           )}
 
@@ -268,6 +286,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                 categoryId={selectedCategoryId}
                 categories={categories}
                 onCategoryChange={setSelectedCategoryId}
+                isReadOnly={tournament.status === "COMPLETED"}
               />
             </div>
           )}
@@ -278,6 +297,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                 tournamentId={tournament.id!}
                 categoryId={selectedCategoryId}
                 areaId={defaultArea}
+                isReadOnly={tournament.status === "COMPLETED"}
               />
             </div>
           )}
