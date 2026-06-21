@@ -6,7 +6,7 @@ Este documento define todos los casos de uso principales para evaluar y probar e
 
 ## 1. Aplicación: Web-Admin (Panel de Control)
 
-*Directorio: `apps/web-admin`*
+_Directorio: `apps/web-admin`_
 
 Esta es la consola de mando para el Organizador del Torneo y los Presidentes de Mesa (Jury).
 
@@ -35,7 +35,7 @@ Esta es la consola de mando para el Organizador del Torneo y los Presidentes de 
 
 ## 2. Aplicación: Web-Judges (App de Jueces de Esquina)
 
-*Directorio: `apps/web-judges`*
+_Directorio: `apps/web-judges`_
 
 Esta aplicación está pensada para ejecutarse en dispositivos móviles de los 4 jueces sentados en las esquinas del área.
 
@@ -57,7 +57,7 @@ Esta aplicación está pensada para ejecutarse en dispositivos móviles de los 4
 
 ## 3. Aplicación: API (Backend)
 
-*Directorio: `apps/api`*
+_Directorio: `apps/api`_
 
 El servidor central Node/Express que maneja la lógica de negocio y permanencia de datos.
 

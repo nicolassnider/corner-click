@@ -152,17 +152,17 @@ TABLA DE CONTENIDOS
 
 ### TOC: S6. Apéndice 6 – Números de Categorías, Medallas y Trofeos
 
-### TOC: D1. Diagrama 1.          Tamaño del Ring– Formas, Formas Equipos, Pre-Establecda
+### TOC: D1. Diagrama 1. Tamaño del Ring– Formas, Formas Equipos, Pre-Establecda
 
-### TOC: D2. Diagrama 2.          Tamaño del Ring– Lucha - Lucha por Equipos
+### TOC: D2. Diagrama 2. Tamaño del Ring– Lucha - Lucha por Equipos
 
-### TOC: D3. Diagrama 3.          Tamaño del Ring – Rotura de Potencia (Word-Championships)
+### TOC: D3. Diagrama 3. Tamaño del Ring – Rotura de Potencia (Word-Championships)
 
-### TOC: D4. Diagrama 4.          Tamaño del Ring – Técnicas Especiales (Word-Championships)
+### TOC: D4. Diagrama 4. Tamaño del Ring – Técnicas Especiales (Word-Championships)
 
-### TOC: D5. Diagrama 5.          Tamaño del Ring – Técnicas Especiales / Rotura de Potencia (World Cup Events)
+### TOC: D5. Diagrama 5. Tamaño del Ring – Técnicas Especiales / Rotura de Potencia (World Cup Events)
 
-A11.       Apéndice 11 – Ajustes a las Reglas Oficiales de Competición de la ITF para Torneos Electrónicos .. 124
+A11. Apéndice 11 – Ajustes a las Reglas Oficiales de Competición de la ITF para Torneos Electrónicos .. 124
 
 ## SECCIÓN I - GENERAL
 
@@ -188,7 +188,7 @@ masculinos como a los femeninos, salvo que se indique lo contrario.
 
 ### T3. OFICIALES
 
-3.1.     Comité de Arbitros
+3.1. Comité de Arbitros
 
 El presidente del Comité de Árbitros es responsable de aprobar, asignar y reunir a todos los
 miembros del jurado, árbitros y jueces para los campeonatos de la ITF.
@@ -210,7 +210,7 @@ durante su trabajo.
 destitución de los presidentes del jurado, árbitros, jueces y árbitros de TI.
 3.1.8. Desarrollar e implementar mejoras en los manuales/documentación de los árbitros.
 
-3.2.     Clase y Requisitos de los Arbitros
+3.2. Clase y Requisitos de los Arbitros
 
 Hay tres categorías de árbitros oficiales de la ITF: Clase A, Clase B y Árbitro IT.
 3.2.1. Los criterios para obtener la calificación de árbitro de clase «A» son los
@@ -235,7 +235,7 @@ siguientes:
 
 3.3. Requisitos mínimos para arbitrar en Campeonatos Mundiales y Copas Mundiales
 
-3.3.1.   Los criterios para poder ejercer como árbitro en el Campeonato
+3.3.1. Los criterios para poder ejercer como árbitro en el Campeonato
 Mundial son:
 
 3.3.1.1. Poseer un certificado de árbitro de clase «A» de la ITF
@@ -275,7 +275,7 @@ Ejemplo: Año del evento 2018 - Año del curso 2016 = 2 → 2018-2016 = 2
 Año del evento 2018 - Año del curso 2015 = 3 → 2018-2015 = 3
 X Este árbitro NO es elegible para participar
 
-3.4      Concejo del Ring
+3.4 Concejo del Ring
 (Véase también: Glosario de términos)
 3.4.1. El concejo activo del ring para la competencia de formas está compuesto por:
 un (1) presidente del jurado, un (1) miembro del jurado, un (1) árbitro de TI,
@@ -310,7 +310,7 @@ mismo combate.
 
 ### T4. DEBERES
 
-4.1.     Presidente del Jurado
+4.1. Presidente del Jurado
 Un (1) presidente del jurado estará sentado en la mesa del jurado en todo momento durante la
 competición y será responsable de la gestión y administración general del Concejo del Ring y sus
 actividades, incluyendo, entre otras cosas: la evaluación del rendimiento de los competidores y las
@@ -321,7 +321,7 @@ de la ITF.
 4.1.1. El presidente del jurado y el comité de árbitros son los únicos oficiales autorizados para
 descalificar a un competidor de acuerdo con los artículos T38 y T39 de estas reglas, según el
 procedimiento establecido en el artículo T39.
-4.1.2.       El presidente del jurado es responsable de supervisar todos los combates y el
+4.1.2. El presidente del jurado es responsable de supervisar todos los combates y el
 comportamiento de los árbitros en el ring que se les haya asignado y, como tal, está
 autorizado a dar su opinión y consejo en cualquier momento.
 4.1.3. El presidente del jurado es el supervisor de los miembros del jurado y del árbitro de TI
@@ -360,10 +360,10 @@ jurado debe levantarse e indicar el ganador.
 y con un mínimo de dos (2) votos a su favor, será declarado ganador y
 pasará a la siguiente ronda de la competición.
 
-4.1.4.2.5.      El equipo que haya obtenido, tras las cinco rondas, la mayoría de los
+4.1.4.2.5. El equipo que haya obtenido, tras las cinco rondas, la mayoría de los
 votos totales de los árbitros será declarado ganador y pasará a la
 siguiente ronda de la competición.
-4.1.4.2.6.      En caso de empate, el presidente del jurado deberá ponerse de pie y
+4.1.4.2.6. En caso de empate, el presidente del jurado deberá ponerse de pie y
 cruzar los brazos frente al pecho. Los competidores/equipos
 continuarán entonces hasta que se decidan los puestos.
 
@@ -384,7 +384,7 @@ declarados ganadores del 1.º, 2.º y dos 3.º puestos.
 4.1.4.4.1. En caso de una situación incorrecta, el presidente del jurado podrá
 solicitar una «pausa» y llamar a los árbitros para que aclaren la
 situación o dar instrucciones.
-4.1.4.4.2.    Una vez que los árbitros hayan comunicado sus resultados, el
+4.1.4.4.2. Una vez que los árbitros hayan comunicado sus resultados, el
 presidente del jurado deberá levantarse e indicar al ganador.
 4.1.4.4.3. El equipo que haya obtenido la mayoría de los votos de los árbitros y
 con un mínimo de dos (2) votos a su favor, será declarado ganador y
@@ -393,14 +393,14 @@ pasará a la siguiente ronda de la competición.
 cruzar los brazos frente al pecho. Los competidores/equipos volverán
 a competir hasta que se decidan los puestos.
 
-4.2.     Miembro del Jurado
+4.2. Miembro del Jurado
 
 4.2.1. Al menos un (1) miembro del jurado estará sentado en la mesa del jurado en todo momento
 y será responsable de ayudar al presidente del jurado con la gestión y administración general
 del concejo del ring y sus actividades, incluyendo, entre otras cosas: la rotación de árbitros,
 la interacción entre el concejo del ring, los entrenadores y los competidores, la destitución y
 sustitución de entrenadores, y la gestión de los competidores.
-4.2.1.1.     Los miembros del jurado deben estar al día en todo momento con las Reglas
+4.2.1.1. Los miembros del jurado deben estar al día en todo momento con las Reglas
 Oficiales de Competición de la ITF.
 4.2.1.2. Los miembros del jurado ayudan al presidente del jurado en la administración del
 concejo del ring y de todos los combates con el fin de declarar al ganador o ganadores.
@@ -415,7 +415,7 @@ datos.
 4.3.3. El registro de las advertencias y faltas indicadas por el presidente del jurado,
 de conformidad con las Reglas Oficiales de Competición de la ITF.
 
-4.4.      Arbitros – Formas
+4.4. Arbitros – Formas
 
 Un (1) árbitro central y cuatro (4) árbitros se sentarán a una distancia mínima de un (1) metro fuera del
 ring y de cara a los competidores durante la competencia de formas. Calificarán las actuaciones de los
@@ -434,10 +434,10 @@ pies en el suelo), con un espacio de 150 cm a cada lado de sus colegas.
 de los competidores, y tenerlos en cuenta a la hora de evaluar su puntuación de acuerdo con los
 parámetros requeridos.
 
-4.5.      Arbitro Central – Lucha Libre
+4.5. Arbitro Central – Lucha Libre
 
 Habrá un (1) árbitro central dentro del ring para controlar el combate durante el combate libre.
-4.5.1.    Los árbitros centrales deben estar al día en todo momento con las Reglas Oficiales de
+4.5.1. Los árbitros centrales deben estar al día en todo momento con las Reglas Oficiales de
 Competición de la ITF.
 4.5.2. Los árbitros centrales pueden dar órdenes, instrucciones y dirigir a los competidores de acuerdo
 con los procedimientos de estas Reglas.
@@ -451,7 +451,7 @@ competición en el ring que se les haya asignado.
 4.5.6. Los árbitros centrales son los únicos oficiales autorizados para asignar advertencias y/o faltas a
 los competidores en el ring que se les haya asignado.
 
-4.6       Arbitros – Lucha libre
+4.6 Arbitros – Lucha libre
 Cuatro (4) árbitros estarán sentados, a un mínimo de un (1) metro fuera y en cada esquina del ring
 durante el combate libre. Asignarán puntos de acuerdo con su criterio, basándose en las Reglas Oficiales
 de Competición de la ITF.
@@ -465,7 +465,7 @@ competidor.
 las plantas de los pies en el suelo).
 4.6.5. Los árbitros de esquina anotarán los puntos electrónicamente, tal y como se indica en las
 Reglas Oficiales de Competición de la ITF.
-4.7.      Arbitro Central – Rotura de Potencia
+4.7. Arbitro Central – Rotura de Potencia
 Un (1) árbitro central estará dentro del ring para controlar el match, asignar puntos por roturas válidas
 (junto con los jueces), verificar el procedimiento correcto y aplicar cualquier infracción o falta necesaria.
 4.7.1. Los árbitros centrales deben estar al día en todo momento con las Reglas Oficiales de
@@ -479,7 +479,7 @@ así como la correcta ejecución de la técnica en cada intento, tal y como se i
 reglas.
 4.7.5. Los árbitros centrales deben mostrar claramente el número correcto de puntos obtenidos
 por cada técnica.
-4.8.      Arbitros – Rotura de Potencia
+4.8. Arbitros – Rotura de Potencia
 Dos (2) árbitros evaluarán en la competición de Rotura de Poder. En colaboración con el árbitro central,
 asignarán puntos por las roturas válidas, verificarán que se siga el procedimiento correcto e indicarán
 cualquier infracción, de acuerdo con su criterio y basándose en las Reglas Oficiales de Competición de
@@ -490,7 +490,7 @@ de la ITF.
 4.8.3. Los árbitros son responsables de comprobar la altura de los tableros y/o los blancos, así
 como la correcta ejecución de la técnica en cada intento, tal y como se indica en las Reglas
 Oficiales de Competición de la ITF.
-4.9.      Arbitro Central – Técnicas Especiales
+4.9. Arbitro Central – Técnicas Especiales
 Habrá un (1) árbitro central dentro del ring para controlar el match durante las técnicas especiales.
 4.9.1. Los árbitros centrales deben estar al día en todo momento con las Reglas Oficiales de
 Competición de la ITF y los manuales relativos al presidente del jurado, los árbitros y los
@@ -506,7 +506,7 @@ reglas.
 4.9.5. Los árbitros centrales deben mostrar claramente el número correcto de puntos obtenidos
 por cada técnica.
 
-4.10.    Arbitros – Técnicas Especiales
+4.10. Arbitros – Técnicas Especiales
 Dos (2) árbitros oficiarán en la competición de técnica especial. En colaboración con el árbitro
 central, asignarán puntos por roturas válidas, verificarán el procedimiento correcto e indicarán
 cualquier infracción, de acuerdo con su criterio basado en las Reglas Oficiales de Competición
@@ -518,7 +518,7 @@ de la ITF.
 como la correcta ejecución de la técnica en cada intento, tal y como se indica en las Reglas
 Oficiales de Competición de la ITF.
 
-4.11.      Arbitros – Lucha Preestablecida
+4.11. Arbitros – Lucha Preestablecida
 Un (1) árbitro central y cuatro (4) árbitros se sentarán a una distancia mínima de un (1) metro
 fuera del ring y de cara a los competidores durante la competición de lucha preestablecida.
 Calificarán el rendimiento de los competidores según su criterio, evaluando las deducciones en
@@ -532,7 +532,7 @@ acuerdo con los procedimientos de estas Reglas.
 competidor.
 4.11.5. Los árbitros deben sentarse correctamente (erguidos, con la espalda recta y las plantas de
 los pies en el suelo), con un espacio de 150 cm a cada lado de sus colegas.
-4.11.6.       Los árbitros deben observar cuidadosa y exhaustivamente las actuaciones y el
+4.11.6. Los árbitros deben observar cuidadosa y exhaustivamente las actuaciones y el
 comportamiento de los competidores, y tenerlos en cuenta a la hora de evaluar su
 puntuación de acuerdo con los parámetros requeridos.
 
@@ -562,7 +562,7 @@ Todos los árbitros deben cumplir las siguientes normas:
 4.15.6. Está prohibido el uso de dispositivos móviles/electrónicos para uso personal durante
 las horas de competición.
 
-4.16.      Evaluación
+4.16. Evaluación
 Cada árbitro es responsable de emitir su propia evaluación y/o decisión de acuerdo con estas
 reglas.
 
@@ -583,7 +583,7 @@ La edad “competitiva” de los competidores se define mediante la siguiente f�
 
 Año de la competencia - Año de nacimiento - 1 = Edad de los competidores
 
-Ejemplo:        Año del evento 2019 - Año de nacimiento 2001 - 1 = 17
+Ejemplo: Año del evento 2019 - Año de nacimiento 2001 - 1 = 17
 → 2019 - 2001 - 1 = 17
 Este competidor solo puede competir como junior.
 
@@ -591,30 +591,30 @@ Año del evento 2019 - Año de nacimiento 2000 - 1 = 18
 → 2019 - 2001 - 1 = 18
 Este competidor solo puede competir como adulto.
 
-Campeonato del Mundo                                                         Copa del Mundo
-5.1. División por edad Descripción                                         5.1. División por edad    Descripción
-12-14 años             Pre-Junior                                          12-14 años                 Prejunior
-15-17 años             Junior                                              15-17 años                 Junior
-18 años y mayores      Adulto                                              18-35 años                 Adulto
-36-45 años                 Senior
-46 años y mayores          Veteranos
+Campeonato del Mundo Copa del Mundo
+5.1. División por edad Descripción 5.1. División por edad Descripción
+12-14 años Pre-Junior 12-14 años Prejunior
+15-17 años Junior 15-17 años Junior
+18 años y mayores Adulto 18-35 años Adulto
+36-45 años Senior
+46 años y mayores Veteranos
 
-5.2.    Todos los competidores pre-junior o junior                         5.2. Todos los competidores con cinturón de
-deben ser 1º, 2º o 3º Dan.                                                 color deben ser 4º, 3º, 2º o 1º gup.
-Todos los competidores adultos deben ser 1º, 2º, 3º,                       Todos los competidores pre-junior o junior con
-4º, 5º o 6º Dan.                                                           cinturón negro deben ser 1º, 2º o 3º Dan.
+5.2. Todos los competidores pre-junior o junior 5.2. Todos los competidores con cinturón de
+deben ser 1º, 2º o 3º Dan. color deben ser 4º, 3º, 2º o 1º gup.
+Todos los competidores adultos deben ser 1º, 2º, 3º, Todos los competidores pre-junior o junior con
+4º, 5º o 6º Dan. cinturón negro deben ser 1º, 2º o 3º Dan.
 Todos los competidores adultos, senior o
 veteranos con cinturón negro deben ser 1º, 2º,
 3º, 4º, 5º o 6º Dan.
 
-5.3. Todos los competidores deben ser titulares de                         5.3.      Todos los competidores deben estar
-un certificado de cinturón negro de la ITF y estar                         registrados en el sistema en línea de la ITF con su
-registrados en el sistema en línea de la ITF con su                        rango actual, deben gozar de buena salud y estar
-rango actual, deben gozar de buena salud y estar                           registrados en la Asociación Nacional o Asociación
-registrados en la Asociación Nacional del país que                         Aliada del país representado, y deben
-representan, y deben proporcionar una prueba de                            proporcionar una prueba de identificación
-identificación mediante un pasaporte válido o un                           mediante un pasaporte válido o un documento
-documento nacional de identidad legal.                                     nacional de identidad legal.
+5.3. Todos los competidores deben ser titulares de 5.3. Todos los competidores deben estar
+un certificado de cinturón negro de la ITF y estar registrados en el sistema en línea de la ITF con su
+registrados en el sistema en línea de la ITF con su rango actual, deben gozar de buena salud y estar
+rango actual, deben gozar de buena salud y estar registrados en la Asociación Nacional o Asociación
+registrados en la Asociación Nacional del país que Aliada del país representado, y deben
+representan, y deben proporcionar una prueba de proporcionar una prueba de identificación
+identificación mediante un pasaporte válido o un mediante un pasaporte válido o un documento
+documento nacional de identidad legal. nacional de identidad legal.
 Los competidores afiliados a la Asociación Nacional
 o Asociación Aliada de su país podrán inscribirse y
 competir en la Copa del Mundo como miembros de
@@ -622,9 +622,9 @@ un club, escuela o equipo asociado.
 (Las excepciones a esta norma las determina la
 Junta Directiva).
 
-5.4. La Competencia para la categoría de edad Pre-                               5.4. La competencia para todas las categorías de
-Junior será llamada:                                                             edad es el mismo evento y se denominará:
-“ITF Taekwon-Do Pre-Junior World Championship”.                                  «Copa del Mundo de Taekwon-Do de la ITF».
+5.4. La Competencia para la categoría de edad Pre- 5.4. La competencia para todas las categorías de
+Junior será llamada: edad es el mismo evento y se denominará:
+“ITF Taekwon-Do Pre-Junior World Championship”. «Copa del Mundo de Taekwon-Do de la ITF».
 
 La Competencia para la categoría de edad Junior será
 llamada:
@@ -651,13 +651,13 @@ Nota:
 El Comité de Árbitros podrá, a su discreción, modificar los requisitos de vestimenta anteriores para
 determinados eventos debido a condiciones meteorológicas, sanitarias u otros requisitos.
 
-World Championship                                                                         World Cup
-6.2. Indumentaria                                                            6.2. Indumentaria
+World Championship World Cup
+6.2. Indumentaria 6.2. Indumentaria
 
-6.2.1. Dobok                                                                 6.2.1. Dobok
-Los competidores deben llevar el Dobok «oficialmente                            Los competidores deben llevar el «Dobok
-aprobado» por la ITF.                                                           oficialmente aprobado» por la ITF.
-Consulte el Apéndice 2: Indumentaria aprobada                                   Consulte el Apéndice 2: Indumentaria aprobada.
+6.2.1. Dobok 6.2.1. Dobok
+Los competidores deben llevar el Dobok «oficialmente Los competidores deben llevar el «Dobok
+aprobado» por la ITF. oficialmente aprobado» por la ITF.
+Consulte el Apéndice 2: Indumentaria aprobada Consulte el Apéndice 2: Indumentaria aprobada.
 
 Tanto los Doboks de cinturón negro como los de
 cinturón de color PUEDEN llevar el nombre del
@@ -668,31 +668,31 @@ y medir entre 4 cm y 8 cm de altura. Esto se suma
 a las marcas obligatorias.
 Consulte el Apéndice 2: Indumentaria aprobada.
 
-6.2.2. Cinturones negros                                                     6.2.2. Cinturones:
-6.2.2.1. Cinturones negros pre-junior y junior:                              6.2.2.1. Cinturón negro pre-junior y junior.
-Consulte el Apéndice 2: Ropa aprobada.                                        Consulte el Apéndice 2: Ropa aprobada.
-6.2.2.2. Cinturones negros adultos:                                          6.2.2.2. Cinturones negros para adultos, sénior y
-Consulte el Apéndice 2: Ropa aprobada.                                     veteranos.
+6.2.2. Cinturones negros 6.2.2. Cinturones:
+6.2.2.1. Cinturones negros pre-junior y junior: 6.2.2.1. Cinturón negro pre-junior y junior.
+Consulte el Apéndice 2: Ropa aprobada. Consulte el Apéndice 2: Ropa aprobada.
+6.2.2.2. Cinturones negros adultos: 6.2.2.2. Cinturones negros para adultos, sénior y
+Consulte el Apéndice 2: Ropa aprobada. veteranos.
 Consulte el Apéndice 2: Ropa aprobada.
 6.2.2.3. Todos los cinturones de colores.
 Consulte el Apéndice 2: Ropa aprobada.
 
-6.2.3. Los competidores pueden llevar ropa deportiva                         6.2.3.      Los competidores pueden llevar ropa
-normal, como conjuntos deportivos, zapatillas de                             deportiva normal, como conjuntos deportivos,
-entrenamiento, etc., cuando no estén compitiendo,                            zapatillas de entrenamiento, etc., cuando no estén
-pero esto queda a discreción del Comité de Torneos de                        compitiendo, pero esto queda a discreción del Comité
-la ITF.                                                                      de Torneos de la ITF.
+6.2.3. Los competidores pueden llevar ropa deportiva 6.2.3. Los competidores pueden llevar ropa
+normal, como conjuntos deportivos, zapatillas de deportiva normal, como conjuntos deportivos,
+entrenamiento, etc., cuando no estén compitiendo, zapatillas de entrenamiento, etc., cuando no estén
+pero esto queda a discreción del Comité de Torneos de compitiendo, pero esto queda a discreción del Comité
+la ITF. de Torneos de la ITF.
 
-6.2.4. Para las ceremonias de apertura y clausura y las                      6.2.4. Para las ceremonias de apertura y clausura y
-ceremonias de entrega de medallas, los países pueden                         las ceremonias de entrega de medallas, los países
-llevar el Dobok oficial de la ITF o el conjunto deportivo                    pueden llevar el Dobok oficial de la ITF o el conjunto
-oficial del país, pero todos los miembros del equipo                         deportivo oficial de la escuela, el club o el país, pero
-deben vestir igual.                                                          todos los miembros del equipo deben vestir igual.
+6.2.4. Para las ceremonias de apertura y clausura y las 6.2.4. Para las ceremonias de apertura y clausura y
+ceremonias de entrega de medallas, los países pueden las ceremonias de entrega de medallas, los países
+llevar el Dobok oficial de la ITF o el conjunto deportivo pueden llevar el Dobok oficial de la ITF o el conjunto
+oficial del país, pero todos los miembros del equipo deportivo oficial de la escuela, el club o el país, pero
+deben vestir igual. todos los miembros del equipo deben vestir igual.
 
-6.2.5. Para la ceremonia de entrega de medallas, todos     6.2.5. Para la ceremonia de entrega de medallas,
-los competidores deben llevar el Dobok completo de la      todos los competidores deben llevar el Dobok
-ITF y/o el conjunto nacional completo. No se permite       completo de la ITF y/o el conjunto deportivo
-mezclar el Dobok y el conjunto deportivo.                  completo. No se permite mezclar el Dobok y el
+6.2.5. Para la ceremonia de entrega de medallas, todos 6.2.5. Para la ceremonia de entrega de medallas,
+los competidores deben llevar el Dobok completo de la todos los competidores deben llevar el Dobok
+ITF y/o el conjunto nacional completo. No se permite completo de la ITF y/o el conjunto deportivo
+mezclar el Dobok y el conjunto deportivo. completo. No se permite mezclar el Dobok y el
 conjunto deportivo.
 6.3. Está prohibido beber bebidas alcohólicas o fumar mientras se lleva puesto el Dobok.
 
@@ -712,12 +712,12 @@ en la llave maestra principal.
 7.2.4. Gafas deportivas graduadas con montura blanda homologadas. Se debe solicitar y obtener
 la autorización por escrito del TUIC antes del evento. Véase el apéndice 8: Equipamiento
 homologado.
-7.3.    Todo el equipo de seguridad (excepto los protectores bucales y los protectores de ingle)
+7.3. Todo el equipo de seguridad (excepto los protectores bucales y los protectores de ingle)
 DEBE ser un modelo homologado para competición fabricado por un proveedor oficial de
 la ITF. Todo el equipo y los proveedores homologados para competición se indicarán en la
 carta de invitación oficial del evento y en el sitio web de la ITF.
 
-7.4.      El equipo de seguridad NO puede contener metal, hueso o plástico duro (excepto los
+7.4. El equipo de seguridad NO puede contener metal, hueso o plástico duro (excepto los
 protectores de ingle y los protectores de pecho). Está prohibido el uso de cremalleras,
 cordones o cierres con tachuelas.
 
@@ -725,7 +725,7 @@ cordones o cierres con tachuelas.
 especiales con la aprobación del TUIC. Se debe solicitar y obtener la aprobación por escrito
 del TUIC antes del evento. Véase el Apéndice 8: Equipamiento aprobado.
 
-7.6.    Todos los competidores con cabello largo DEBEN recogerse el cabello de forma segura. El
+7.6. Todos los competidores con cabello largo DEBEN recogerse el cabello de forma segura. El
 cabello debe mantenerse en su sitio y/o cubrirse utilizando únicamente artículos de
 material suave o elástico.
 7.6.1. No se permiten materiales duros, metales, pinzas ni pasadores.
@@ -745,7 +745,7 @@ seguridad y la chaqueta del Dobok mientras el competidor está compitiendo.
 
 7.8. Solo se permite llevar ropa interior suave o elástica debajo del Dobok del competidor
 (debajo de la chaqueta y/o los pantalones).
-7.8.1.   La ropa interior (solo aquellas prendas que sean visibles mientras el
+7.8.1. La ropa interior (solo aquellas prendas que sean visibles mientras el
 competidor está compitiendo) DEBE:
 7.8.1.1. Ser de color blanco liso.
 7.8.1.2. Estar fabricada con una sola capa de material suave y/o elástico.
@@ -773,7 +773,7 @@ cinta/vendaje blando/faja blanda utilizada en zonas no visibles (por ejemplo,
 la rodilla) puede ser de cualquier color, siempre que el color no sea
 claramente visible a través del material del Dobok.
 
-7.10.6.     NO se permite el uso de cinta adhesiva/vendajes blandos/cintas blandas en las siguientes
+7.10.6. NO se permite el uso de cinta adhesiva/vendajes blandos/cintas blandas en las siguientes
 circunstancias:
 7.10.6.1. Técnica especial: NO se permite el uso de cinta adhesiva/vendajes
 blandos/cintas blandas en ninguna articulación de las extremidades
@@ -793,7 +793,7 @@ debido a una lesión en el combate.
 izquierdo y el competidor tiene una tirita/esparadrapo
 en la mano izquierda debido a una laceración.
 
-7.11.       Todo el equipo de seguridad, la ropa protectora, las vendas/tiritas/cintas, la ropa y/o los
+7.11. Todo el equipo de seguridad, la ropa protectora, las vendas/tiritas/cintas, la ropa y/o los
 accesorios/adornos de los competidores pueden ser objeto de inspección y aprobación o rechazo por parte del
 Comité de Torneos de la ITF y/o del Comité de Árbitros. Dicha inspección y decisión del comité involucrado es
 definitiva y vinculante.
@@ -801,13 +801,13 @@ definitiva y vinculante.
 T8. ATENCIÓN MÉDICA
 (Véase también: Apéndice 7, Apéndice 9, Glosario de términos)
 
-8.1.    Todos los eventos del Campeonato Mundial y la Copa del Mundo deben contar con
+8.1. Todos los eventos del Campeonato Mundial y la Copa del Mundo deben contar con
 un mínimo de un (1) médico calificado, un número adecuado de personal médico
 calificado y el equipo y los suministros médicos adecuados en todo momento. Es
 posible que se requiera personal médico y/o equipo adicional según el contrato o los
 requisitos legales del país anfitrión.
 
-8.2.     Se deben cumplir las recomendaciones de los médicos oficiales del torneo que
+8.2. Se deben cumplir las recomendaciones de los médicos oficiales del torneo que
 prohíben la participación de un competidor tras una lesión.
 
 8.3. Solo el médico oficial del torneo de la ITF estará autorizado a prestar asistencia médica
@@ -820,7 +820,7 @@ Directiva de la ITF, el Comité de Torneos de la ITF, el Comité de Árbitros de
 de la ITF, los funcionarios de la ITF y la organización anfitriona no se harán responsables de ninguna
 lesión, pérdida o eventualidad que se produzca durante el evento.
 
-9.2.     El costo del seguro de accidentes, el tratamiento y el seguro de responsabilidad civil de los
+9.2. El costo del seguro de accidentes, el tratamiento y el seguro de responsabilidad civil de los
 competidores es responsabilidad de la Asociación Nacional. El anfitrión del evento tiene la
 responsabilidad de obtener un seguro de accidentes y un seguro de responsabilidad civil adecuados
 para el torneo.
@@ -860,13 +860,13 @@ para que los competidores puedan seguir el curso del evento durante su desarroll
 
 T13. DELEGADOS
 
-World Championship                                                               World Cup
+World Championship World Cup
 
-Un delegado individual o de equipo puede ser                             Un delegado individual, de club o de equipo podrá
-cualquier persona autorizada por la Asociación                           ser cualquier persona autorizada por la Asociación
-Nacional. El delegado inscribe a los competidores,                       Nacional o la Asociación Aliada. Un delegado inscribe
-presenta la documentación, presenta quejas y                             a los competidores, entrega la documentación,
-coopera con los demás oficiales de la competición.                       presenta quejas y coopera con los demás oficiales de
+Un delegado individual o de equipo puede ser Un delegado individual, de club o de equipo podrá
+cualquier persona autorizada por la Asociación ser cualquier persona autorizada por la Asociación
+Nacional. El delegado inscribe a los competidores, Nacional o la Asociación Aliada. Un delegado inscribe
+presenta la documentación, presenta quejas y a los competidores, entrega la documentación,
+coopera con los demás oficiales de la competición. presenta quejas y coopera con los demás oficiales de
 la competición.
 
 ### T14. ENTRENADORES
@@ -886,7 +886,7 @@ ring de competición, en su posición designada.
 Comité de Torneo, Árbitros e Informática (TUIC) decidirá el momento y la duración de la expulsión.
 14.9. Un entrenador descalificado durante un match deberá ser reemplazado en un plazo de dos (2)
 minutos.
-14.9.1.     Esto podrá ser realizado por otro entrenador registrado.
+14.9.1. Esto podrá ser realizado por otro entrenador registrado.
 14.9.2. Esto podrá ser realizado por un competidor registrado que vista el uniforme de entrenador.
 14.9.2.1. Válido únicamente para el match en curso.
 14.10. Si otro entrenador no se presenta en el plazo de dos (2) minutos, el competidor será descalificado.
@@ -895,20 +895,20 @@ minutos.
 
 Número completo de medallas y trofeos ver Anexo 6 - Números de Categorías, Medallas y
 Trofeos
-World Championship                                     World Cup
-15.1. Medallas:                                     15.1. Medallas:
+World Championship World Cup
+15.1. Medallas: 15.1. Medallas:
 
-15.1.1. Individual                                                        15.1.1. Individual
-El 1er, 2º y dos (2) terceros lugares                           El 1er, 2º y dos (2) terceros lugares recibirán
-recibirán medallas.                                             medallas.
+15.1.1. Individual 15.1.1. Individual
+El 1er, 2º y dos (2) terceros lugares El 1er, 2º y dos (2) terceros lugares recibirán
+recibirán medallas. medallas.
 
-15.1.2. Equipos                                                           15.1.2. Equipos
-El 1er, 2º y dos (2) terceros lugares                           El 1er, 2º y dos (2) terceros lugares recibirán
-recibirán medallas.                                             medallas.
-6 medallas por equipo en las categorías                         6 medallas por equipo en las categorías de Lucha
-de Combate, Formas, Rotura de                                   y Formas por Equipos.
-Potencia y Técnicas Especiales por                              2 medallas por equipo en las categorías de Lucha
-equipos.                                                        Preestablecida.
+15.1.2. Equipos 15.1.2. Equipos
+El 1er, 2º y dos (2) terceros lugares El 1er, 2º y dos (2) terceros lugares recibirán
+recibirán medallas. medallas.
+6 medallas por equipo en las categorías 6 medallas por equipo en las categorías de Lucha
+de Combate, Formas, Rotura de y Formas por Equipos.
+Potencia y Técnicas Especiales por 2 medallas por equipo en las categorías de Lucha
+equipos. Preestablecida.
 2 medallas por equipo en las categorías
 de Lucha Preestablecida.
 15.2. Trofeos:
@@ -957,28 +957,28 @@ añadido al total general y no 6 oros.
 
 (Véase también: Apéndice 3, Apéndice 7, Glosario de términos)
 
-16.1      CHARYOT                         ATENCIÓN
-16.2      KYONG YE                        SALUDO
-16.3      JUNBI                           PREPARADO-LISTO
-16.4      SIJAK                           COMENZAR
-16.5      HAECHYO                         SEPARARSE
-16.6      GAESOK                          CONTINUAR
-16.7      GOMAN                           FINAL
-16.8      BARO                            REGRESAR AL INICIO
-16.9      SHIOT                           RELAJARSE
-16.10     JU UI HANNA                     UNA ADVERTENCIA
-16.11     GAM JUM HANNA                   UN PUNTO MENOS (deducir un puno)
-16.12     SIL KYUK                        DESCALIFICACIÓN
-16.13     HONG                            ROJO
-16.14     CHONG                           AZUL
-16.15     JUNG JI                         DETENER EL TIEMPO
-16.16     DONG CHONG                      EMPATE
+16.1 CHARYOT ATENCIÓN
+16.2 KYONG YE SALUDO
+16.3 JUNBI PREPARADO-LISTO
+16.4 SIJAK COMENZAR
+16.5 HAECHYO SEPARARSE
+16.6 GAESOK CONTINUAR
+16.7 GOMAN FINAL
+16.8 BARO REGRESAR AL INICIO
+16.9 SHIOT RELAJARSE
+16.10 JU UI HANNA UNA ADVERTENCIA
+16.11 GAM JUM HANNA UN PUNTO MENOS (deducir un puno)
+16.12 SIL KYUK DESCALIFICACIÓN
+16.13 HONG ROJO
+16.14 CHONG AZUL
+16.15 JUNG JI DETENER EL TIEMPO
+16.16 DONG CHONG EMPATE
 
-16.17     IL HUE JONG                     PRIMER ROUND
-16.18     I HUE JONG                      SEGUNDO ROUND
-16.19     SAM HUE JONG                    TERCER ROUND
-16.20     SA HUE JONG                     CUARTO ROUND (al primer punto o muerte súbita)
-16.21     SUNG                            GANADOR
+16.17 IL HUE JONG PRIMER ROUND
+16.18 I HUE JONG SEGUNDO ROUND
+16.19 SAM HUE JONG TERCER ROUND
+16.20 SA HUE JONG CUARTO ROUND (al primer punto o muerte súbita)
+16.21 SUNG GANADOR
 
 ### T17. DIVISIÓN DE LA COMPETENCIA
 
@@ -986,11 +986,11 @@ Todas las divisiones están enumeradas en los Anexos 1, 2, 3, 4 y 5.
 
 ### T18. NÚMEROS DE COMPETIDORES – INDIVIDUALES Y POR EQUIPOS
 
-World Championship                                                                     World Cup
-18.1. INDIVIDUAL                                                          18.1. INDIVIDUAL
-18.1.1. El número de competidores individuales que                           18.1.1. Se permite la participación de cualquier
-pueden participar en cada evento está limitado a dos                         número de competidores individuales por evento.
-(2) competidores por país.                                                   18.1.2. Estos competidores pueden ser
+World Championship World Cup
+18.1. INDIVIDUAL 18.1. INDIVIDUAL
+18.1.1. El número de competidores individuales que 18.1.1. Se permite la participación de cualquier
+pueden participar en cada evento está limitado a dos número de competidores individuales por evento.
+(2) competidores por país. 18.1.2. Estos competidores pueden ser
 individuales o miembros de un equipo.
 18.1.3. Los competidores deben competir en su
 categoría de edad asignada en todas las divisiones
@@ -1009,43 +1009,43 @@ permite competir por más de un (1) club/escuela,
 ni por diferentes clubes/escuelas en diferentes
 divisiones.
 
-18.2. GRUPO DE EQUIPOS (Masculino y Femenino)                             18.2. GRUPO DE EQUIPOS (Masculino y Femenino)
-Todos los competidores registrados pueden ser                                Todos los competidores registrados pueden ser
-considerados Miembros del Grupo de Equipos y                                 considerados Miembros del Grupo de Equipos y
-pueden participar en eventos por equipos según su                            participar en eventos por equipos según su grupo
-grupo de edad y género.                                                      de edad y género.
+18.2. GRUPO DE EQUIPOS (Masculino y Femenino) 18.2. GRUPO DE EQUIPOS (Masculino y Femenino)
+Todos los competidores registrados pueden ser Todos los competidores registrados pueden ser
+considerados Miembros del Grupo de Equipos y considerados Miembros del Grupo de Equipos y
+pueden participar en eventos por equipos según su participar en eventos por equipos según su grupo
+grupo de edad y género. de edad y género.
 
-18.3. EQUIPO (Masculino y Femenino)                                       18.3. EQUIPO (Masculino y Femenino)
-De los Miembros del Grupo de Equipos, un mínimo                               De los Miembros del Grupo de Equipos, 5
-de 5 competidores + 1 reserva (opcional) pueden                               competidores + 1 reserva (opcional) podrán
-competir en las modalidades de Formas, Combate,                               competir en eventos de Formas, y 3, 4 o 5
-Técnicas Especiales y Rompimiento de Potencia.                                competidores + 1 reserva (opcional) podrán
+18.3. EQUIPO (Masculino y Femenino) 18.3. EQUIPO (Masculino y Femenino)
+De los Miembros del Grupo de Equipos, un mínimo De los Miembros del Grupo de Equipos, 5
+de 5 competidores + 1 reserva (opcional) pueden competidores + 1 reserva (opcional) podrán
+competir en las modalidades de Formas, Combate, competir en eventos de Formas, y 3, 4 o 5
+Técnicas Especiales y Rompimiento de Potencia. competidores + 1 reserva (opcional) podrán
 competir en eventos de Combate.
-18.4. El entrenador debe presentar la lista del equipo                    18.4. El Entrenador deberá presentar la lista del
-y las tarjetas de identificación de los competidores (5                   equipo y las tarjetas de identificación de los
-más 1 reserva opcional) al Presidente del Jurado                          competidores al Presidente del Jurado justo antes del
-justo antes del inicio de la división de equipos y de                     inicio de la división de competición por equipos y de
-cada combate posterior.                                                   cada combate posterior.
+18.4. El entrenador debe presentar la lista del equipo 18.4. El Entrenador deberá presentar la lista del
+y las tarjetas de identificación de los competidores (5 equipo y las tarjetas de identificación de los
+más 1 reserva opcional) al Presidente del Jurado competidores al Presidente del Jurado justo antes del
+justo antes del inicio de la división de equipos y de inicio de la división de competición por equipos y de
+cada combate posterior. cada combate posterior.
 
-18.4.1. Al inicio de cada combate por equipos, el                         18.4.1. Al inicio de cada combate por equipos, el
-entrenador DEBE presentar las tarjetas de                                 entrenador DEBE presentar las Tarjetas de
-identificación de los competidores correspondientes                       Identificación de Competidor correspondientes (una
-(una por cada competidor que vaya a competir en la                        por cada competidor que vaya a competir en la
-división de equipos).                                                     división por equipos).
-18.4.2. Una vez presentadas las Tarjetas de                               18.4.2. Una vez presentadas las Tarjetas de
-Identificación de Competidor para una división, NO                        Identificación de Competidor para una división, NO
-se permitirán cambios en los miembros de ese                              se permitirán cambios en los miembros de ese
-equipo durante esa división.                                              equipo durante esa división.
-18.4.3. Los equipos no podrán cambiar sus miembros                        18.4.3. Los equipos no pueden cambiar los miembros
-de un match a otro. Toda la división de la                                del equipo de un combate a otro. Toda la división de
-competencia debe completarse con los mismos 6                             la competencia debe completarse con los mismos
-miembros.                                                                 miembros.
+18.4.1. Al inicio de cada combate por equipos, el 18.4.1. Al inicio de cada combate por equipos, el
+entrenador DEBE presentar las tarjetas de entrenador DEBE presentar las Tarjetas de
+identificación de los competidores correspondientes Identificación de Competidor correspondientes (una
+(una por cada competidor que vaya a competir en la por cada competidor que vaya a competir en la
+división de equipos). división por equipos).
+18.4.2. Una vez presentadas las Tarjetas de 18.4.2. Una vez presentadas las Tarjetas de
+Identificación de Competidor para una división, NO Identificación de Competidor para una división, NO
+se permitirán cambios en los miembros de ese se permitirán cambios en los miembros de ese
+equipo durante esa división. equipo durante esa división.
+18.4.3. Los equipos no podrán cambiar sus miembros 18.4.3. Los equipos no pueden cambiar los miembros
+de un match a otro. Toda la división de la del equipo de un combate a otro. Toda la división de
+competencia debe completarse con los mismos 6 la competencia debe completarse con los mismos
+miembros. miembros.
 18.4.4. Los competidores solo pueden competir por
 una (1) Asociación Nacional, Asociación Aliada, Club
 o Escuela por evento.
-18.5. El equipo debe estar formado por los mismos 5                       18.5. El equipo debe estar compuesto por el mismo
-miembros más 1 reserva opcional para toda la                              equipo para toda la división.
-división.                                                                 18.5.1. Formas por Equipo:
+18.5. El equipo debe estar formado por los mismos 5 18.5. El equipo debe estar compuesto por el mismo
+miembros más 1 reserva opcional para toda la equipo para toda la división.
+división. 18.5.1. Formas por Equipo:
 Cinco (5) competidores + 1 reserva (opcional)
 deben competir en la competencia de Formas.
 18.5.2. Lucha por Equipo
@@ -1062,15 +1062,15 @@ El orden de la competición está sujeto a los requisitos de tiempo y al calenda
 20.1 La ubicación de los competidores en la llave maestra del evento/división y todos los byes se
 decidirán mediante un sorteo aleatorio por computadora.
 
-World Championship                                        World Cup
+World Championship World Cup
 20.2. Los ganadores del primer, segundo y tercer 20.2. Los ganadores del primer, segundo y tercer
-puesto del Campeonato Mundial ITF anterior de       puesto de la Copa del Mundo ITF anterior de la
-la misma categoría se ubicarán en la cima y la      misma categoría se ubicarán en la cima y la base
-base del sistema piramidal. Las medallas, que       del sistema piramidal. Las medallas, que cuentan
-cuentan para los trofeos generales, no se podrán    para los trofeos generales, no se podrán ganar sin
-ganar sin al menos 4 competidores o equipos en      al menos 4 competidores o equipos en el evento.
-el evento. Los participantes que pasen por alto se  Los participantes que pasen por alto se decidirán
-decidirán en el sorteo.                             en el sorteo.
+puesto del Campeonato Mundial ITF anterior de puesto de la Copa del Mundo ITF anterior de la
+la misma categoría se ubicarán en la cima y la misma categoría se ubicarán en la cima y la base
+base del sistema piramidal. Las medallas, que del sistema piramidal. Las medallas, que cuentan
+cuentan para los trofeos generales, no se podrán para los trofeos generales, no se podrán ganar sin
+ganar sin al menos 4 competidores o equipos en al menos 4 competidores o equipos en el evento.
+el evento. Los participantes que pasen por alto se Los participantes que pasen por alto se decidirán
+decidirán en el sorteo. en el sorteo.
 
 20.3. El sorteo de la competición se realizará al menos 48 horas antes del evento y estará disponible en
 el sitio web de la ITF.
@@ -1120,10 +1120,10 @@ describe en las categorías enumeradas en el Anexo 1.
 
 26.1. Se utilizará el sistema piramidal de eliminación.
 
-World Championship                                                            World Cup
-26.2. Los competidores competirán 1 a 1 y realizarán                      26.2.
-dos (2) Formas Designadas correspondientes a su                              26.2.1. Los competidores de cinturón de color
-nivel (véase el Artículo T.27).                                              competirán 1 a 1 y realizarán una (1) Forma
+World Championship World Cup
+26.2. Los competidores competirán 1 a 1 y realizarán 26.2.
+dos (2) Formas Designadas correspondientes a su 26.2.1. Los competidores de cinturón de color
+nivel (véase el Artículo T.27). competirán 1 a 1 y realizarán una (1) Forma
 Designada apropiada para su rango (véase el
 Artículo T.27).
 26.2.2. Los competidores de cinturón negro
@@ -1132,15 +1132,15 @@ Designada en las rondas eliminatorias y dos (2)
 Formas Designadas en la ronda final, apropiadas
 para su grado (véase el Artículo T.27).
 
-26.3                                                                      26.3.
-26.3.1. La primera Forma Designada se elegirá al azar                        26.3.1. Para los cinturones negros, la Forma
-entre una de las tres últimas formas                                         Designada (o la primera Forma Designada en la
-correspondientes a su nivel (véase el Artículo T.27).                        final) se elegirá al azar entre una de las tres
+26.3 26.3.
+26.3.1. La primera Forma Designada se elegirá al azar 26.3.1. Para los cinturones negros, la Forma
+entre una de las tres últimas formas Designada (o la primera Forma Designada en la
+correspondientes a su nivel (véase el Artículo T.27). final) se elegirá al azar entre una de las tres
 últimas Formas apropiadas para su grado (véase
 el Artículo T.27).
-26.3.2. La segunda Forma Designada se elegirá al                             26.3.2. La segunda Forma Designada en la final de
-azar entre todas las formas restantes                                        cinturones negros se elegirá al azar entre todas las
-correspondientes a su nivel (véase el Artículo T.27).                        Formas restantes apropiadas para su grado (véase
+26.3.2. La segunda Forma Designada se elegirá al 26.3.2. La segunda Forma Designada en la final de
+azar entre todas las formas restantes cinturones negros se elegirá al azar entre todas las
+correspondientes a su nivel (véase el Artículo T.27). Formas restantes apropiadas para su grado (véase
 el Artículo T.27).
 26.3.3. Para los cinturones de color, la Forma
 Designada se elegirá aleatoriamente de una de las
@@ -1170,7 +1170,7 @@ grupo de Formas del rango más bajo.
 resultarán en una deducción de 1,0 punto de cada puntuación del Árbitro (ver apéndice 1 –
 procedimiento de puntuación).
 
-World Championship                                                        World Cup
+World Championship World Cup
 27.7. El 4º y el 3er Gup competirán juntos en una
 categoría.
 El 4º Gup competirá con la Forma Designada de
@@ -1193,13 +1193,13 @@ más bajo en ese encuentro.
 
 28.1. Se utilizará el sistema piramidal de eliminación
 
-World Championship                                                              World Cup
-28.2. Ambos equipos realizarán una (1) forma                              28.2. Ambos equipos realizarán una (1) forma
-opcional y una (1) forma designada en el                               opcional en el siguiente orden:
-siguiente orden:                                                          Equipo 1: 1ª forma opcional (de CHON-JI a GE-
-Equipo 1: 1ª forma opcional (de CHON-JI a CHOONG-                            BAEK).
-MOO).                                                                     Equipo 2: 1ª forma opcional (de CHON-JI a GE-
-Equipo 2: 1ª forma opcional (de CHON-JI a CHOONG-                            BAEK).
+World Championship World Cup
+28.2. Ambos equipos realizarán una (1) forma 28.2. Ambos equipos realizarán una (1) forma
+opcional y una (1) forma designada en el opcional en el siguiente orden:
+siguiente orden: Equipo 1: 1ª forma opcional (de CHON-JI a GE-
+Equipo 1: 1ª forma opcional (de CHON-JI a CHOONG- BAEK).
+MOO). Equipo 2: 1ª forma opcional (de CHON-JI a GE-
+Equipo 2: 1ª forma opcional (de CHON-JI a CHOONG- BAEK).
 MOO).
 Equipo 1: 2ª forma designada, cualquiera de los
 siguientes: KWANG GAE, PO EUN o GE-BAEK.
@@ -1213,10 +1213,10 @@ ambos equipos se presenten para el saludo.
 28.4. El equipo que obtenga la mayoría de los votos de los árbitros y un mínimo de dos (2) votos a su favor será
 declarado ganador y avanzará a la siguiente ronda de la competición.
 
-World Championship                                                              World Cup
-28.5. En caso de Empate, se elegirá aleatoriamente                        28.5. En caso de empate, se deberá realizar una
-una Forma adicional, de KWANG-GAE a GE-BAEK, y                               Forma opcional adicional hasta determinar el
-deberá repetirse hasta que se determine el ganador.                          ganador.
+World Championship World Cup
+28.5. En caso de Empate, se elegirá aleatoriamente 28.5. En caso de empate, se deberá realizar una
+una Forma adicional, de KWANG-GAE a GE-BAEK, y Forma opcional adicional hasta determinar el
+deberá repetirse hasta que se determine el ganador. ganador.
 Se podrá realizar la misma Forma opcional o
 cualquier otra desde CHON-JI hasta GE-BAEK.
 
@@ -1240,11 +1240,11 @@ T28.6.).
 
 ### T29. EJECUCIÓN – EQUIPO
 
-World Championship                                        World Cup
-29.1. Los equipos (cinco (5) competidores) deben    29.1.
-realizar una (1) Forma opcional de CHON-JI a     29.1.1. Para cinturones negros:
-CHOONG MOO y una (1) Forma designada que            Cada equipo de cinco (5) competidores debe
-sea KWANG GAE, PO EUN o GE-BAEK.                    realizar en conjunto una (1) forma opcional. La
+World Championship World Cup
+29.1. Los equipos (cinco (5) competidores) deben 29.1.
+realizar una (1) Forma opcional de CHON-JI a 29.1.1. Para cinturones negros:
+CHOONG MOO y una (1) Forma designada que Cada equipo de cinco (5) competidores debe
+sea KWANG GAE, PO EUN o GE-BAEK. realizar en conjunto una (1) forma opcional. La
 forma opcional puede ser desde CHON-Ji hasta
 GAE-BAEK.
 29.1.2. Para cinturones de color:
@@ -1274,12 +1274,12 @@ categorías que figuran en el Anexo 2.
 
 ### T32. DURACIÓN DE LOS COMBATES Y DECISIONES
 
-World Championship                                                             World Cup
-32.1. Individuales                                                        32.1. Individuales
-32.1.1. Los combates eliminatorios y finales                              32.1.1. Combates Individuales
-individuales serán de dos (2) rounds de dos (2)                           32.1.1.1. Los combates eliminatorios de Cinturón de
-minutos de duración, con un descanso de un minuto                         Color serán de un (1) round de dos (2) minutos de
-entre rounds.                                                             duración.
+World Championship World Cup
+32.1. Individuales 32.1. Individuales
+32.1.1. Los combates eliminatorios y finales 32.1.1. Combates Individuales
+individuales serán de dos (2) rounds de dos (2) 32.1.1.1. Los combates eliminatorios de Cinturón de
+minutos de duración, con un descanso de un minuto Color serán de un (1) round de dos (2) minutos de
+entre rounds. duración.
 32.1.1.2. Los combates eliminatorios de Cinturón
 Negro serán de un (1) round de tres (3) minutos de
 duración.
@@ -1293,7 +1293,7 @@ duración, con un minuto de descanso entre rounds.
 32.1.3. Si se produce un nuevo empate, el primer punto anotado por al menos dos (2) árbitros en
 la misma fracción de segundo decidirá quién es el ganador.
 
-32.2.     Equipos
+32.2. Equipos
 32.2.1. Cada combate por equipos constará de un (1) round de dos (2) minutos.
 32.2.2. En los combates por equipos, se contabilizarán todas las decisiones de los jueces de los
 cinco (5) combates. Sin embargo, si los cinco (5) combates finalizan y el resultado es un
@@ -1340,7 +1340,7 @@ Se deducirá un punto por las siguientes infracciones:
 36.3. Barrido de piernas.
 36.4. Agarre.
 36.5. Ataque intencional a un objetivo distinto al mencionado en el artículo T33.
-36.6. Conducta Antideportiva*
+36.6. Conducta Antideportiva\*
 36.6.1. Incluye cualquier acción realizada por un competidor que muestre falta de respeto,
 incumplimiento de instrucciones u otros comportamientos inaceptables hacia los
 árbitros, oficiales u otros competidores, incluyendo, entre otros: incumplimiento o
@@ -1439,7 +1439,7 @@ síndrome de impacto secundario, es imperativo llamar al médico para una evalua
 o el entrenador detectan cualquier síntoma.
 
 T40. PROCEDIMIENTO DEL COMBATE – INDIVIDUAL Y POR EQUIPOS
-40.1.   INDIVIDUAL
+40.1. INDIVIDUAL
 40.1.1. Los competidores de lucha comenzarán el combate en sus posiciones de inicio, cada uno
 con un par de protectores de manos, pies y cabeza de color rojo o azul para diferenciarlos.
 Se deberá usar protección bucal transparente en todo momento. A la orden del Árbitro
@@ -1455,7 +1455,7 @@ resultado.
 40.1.5. En caso de empate, las advertencias y/o descuento de puntos no se acumularán.
 40.1.6. Si un competidor abandona el ring, deberá reiniciar la competencia un (1) metro dentro
 del mismo.
-40.2.   EQUIPO
+40.2. EQUIPO
 40.2.1. El procedimiento de lucha por equipos será el mismo que el de la lucha individual.
 40.2.2. Se lanzará una moneda entre dos (2) entrenadores para determinar qué equipo envía a
 su primer competidor al ring.
@@ -1504,10 +1504,10 @@ para cada técnica se indicará en el apéndice 6 - Tableros y Alturas.
 44.3. En la rotura de potencia se permite avanzar, deslizarse, saltar o saltar. Sin embargo, se debe usar
 un bloqueo de antebrazo antes y después de cada intento de romper el/los tablero(s).
 44.4. En el Sonkal Taerigi, el golpe puede ser hacia adentro o hacia afuera.
-World Championship                                            World Cup
+World Championship World Cup
 44.5. Se permite un tiempo total de dos (2) minutos 44.5. Se permite un tiempo total de un (1) minuto
 para establecer las alturas correctas para las para ajustar las alturas correctas de los elementos
-técnicas de rotura enumeradas.                        de rotura de potencia indicados.
+técnicas de rotura enumeradas. de rotura de potencia indicados.
 44.5.1. Los competidores deben elegir: una (1)
 técnica de mano y una (1) técnica de pie de la
 lista de técnicas indicada en el apéndice 6 -
@@ -1535,10 +1535,10 @@ la misma ronda de rotura, habrá dos terceros lugares.
 44.12. El competidor podrá optar por rechazar cualquier técnica en particular.
 44.13. En caso de empate:
 
-World Championship                                                             World Cup
-44.13.1. El presidente del jurado seleccionará por                       44.13.1. El presidente del jurado seleccionará por
-sorteo una técnica de la lista que servirá de                            sorteo la técnica de mano o pie como criterio de
-desempate.                                                               desempate.
+World Championship World Cup
+44.13.1. El presidente del jurado seleccionará por 44.13.1. El presidente del jurado seleccionará por
+sorteo una técnica de la lista que servirá de sorteo la técnica de mano o pie como criterio de
+desempate. desempate.
 
 44.13.2. El Presidente del Jurado decidirá cuántas placas se utilizarán.
 44.13.3. Los competidores ejecutarán la técnica elegida según los procedimientos descritos
@@ -1548,7 +1548,7 @@ qué miembro del equipo ejecutará la técnica de desempate).
 44.13.4. En caso de nuevo empate, este procedimiento continuará hasta que se decidan los
 puestos.
 
-World Championship                                                              World Cup
+World Championship World Cup
 44.14. Equipos
 44.14.1. Los equipos (5 competidores + 1 reserva) ejecutarán las
 roturas indicadas en el Apéndice 6, aplicando los procedimientos
@@ -1574,7 +1574,7 @@ menos 60 minutos antes de la hora programada
 para la categoría correspondiente.
 44.14.2.6. Una vez creada y firmada la lista, se
 permiten cambios hasta 60 minutos antes de la
-hora     programada          para    la   categoría
+hora programada para la categoría
 correspondiente (siguiendo el procedimiento
 correcto descrito en T44.16.2.).
 44.14.3. El orden de las roturas (indicado en el Apéndice 6) lo
@@ -1631,7 +1631,7 @@ miembro del equipo realizará la técnica de desempate).
 47.9.5. En caso de nuevo empate, este procedimiento continuará hasta que se decidan los
 puestos.
 
-World Championship                                                                      World Cup
+World Championship World Cup
 47.10. Equipos
 47.10.1. Los equipos (5 competidores + 1 reserva)
 realizarán las pruebas indicadas en el Apéndice 6,
@@ -1659,7 +1659,7 @@ menos 60 minutos antes de la hora programada
 para la categoría correspondiente.
 47.10.2.6. Una vez creada y firmada la lista, se
 permiten cambios hasta 60 minutos antes de la
-hora     programada          para    la   categoría
+hora programada para la categoría
 correspondiente (a partir del procedimiento
 descrito en T47.10.2.).
 
@@ -1814,27 +1814,27 @@ categorías que se indican a continuación.
 Las categorías de Formas individuales con menos de cuatro (4) competidores se fusionarán con otra
 categoría. Esta nueva categoría utilizará las Formas correspondientes al rango más bajo.
 
-World Championship                                                                                            World Cup
-1.1.   Individual                                                             1.1. Individual
+World Championship World Cup
+1.1. Individual 1.1. Individual
 
-1.1.1. Masculino                                                              1.1.1. Masculino
+1.1.1. Masculino 1.1.1. Masculino
 
-1.1.1.1. Pre-Junior                                                           1.1.1.1. Pre-Junior
-13250 Indiv. Masculino Pre-Junior Forma 1er Dan                              13230 Indiv Masculino Pre-Junior Forma 4º-3er Gup
-13260 Indiv. Masculino Pre-Junior Forma 2º - 3er Dan                         Forma Indiv Masculino Pre-Junior Forma 2º-1er Gup
+1.1.1.1. Pre-Junior 1.1.1.1. Pre-Junior
+13250 Indiv. Masculino Pre-Junior Forma 1er Dan 13230 Indiv Masculino Pre-Junior Forma 4º-3er Gup
+13260 Indiv. Masculino Pre-Junior Forma 2º - 3er Dan Forma Indiv Masculino Pre-Junior Forma 2º-1er Gup
 13250 Indiv Masculino Pre-Junior Forma 1er Dan
 13260 Indiv Masculino Pre-Junior Forma 2º-3er Dan
 
-1.1.1.2. Junior                                                               1.1.1.2. Junior
-14250 Individual Masculino Junior Forma 1er Dan                              14230 Indiv Masculino Junior Forma 4º-3er Gup
-14260 Individual Masculino Junior Forma 2º Dan                               14240 Indiv Masculino Junior Forma 2º-1er Gup
-14270 Individual Masculino Junior Forma 3er Dan                              14250 Indiv Masculino Junior Forma 1er Dan
+1.1.1.2. Junior 1.1.1.2. Junior
+14250 Individual Masculino Junior Forma 1er Dan 14230 Indiv Masculino Junior Forma 4º-3er Gup
+14260 Individual Masculino Junior Forma 2º Dan 14240 Indiv Masculino Junior Forma 2º-1er Gup
+14270 Individual Masculino Junior Forma 3er Dan 14250 Indiv Masculino Junior Forma 1er Dan
 14260 Indiv Masculino Junior Forma 2º Dan
 14270 Indiv Masculino Junior Forma 3er Dan
 
-1.1.1.3. Adulto                                                               1.1.1.3. Adulto
-15250 Individual Masculino Forma 1er Dan                                     15230 Indiv Masculino Forma 4º-3er Gup
-15260 Individual Masculino Forma 2º Dan                                      15240 Indiv Masculino Forma 2º-1er Gup
+1.1.1.3. Adulto 1.1.1.3. Adulto
+15250 Individual Masculino Forma 1er Dan 15230 Indiv Masculino Forma 4º-3er Gup
+15260 Individual Masculino Forma 2º Dan 15240 Indiv Masculino Forma 2º-1er Gup
 15270 Individual Masculino Forma 3er Dan
 15250 Indiv Masculino Forma 1er Dan
 15280 Individual Masculino Forma 4º - 6º Dan
@@ -1858,11 +1858,11 @@ World Championship                                                              
 17270 Forma Indiv Masculino Veteranos 3er Dan
 17280 Forma Indiv Masculino Veteranos 4º-6º Dan
 
-1.1.2. Femenino                                                               1.1.2. Femenino
+1.1.2. Femenino 1.1.2. Femenino
 
-1.1.2.1. Pre-Junior                                                      1.1.2.1. Pre-Junior
-23250 Indiv. Femenino Pre-Junior Forma 1er Dan                              23230 Forma Individual Femenino Pre-Junior
-23260 Indiv Femenino Pre-Junior Forma 2º - 3.er Dan                         4º-3er Gup
+1.1.2.1. Pre-Junior 1.1.2.1. Pre-Junior
+23250 Indiv. Femenino Pre-Junior Forma 1er Dan 23230 Forma Individual Femenino Pre-Junior
+23260 Indiv Femenino Pre-Junior Forma 2º - 3.er Dan 4º-3er Gup
 23240 Forma Individual Femenino Pre-Junior
 2º-1er Gup
 23250 Forma Individual Femenino Pre-Junior
@@ -1870,18 +1870,18 @@ World Championship                                                              
 23260 Forma Individual Femenino Pre-Junior
 2º-3er Dan
 
-1.1.2.2. Junior                                                          1.1.2.2. Júnior
-24250 Indiv Femenino Junior Forma 1er Dan                                   24230 Individual Femenino Forma Júnior 4º-3er Gup
-24260 Indiv Femenino Junior Forma 2º Dan                                    24240 Individual Femenino Forma Júnior 2º-1er Gup
-24270 Indiv Femenino Junior Forma 3er Dan                                   24250 Individual Femenino Forma Júnior 1er Dan
+1.1.2.2. Junior 1.1.2.2. Júnior
+24250 Indiv Femenino Junior Forma 1er Dan 24230 Individual Femenino Forma Júnior 4º-3er Gup
+24260 Indiv Femenino Junior Forma 2º Dan 24240 Individual Femenino Forma Júnior 2º-1er Gup
+24270 Indiv Femenino Junior Forma 3er Dan 24250 Individual Femenino Forma Júnior 1er Dan
 24260 Individual Femenino Forma Júnior 2º Dan
 24270 Individual Femenino Forma Júnior 3er Dan
 
-1.1.2.3. Femenino Adulto                                                      1.1.2.3. Adulto
-25250 Individual Femenino Forma 1er Dan                                      25230 Individual Femenino Forma 4º-3er Gup
-25260 Individual Femenino Forma 2º Dan                                       25240 Individual Femenino Forma 2º-1er Gup
-25270 Individual Femenino Forma 3er Dan                                      25250 Individual Femenino Forma 1er Dan
-25280 Individual Femenino Forma 4º - 6º Dan                                  25260 Individual Femenino Forma 2º Dan
+1.1.2.3. Femenino Adulto 1.1.2.3. Adulto
+25250 Individual Femenino Forma 1er Dan 25230 Individual Femenino Forma 4º-3er Gup
+25260 Individual Femenino Forma 2º Dan 25240 Individual Femenino Forma 2º-1er Gup
+25270 Individual Femenino Forma 3er Dan 25250 Individual Femenino Forma 1er Dan
+25280 Individual Femenino Forma 4º - 6º Dan 25260 Individual Femenino Forma 2º Dan
 25270 Individual Femenino Forma 3er Dan
 25280 Individual Femenino Forma 4º-6º Dan
 
@@ -1904,20 +1904,20 @@ Gup
 27280 Individual Femenino Veteranos Forma 4º-6.º
 Dan
 
-1.2. Equipo                                                                   1.2. Equipo
+1.2. Equipo 1.2. Equipo
 
-1.2.1. Masculino                                                              1.2.1. Masculino
+1.2.1. Masculino 1.2.1. Masculino
 
-1.2.1.1. Pre-Junior                                                           1.2.1.1. Pre-Junior
-63270 Equipo Masculino Pre-Junior Forma                                      63240 Equipo Masculino Forma Pre-Junior 4º-1º Gup
+1.2.1.1. Pre-Junior 1.2.1.1. Pre-Junior
+63270 Equipo Masculino Pre-Junior Forma 63240 Equipo Masculino Forma Pre-Junior 4º-1º Gup
 
 63270 Equipo Masculino Forma Pre-Junior 1º-3er Dan
-1.2.1.2. Masculino Junior                                                     1.2.1.2. Junior
-64270 Equipo Masculino Junior                                                  64240 Equipo Masculino Forma Junior 4º-1º Gup
+1.2.1.2. Masculino Junior 1.2.1.2. Junior
+64270 Equipo Masculino Junior 64240 Equipo Masculino Forma Junior 4º-1º Gup
 64270 Equipo Masculino Forma Junior 1º-3er Dan
 
-1.2.1.3. Masculino Adulto                                                     1.2.1.3. Adulto
-65280 Equipo Masculino                                                       65240 Equipo Masculino Forma 4º-1º Gup
+1.2.1.3. Masculino Adulto 1.2.1.3. Adulto
+65280 Equipo Masculino 65240 Equipo Masculino Forma 4º-1º Gup
 65280 Equipo Masculino Forma 1º-6.º Dan
 
 1.2.1.4. Sénior
@@ -1927,16 +1927,16 @@ Dan
 67240 Equipo Masculino Forma Veteranos 4º-1º Gup
 67280 Equipo Masculino Forma Veteranos 1º-6º Dan
 
-1.2.2. Femenino                                                               1.2.2. Femenino
+1.2.2. Femenino 1.2.2. Femenino
 
-1.2.2.1. Pre-Junior                                                           1.2.2.1. Pre-Junior
-73270 Equipo Femenino Pre-Junior                                             73240 Equipo Femenino Pre-Junior Forma 4º-1er Gup
+1.2.2.1. Pre-Junior 1.2.2.1. Pre-Junior
+73270 Equipo Femenino Pre-Junior 73240 Equipo Femenino Pre-Junior Forma 4º-1er Gup
 73270 Equipo Femenino Pre-Junior Forma 1er-3er Dan
 1.2.2.2. Femenino Junior
-74270 Equipo Femenino Junior                                              1.2.2.2. Femenino Júnior
+74270 Equipo Femenino Junior 1.2.2.2. Femenino Júnior
 74240 Equipo Femenino Júnior Forma 4º-1er Gup
 74270 Equipo Femenino Júnior Forma 1er-3er Dan
-1.2.2.3. Femenino Adulto                                                      1.2.2.3. Femenino Adulto
+1.2.2.3. Femenino Adulto 1.2.2.3. Femenino Adulto
 75280 Equipo Femenino
 75240 Equipo Femenino Júnior Forma 4º-1er Gup
 75280 Equipo Femenino Júnior Forma 1er-6º Dan
@@ -1949,9 +1949,9 @@ Dan
 77240 Equipo Veteranas Forma 4º-.º Gup
 77280 Equipo Veteranas Forma 1º-6º Dan
 
-1.2.3. Cada equipo (masculino y/o femenino de                                 1.2.3. Cada equipo (masculino y/o femenino) debe estar
-cualquier categoría y peso) debe estar compuesto por                          compuesto por cinco (5) competidores y puede tener un
-cinco (5) competidores y un (1) suplente (opcional).                          (1) suplente opcional.
+1.2.3. Cada equipo (masculino y/o femenino de 1.2.3. Cada equipo (masculino y/o femenino) debe estar
+cualquier categoría y peso) debe estar compuesto por compuesto por cinco (5) competidores y puede tener un
+cinco (5) competidores y un (1) suplente (opcional). (1) suplente opcional.
 1.2.3.1. Los cinturones de color deben competir con
 cinturones de color y pueden ser de cualquier Gup del 4º
 al 1º.
@@ -1960,7 +1960,7 @@ cinturones negros.
 Los cinturones de color pueden ser de cualquier grado
 del 1º al 6º.
 
-1.2.4. No se pueden combinar distintas categorías de edad. *Ver Regla T5.
+1.2.4. No se pueden combinar distintas categorías de edad. \*Ver Regla T5.
 
 ### S2. Anexo 2 – Divisiones de Lucha
 
@@ -1970,26 +1970,26 @@ categorías que se indican a continuación.
 Las categorías individuales de Lucha con menos de cuatro (4) competidores se fusionarán con otra
 categoría.
 
-World Championship                                                                        World Cup
-2.1.       Individual                                                       2.1. Individual
+World Championship World Cup
+2.1. Individual 2.1. Individual
 
-2.1.1. Masculino                                                            2.1.1. Masculino
+2.1.1. Masculino 2.1.1. Masculino
 
-2.1.1.1. Pre-Junior                                                         2.1.1.1. Pre-Junior
-13171 Combate Individual Masculino Pre-Junior                               13141 Individual Masculino Pre-Junior Sparring 4º-1er
-hasta 40 kg                                                                 Gup hasta 40 kg
-13172 Combate Individual Masculino Pre-Junior                               13142 Individual Masculino Pre-Junior Sparring 4º-1er
-de 40 a 45 kg                                                               Gup más de 40 a 45 kg
-13173 Combate Individual Masculino Pre-Junior                               13143 Individual Masculino Pre-Junior Sparring 4º-1er
-de 45 a 50 kg                                                               Gup más de 45 a 50 kg
-13174 Combate Individual Masculino Pre-Junior                               13144 Individual Masculino Pre-Junior Sparring 4º-1er
-de 50 a 55 kg                                                               Gup más de 50 a 55 kg
-13175 Combate Individual Masculino Pre-Junior                               13145 Individual Masculino Pre-Junior Sparring 4º-1er
-de 55 a 60 kg                                                               Gup más de 55 a 60 kg
-13176 Combate Individual Masculino Pre-Junior                               13146 Individual Masculino Pre-Junior Sparring 4º-1er
-de 60 a 65 kg                                                               Gup más de 60 a 65 kg
-13177 Combate Individual Masculino Pre-Junior                               13147 Individual Masculino Pre-Junior Sparring 4º-1er
-de 65 kg                                                                    Gup más de 65 kg
+2.1.1.1. Pre-Junior 2.1.1.1. Pre-Junior
+13171 Combate Individual Masculino Pre-Junior 13141 Individual Masculino Pre-Junior Sparring 4º-1er
+hasta 40 kg Gup hasta 40 kg
+13172 Combate Individual Masculino Pre-Junior 13142 Individual Masculino Pre-Junior Sparring 4º-1er
+de 40 a 45 kg Gup más de 40 a 45 kg
+13173 Combate Individual Masculino Pre-Junior 13143 Individual Masculino Pre-Junior Sparring 4º-1er
+de 45 a 50 kg Gup más de 45 a 50 kg
+13174 Combate Individual Masculino Pre-Junior 13144 Individual Masculino Pre-Junior Sparring 4º-1er
+de 50 a 55 kg Gup más de 50 a 55 kg
+13175 Combate Individual Masculino Pre-Junior 13145 Individual Masculino Pre-Junior Sparring 4º-1er
+de 55 a 60 kg Gup más de 55 a 60 kg
+13176 Combate Individual Masculino Pre-Junior 13146 Individual Masculino Pre-Junior Sparring 4º-1er
+de 60 a 65 kg Gup más de 60 a 65 kg
+13177 Combate Individual Masculino Pre-Junior 13147 Individual Masculino Pre-Junior Sparring 4º-1er
+de 65 kg Gup más de 65 kg
 13171 Combate Individual Masculino Pre-Junior 1er-3er
 Dan hasta 40 kg
 13172 Combate Individual Masculino Pre-Junior 1er-3er
@@ -2005,22 +2005,22 @@ Dan más de 60 a 65 kg
 13177 Combate Individual Masculino Pre-Junior 1er-3er
 Dan más de 65 kg
 
-2.1.1.2. Júnior                                                             2.1.1.2. Júnior
-14171 Combate Individual Masculino Júnior                                   14141 Combate Individual Masculino Júnior 4º-1er Gup
-hasta 50 kg                                                                 hasta 50 kg
-14172 Combate Individual Masculino Júnior                                   14142 Combate Individual Masculino Júnior 4º-1er Gup
-de 50 a 55 kg                                                               más de 50 a 55 kg
-14173 Combate Individual Masculino Júnior                                   14143 Combate Individual Masculino Júnior 4º-1er Gup
-de 55 a 60 kg                                                               más de 55 a 60 kg
-14174 Combate Individual Masculino Júnior                                   14144 Combate Individual Masculino Júnior 4º-1er Gup
-de 60 a 65 kg                                                               más de 60 a 65 kg
+2.1.1.2. Júnior 2.1.1.2. Júnior
+14171 Combate Individual Masculino Júnior 14141 Combate Individual Masculino Júnior 4º-1er Gup
+hasta 50 kg hasta 50 kg
+14172 Combate Individual Masculino Júnior 14142 Combate Individual Masculino Júnior 4º-1er Gup
+de 50 a 55 kg más de 50 a 55 kg
+14173 Combate Individual Masculino Júnior 14143 Combate Individual Masculino Júnior 4º-1er Gup
+de 55 a 60 kg más de 55 a 60 kg
+14174 Combate Individual Masculino Júnior 14144 Combate Individual Masculino Júnior 4º-1er Gup
+de 60 a 65 kg más de 60 a 65 kg
 
-14175 Combate Individual Masculino Júnior                                   14145 Combate Individual Masculino Júnior 4º-1er Gup
-de 65 a 70 kg                                                               más de 65 a 70 kg
-14176 Combate Individual Masculino Júnior                                   14146 Combate Individual Masculino Júnior 4º-1er Gup
-de 70 a 75 kg                                                               más de 70 a 75 kg
-14177 Combate Individual Masculino Júnior                                   14147 Combate Individual Masculino Júnior 4º-1er Gup
-de 75 kg                                                                    más de 75 kg
+14175 Combate Individual Masculino Júnior 14145 Combate Individual Masculino Júnior 4º-1er Gup
+de 65 a 70 kg más de 65 a 70 kg
+14176 Combate Individual Masculino Júnior 14146 Combate Individual Masculino Júnior 4º-1er Gup
+de 70 a 75 kg más de 70 a 75 kg
+14177 Combate Individual Masculino Júnior 14147 Combate Individual Masculino Júnior 4º-1er Gup
+de 75 kg más de 75 kg
 14171 Combate Individual Masculino Júnior 1er-3er Dan
 hasta 50 kg
 14172 Combate Individual Masculino Junior 1er-3er Dan
@@ -2036,20 +2036,20 @@ más de 70 a 75 kg
 14177 Combate Individual Masculino Junior 1er-3er Dan
 más de 75 kg
 
-2.1.1.3. Adulto                                                             2.1.1.3. Adulto Masculino
-15181 Combate individual masculino hasta 57 kg                              15141 Individual Sparring 4º-1er Gup hasta 57 kg
-15182 Combate individual masculino de más de 57                             15142 Individual Sparring 4º-1er Gup más de 57 a 63 kg
-a 63 kg                                                                     15143 Individual Sparring 4º-1er Gup más de 63 a 69 kg
-15183 Combate individual masculino de más de 63                             15144 Individual Sparring 4º-1er Gup más de 69 a 75 kg
-a 69 kg                                                                     15145 Individual Sparring 4º-1er Gup más de 75 a 81 kg
-15184 Combate individual masculino de más de 69                             15146 Individual Sparring 4º-1er Gup más de 81 a 87 kg
-a 75 kg                                                                     15147 Individual Sparring 4º-1er Gup más de 87 kg
-15185 Combate individual masculino de más de 75                             15181 Individual Sparring 1er-6º Dan hasta 57 kg
-a 81 kg                                                                     15182 Individual Combate 1er-6º Dan más de 57 a 63 kg
-15186 Combate individual masculino de más de 81                             15183 Combate individual masculino 1er-6º Dan más de
-a 87 kg                                                                     63 a 69 kg
-15187 Combate individual masculino de más de 87                             15184 Combate individual masculino 1er-6º Dan más de
-kg                                                                          69 a 75 kg
+2.1.1.3. Adulto 2.1.1.3. Adulto Masculino
+15181 Combate individual masculino hasta 57 kg 15141 Individual Sparring 4º-1er Gup hasta 57 kg
+15182 Combate individual masculino de más de 57 15142 Individual Sparring 4º-1er Gup más de 57 a 63 kg
+a 63 kg 15143 Individual Sparring 4º-1er Gup más de 63 a 69 kg
+15183 Combate individual masculino de más de 63 15144 Individual Sparring 4º-1er Gup más de 69 a 75 kg
+a 69 kg 15145 Individual Sparring 4º-1er Gup más de 75 a 81 kg
+15184 Combate individual masculino de más de 69 15146 Individual Sparring 4º-1er Gup más de 81 a 87 kg
+a 75 kg 15147 Individual Sparring 4º-1er Gup más de 87 kg
+15185 Combate individual masculino de más de 75 15181 Individual Sparring 1er-6º Dan hasta 57 kg
+a 81 kg 15182 Individual Combate 1er-6º Dan más de 57 a 63 kg
+15186 Combate individual masculino de más de 81 15183 Combate individual masculino 1er-6º Dan más de
+a 87 kg 63 a 69 kg
+15187 Combate individual masculino de más de 87 15184 Combate individual masculino 1er-6º Dan más de
+kg 69 a 75 kg
 15185 Combate individual masculino 1er-6º Dan más de
 75 a 81 kg
 15186 Combate individual masculino 1er-6º Dan más de
@@ -2104,24 +2104,24 @@ más de 84 kg
 23141 Combate Individual Pre-Junior Femenino
 4º-1er Gup hasta 40 kg
 23142 Combate Individual Pre-Junior Femenino
-2.1.2. Femenino                                                                4º-1er Gup de 40 a 44 kg
+2.1.2. Femenino 4º-1er Gup de 40 a 44 kg
 23143 Combate Individual Pre-Junior Femenino
-2.1.2.1. Pre-Junior                                                            4º-1er Gup de 44 a 48 kg
-23171 Combate Individual Pre-Junior Femenino                                23144 Combate Individual Pre-Junior Femenino
-hasta 40 kg                                                                 4º-1er Gup de 48 a 52 kg
-23172 Combate Individual Pre-Junior Femenino                                23145 Combate Individual Pre-Junior Femenino
-de 40 a 44 kg                                                               4º-1er Gup de 52 a 56 kg
-23173 Combate Individual Pre-Junior Femenino                                23146 Combate Individual Pre-Junior Femenino
-de 44 a 48 kg                                                               4º-1er Gup de 56 a 60 kg
-23174 Combate Individual Pre-Junior Femenino                                23147 Combate Individual Femenino Pre-Junior
-de 48 a 52 kg                                                               4º-1er Gup más de 60 kg
-23175 Combate Individual Pre-Junior Femenino                                23171 Combate Individual Femenino Pre-Junior
-de 52 a 56 kg                                                               1er-3er Dan hasta 40 kg
-23176 Combate Individual Pre-Junior Femenino                                23172 Combate Individual Femenino Pre-Junior
+2.1.2.1. Pre-Junior 4º-1er Gup de 44 a 48 kg
+23171 Combate Individual Pre-Junior Femenino 23144 Combate Individual Pre-Junior Femenino
+hasta 40 kg 4º-1er Gup de 48 a 52 kg
+23172 Combate Individual Pre-Junior Femenino 23145 Combate Individual Pre-Junior Femenino
+de 40 a 44 kg 4º-1er Gup de 52 a 56 kg
+23173 Combate Individual Pre-Junior Femenino 23146 Combate Individual Pre-Junior Femenino
+de 44 a 48 kg 4º-1er Gup de 56 a 60 kg
+23174 Combate Individual Pre-Junior Femenino 23147 Combate Individual Femenino Pre-Junior
+de 48 a 52 kg 4º-1er Gup más de 60 kg
+23175 Combate Individual Pre-Junior Femenino 23171 Combate Individual Femenino Pre-Junior
+de 52 a 56 kg 1er-3er Dan hasta 40 kg
+23176 Combate Individual Pre-Junior Femenino 23172 Combate Individual Femenino Pre-Junior
 
-de 56 a 60 kg                                                               1.er-3.er Dan más de 40 a 44 kg
-23177 Combate Individual Pre-Junior Femenino                                23173 Combate Individual Femenino Pre-Junior
-de 60 kg                                                                    1.er-3.er Dan más de 44 a 48 kg
+de 56 a 60 kg 1.er-3.er Dan más de 40 a 44 kg
+23177 Combate Individual Pre-Junior Femenino 23173 Combate Individual Femenino Pre-Junior
+de 60 kg 1.er-3.er Dan más de 44 a 48 kg
 23174 Combate Individual Femenino Pre-Junior
 1.er-3.er Dan más de 48 a 52 kg
 23175 Combate Individual Femenino Pre-Junior
@@ -2138,21 +2138,21 @@ hasta 45 kg
 24142 Combate Individual Femenino Junior 4º-1er Gup
 de 45 a 49 kg
 24143 Combate Individual Femenino Junior 4º-1er Gup
-2.1.2.2. Junior                                                                de 49 a 53 kg
-24171 Combate Individual Femenino Junior                                    24144 Combate Individual Femenino Junior 4º-1er Gup
-hasta 45 kg                                                                 de 53 a 57 kg
-24172 Combate Individual Femenino Junior                                    24145 Combate Individual Femenino Junior 4º-1er Gup
-de 45 a 49 kg                                                               de 57 a 61 kg
-24173 Combate Individual Femenino Junior                                    24146 Combate Individual Femenino Junior 4º-1er Gup
-de 49 a 53 kg                                                               de 61 a 65 kg
-24174 Combate Individual Femenino Junior                                    24147 Combate Individual Femenino Junior 4º-1er Gup
-de 53 a 57 kg                                                               de 65 kg
-24175 Combate Individual Femenino Junior                                    24171 Combate Individual Femenino Junior 1er-3er Dan
-de 57 a 61 kg                                                               hasta 45 kg
-24176 Combate Individual Femenino Junior                                    24172 Combate Individual Femenino Junior Combate
-de 61 a 65 kg                                                               1er-3er Dan de 45 a 49 kg
-24177 Combate Individual Femenino Junior                                    24173 Combate Individual Femenino Junior 1er-3er Dan
-de 65 kg                                                                    de 49 a 53 kg
+2.1.2.2. Junior de 49 a 53 kg
+24171 Combate Individual Femenino Junior 24144 Combate Individual Femenino Junior 4º-1er Gup
+hasta 45 kg de 53 a 57 kg
+24172 Combate Individual Femenino Junior 24145 Combate Individual Femenino Junior 4º-1er Gup
+de 45 a 49 kg de 57 a 61 kg
+24173 Combate Individual Femenino Junior 24146 Combate Individual Femenino Junior 4º-1er Gup
+de 49 a 53 kg de 61 a 65 kg
+24174 Combate Individual Femenino Junior 24147 Combate Individual Femenino Junior 4º-1er Gup
+de 53 a 57 kg de 65 kg
+24175 Combate Individual Femenino Junior 24171 Combate Individual Femenino Junior 1er-3er Dan
+de 57 a 61 kg hasta 45 kg
+24176 Combate Individual Femenino Junior 24172 Combate Individual Femenino Junior Combate
+de 61 a 65 kg 1er-3er Dan de 45 a 49 kg
+24177 Combate Individual Femenino Junior 24173 Combate Individual Femenino Junior 1er-3er Dan
+de 65 kg de 49 a 53 kg
 24174 Combate Individual Femenino Junior 1er-3er Dan
 de 53 a 57 kg
 24175 Combate Individual Femenino Junior 1er-3er Dan
@@ -2169,14 +2169,14 @@ hasta 50 kg
 más de 50 a 55 kg
 25143 Combate Individual Femenino 4º-1er Gup
 
-2.1.2.3. Adulto                                                                 más de 55 a 60 kg
-25181 Combate Individual Femenino hasta 50 kg                                25144 Combate Individual Femenino 4º-1er Gup
-25182 Combate Individual Femenino de 50 a 55 kg                              más de 60 a 65 kg
-25183 Combate Individual Femenino de 55 a 60 kg                              25145 Combate Individual Femenino 4º-1er Gup
-25184 Combate Individual Femenino de 60 a 65 kg                              más de 65 a 70 kg
-25185 Combate Individual Femenino de 65 a 70 kg                              25146 Combate Individual Femenino 4º-1er Gup
-25186 Combate Individual Femenino de 70 a 75 kg                              más de 70 a 75 kg
-25187 Combate Individual Femenino más de 75 kg                               25147 Combate Individual Femenino 4º-1er Gup
+2.1.2.3. Adulto más de 55 a 60 kg
+25181 Combate Individual Femenino hasta 50 kg 25144 Combate Individual Femenino 4º-1er Gup
+25182 Combate Individual Femenino de 50 a 55 kg más de 60 a 65 kg
+25183 Combate Individual Femenino de 55 a 60 kg 25145 Combate Individual Femenino 4º-1er Gup
+25184 Combate Individual Femenino de 60 a 65 kg más de 65 a 70 kg
+25185 Combate Individual Femenino de 65 a 70 kg 25146 Combate Individual Femenino 4º-1er Gup
+25186 Combate Individual Femenino de 70 a 75 kg más de 70 a 75 kg
+25187 Combate Individual Femenino más de 75 kg 25147 Combate Individual Femenino 4º-1er Gup
 más de 75 kg
 25181 Combate Individual Femenino 1er-6º Dan
 hasta 50 kg
@@ -2234,7 +2234,7 @@ más de 67 a 74 kg
 27184 Combate individual para veteranas, 1er-6º Dan
 más de 74 kg
 
-2.3.       Equipos
+2.3. Equipos
 
 2.2.1. Masculino
 
@@ -2243,22 +2243,22 @@ más de 74 kg
 Gup
 63170 Equipo Masculino Pre-Junior Combate 1er-3er
 Dan
-2.2.       Equipos
+2.2. Equipos
 2.2.1.2. Junior
-2.2.1. Masculino                                                                64140 Equipo Masculino Junior Combate 4º-1er Gup
+2.2.1. Masculino 64140 Equipo Masculino Junior Combate 4º-1er Gup
 64170 Equipo Masculino Junior Combate 1er-3er Dan
 2.2.1.1. Pre-Junior
-63170 Combate Pre-Junior Masculino por Equipos                               2.2.1.3. Adulto
+63170 Combate Pre-Junior Masculino por Equipos 2.2.1.3. Adulto
 65140 Equipo Masculino Combate 4º-1er Gup
 65180 Equipo Masculino Combate 1er-6º Dan
 
 2.2.1.4. Sénior
-2.2.1.2. Júnior                                                                 66140 Equipo Masculino Sénior Combate 4º-1er Gup
-64170 Combate Júnior Masculino por Equipos                                   66180 Equipo Masculino Sénior Combate 1er-6º Dan
+2.2.1.2. Júnior 66140 Equipo Masculino Sénior Combate 4º-1er Gup
+64170 Combate Júnior Masculino por Equipos 66180 Equipo Masculino Sénior Combate 1er-6º Dan
 
 2.2.1.5. Veteranos
-2.2.1.3. Adulto                                                                 67140 Equipo Masculino Veteranos Combate 4º-1er
-65180 Combate Masculino por Equipos                                          Gup
+2.2.1.3. Adulto 67140 Equipo Masculino Veteranos Combate 4º-1er
+65180 Combate Masculino por Equipos Gup
 67180 Equipo Masculino Veteranos Combate 1er-6º
 Dan
 
@@ -2271,21 +2271,21 @@ Gup
 Dan
 
 2.2.2.2. Junior
-2.2.2. Femenino                                                                 74140 Equipo Femenino Junior Combate 4º-1er Gup
+2.2.2. Femenino 74140 Equipo Femenino Junior Combate 4º-1er Gup
 
 74170 Equipo Femenino Junior Combate 1.er-3.er Dan
 2.2.2.1. Pre-Junior
-73170 Combate Pre-Junior Femenino por Equipos                                2.2.2.3. Adulto
+73170 Combate Pre-Junior Femenino por Equipos 2.2.2.3. Adulto
 75140 Equipo Femenino Combate 4.º-1.er Gup
 75180 Equipo Femenino Combate 1.er-6.º Dan
 
 2.2.2.4. Sénior
-2.2.2.2. Júnior                                                                 76140 Equipo Femenino Sénior Combate 4.º-1.er Gup
-74170 Combate Júnior Femenino por Equipos                                    76180 Equipo Femenino Sénior Combate 1.º-6.º Dan
+2.2.2.2. Júnior 76140 Equipo Femenino Sénior Combate 4.º-1.er Gup
+74170 Combate Júnior Femenino por Equipos 76180 Equipo Femenino Sénior Combate 1.º-6.º Dan
 
 2.2.2.5. Veteranos
-2.2.2.3. Adulto                                                                 77140 Equipo Femenino Veterano Combate 4.º-1.er
-75180 Combate Femenino por Equipos                                           Gup
+2.2.2.3. Adulto 77140 Equipo Femenino Veterano Combate 4.º-1.er
+75180 Combate Femenino por Equipos Gup
 77180 Equipo Femenino Veterano Combate 1.º-6.º Dan
 
 2.2.3. Cada equipo (masculino y/o femenino) debe estar
@@ -2297,10 +2297,10 @@ cinturones de color y pueden ser de cualquier Gup, del
 4.º al 1.º.
 2.2.3.2. Los cinturones negros deben competir con
 cinturones negros.
-2.2.3. Cada equipo (masculino y/o femenino, de                                  Los cinturones negros pueden ser de cualquier división
-cualquier categoría y peso) debe estar formado por                              de peso y de cualquier grado, del 1.º al 6.º.
-cinco (5) competidores y un (1) suplente (opcional).                            2.2.3.3. Las categorías de edad no se pueden combinar.
-*Ver Regla T5
+2.2.3. Cada equipo (masculino y/o femenino, de Los cinturones negros pueden ser de cualquier división
+cualquier categoría y peso) debe estar formado por de peso y de cualquier grado, del 1.º al 6.º.
+cinco (5) competidores y un (1) suplente (opcional). 2.2.3.3. Las categorías de edad no se pueden combinar.
+\*Ver Regla T5
 2.2.3.4. Si un equipo está compuesto por solo tres (3)
 competidores, se perderán las decisiones de los jueces.
 2.2.3.5. Si un equipo está compuesto por solo cuatro (4)
@@ -2313,16 +2313,16 @@ competidores, se perderán las decisiones de los jueces.
 Los competidores de Rotura de Potencia se organizarán en grupos según su sexo y edad, de acuerdo con las
 categorías que se enumeran a continuación.
 
-World Championship                                                                        World Cup
-3.1.       Individual                                                       3.1. Individual
+World Championship World Cup
+3.1. Individual 3.1. Individual
 
-3.1.1.     Masculino                                                        3.1.1. Masculino
+3.1.1. Masculino 3.1.1. Masculino
 
 3.1.1.1. Junior
 14370 Individ.masculino junior Rotura de Potencia
 
-3.1.1.2. Adulto                                                             3.1.1.2. Adulto
-15380 Individual masculino Rotura de Potencia                               15380 Individual masculino Rotura de Poder 1.º-6.º Dan
+3.1.1.2. Adulto 3.1.1.2. Adulto
+15380 Individual masculino Rotura de Potencia 15380 Individual masculino Rotura de Poder 1.º-6.º Dan
 
 3.1.1.3. Senior
 16380 Individual Masculino Senior Rotura de Poder 1.º-
@@ -2332,13 +2332,13 @@ World Championship                                                              
 17380 Individual Masculino Veteranos Rotura de Poder
 1.º-6.º Dan
 
-3.1.2. Femenino                                                             3.1.2. Femenino
+3.1.2. Femenino 3.1.2. Femenino
 
 3.1.2.1. Junior
 24370 Indiv.l Femenino Junior Rotura de Potencia
 
-3.1.2.2. Adulto                                                             3.1.2.2. Adulto
-25380 Individual Femenino Rotura de Potencia                                25380 Rotura de Poder indiv. femenino 1.º-6.º Dan
+3.1.2.2. Adulto 3.1.2.2. Adulto
+25380 Individual Femenino Rotura de Potencia 25380 Rotura de Poder indiv. femenino 1.º-6.º Dan
 
 3.1.2.3. Senior
 26380 Rotura de Poder indiv.femenino senior 1.º-6.º
@@ -2348,8 +2348,8 @@ Dan
 27380 Rotura de Poder individual femenino veterano
 1.º-6.º Dan
 
-3.1.3.   Cada competidor puede intentar todos los                           3.1.3. Cada competidor puede intentar una (1) técnica de
-ítems enumerados en el Apéndice 6 para su grupo                             mano y una (1) técnica de pie. Elegidas por ellos mismos de
+3.1.3. Cada competidor puede intentar todos los 3.1.3. Cada competidor puede intentar una (1) técnica de
+ítems enumerados en el Apéndice 6 para su grupo mano y una (1) técnica de pie. Elegidas por ellos mismos de
 entre las técnicas enumeradas en el Apéndice 6:
 
 3.2. Equipo
@@ -2383,25 +2383,25 @@ competidores y un (1) reserva (opcional).
 Los competidores de Técnicas Especiales se organizarán en grupos según género y edad, de acuerdo con las
 categorías que se enumeran a continuación.
 
-World Championship                                                                        World Cup
-4.1.     Individual                                                         4.1. Individual
+World Championship World Cup
+4.1. Individual 4.1. Individual
 
-4.1.1. Masculino                                                            4.1.1. Masculino
+4.1.1. Masculino 4.1.1. Masculino
 
-4.1.1.1. Pre-Junior                                                         4.1.1.1. Pre-Junior
-13470 Individual Masculino Pre-Junior Técnica                               13440 Individual Masculino Pre-Junior Técnica Especial
-Especial                                                                    4.º-1.er Gup
+4.1.1.1. Pre-Junior 4.1.1.1. Pre-Junior
+13470 Individual Masculino Pre-Junior Técnica 13440 Individual Masculino Pre-Junior Técnica Especial
+Especial 4.º-1.er Gup
 13470 Individual Masculino Pre-Junior Técnica Especial
 1.er-3.er Dan
 
-4.1.1.2. Junior                                                             4.1.1.2. Junior
-14470 Individual Masculino Júnior Técnica Especial                          14440 Individual Masculino Junior Técnica Especial
+4.1.1.2. Junior 4.1.1.2. Junior
+14470 Individual Masculino Júnior Técnica Especial 14440 Individual Masculino Junior Técnica Especial
 4.º-1.er Gup
 14470 Individual Masculino Junior Técnica Especial
 1.er-3.er Dan
 
-4.1.1.3. Adulto                                                             4.1.1.3. Adulto
-15480 Individual Masculino Técnica Especial                                 15440 Individual Masculino Técnica Especial 4.º-1.er
+4.1.1.3. Adulto 4.1.1.3. Adulto
+15480 Individual Masculino Técnica Especial 15440 Individual Masculino Técnica Especial 4.º-1.er
 Gup
 15480 Individual Masculino Técnica Especial 1.er-6.º
 Dan
@@ -2418,22 +2418,22 @@ Dan
 17480 Individual Masculino Veterano Técnica Especial
 1.º-6.º Dan
 
-4.1.2. Femenino                                                             4.1.2. Femenino
+4.1.2. Femenino 4.1.2. Femenino
 
-4.1.2.1. Pre-Junior                                                         4.1.2.1. Pre-Junior
-23470 Individual Femenino Pre-Junior Técnica                                23440 Individual Femenino Pre-Junior Técnica Especial
-Especial                                                                    4.º-1.er Gup
+4.1.2.1. Pre-Junior 4.1.2.1. Pre-Junior
+23470 Individual Femenino Pre-Junior Técnica 23440 Individual Femenino Pre-Junior Técnica Especial
+Especial 4.º-1.er Gup
 23470 Individual Femenino Pre-Junior Técnica Especial
 1.º-3.er Dan
 
-4.1.2.2. Junior                                                             4.1.2.2. Júnior
-24470 Individual Femenino Júnior Técnica Especial                           24440 Individual Femenino Júnior Técnica Especial
+4.1.2.2. Junior 4.1.2.2. Júnior
+24470 Individual Femenino Júnior Técnica Especial 24440 Individual Femenino Júnior Técnica Especial
 4.º-1.er Gup
 
 24470 Individual Femenino Júnior Técnica Especial
 1.º-3.er Dan
-4.1.2.3. Adulto                                                             4.1.2.3. Adulto
-25480 Individual Femenino Técnica Especial                                  25440 Individual Femenino Técnica Especial
+4.1.2.3. Adulto 4.1.2.3. Adulto
+25480 Individual Femenino Técnica Especial 25440 Individual Femenino Técnica Especial
 4.º-1.er Gup
 25480 Individual Femenino Técnica Especial
 1.º-6.º Dan
@@ -2448,14 +2448,14 @@ Especial                                                                    4.º
 27480 Individual Femenino Veterano Técnica Especial
 1.º-6.º Dan
 
-4.1.3. Cada competidor podrá intentar todas las                             4.1.3. Cada competidor puede intentar todos los ítems
-roturas enumeradas en el Apéndice 6 para su grupo.                          enumerados en el Apéndice 6 para su grupo.
+4.1.3. Cada competidor podrá intentar todas las 4.1.3. Cada competidor puede intentar todos los ítems
+roturas enumeradas en el Apéndice 6 para su grupo. enumerados en el Apéndice 6 para su grupo.
 
 4.2. Equipo
 4.2.1. Masculino
 
 4.2.1.1. Pre-Junior
-63470 Equipo              Masculino        Pre-Junior Técnica
+63470 Equipo Masculino Pre-Junior Técnica
 Especial
 
 4.2.1.2. Júnior
@@ -2487,19 +2487,19 @@ competidores y un (1) suplente (opcional).
 Los competidores de Lucha Preestablecida se organizarán en grupos según la edad, de acuerdo con las
 categorías que se enumeran a continuación.
 
-World Championship                                                                World Cup
-5.1.     Equipo                                                           5.2.     Equipo
+World Championship World Cup
+5.1. Equipo 5.2. Equipo
 
-5.1.1. Pre-Junior                                                         5.1.1. Pre-Junior
-53570 Lucha Pre-establecida Pre-Junior por                                53570 Lucha Preestablecida Pre-Junior por
-Equipos                                                                   Equipos 1st-3rd Dan
+5.1.1. Pre-Junior 5.1.1. Pre-Junior
+53570 Lucha Pre-establecida Pre-Junior por 53570 Lucha Preestablecida Pre-Junior por
+Equipos Equipos 1st-3rd Dan
 
-5.1.2. Junior                                                             5.1.2. Junior
-54570 Lucha Pre-establecida Junior por Equipos                            54570 Lucha Pre-establecida Junior por Equipos 1st-
+5.1.2. Junior 5.1.2. Junior
+54570 Lucha Pre-establecida Junior por Equipos 54570 Lucha Pre-establecida Junior por Equipos 1st-
 3rd Dan
 
-5.1.3. Adulto                                                             5.1.3. Adulto
-55580 Lucha Pre-establecida Adulto por Equipos                            55580 Lucha Pre-establecida Adulto por Equipos
+5.1.3. Adulto 5.1.3. Adulto
+55580 Lucha Pre-establecida Adulto por Equipos 55580 Lucha Pre-establecida Adulto por Equipos
 1st-6th Dan
 
 5.1.4. Senior
@@ -2509,7 +2509,7 @@ Equipos 1st-6th Dan
 5.1.5. Veterano
 55580 Lucha Pre-establecida Veterao por Equipos
 1st-6th Dan
-5.3.    El Equipo de Preestablecida puede ser:
+5.3. El Equipo de Preestablecida puede ser:
 5.3.1. dos (2) competidores masculinos
 5.3.2. dos (2) competidoras femeninas
 5.3.3. o un (1) competidor masculino y una (1) competidora femenina
@@ -2518,7 +2518,7 @@ Equipos 1st-6th Dan
 
 (ver S 1., S 2., S 3., S 4., S 5)
 
-6.1.    Campeonato del Mundo
+6.1. Campeonato del Mundo
 
 Pattern Team 63270 73270 64270 74270 65280 75280
 
@@ -2557,7 +2557,7 @@ Team
 13260 23260 14260 24260 15260 25260
 
 13470 23470 14470 24470 15480 25480
-male       black
+male black
 
 53570
 Pre-Junior
@@ -2568,22 +2568,22 @@ female black
 14370 24370 15380 25380
 
 64370 74370 65380 75380
-male       black
+male black
 
 54570
 Junior
 female black
 
 15280 25280
-male       black
+male black
 
 55580
 Adult
 female black
 
-gold        208            6                                                  6                                                6                                                6                                                6                                                6                                            6                           36                  6                                      6                                          4                       2                 36                                                4                     24                         6                                           36                                             6
-Medals        silver      208            6                                                  6                                                6                                                6                                                6                                                6                                            6                           36                  6                                      6                                          4                       2                 36                                                4                     24                         6                                           36                                             6
-bronze       416            12                                                12                                               12                                               12                                               12                                               12                                           12                           72                 12                                     12                                          8                       4                 72                                                8                     48                         12                                          72                                            12
+gold 208 6 6 6 6 6 6 6 36 6 6 4 2 36 4 24 6 36 6
+Medals silver 208 6 6 6 6 6 6 6 36 6 6 4 2 36 4 24 6 36 6
+bronze 416 12 12 12 12 12 12 12 72 12 12 8 4 72 8 48 12 72 12
 
 En las competencias por equipos de Combate, Forma, Rotura de Potencia y Técnica Especial, los equipos
 premiados recibirán 6 medallas cada uno.
@@ -2591,9 +2591,9 @@ premiados recibirán 6 medallas cada uno.
 En las competencias por equipos de Lucha Preestablecida, los equipos premiados recibirán 2 medallas cada
 uno.
 
-Total de categorías:           95
-Total de medallas:             832,                                                   208 de oro               208 de plata             416 de bronce
-Total de trofeos:              21,                                                    6 en la general individual
+Total de categorías: 95
+Total de medallas: 832, 208 de oro 208 de plata 416 de bronce
+Total de trofeos: 21, 6 en la general individual
 6 en la general por equipos
 1 por el 1.er puesto en la clasificación nacional del Campeonato Mundial
 1 por el 2.º puesto en la clasificación nacional del Campeonato Mundial
@@ -2608,30 +2608,30 @@ Junior
 1 por el 3.er puesto en la clasificación nacional del Campeonato Mundial Pre-
 Junior
 
-53570                                                      54570                                                     55580                                                      56580                                                        57580
+53570 54570 55580 56580 57580
 
 58
 Pre-Arranged
 Special Team
-Special     13440 23440 13470 23470 14440 24440 14470 24470 15440 25440 15480 25480 16440 26440 16480 26480 17480 27480 17480 27480
+Special 13440 23440 13470 23470 14440 24440 14470 24470 15440 25440 15480 25480 16440 26440 16480 26480 17480 27480 17480 27480
 Power Team
-Power                                                                                                                                                                15380 25380                                               16380 26380                                                  17380 27380
+Power 15380 25380 16380 26380 17380 27380
 
 Pattern Team 63240 43240 63270 73270 64240 74240 64270 74270 65240 75240 65280 75280 66240 76240 66280 76280 67240 77240 67280 77280
 
-Pattern 4                                                                                                                                                             15280 25280                                               16280 26280                                                  17280 27280
+Pattern 4 15280 25280 16280 26280 17280 27280
 
-Pattern 3                                                                                                   14270 24270                                               15270 25270                                               16270 26270                                                  17270 27270
-Pattern 2    13240 23240 13260 23260 14240 24240 14260 24260 15240 25240 15260 25260 16240 26240 16260 26260 17240 27240 17260 27260
-Pattern 1    13230 23230 13250 23250 14230 24230 14250 24250 15230 25230 15250 25250 16230 26230 16250 26250 17230 27230 17250 27250
+Pattern 3 14270 24270 15270 25270 16270 26270 17270 27270
+Pattern 2 13240 23240 13260 23260 14240 24240 14260 24260 15240 25240 15260 25260 16240 26240 16260 26260 17240 27240 17260 27260
+Pattern 1 13230 23230 13250 23250 14230 24230 14250 24250 15230 25230 15250 25250 16230 26230 16250 26250 17230 27230 17250 27250
 Sparring Team 63140 43140 63170 73170 64140 74140 64170 74170 65140 75140 65180 75180 66140 76140 66180 76180 67140 77140 67180 77180
-Sparring 7    13147 23147 13177 23177 14147 24147 14177 24177 15147 25147 15187 25187
-Sparring 6    13146 23146 13176 23176 14146 24146 14176 24176 15146 25146 15186 25186
-Sparring 5    13145 23145 13175 23175 14145 24145 14175 24175 15145 25145 15185 25185 16145 26145 16185 26185
-Sparring 4    13144 23144 13174 23174 14144 24144 14174 24174 15144 25144 15184 25184 16144 26144 16184 26184 17144 27144 17184 27184
-Sparring 3    13143 23143 13173 23173 14143 24143 14173 24173 15143 25143 15183 25183 16143 26143 16183 26183 17143 27143 17183 27183
-Sparring 2    13142 23142 13172 23172 14142 24142 14172 24172 15142 25142 15182 25182 16142 26142 16182 26182 17142 27142 17182 27182
-Sparring 1    13141 23141 13171 23171 14141 24141 14171 24171 15141 25141 15181 25181 16141 26141 16181 26181 17141 27141 17181 27181
+Sparring 7 13147 23147 13177 23177 14147 24147 14177 24177 15147 25147 15187 25187
+Sparring 6 13146 23146 13176 23176 14146 24146 14176 24176 15146 25146 15186 25186
+Sparring 5 13145 23145 13175 23175 14145 24145 14175 24175 15145 25145 15185 25185 16145 26145 16185 26185
+Sparring 4 13144 23144 13174 23174 14144 24144 14174 24174 15144 25144 15184 25184 16144 26144 16184 26184 17144 27144 17184 27184
+Sparring 3 13143 23143 13173 23173 14143 24143 14173 24173 15143 25143 15183 25183 16143 26143 16183 26183 17143 27143 17183 27183
+Sparring 2 13142 23142 13172 23172 14142 24142 14172 24172 15142 25142 15182 25182 16142 26142 16182 26182 17142 27142 17182 27182
+Sparring 1 13141 23141 13171 23171 14141 24141 14171 24171 15141 25141 15181 25181 16141 26141 16181 26181 17141 27141 17181 27181
 Copa del Mundo
 
 colored
@@ -2731,71 +2731,71 @@ Pattern 4
 
 Special
 Power
-gold       450       20           20           20           20           16           12           12 120 20                                20          8           6 120 6                               0         20           0           10
-Medals        silver      450       20           20           20           20           16           12           12 120 20                                20          8           6 120 6                               0         20           0           10
-bronze       900       40           40           40           40           32           24           24 240 40                                40          16          12 240 12                             0         40           0           20
+gold 450 20 20 20 20 16 12 12 120 20 20 8 6 120 6 0 20 0 10
+Medals silver 450 20 20 20 20 16 12 12 120 20 20 8 6 120 6 0 20 0 10
+bronze 900 40 40 40 40 32 24 24 240 40 40 16 12 240 12 0 40 0 20
 
 En las competencias por equipos de Combate y Forma, los equipos premiados recibirán 6 medallas cada uno.
 En las competencias por equipos de lucha preestablecida, los equipos premiados recibirán 2 medallas cada uno.
 
-Total de medallas:             1800,                                   450 de oro                                                          450 de plata                                                   900 de bronce.
-Total de categorías:           245
+Total de medallas: 1800, 450 de oro 450 de plata 900 de bronce.
+Total de categorías: 245
 
-### D1. Diagrama 1.           Tamaño del Ring– Formas, Formas Equipos, Pre-Establecda
+### D1. Diagrama 1. Tamaño del Ring– Formas, Formas Equipos, Pre-Establecda
 
-1m                                    8m                                     1m
+1m 8m 1m
 10 por 10 metros están en juego
 
 EV
 
-ODR                                     ODB
-CR                                                                                                CB
+ODR ODB
+CR CB
 
 1m
 
-8m                                                          R                        B
+8m R B
 
 1m
 
 CR
-U1          U2                        U4           U5
+U1 U2 U4 U5
 U3
 
-RO1          RO2                            Mesa del Jurado
+RO1 RO2 Mesa del Jurado
 
-IT           JP          JM
+IT JP JM
 
-### D2. Diagrama 2.           Tamaño del Ring– Lucha - Lucha por Equipos
+### D2. Diagrama 2. Tamaño del Ring– Lucha - Lucha por Equipos
 
-1m                                    8m                                     1m
+1m 8m 1m
 8 por 8 metros están en juego
 
 EV
 
-ODR                                       ODB
-U2                                                                                                U3
+ODR ODB
+U2 U3
 
 1m
 
-8m                     CR                                   R                        B                                   CB
+8m CR R B CB
 
 1m
 
-U1                                                                                                U4
+U1 U4
 
-RO1          RO2                            Mesa del Jurado
+RO1 RO2 Mesa del Jurado
 
-IT           JP          JM
+IT JP JM
 
-### D3. Diagrama 3.          Tamaño del Ring – Rotura de Potencia (Word-Championships)
+### D3. Diagrama 3. Tamaño del Ring – Rotura de Potencia (Word-Championships)
 
-1m                                      8m                                     1m
+1m 8m 1m
 10 por 10 metros están en juego
 
 1m
 
 YOPCHA
-JIRUGI                                                U3
+JIRUGI U3
 DOLLYO
 CR
 CHAGI
@@ -2804,57 +2804,57 @@ SONKAL
 8m
 TAERIGI
 BANDAE
-U2                                                                    DOLLY
-AP JOOMUK                                                                                                     CHAGI
+U2 DOLLY
+AP JOOMUK CHAGI
 JIRUGI /
 AP PALKUP
 TAERIGI
 
 1m
 
-Sco              Sco            Sco                 C
-2                1              3                                 EV
+Sco Sco Sco C
+2 1 3 EV
 
-RO1          RO2                              Mesa del Jurado
+RO1 RO2 Mesa del Jurado
 
-IT         JP          JM
+IT JP JM
 
 Se requieren máquinas de Rotua de potencia homologadas por la ITF TUIC.
 Se requiere un mínimo de cinco (5).
 La posición horizontal de las tablas en el ring es fija. Solo se puede modificar verticalmente.
 
-### D4. Diagrama 4.          Tamaño del Ring – Técnicas Especiales (Word-Championships)
+### D4. Diagrama 4. Tamaño del Ring – Técnicas Especiales (Word-Championships)
 
-1m                                    8m                                       1m
+1m 8m 1m
 10 por 10 metros están en juego
 
 - 1. TWIMYO NOPI
-APCHA BUSIGI
-1m                                                                                                                   4. TWIO DOLMYO
-U2                                              YOPCHA JIRUGI
+     APCHA BUSIGI
+     1m 4. TWIO DOLMYO
+     U2 YOPCHA JIRUGI
 
 U3
 CR
 
-- 1. TWIMYO                                                       U1
-BANDAE
-8m
-DOLLYO
-CHAGI
+- 1. TWIMYO U1
+     BANDAE
+     8m
+     DOLLYO
+     CHAGI
 
 - 1. TWIMYO
-DOLLYO CHAGI
+     DOLLYO CHAGI
 
 1m
 
 - 1. TWIO NOMO
-YOP CHAGI
-Sco             Sco              Sco               C
-2               1                3                             EV
+     YOP CHAGI
+     Sco Sco Sco C
+     2 1 3 EV
 
-RO1          RO2                            Mesa del Jurado
+RO1 RO2 Mesa del Jurado
 
-IT           JP          JM
+IT JP JM
 
 Se requieren máquinas de técnica especial de un tipo aprobado por la ITF TUIC.
 Se requiere un mínimo de cinco (5); sin embargo, si es posible, se prefieren siete (7).
@@ -2866,16 +2866,16 @@ hacia adelante y hacia atrás.
 
 ### TOC: D5. Diagrama 5. Tamaño del Ring – Técnicas Especiales / Rotura de Potencia (World Cup Events)
 
-1m                                      8m                                     1m
+1m 8m 1m
 10 por 10 metros están en juego
 
 - 1. TWIMYO NOPI
-APCHA BUSIGI
-1m
-U2
+     APCHA BUSIGI
+     1m
+     U2
 
 HAND
-U3                                                                                 TECHNIQUE
+U3 TECHNIQUE
 CR
 U1
 
@@ -2887,13 +2887,13 @@ TECHNIQUE
 1m
 
 - 1. TWIO NOMO
-YOP CHAGI
-Sco              Sco            Sco                 C
-2                1              3                                EV
+     YOP CHAGI
+     Sco Sco Sco C
+     2 1 3 EV
 
 Mesa del Jurado
 
-IT         JP          JM
+IT JP JM
 
 Se requieren máquinas de técnica especial de un tipo aprobado por la ITF TUIC.
 Se requiere un mínimo de tres (3).
@@ -2904,20 +2904,20 @@ hacia adelante y hacia atrás.
 Todas las máquinas (especiales y de potencia) están siempre en el ring.
 Por ejemplo, las máquinas de potencia no se moverán durante las categorías de técnica especial.
 
-A1.     Apéndice 1 – Procedimiento de Puntuación
+A1. Apéndice 1 – Procedimiento de Puntuación
 
-1.1.    Propósito
+1.1. Propósito
 
 El propósito de este Apéndice 1 – Procedimiento de Puntuación es:
 1.1.1. Estandarizar los criterios de evaluación de los miembros del jurado, árbitros y jueces.
 1.1.2. Proteger la autoridad de los miembros del jurado, árbitros y jueces.
 1.1.3. Describir los derechos y deberes de los miembros del jurado, árbitros y jueces.
 
-1.2.    Aplicación
+1.2. Aplicación
 
 Estas reglas se deben aplicar en todos los campeonatos oficiales sancionados por la ITF.
 
-1.3.    Forma Individual
+1.3. Forma Individual
 
 1.3.1. Los competidores competirán según los procedimientos definidos en T25, 26, 27, 28 y 29.
 1.3.2. Ambos competidores realizarán las formas designadas correspondientes a su nivel. (Véase el
@@ -2947,19 +2947,19 @@ votos a su favor, será declarado ganador y avanzará a la siguiente ronda de la
 Formas designadas previamente) hasta que se determine el ganador.
 
 FORMA INDIVIDUAL – PUNTUACIÓN POR FORMA
-Nivel 1:     Se comienza con 6 puntos– Deducir por cada error cometido
-Nivel 2:     Se pueden agregar hasta 4 puntos en total por cada ejecución
+Nivel 1: Se comienza con 6 puntos– Deducir por cada error cometido
+Nivel 2: Se pueden agregar hasta 4 puntos en total por cada ejecución
 SANCIONES ANTES Y DESPUÉS DE LA EJECUCIÓN - DEDUCIR UN (1) PUNTO COMPLETO
 POR CUALQUIERA DE LOS SIGUIENTES INCIDENTES.
 MÁXIMO DE 1 PUNTO POR FORMA
 Ejecución incorrecta de Charyot Sogui (Cruzar los brazos en preparación; Pisotón al ponerse firmes…)
 
-Faltas        No caminar directamente desde el borde del ring hasta la posición inicial de la forma
-ls          Realizar cualquier acción de pisotón al entrar al ring
+Faltas No caminar directamente desde el borde del ring hasta la posición inicial de la forma
+ls Realizar cualquier acción de pisotón al entrar al ring
 Hacer una pausa al entrar o salir del ring para realizar cualquier técnica o acción
 Comportamiento antideportivo
 
-Nivel 1                                 DEDUCIR 0.2 PUNTOS, CADA VEZ, POR CADA ERROR COMETIDO.
+Nivel 1 DEDUCIR 0.2 PUNTOS, CADA VEZ, POR CADA ERROR COMETIDO.
 POR EJEMPLO, AUNQUE NO LIMITADO A …
 No gritar o gritar el nombre incorrecto de la forma
 (Máximo de 6 Gritar o "Kihap" en cualquier momento durante o al final de la forma
@@ -2971,8 +2971,8 @@ No regresar al punto de inicio (dentro del radio de un hombro)
 Regresar al punto de inicio con el pie equivocado
 Salir completamente del ring (Ver Glosario)
 Paso incorrecto o impreciso (colocación del pie después de patear, giros, pivoteo, pie con pie, desplazamiento, deslizamiento)
-… por cada       Preparación o ejecución incorrecta o imprecisa de la técnica (por ejemplo, cruzar, acción previa, volar, saltar, etc.)
-error.         Posición incorrecta o imprecisa
+… por cada Preparación o ejecución incorrecta o imprecisa de la técnica (por ejemplo, cruzar, acción previa, volar, saltar, etc.)
+error. Posición incorrecta o imprecisa
 Moción incorrecta o impreciso (por ejemplo, continuo, conectado, lento, rápido, natural, normal)
 Atacar o defender con una técnica incorrecta
 Retención (sujeción) o terminación (retracción) incorrecta de una patada, según la definición técnica de esa técnica. Dudar o
@@ -2984,27 +2984,27 @@ Onda sinusoidal imprecisa o incorrecta en un movimiento individual.
 Dudar y/o detenerse durante más de una fracción de segundo
 
 DAR 0 PUNTOS (para toda la Forma) POR:
-Errores de       Detener la forma por completo o pausarla por más de 2 segundos.
-Cero          No realizar la forma designada o realizar una forma fuera del nivel del competidor.
+Errores de Detener la forma por completo o pausarla por más de 2 segundos.
+Cero No realizar la forma designada o realizar una forma fuera del nivel del competidor.
 Iniciar la forma en la dirección incorrecta (lateral/frontal/posterior).
 Iniciar una forma con una posición preparatoria diferente a la especificada en las instrucciones técnicas.
 (Dados durante
-el Nivel 1     Añadir u omitir cualquier movimiento o cambiar cualquier secuencia de movimientos que no esté prescrita por la dirección
-s          técnica de la forma (por ejemplo, realizar dos o más bloqueos ascendentes en secuencia en lugar de golpes en Dan-Gun;
+el Nivel 1 Añadir u omitir cualquier movimiento o cambiar cualquier secuencia de movimientos que no esté prescrita por la dirección
+s técnica de la forma (por ejemplo, realizar dos o más bloqueos ascendentes en secuencia en lugar de golpes en Dan-Gun;
 mezclar formas).
 No completar la secuencia y dirección de pasos prescritas para completar el diagrama de la forma.
 
-Nivel 2               AGREGAR UN MÁXIMO DE 2 PUNTOS AL FINAL DE LA EJECUCIÓN (En incrementos de 0,5) POR:
+Nivel 2 AGREGAR UN MÁXIMO DE 2 PUNTOS AL FINAL DE LA EJECUCIÓN (En incrementos de 0,5) POR:
 Botón 2:
 Ritmo general y onda sinusoidal
 Máximo de 2
 puntos
 AGREGAR UN MÁXIMO DE 2 PUNTOS AL FINAL DE LA EJECUCIÓN (En incrementos de 0,5) POR:
 Botón 3:
-Máximo de 2      Potencia en general
+Máximo de 2 Potencia en general
 puntos
 
-1.4.    Formas por Equipos
+1.4. Formas por Equipos
 1.4.1 Ambos equipos realizarán una (1) forma opcional y una (1) designada en el siguiente orden:
 • Equipo 1: Forma opcional
 • Equipo 2: Forma opcional
@@ -3032,15 +3032,15 @@ de la competición.
 sorteo las Formas designadas anteriormente) hasta que se decida el ganador.
 
 FORMAS POR EQUIPOS– PUNTUACIÓN POR FORMA
-Nivel 1:      Se comienza con 6 puntos– Deducir por cada error cometido
-Nivel 2:      Se pueden agregar hasta 4 puntos en total por cada ejecución
+Nivel 1: Se comienza con 6 puntos– Deducir por cada error cometido
+Nivel 2: Se pueden agregar hasta 4 puntos en total por cada ejecución
 SANCIONES ANTES Y DESPUÉS DE LA EJECUCIÓN - DEDUCIR UN (1) PUNTO COMPLETO
 POR CUALQUIERA DE LOS SIGUIENTES INCIDENTES.
 MÁXIMO DE 1 PUNTO POR FORMA
 Ejecución incorrecta de Charyot Sogui (Cruzar los brazos en preparación; Pisotón al ponerse firmes…)
 No caminar directamente desde el borde del ring hasta la posición inicial de la forma
-Faltas         Realizar cualquier acción de pisotón al entrar al ring
-ls           Hacer una pausa al entrar o salir del ring para realizar cualquier técnica o acción
+Faltas Realizar cualquier acción de pisotón al entrar al ring
+ls Hacer una pausa al entrar o salir del ring para realizar cualquier técnica o acción
 Comportamiento antideportivo
 
 DEDUCIR 0.2 PUNTOS, CADA VEZ, POR CADA ERROR COMETIDO.
@@ -3060,37 +3060,37 @@ Moción incorrecta o inexacta (es decir, continua, conectada, lenta, rápida, na
 Atacar o defender con una técnica incorrecta
 … por cada No retirar una patada rápida inmediatamente después de su ejecución (patada frontal/lateral/giratoria/media o alta con giro)
 Falla de al menos un competidor en mantener el ritmo prescrito de la forma en todo momento (la forma se considera en
-error      movimiento cuando 1 o 5 participantes continúan la secuencia).
+error movimiento cuando 1 o 5 participantes continúan la secuencia).
 Vacilación o detención por más de una fracción de segundo.
 Falta de Potencia o Aplicación incorrecta de la misma.
 Respiración incorrecta o imprecisa.
 Onda sinusoidal inexacta o incorrecta en un movimiento individual y/o ritmo incorrecto o impreciso al dar pasos o en la
 transición entre movimientos.
 
-Errores                                                  DAR 0 PUNTOS (para toda la Forma) POR:
-de Cero         Cuando todo el equipo detiene la forma por completo o hace una pausa de más de 2 segundos.
+Errores DAR 0 PUNTOS (para toda la Forma) POR:
+de Cero Cuando todo el equipo detiene la forma por completo o hace una pausa de más de 2 segundos.
 No realizar la forma designada o realizar una forma que no se corresponde con el nivel del/los competidor(es) del equipo.
 Comenzar la forma en la dirección incorrecta (lateral/frontal/posterior).
 Comenzar una forma con una posición preparatoria diferente a la especificada en las instrucciones técnicas.
-(Dados durante     Añadir u omitir cualquier movimiento, o cambiar cualquier secuencia de movimientos que no esté prescrita por la dirección
-el Nivel 1      técnica de la forma (por ejemplo, realizar dos o más bloqueos ascendentes en secuencia en lugar de golpes en Dan-Gun;
+(Dados durante Añadir u omitir cualquier movimiento, o cambiar cualquier secuencia de movimientos que no esté prescrita por la dirección
+el Nivel 1 técnica de la forma (por ejemplo, realizar dos o más bloqueos ascendentes en secuencia en lugar de golpes en Dan-Gun;
 mezclar patrones).
 No completar la secuencia y dirección de pasos prescritas para completar el diagrama de la forma.
 Nota: En Forma por Equipos, a la misma infracción (por ejemplo, más de un miembro del equipo realizó una posición incorrecta
 o más de un miembro del equipo realizó el mismo movimiento a una altura o alineación incorrecta) solo se le puede asignar
 una única deducción de 1 x 0,2 puntos por esa infracción en particular y no múltiples deducciones acumuladas de 0,2 puntos.
 
-Nivel 2                AGREGAR UN MÁXIMO DE 2 PUNTOS AL FINAL DE LA EJECUCIÓN (En incrementos de 0,5) POR:
+Nivel 2 AGREGAR UN MÁXIMO DE 2 PUNTOS AL FINAL DE LA EJECUCIÓN (En incrementos de 0,5) POR:
 Botón 2:
 Trabajo en Equipo
 Máximo de 2
 puntos
 AGREGAR UN MÁXIMO DE 2 PUNTOS AL FINAL DE LA EJECUCIÓN (En incrementos de 0,5) POR:
 Botón 3:
-Máximo de 2       Coreografía y Dificultad
+Máximo de 2 Coreografía y Dificultad
 puntos
 
-1.5.      Lucha Individual
+1.5. Lucha Individual
 
 Los árbitros de esquina anotarán todos los puntos electrónicamente, según lo indicado en las Reglas
 Oficiales de Competición de la ITF, y se aplicarán las siguientes decisiones:
@@ -3132,7 +3132,7 @@ Presidente del Jurado autorizará al Árbitro de TI a ejecutar el comando "Desca
 Azul)" en la computadora, lo que resultará en que el equipo contrario reciba automáticamente
 4 puntos.
 
-1.7.      Rotura de Potencia
+1.7. Rotura de Potencia
 
 Los árbitros anotarán todos los puntos electrónicamente, según lo indicado en las Reglas Oficiales
 de Competición de la ITF, y se aplicarán las siguientes decisiones:
@@ -3153,10 +3153,10 @@ lugares. (Solo en caso de que dos (2) o más competidores empaten en el tercer l
 la misma puntuación total en la misma ronda de rotura, habrá dos ganadores del tercer
 lugar).
 
-World Championship                                                       World Cup
-1.7.7. En caso de empate, el Presidente del                     1.7.7. En caso de empate, el Presidente del Jurado
-Jurado seleccionará al azar un elemento de                      sorteará al azar entre las técnicas de mano y pie para
-la lista de técnicas para desempatar.                           desempatar. El competidor podrá elegir qué técnica de
+World Championship World Cup
+1.7.7. En caso de empate, el Presidente del 1.7.7. En caso de empate, el Presidente del Jurado
+Jurado seleccionará al azar un elemento de sorteará al azar entre las técnicas de mano y pie para
+la lista de técnicas para desempatar. desempatar. El competidor podrá elegir qué técnica de
 mano o pie ejecutará.
 
 1.7.8. El Presidente del Jurado decidirá cuántas placas se utilizarán. Los entrenadores indicarán a
@@ -3166,7 +3166,7 @@ se determine un ganador.
 del match no podrán continuar en la competencia de rotura de potencia para determinar
 su puesto y no recibirán medalla.
 
-1.8.      Técnicas Especiales
+1.8. Técnicas Especiales
 
 Los árbitros anotarán todos los puntos electrónicamente, según lo indicado en las Reglas Oficiales
 de Competición de la ITF, y se aplicarán las siguientes decisiones:
@@ -3195,7 +3195,7 @@ hasta que se definan los puestos.
 durante la competencia no podrán continuar en la competencia de técnica especial para
 determinar ningún puesto y no recibirán ninguna medalla.
 
-1.9.      Competencia de Lucha Preestablecida
+1.9. Competencia de Lucha Preestablecida
 
 Los árbitros anotarán todos los puntos electrónicamente, según lo indicado en las Reglas Oficiales
 de Competición de la ITF.
@@ -3227,18 +3227,18 @@ puntuación total de cada competidor según las deducciones realizadas por cada
 árbitro.
 
 PUNTUACIÓN DE LUCHA PREESTALECIDA
-Nivel 1:      Se comienza con 6 puntos– Deducir por cada error cometido
-Nivel 2:      Se pueden agregar hasta 4 puntos en total por cada ejecución
+Nivel 1: Se comienza con 6 puntos– Deducir por cada error cometido
+Nivel 2: Se pueden agregar hasta 4 puntos en total por cada ejecución
 SANCIONES ANTES Y DESPUÉS DE LA EJECUCIÓN - DEDUCIR UN (1) PUNTO COMPLETO
 POR CUALQUIERA DE LOS SIGUIENTES INCIDENTES.
 MÁXIMO DE 1 PUNTO POR EJECUCIÓN
 Ejecución incorrecta de Charyot Sogui (Cruzar los brazos en preparación; Pisotón al ponerse firmes…)
-Faltas        No caminar directamente desde el borde del ring hasta la posición inicial de la forma
+Faltas No caminar directamente desde el borde del ring hasta la posición inicial de la forma
 Realizar cualquier acción de pisotón al entrar al ring
 Hacer una pausa al entrar o salir del ring para realizar cualquier técnica o acción
 Comportamiento antideportivo
 
-Nivel 1 …                                DEDUCIR 0.2 PUNTOS, CADA VEZ, POR CADA ERROR COMETIDO.
+Nivel 1 … DEDUCIR 0.2 PUNTOS, CADA VEZ, POR CADA ERROR COMETIDO.
 POR EJEMPLO, AUNQUE NO LIMITADO A …
 Realizar cualquier técnica sin un objetivo accesible y legítimo.
 Atacar o defender con una aplicación incorrecta de la técnica.
@@ -3246,9 +3246,9 @@ Realizar cualquier movimiento ofensivo, defensivo o evasivo sin propósito, func
 acrobáticos.
 Pérdida del equilibrio.
 No mantener la distancia adecuada para el intercambio de ataque y defensa.
-Máximo de 6      Gritar o decir "Kihap" en cualquier momento durante la ejecución, excepto en la secuencia final.
-puntos en        Falta o aplicación incorrecta de la potencia.
-total por        Salir completamente del ring por uno o ambos competidores (Ver glosario).
+Máximo de 6 Gritar o decir "Kihap" en cualquier momento durante la ejecución, excepto en la secuencia final.
+puntos en Falta o aplicación incorrecta de la potencia.
+total por Salir completamente del ring por uno o ambos competidores (Ver glosario).
 Vacilar o detenerse durante más de una fracción de segundo. (p. ej., que al menos un competidor no esté en acción en todo
 deducciones
 momento).
@@ -3260,8 +3260,8 @@ Moción incorrecta o inexacta (p. ej., continuo, conectado, lento, rápido, natu
 Asistir al oponente durante la ejecución de la técnica o movimiento
 No retirar una patada de retracción inmediatamente después de la ejecución
 
-Errores                                               DAR 0 PUNTOS (para toda la Ejecución) POR:
-de Cero        No cumplir con los requisitos de tiempo mínimo o máximo.
+Errores DAR 0 PUNTOS (para toda la Ejecución) POR:
+de Cero No cumplir con los requisitos de tiempo mínimo o máximo.
 Pausar o detenerse durante más de 2 segundos en cualquier momento durante la actuación (Ambos atletas deben haber
 detenido la actuación, por ejemplo: por olvidarse o esperando el reloj al final de la misma).
 (Dados durante
@@ -3270,14 +3270,14 @@ el Nivel 1
 No bloquear ni evadir el ataque de un oponente en ningún momento que no sea el golpe final o la secuencia final.
 Nota: En caso de que una misma técnica tenga múltiples errores, se deducirá una penalización por cada error cometido.
 
-Nivel 2               AGREGAR UN MÁXIMO DE 2 PUNTOS AL FINAL DE LA EJECUCIÓN (En incrementos de 0,5) POR:
+Nivel 2 AGREGAR UN MÁXIMO DE 2 PUNTOS AL FINAL DE LA EJECUCIÓN (En incrementos de 0,5) POR:
 Botón 2:
 Trabajo en Equipo
 Máximo de 2
 puntos
 AGREGAR UN MÁXIMO DE 2 PUNTOS AL FINAL DE LA EJECUCIÓN (En incrementos de 0,5) POR:
 Botón 3:
-Máximo de 2      Coreografía y Dificultad
+Máximo de 2 Coreografía y Dificultad
 puntos
 
 1.9.4. Los equipos competirán de acuerdo con las siguientes reglas y regulaciones:
@@ -3305,7 +3305,7 @@ el combate, que no formen parte del programa de Taekwon-Do.
 1.9.4.9. Si uno o ambos miembros del equipo realizan más de tres (3) secuencias de técnicas
 acrobáticas durante el combate, el equipo recibirá 0 puntos.
 
-A2.     Apéndice 2 – Indumentaria Aprobada
+A2. Apéndice 2 – Indumentaria Aprobada
 
 2.1. DOBOKS Y CINTURONES APROBADOS
 
@@ -3356,49 +3356,49 @@ mm de ancho y 65 mm de alto.
 DOBOKS OFICIALMENTE APROBADOS POR LA ITF PARA
 CAMPEONATOS DEL MUNDO Y COPA DEL MUNDO
 
-•     Escudo tradicional de la ITF situado en el pecho izquierdo (I)
+• Escudo tradicional de la ITF situado en el pecho izquierdo (I)
 de la chaqueta.
-•     Dimensiones totales: 7cm de alto * 7cm de ancho
+• Dimensiones totales: 7cm de alto \* 7cm de ancho
 
-•     NUEVO LOGO de la ITF situado en el pecho izquierdo (I) de la
+• NUEVO LOGO de la ITF situado en el pecho izquierdo (I) de la
 chaqueta, debajo del escudo tradicional de la ITF.
-•     Dimensiones totales: 9cm de ancho * 3,5cm de alto
+• Dimensiones totales: 9cm de ancho \* 3,5cm de alto
 
-•     El logotipo del patrocinador de la ITF SÓLO en la manga
+• El logotipo del patrocinador de la ITF SÓLO en la manga
 derecha (D) de la chaqueta, por encima del nivel del codo.
-•     El logotipo del patrocinador de la ITF SÓLO en la parte
+• El logotipo del patrocinador de la ITF SÓLO en la parte
 derecha (D) del pantalón Dobok. Situado en la parte
 delantera del muslo, entre la rodilla y la cintura.
-•     Ambas áreas no deberán medir más de 8cm de largo * 5cm
+• Ambas áreas no deberán medir más de 8cm de largo \* 5cm
 de alto
-•     NO se permiten otros logotipos
+• NO se permiten otros logotipos
 
-•     Se permite el patrocinio personal sólo en la manga izquierda
+• Se permite el patrocinio personal sólo en la manga izquierda
 (I) de la chaqueta, por encima del nivel del codo, con una
-medida máxima de 8 cm de largo * 5 cm de alto
-•     El logotipo debe ser aprobado por los Comités de Torneos y
+medida máxima de 8 cm de largo \* 5 cm de alto
+• El logotipo debe ser aprobado por los Comités de Torneos y
 de Árbitros de la ITF.
-•     No se permite ningún logotipo o publicidad del patrocinador
+• No se permite ningún logotipo o publicidad del patrocinador
 en ninguna otra parte del pantalón y, o chaqueta del Dobok
-•     La bandera o el emblema nacional PUEDE llevarse en el
+• La bandera o el emblema nacional PUEDE llevarse en el
 pecho derecho (D), frente al escudo de la ITF
-•     El escudo no puede ser más grande que 85x65 mm
-•     La etiqueta aprobada por la ITF debe estar impresa en la
+• El escudo no puede ser más grande que 85x65 mm
+• La etiqueta aprobada por la ITF debe estar impresa en la
 solapa interior de la chaqueta
-•     El nombre del país DEBE estar impreso en la espalda, (SÓLO
+• El nombre del país DEBE estar impreso en la espalda, (SÓLO
 para Campeonato del Mundo. En la Copa del Mundo PUEDE
 estar impreso el Nombre del País, del Club, o NADA)
-•     Debe estar situado por encima o por debajo del nivel del
+• Debe estar situado por encima o por debajo del nivel del
 cinturón
-•      Las letras deben ser totalmente negras
-•     Altura de las letras: 4cm - 8cm
+• Las letras deben ser totalmente negras
+• Altura de las letras: 4cm - 8cm
 
-•     Nuevo texto de la ITF situado horizontalmente en ambas
+• Nuevo texto de la ITF situado horizontalmente en ambas
 piernas del pantalón a la altura de la rodilla
-•     Las letras deben ser totalmente negras
-•     Dimensiones totales: 7cm de ancho * 5cm de alto
+• Las letras deben ser totalmente negras
+• Dimensiones totales: 7cm de ancho \* 5cm de alto
 
-2.3.      CINTURONES
+2.3. CINTURONES
 
 Todos los cinturones negros aprobados por la ITF deben cumplir los siguientes criterios:
 
@@ -3470,11 +3470,11 @@ I
 - 1. Nombre
 - 1. Federación Internacional de Taekwon-Do en caligrafía coreana.
 
-2.3.3. Todos los cinturones de color de la ITF deben cumplir con los siguientes criterios (solo Copa del Mundo):
+  2.3.3. Todos los cinturones de color de la ITF deben cumplir con los siguientes criterios (solo Copa del Mundo):
 
-2.3.3.1. Todos los cinturones de color para Juniors y Adultos deben ser del mismo color.
-2.3.3.2. Un cinturón para un grado impar debe tener una franja cruzada del color correspondiente a
-unos 5 cm del extremo izquierdo del cinturón.
+  2.3.3.1. Todos los cinturones de color para Juniors y Adultos deben ser del mismo color.
+  2.3.3.2. Un cinturón para un grado impar debe tener una franja cruzada del color correspondiente a
+  unos 5 cm del extremo izquierdo del cinturón.
 
 Ejemplo 2º gup
 
@@ -3491,23 +3491,23 @@ T 14. ENTRENADOR5ES (extracto)
 "...Los entrenadores deben llevar un traje de entrenamiento (es decir, pantalones, camiseta o polo y/o
 chaqueta deportiva), zapatos de gimnasia y llevar una toalla. Los entrenadores no pueden llevar mochilas
 u otros artículos que no sean de Taekwon-Do en el área de competición..."
-•    Los entrenadores DEBEN llevar un traje de
+• Los entrenadores DEBEN llevar un traje de
 entrenamiento (es decir, remera, polo, pantalones y/o
 chaqueta)
 •
-•    Los entrenadores DEBEN llevar calzado deportivo
+• Los entrenadores DEBEN llevar calzado deportivo
 
 •
-•    Los entrenadores DEBEN llevar una toalla
+• Los entrenadores DEBEN llevar una toalla
 •
-•    Los entrenadores PUEDEN llevar una botella de agua
+• Los entrenadores PUEDEN llevar una botella de agua
 ‘
-•    El nombre del país DEBE estar impreso en la espalda,
+• El nombre del país DEBE estar impreso en la espalda,
 (sólo para Campeonato del Mundo, en la Copa del
 Mundo PUEDE estar impreso el Nombre del País, del
 Club, o NADA)altura recomendada de las letras: 4- 8cm
 •
-•    Los entrenadores NO están autorizados a llevar
+• Los entrenadores NO están autorizados a llevar
 mochilas y/u otros artículos que no sean de Taekwon-
 Do en el área de competición
 
@@ -3529,19 +3529,19 @@ El código de vestimenta del árbitro consiste en:
 El Comité de Árbitros podrá, a su discreción, modificar los requisitos de vestimenta anteriores para ciertos
 eventos internacionales debido a condiciones climáticas, sanitarias u otras circunstancias.
 
-•     Saco/Blazer azul
+• Saco/Blazer azul
 •
-•     Camisa blanca, mangas largas
+• Camisa blanca, mangas largas
 •
-•     Pantalones azules
+• Pantalones azules
 •
-•     Corbata azul
+• Corbata azul
 •
-•     Medias blancas
+• Medias blancas
 
-•     Calzado Deportivo blanco
+• Calzado Deportivo blanco
 •
-•     Un bolígrafo
+• Un bolígrafo
 
 A3. Apéndice 3 – Procedimientos y señales del árbitro
 
@@ -3565,110 +3565,110 @@ Información de la ITF (TUIC)
 
 SEÑAS DE MANOS DEL PRESIDENTE DEL JURADO
 
-Esperando para dar una decisión                                                            Empate
+Esperando para dar una decisión Empate
 
-Ganador Azul                                                              Ganador Rojo
+Ganador Azul Ganador Rojo
 
-Descalificado (Azul)                                                  Detener el Reloj (JUNG JI)
+Descalificado (Azul) Detener el Reloj (JUNG JI)
 
-Llama a un (1) Juez de Esquina a la Mesa                                     Llama a todos los Oficiales a la Mesa
+Llama a un (1) Juez de Esquina a la Mesa Llama a todos los Oficiales a la Mesa
 
 Envía a un (1) Juez de Esquina de regreso a su
 Envía a todos los Oficiales a sus sillas
 silla
 
 Juez de Esquina/Árbitro Central recibiendo
-Juez de Esquina/Árbitro Central se acercan a la                             instrucciones. El Árbitro Central espera en
-Mesa y Saluda                                              posición de pies paralelos y las manos cruzadas
+Juez de Esquina/Árbitro Central se acercan a la instrucciones. El Árbitro Central espera en
+Mesa y Saluda posición de pies paralelos y las manos cruzadas
 atrás
 
 INSPECCIÓN DEL EQUIPO DE SEGURIDAD DEL
 COMPETIDOR
 (en caso de no realizarse fuera del ring por los Verificadores)
 
-- 1. Indique al competidor que extienda los                                2. Compruebe la superficie frontal de los
-brazos para inspección.                                                         guantes.
+- 1. Indique al competidor que extienda los 2. Compruebe la superficie frontal de los
+     brazos para inspección. guantes.
 
-- 1. Compruebe la superficie superior de los                          4. Revise las palmas y la parte inferior de los
-guantes y las muñecas.
-guantes.
+- 1. Compruebe la superficie superior de los 4. Revise las palmas y la parte inferior de los
+     guantes y las muñecas.
+     guantes.
 
-- 1. Compruebe el Protector Bucal                                       6. Compruebe el Protector Inguinal
+- 1. Compruebe el Protector Bucal 6. Compruebe el Protector Inguinal
 
 Obligatorio para hombres, opcional para mujeres
 (Debe usarse debajo del pantalón del Dobok)
 
-- 1. Compruebe la parte superior del protector del                       8. Compruebe la parte del talón del protector del
-pie.                                                                    pie.
+- 1. Compruebe la parte superior del protector del 8. Compruebe la parte del talón del protector del
+     pie. pie.
 
-- 1. Indicar al competidor que se dé la vuelta:                        10. Verificar el número de identificación/país del
-revisar el casco y buscar fijaciones de metal o                                           competidor
-plástico para el cabello.
+- 1. Indicar al competidor que se dé la vuelta: 10. Verificar el número de identificación/país del
+     revisar el casco y buscar fijaciones de metal o competidor
+     plástico para el cabello.
 
 SALUDO INICIAL
 
-- 1. El árbitro llama al competidor             2. El árbitro llama al competidor             3. Los competidores se enfrentan
-Rojo "Hong"                                   azul “Chong”                        a la mesa del jurado. “Charyot”
+- 1. El árbitro llama al competidor 2. El árbitro llama al competidor 3. Los competidores se enfrentan
+     Rojo "Hong" azul “Chong” a la mesa del jurado. “Charyot”
 
-- 1. Los competidores saludan                  5. Los competidores se enfrentan                 6. Los competidores saludan al
-hacia la mesa del jurado. “Kyong-                 al árbitro central. “Charyot”                    árbitro central. “Kyong-Ye”
-Ye”
+- 1. Los competidores saludan 5. Los competidores se enfrentan 6. Los competidores saludan al
+     hacia la mesa del jurado. “Kyong- al árbitro central. “Charyot” árbitro central. “Kyong-Ye”
+     Ye”
 
-- 1. Los competidores se enfrentan.               8. Los competidores se saludan
-“Charyot”                                  entre sí. "Kyong-Ye"
+- 1. Los competidores se enfrentan. 8. Los competidores se saludan
+     “Charyot” entre sí. "Kyong-Ye"
 
 INICIANDO EL MATCH
 
-- 1. Retrocede a la posición                       10. Extender el brazo entre                  11. Indica el número de round.
-preparatoria. "Junbi"                                competidores                                    “Il Hue Jong”
+- 1. Retrocede a la posición 10. Extender el brazo entre 11. Indica el número de round.
+     preparatoria. "Junbi" competidores “Il Hue Jong”
 
-- 1. Manteniendo el brazo entre                     13. Baja el brazo para iniciar
-los competidores, verifique                           el combate. “Sijak”
-visualmente para asegurarse
-de que el presidente del
-jurado y todos los jueces de
-esquina estén listos para
-comenzar.
+- 1. Manteniendo el brazo entre 13. Baja el brazo para iniciar
+     los competidores, verifique el combate. “Sijak”
+     visualmente para asegurarse
+     de que el presidente del
+     jurado y todos los jueces de
+     esquina estén listos para
+     comenzar.
 
 AL FINAL DEL MATCH
 
-- 1. Interponer la mano entre los                2. El árbitro dirige al competidor              3. El árbitro dirige al competidor
-competidores para detener el                   rojo de vuelta al centro "Hong"               Azul de regreso al centro “Chong”
-combate. "Goman"
+- 1. Interponer la mano entre los 2. El árbitro dirige al competidor 3. El árbitro dirige al competidor
+     competidores para detener el rojo de vuelta al centro "Hong" Azul de regreso al centro “Chong”
+     combate. "Goman"
 
-- 1. Los competidores se enfrentan.                5. Los competidores se saludan                  6. Los competidores enfrentan al
-“Charyot”                                   entre sí. "Kyong-Ye"                          árbitro central. “Charyot”
+- 1. Los competidores se enfrentan. 5. Los competidores se saludan 6. Los competidores enfrentan al
+     “Charyot” entre sí. "Kyong-Ye" árbitro central. “Charyot”
 
-- 1. Los competidores saludan al                 8. Los competidores enfrentan a                 9. Los competidores saludan a la
-árbitro central. “Kyong-Ye”                  la mesa del jurado. “Charyot”                    mesa del jurado. “Kyong-Ye”
+- 1. Los competidores saludan al 8. Los competidores enfrentan a 9. Los competidores saludan a la
+     árbitro central. “Kyong-Ye” la mesa del jurado. “Charyot” mesa del jurado. “Kyong-Ye”
 
 AL FINAL DEL MATCH (continuación)
 
-- 1. El árbitro central toma los                11. Levanta el brazo del ganador.
-brazos de los competidores.                      (Ganador Azul “Chong Sung”)
+- 1. El árbitro central toma los 11. Levanta el brazo del ganador.
+     brazos de los competidores. (Ganador Azul “Chong Sung”)
 
 SEÑALES ADICIONALES 1
 
-No sucedió Nada                                                                 Detener el Reloj
+No sucedió Nada Detener el Reloj
 “Jung-Ji”
 
-Luchen                                               Escuche                                             No Hablar
+Luchen Escuche No Hablar
 
-Detención del Reloj por Lesión                Dirigir al oponente a su entrenador en                Dirigiendo a ambos competidores a
-caso de lesión.                                   sus entrenadores.
+Detención del Reloj por Lesión Dirigir al oponente a su entrenador en Dirigiendo a ambos competidores a
+caso de lesión. sus entrenadores.
 
 SEÑALES ADICIONALES 2
 
-Coach: No Hablar                                                                   Coach: Sentarse
+Coach: No Hablar Coach: Sentarse
 
-Indicar al competidor rojo que                                                      El árbitro ordena al competidor
-regrese al ring tras salir del                                                             azul que retroceda
+Indicar al competidor rojo que El árbitro ordena al competidor
+regrese al ring tras salir del azul que retroceda
 área de competencia.
 
 (Regresar al menos 1 metro
 dentro del ring).
 
-3.1.            ADVERTENCIAS
+3.1. ADVERTENCIAS
 
 Se podrán aplicar advertencias por las siguientes infracciones:
 
@@ -3707,26 +3707,26 @@ oponente.
 
 ADVERTENCIAS
 
-- 1. Simular haber anotado                           2. Salir del ring con ambos pies.
-un punto o refutar una
-posible acción anotada                            5. Evitar intencionadamente el combate.
-mediante un gesto con el
-brazo o la mano.                              7. Ajustar el equipo sin el consentimiento del árbitro.
+- 1. Simular haber anotado 2. Salir del ring con ambos pies.
+     un punto o refutar una
+     posible acción anotada 5. Evitar intencionadamente el combate.
+     mediante un gesto con el
+     brazo o la mano. 7. Ajustar el equipo sin el consentimiento del árbitro.
 
-(Bajar el puño cerrado                              (Dibuje una línea horizontal que cruce su cuerpo desde la línea
-desde la altura de los                              central hasta el costado).
+(Bajar el puño cerrado (Dibuje una línea horizontal que cruce su cuerpo desde la línea
+desde la altura de los central hasta el costado).
 ojos hasta la del
 hombro).
 
-- 1. Caída.                                           4. Simular una lesión                             6. Ataque involuntario
-a un objetivo ilegal.
-(Extiende ambas manos,                             8. Empujar
-con las palmas hacia                                                                                (Ejecutar un golpe de
-abajo, paralelas al suelo,                         (Ejecutar un bloqueo                                  puño en ángulo)
-mientras bajas el cuerpo                           hacia adentro con el
-flexionando las rodillas).                         antebrazo externo)
+- 1. Caída. 4. Simular una lesión 6. Ataque involuntario
+     a un objetivo ilegal.
+     (Extiende ambas manos, 8. Empujar
+     con las palmas hacia (Ejecutar un golpe de
+     abajo, paralelas al suelo, (Ejecutar un bloqueo puño en ángulo)
+     mientras bajas el cuerpo hacia adentro con el
+     flexionando las rodillas). antebrazo externo)
 
-3.2. FALTAS
+  3.2. FALTAS
 
 Se podrán aplicar faltas por las siguientes infracciones (Ver fotografías en la página siguiente).
 
@@ -3756,11 +3756,11 @@ otros: incumplimiento o negativa a seguir las instrucciones del árbitro, abando
 intencional del ring / manipulación del tiempo, comportamiento / lenguaje
 inapropiado…)
 
-- 1. Contacto Fuerte                             2. Atacar a un oponente                      3. Barrido de piernas
-- 1. Agarre/Retención                            caído
-- 1. Ataque intencional a un                                                                        (Ejecutar una patada de
-objetivo ilegal                            (Ejecutar una patada frontal                               barrido)
-- 1. Conducta Antideportiva                             baja y rápida)
+- 1. Contacto Fuerte 2. Atacar a un oponente 3. Barrido de piernas
+- 1. Agarre/Retención caído
+- 1. Ataque intencional a un (Ejecutar una patada de
+     objetivo ilegal (Ejecutar una patada frontal barrido)
+- 1. Conducta Antideportiva baja y rápida)
 
 (Ejecutar un puño en
 ángulo sobre la palma
@@ -3780,19 +3780,19 @@ con un dedo en el aire y señalando con la otra mano al infractor.
 • Tras la señal, el Árbitro Central regresa a la posición de preparación, levanta la mano y da la orden de
 continuar "GAESOK".
 
-- 1. El árbitro central detiene el             2. El árbitro central indica la                    3. El árbitro central retrocede,
-combate. “Haechyo”                      infracción con la seña de manos                    señala al competidor infractor y
-correcta.                                          anuncia una falta mientras hace un
-círculo con la mano sobre la
-(p. ej., FALTA: Ataque intencional a              cabeza.
-un objetivo ilegal)
-“Gam Jum Hanna”
+- 1. El árbitro central detiene el 2. El árbitro central indica la 3. El árbitro central retrocede,
+     combate. “Haechyo” infracción con la seña de manos señala al competidor infractor y
+     correcta. anuncia una falta mientras hace un
+     círculo con la mano sobre la
+     (p. ej., FALTA: Ataque intencional a cabeza.
+     un objetivo ilegal)
+     “Gam Jum Hanna”
 
-- 1. El árbitro central devuelve a los          5. El árbitro central levanta la mano y da la orden de continuar. "Gaesok"
-competidores a la posición de
-preparados.
+- 1. El árbitro central devuelve a los 5. El árbitro central levanta la mano y da la orden de continuar. "Gaesok"
+     competidores a la posición de
+     preparados.
 
-3.3. DESCALIFICACIÓN
+  3.3. DESCALIFICACIÓN
 
 Se podrán imponer descalificaciones por las siguientes infracciones:
 
@@ -3852,14 +3852,14 @@ parte inferior del puño hacia afuera, y emite la orden de descalificar
 
 POSICIONES DEL JUEZ DE ESQUINA
 
-Posición Correcta: Parado                      Posición Correcta: Parado                     Posición Correcta: Sentado
+Posición Correcta: Parado Posición Correcta: Parado Posición Correcta: Sentado
 
-Posición Incorrecta: Sentado                   Posición Incorrecta: Sentado                   Posición Incorrecta: Sentado
+Posición Incorrecta: Sentado Posición Incorrecta: Sentado Posición Incorrecta: Sentado
 
 POSICIONES DEL JUEZ DE ESQUINA
 
-Definición al Primer Punto                          Definición al Primer Punto                    Definición al Primer punto
-Un paso al lado (Derecha)                                 Parado                              Un paso al lado (Izquierda)
+Definición al Primer Punto Definición al Primer Punto Definición al Primer punto
+Un paso al lado (Derecha) Parado Un paso al lado (Izquierda)
 
 Definición al Primer Punto
 Posición Incorrecta
@@ -3872,7 +3872,7 @@ No hay Puntos Válidos por la Rotura
 No hay Rotura
 ( Las manos comienzan en la posición X-Canto de Manos y luego se separan hacia abajo. )
 
-A4.       Apéndice 4 – GARANTÍA DEL GOBIERNO NACIONAL
+A4. Apéndice 4 – GARANTÍA DEL GOBIERNO NACIONAL
 
 Este documento describe los protocolos relativos a la Solicitud de Aprobación de artículos de
 patrocinio/publicidad en los Doboks y el equipamiento de los competidores, así como en la ropa y el
@@ -3904,15 +3904,15 @@ GARANTÍA DE ADHESIÓN
 Un formulario por cada patrocinador: debe ser completado y firmado por el Jefe de Delegación y enviado
 al Comité de Árbitros de la ITF, antes del primer día del evento.
 
-Jefe de Delegación:             (Insertar Nombre)
+Jefe de Delegación: (Insertar Nombre)
 
-En nombre de:                   (Insertar Nombre de la Asociación Nacional o la Asociación Aliada)
+En nombre de: (Insertar Nombre de la Asociación Nacional o la Asociación Aliada)
 
-País:                           (Insertar nombre del País)
+País: (Insertar nombre del País)
 
-Patrocinio de:                  (Insertar nombre del/los Competidor/es o Equipo/s)
+Patrocinio de: (Insertar nombre del/los Competidor/es o Equipo/s)
 
-Patrocinado por:                (Insertar nombre del Patrocinador)
+Patrocinado por: (Insertar nombre del Patrocinador)
 
 De acuerdo con el Reglamento Oficial de Competición de la ITF: Apéndice 2 - Indumentaria aprobada, y
 Apéndice 4 - Aprobación del patrocinio:
@@ -3920,28 +3920,28 @@ Apéndice 4 - Aprobación del patrocinio:
 El Jefe de Delegación arriba indicado
 
 - 1. Asegura por la presente que ha leído y entendido completamente las normas y requisitos del
-Patrocinio/Publicidad y se compromete a seguir dichas normas,
+     Patrocinio/Publicidad y se compromete a seguir dichas normas,
 - 1. asegura por la presente que el Patrocinador arriba mencionado y todas las imágenes, logotipos,
-marcas de palabras y textos asociados se adhieren estrictamente a los requisitos del Apéndice 4 -
-Aprobación de Patrocinio, y los cumplen,
+     marcas de palabras y textos asociados se adhieren estrictamente a los requisitos del Apéndice 4 -
+     Aprobación de Patrocinio, y los cumplen,
 - 1. se compromete por la presente a acatar cualquier decisión tomada por el Comité de Árbitros de la
-ITF con respecto a la idoneidad de dicho patrocinio/publicidad, en caso de que haya alguna duda o
-pregunta sobre el cumplimiento o la idoneidad de dicho patrocinio/publicidad,
+     ITF con respecto a la idoneidad de dicho patrocinio/publicidad, en caso de que haya alguna duda o
+     pregunta sobre el cumplimiento o la idoneidad de dicho patrocinio/publicidad,
 - 1. se compromete a aceptar todas las acciones y/o sanciones aplicadas por el Comité de Árbitros de la
-ITF en caso de incumplimiento o violación de las normas mencionadas anteriormente.
+     ITF en caso de incumplimiento o violación de las normas mencionadas anteriormente.
 
-FIRMA:                          (Insertar la Firma del Jefe de la Delegación)
+FIRMA: (Insertar la Firma del Jefe de la Delegación)
 
-FECHA:                                      Día                /                  Mes                    /                Año
+FECHA: Día / Mes / Año
 
 A5. Apéndice 5 – APROBACIÓN DE PATROCINIO/PUBLICIDAD
 
-5.1.       INFORMACIÓN GENERAL
+5.1. INFORMACIÓN GENERAL
 
 Este reglamento se elabora de conformidad con el Artículo T6 del Reglamento Oficial de Competición de
 la ITF, Apéndice 2, Indumentaria Aprobada. Cabe destacar la siguiente cláusula:
 
-5.2.         Apéndice 2 – Indumentaria Aprobada.
+5.2. Apéndice 2 – Indumentaria Aprobada.
 
 5.2.1. Patrocinio: Los competidores podrán exhibir los logotipos de sus patrocinadores
 personales, de acuerdo con los siguientes criterios:
@@ -4037,7 +4037,7 @@ directivos, personal médico, e incluye cualquier persona de apoyo asociada con 
 equipo, presente en el lugar de competencia o en cualquier lugar asociado a la
 competencia.
 
-5.4.      PROCEDIMIENTO - SOLICITUD DE APROBACIÓN DE LOS PATROCINADORES EN CUESTIÓN
+5.4. PROCEDIMIENTO - SOLICITUD DE APROBACIÓN DE LOS PATROCINADORES EN CUESTIÓN
 
 El siguiente procedimiento se utilizará para solicitar aclaraciones y aprobación formal, SOLO en
 caso de que un patrocinador propuesto represente productos, servicios o actividades que puedan
@@ -4063,36 +4063,36 @@ marcada en el gráfico o la foto.
 solicitud para verificar su conformidad con las Reglas Oficiales de Competición de la ITF
 
 - Apéndice 2 - Ropa Aprobada.
-5.4.3. La Aprobación se evaluará en función del cumplimiento real de las normas y
-reglamentos escritos, así como considerando la intención de las mismas, los Principios
-del Taekwon-Do y las consideraciones éticas y morales comunes.
-5.4.4. El Comité de Árbitros de la ITF enviará una respuesta formal por escrito al solicitante
-en un plazo de veinte (20) días hábiles.
-5.4.5 No se considerarán las protestas ni el arbitraje de decisiones.
-5.4.6 Cualquier desaprobación se documentará con los motivos.
-5.4.7 La postura y la respuesta del Comité de Árbitros de la ITF serán definitivas y vinculantes.
-5.4.8 Los solicitantes/jefes de equipo deberán tener en su poder una copia de la respuesta
-formal durante su asistencia al evento.
+  5.4.3. La Aprobación se evaluará en función del cumplimiento real de las normas y
+  reglamentos escritos, así como considerando la intención de las mismas, los Principios
+  del Taekwon-Do y las consideraciones éticas y morales comunes.
+  5.4.4. El Comité de Árbitros de la ITF enviará una respuesta formal por escrito al solicitante
+  en un plazo de veinte (20) días hábiles.
+  5.4.5 No se considerarán las protestas ni el arbitraje de decisiones.
+  5.4.6 Cualquier desaprobación se documentará con los motivos.
+  5.4.7 La postura y la respuesta del Comité de Árbitros de la ITF serán definitivas y vinculantes.
+  5.4.8 Los solicitantes/jefes de equipo deberán tener en su poder una copia de la respuesta
+  formal durante su asistencia al evento.
 
-5.5. GENERAL
-5.5.1. Salvo lo establecido en las Reglas Oficiales de Competencia de la ITF, está prohibido el
-patrocinio o la publicidad en los Doboks y el equipamiento de los competidores durante
-la Competencia.
+  5.5. GENERAL
+  5.5.1. Salvo lo establecido en las Reglas Oficiales de Competencia de la ITF, está prohibido el
+  patrocinio o la publicidad en los Doboks y el equipamiento de los competidores durante
+  la Competencia.
 
-5.5.2. De acuerdo con las Reglas Oficiales de Competencia de la ITF, se podrán tomar medidas
-disciplinarias contra un competidor o cualquier otro miembro de una delegación por
-cualquier incumplimiento de este reglamento. Dichas medidas se ajustarán a las reglas
-oficiales o, cuando no se especifiquen en ellas, podrán incluir, entre otras: la retirada
-de los artículos infractores, la expulsión del infractor de la sede de la Competencia u
-otras medidas administrativas que se consideren oportunas.
+  5.5.2. De acuerdo con las Reglas Oficiales de Competencia de la ITF, se podrán tomar medidas
+  disciplinarias contra un competidor o cualquier otro miembro de una delegación por
+  cualquier incumplimiento de este reglamento. Dichas medidas se ajustarán a las reglas
+  oficiales o, cuando no se especifiquen en ellas, podrán incluir, entre otras: la retirada
+  de los artículos infractores, la expulsión del infractor de la sede de la Competencia u
+  otras medidas administrativas que se consideren oportunas.
 
-5.5.3. Sin limitar el efecto de lo anterior, en el caso de un competidor menor de 18 años (véase
-el artículo T5 del Reglamento Oficial de Competición de la ITF), queda prohibida la
-aparición o incorporación en cualquier prenda de vestir, Dobok o equipamiento de
-cualquier referencia a un producto, servicio u otra actividad que el Comité de Árbitros
-de la ITF considere perjudicial para el bienestar, la salud o el interés general de los
-jóvenes, o que se considere inapropiada u ofensiva, teniendo en cuenta la edad de los
-jugadores.
+  5.5.3. Sin limitar el efecto de lo anterior, en el caso de un competidor menor de 18 años (véase
+  el artículo T5 del Reglamento Oficial de Competición de la ITF), queda prohibida la
+  aparición o incorporación en cualquier prenda de vestir, Dobok o equipamiento de
+  cualquier referencia a un producto, servicio u otra actividad que el Comité de Árbitros
+  de la ITF considere perjudicial para el bienestar, la salud o el interés general de los
+  jóvenes, o que se considere inapropiada u ofensiva, teniendo en cuenta la edad de los
+  jugadores.
 
 La Federación Internacional de Taekwon-Do, sus Comités de Torneos, Árbitros y de
 Tecnología (TUIC) consideran que entre los ejemplos de dichos productos, servicios o
@@ -4119,7 +4119,7 @@ definitiva y vinculante.
 cualquier prenda de vestir o equipamiento para que se examine su cumplimiento con
 este reglamento.
 
-A6.     Apéndice 6 – TABLEROS Y ALTURAS
+A6. Apéndice 6 – TABLEROS Y ALTURAS
 Los siguientes puntos describen las placas mínimas que se deben utilizar en la Competencia de
 Rotura de Potencia, las alturas mínimas que se deben utilizar en Técnicas Especiales y los
 procedimientos que deben seguir los competidores en cada una de estas divisiones.
@@ -4140,43 +4140,43 @@ Técnica Especial y de Rotura de Potencia para Campeonatos Mundiales y Copas del
 6.1. ROTURA DE POTENCIA
 
 CAMPEONATO DEL MUNDO - NÚMERO DE PLACAS – ROTURA DE POTENCIA
-PLACAS       PLACAS
-COREANO                ESPAÑOL
-Junior      Adulto
+PLACAS PLACAS
+COREANO ESPAÑOL
+Junior Adulto
 MASCULINO – Junior y Adulto
-Ap-Joomuk Jirugi                           Puño Frontal                                         2                    3
-Sonkal Taerigi                             Golpe de Canto de Mano                               2                    3
-Yopcha Jirugi                              Patada lateral penetrante                            3                    4
-Dollyo Chagi                               Patada Circular                                      2                    3
-Bandae Dollyo Chagi                        Giro Talón                                           2                    3
+Ap-Joomuk Jirugi Puño Frontal 2 3
+Sonkal Taerigi Golpe de Canto de Mano 2 3
+Yopcha Jirugi Patada lateral penetrante 3 4
+Dollyo Chagi Patada Circular 2 3
+Bandae Dollyo Chagi Giro Talón 2 3
 FEMENINO – Junior y Adulto
-Ap Palkup Taerigi                          Codo frontal                                         1                    2
-Sonkal Taerigi                             Golpe de Canto de Mano                               1                    2
-Yopcha Jirugi                              Patada lateral penetrante                            2                    3
-Dollyo Chagi                               Patada Circular                                      1                    2
-Bandae Dollyo Chagi                        Giro Talón                                           1                    2
+Ap Palkup Taerigi Codo frontal 1 2
+Sonkal Taerigi Golpe de Canto de Mano 1 2
+Yopcha Jirugi Patada lateral penetrante 2 3
+Dollyo Chagi Patada Circular 1 2
+Bandae Dollyo Chagi Giro Talón 1 2
 
 COPA DEL MUNDO -NÚMERO DE PLACAS – ROTURA DE POTENCIA
-PLACAS PLACAS                                              PLACAS
-COREANO                          ESPAÑOL
-Adulto   Senior                                           Veterano
+PLACAS PLACAS PLACAS
+COREANO ESPAÑOL
+Adulto Senior Veterano
 
 MASCULINO – SÓLO 18 años en adelante
 Una (1) Técnica de Mano y una (1) Técnica de Pie, elegidas entre:
-Ap-Joomuk Jirugi                            Puño Frontal
-3              2             2
-Sonkal Taerigi                              Golpe de Canto de Mano
-Yopcha Jirugi                               Patada Circular
-Dollyo Chagi                                Giro Talón                                      4              3             3
-Bandae Dollyo Chagi                         Puño Frontal
+Ap-Joomuk Jirugi Puño Frontal
+3 2 2
+Sonkal Taerigi Golpe de Canto de Mano
+Yopcha Jirugi Patada Circular
+Dollyo Chagi Giro Talón 4 3 3
+Bandae Dollyo Chagi Puño Frontal
 FEMENINO –SÓLO 18 en adelante
 Una (1) Técnica de Mano y una (1) Técnica de Pie, elegidas entre:
-Ap Palkup Taerigi                           Codo frontal
-2              2             1
-Sonkal Taerigi                              Golpe de Canto de Mano
-Yopcha Jirugi                               Patada Circular
-Dollyo Chagi                                Giro Talón                                      3              2             2
-Bandae Dollyo Chagi                         Codo frontal
+Ap Palkup Taerigi Codo frontal
+2 2 1
+Sonkal Taerigi Golpe de Canto de Mano
+Yopcha Jirugi Patada Circular
+Dollyo Chagi Giro Talón 3 2 2
+Bandae Dollyo Chagi Codo frontal
 
 Notas Generales
 
@@ -4188,79 +4188,79 @@ de la máquina.
 6.1.1. Descripción general del procedimiento de Rotura de Potencia
 
 6.1.1.1. A - AJUSTAR:
-6.1.1.1.1.              Indicar mayor o menor altura.
+6.1.1.1.1. Indicar mayor o menor altura.
 NO TOCAR LAS PLACAS NI LAS MÁQUINAS (no es una
 infracción descalificable).
 6.1.1.2. M - MEDIR:
-6.1.1.2.1.           Realizar una (1) Posición en Guardia de Antebrazos
+6.1.1.2.1. Realizar una (1) Posición en Guardia de Antebrazos
 (señalando que están listos).
-6.1.1.2.2.       Realizar una (1) medición obligatoria de distancia.
+6.1.1.2.2. Realizar una (1) medición obligatoria de distancia.
 Para la Rotura de Potencia, una medición se define como la
 extensión deliberada de cualquier herramienta de ataque
 hacia las(s) placa(s) objetivo.
-6.1.1.2.3.       Realizar una (1) Posición en Guardia de Antebrazos
+6.1.1.2.3. Realizar una (1) Posición en Guardia de Antebrazos
 (inmediatamente antes de la rotura).
 
 6.1.1.3. E - EJECUTAR:
-6.1.1.3.1.          Romper las placas.
+6.1.1.3.1. Romper las placas.
 Realizar una (1) Posición en Guardia de Antebrazos
 (inmediatamente después de la rotura).
 
-6.2.      Técnicas Especiales
+6.2. Técnicas Especiales
 
 CAMPEONATO DEL MUNDO – TÉCNICAS ESPECIALES - ALTURA DE LAS PLACAS
-ALTURAS            ALTURAS      ALTURAS
-COREANO                                        ESPAÑOL
-Pre-Junior          Junior       Adulto
+ALTURAS ALTURAS ALTURAS
+COREANO ESPAÑOL
+Pre-Junior Junior Adulto
 MASCULINO – Pre-Junior, Junior y Adulto
-Twimyo Nopi Ap Cha Busigi                Salto en Alto Patada Frontal                        230 cm             250 cm     260 cm
-Twimyo Dollyo Chagi                      Salto en Alto Patada Circular                       210 cm             230 cm     240 cm
-Twimyo Bandae Dollyo Chagi               Salto en Alto Patada Giro Talón                     190 cm             210 cm     220 cm
-Salto en Alto Patada Lateral giro                   190 cm
-Twio Dolmyo Yop Cha Jirugi                                                                                      210 cm     220 cm
+Twimyo Nopi Ap Cha Busigi Salto en Alto Patada Frontal 230 cm 250 cm 260 cm
+Twimyo Dollyo Chagi Salto en Alto Patada Circular 210 cm 230 cm 240 cm
+Twimyo Bandae Dollyo Chagi Salto en Alto Patada Giro Talón 190 cm 210 cm 220 cm
+Salto en Alto Patada Lateral giro 190 cm
+Twio Dolmyo Yop Cha Jirugi 210 cm 220 cm
 360 grados
-Salto en Largo Patada lateral por                   120 cm
-Twio Nomo Yop Chagi                                                                                             130 cm     140 cm
+Salto en Largo Patada lateral por 120 cm
+Twio Nomo Yop Chagi 130 cm 140 cm
 encima de una valla
 FEMENINO – Pre-Junior, Junior y Adulto
-Twimyo Nopi Ap Cha Busigi                Salto en Alto Patada Frontal                        200 cm             220 cm     230 cm
-Twimyo Dollyo Chagi                      Salto en Alto Patada Circular                       180 cm             200 cm     210 cm
-Twimyo Bandae Dollyo Chagi               Salto en Alto Patada Giro Talón                     170 cm             180 cm     190 cm
-Salto en Alto Patada Lateral giro                   170 cm
-Twio Dolmyo Yop Cha Jirugi                                                                                      180 cm     190 cm
+Twimyo Nopi Ap Cha Busigi Salto en Alto Patada Frontal 200 cm 220 cm 230 cm
+Twimyo Dollyo Chagi Salto en Alto Patada Circular 180 cm 200 cm 210 cm
+Twimyo Bandae Dollyo Chagi Salto en Alto Patada Giro Talón 170 cm 180 cm 190 cm
+Salto en Alto Patada Lateral giro 170 cm
+Twio Dolmyo Yop Cha Jirugi 180 cm 190 cm
 360 grados
-Salto en Largo Patada lateral por                   100 cm
-Twio Nomo Yop Chagi                                                                                             110 cm     120 cm
+Salto en Largo Patada lateral por 100 cm
+Twio Nomo Yop Chagi 110 cm 120 cm
 encima de una valla
 
 COPA DEL MUNDO – TÉCNICAS ESPECIALES - ALTURA DE LAS PLACAS
-ALTURAS                ALTURAS
-COREANO                                     ESPAÑOL
-MASCULINO              FEMENINO
+ALTURAS ALTURAS
+COREANO ESPAÑOL
+MASCULINO FEMENINO
 Pre-Junior
-Twimyo Nopi Ap Cha Busigi                  Salto en Alto Patada Frontal                     230 cm                   200 cm
+Twimyo Nopi Ap Cha Busigi Salto en Alto Patada Frontal 230 cm 200 cm
 Salto en Largo Patada lateral
-Twio Nomo Yop Chagi                                                                         120 cm                   100 cm
+Twio Nomo Yop Chagi 120 cm 100 cm
 por encima de una valla
 Junior
-Twimyo Nopi Ap Cha Busigi                  Salto en Alto Patada Frontal                     250 cm                   220 cm
+Twimyo Nopi Ap Cha Busigi Salto en Alto Patada Frontal 250 cm 220 cm
 Salto en Largo Patada lateral
-Twio Nomo Yop Chagi                                                                         130 cm                   110 cm
+Twio Nomo Yop Chagi 130 cm 110 cm
 por encima de una valla
 Adult
-Twimyo Nopi Ap Cha Busigi                  Salto en Alto Patada Frontal                     260 cm                   230 cm
+Twimyo Nopi Ap Cha Busigi Salto en Alto Patada Frontal 260 cm 230 cm
 Salto en Largo Patada lateral
-Twio Nomo Yop Chagi                                                                         140 cm                   120 cm
+Twio Nomo Yop Chagi 140 cm 120 cm
 por encima de una valla
 Senior
-Twimyo Nopi Ap Cha Busigi                  Salto en Alto Patada Frontal                     250 cm                   210 cm
+Twimyo Nopi Ap Cha Busigi Salto en Alto Patada Frontal 250 cm 210 cm
 Salto en Largo Patada lateral
-Twio Nomo Yop Chagi                                                                         120 cm                   90 cm
+Twio Nomo Yop Chagi 120 cm 90 cm
 por encima de una valla
 Veterans
-Twimyo Nopi Ap Cha Busigi                  Salto en Alto Patada Frontal                     240 cm                   200 cm
+Twimyo Nopi Ap Cha Busigi Salto en Alto Patada Frontal 240 cm 200 cm
 Salto en Largo Patada lateral
-Twio Nomo Yop Chagi                                                                         110 cm                   80 cm
+Twio Nomo Yop Chagi 110 cm 80 cm
 por encima de una valla
 
 Notas Generales
@@ -4298,14 +4298,14 @@ que están listos).
 6.2.1.2.2. Realizar una (1) medición obligatoria de distancia
 
 - Para Técnicas Especiales: Una medición se define como dar al menos un
-(1) paso deliberado hacia el objetivo.
-6.2.1.2.3. Realizar una (1) Posición en Guardia de Antebrazos
-(inmediatamente antes de la rotura)
+  (1) paso deliberado hacia el objetivo.
+  6.2.1.2.3. Realizar una (1) Posición en Guardia de Antebrazos
+  (inmediatamente antes de la rotura)
 
-6.2.1.3. E - EJECUTAR:
-6.2.1.3.1. Romper placa
-6.2.1.3.2. Realizar una (1) Posición en Guardia de Antebrazos
-(inmediatamente después de la rotura)
+  6.2.1.3. E - EJECUTAR:
+  6.2.1.3.1. Romper placa
+  6.2.1.3.2. Realizar una (1) Posición en Guardia de Antebrazos
+  (inmediatamente después de la rotura)
 
 A7. Apéndice 7 – Glosario de términos
 
@@ -4358,7 +4358,7 @@ Las cintas deben ser de color piel o blancas. No se permitirán cintas multicolo
 8.1.10. El cabello se podrá sujetar únicamente con un material elástico suave; no se permiten pinzas
 ni pasadores.
 
-A9.     Apéndice 9 – Salud y seguridad
+A9. Apéndice 9 – Salud y seguridad
 
 Las siguientes políticas y procedimientos DEBEN cumplirse durante los eventos de la Copa Mundial
 y los Campeonatos Mundiales de la ITF. Estos procedimientos se han adoptado para brindar la mejor
@@ -4782,32 +4782,32 @@ recomienda un tamaño de archivo total no superior a 200 MB.
 
 GLOSARIO DE TÉRMINOS
 
-Acción previa.                              Para una rotura de potencia o una técnica especial: un (1)
+Acción previa. Para una rotura de potencia o una técnica especial: un (1)
 movimiento hacia atrás, único y continuo, realizado
 inmediatamente antes del intento de rotura.
 
-Advertencia:                                Penalización impuesta a un competidor por una infracción menor
+Advertencia: Penalización impuesta a un competidor por una infracción menor
 de las reglas. La acumulación de tres (3) Advertencias resulta en la
 deducción automática de un (1) punto de la puntuación del
 competidor. (Nota: Estas deducciones de puntos no se consideran
 faltas y, por lo tanto, no resultan en una descalificación).
 
-Agarrar:                                    Agarrar, sujetar o retener cualquier parte del cuerpo del oponente
+Agarrar: Agarrar, sujetar o retener cualquier parte del cuerpo del oponente
 durante cualquier período de tiempo. Agarrar es una violación de
 las reglas y resultará en una falta.
 
-Agregar un Movimiento.                        En las Formas, cuando un competidor/equipo realiza más
+Agregar un Movimiento. En las Formas, cuando un competidor/equipo realiza más
 movimientos de los requeridos por las instrucciones técnicas de la
 forma, se considera que ha añadido un movimiento. Esto resultará en
 una puntuación total de cero (0).
 
-Árbitro de Esquina:                         Los oficiales que califican el desempeño de los competidores
+Árbitro de Esquina: Los oficiales que califican el desempeño de los competidores
 durante un combate. Los oficiales de esquina son responsables ante
 el árbitro y reciben sus instrucciones, quien a su vez es responsable
 ante el presidente del jurado del concejo de ring asignado y recibe
 sus instrucciones.
 
-Árbitro Central:                            El Oficial asignado a un Concejo de Ring específico y encargado del
+Árbitro Central: El Oficial asignado a un Concejo de Ring específico y encargado del
 funcionamiento justo y profesional de las competiciones
 celebradas en un ring específico. Como tal, está a cargo del
 comportamiento y las acciones de los competidores durante un
@@ -4816,18 +4816,18 @@ infracciones de las reglas. Los árbitros son responsables ante el
 Presidente del Jurado de su Consejo de Ring asignado y siguen sus
 instrucciones.
 
-Caída:                                      Cuando cualquier parte del cuerpo del competidor (excepto los
+Caída: Cuando cualquier parte del cuerpo del competidor (excepto los
 pies) entra en contacto, durante cualquier periodo de tiempo, con
 la superficie del ring.
 
-Chong:                                      El competidor "Azul".
+Chong: El competidor "Azul".
 
 El competidor cuyo nombre aparece en la segunda posición
 (inferior) de la llave de la competición, que se coloca en el lado
 izquierdo (I) del ring (a la izquierda del centro mirando hacia el
 frente de la Mesa del Jurado) cuando está listo para competir.
 
-Cinturón:                                   Símbolo de rango, usado como parte del uniforme oficial de los
+Cinturón: Símbolo de rango, usado como parte del uniforme oficial de los
 practicantes de Taekwondo I.T.F. El cinturón debe usarse envuelto
 una vez alrededor de la cintura y anudado al frente. El cinturón
 debe indicar fielmente el rango obtenido por el usuario, mediante
@@ -4835,7 +4835,7 @@ color y/o franja, y (para competidores cinturón negro) mediante
 números romanos correspondientes a su grado obtenido.
 (Consultar el Apéndice 2 – Ropa Aprobada).
 
-Comité TUIC.                                El comité de miembros que supervisa y administra el
+Comité TUIC. El comité de miembros que supervisa y administra el
 funcionamiento del torneo. El TUIC es responsable de la
 programación de los rings y las competiciones, la gestión y
 supervisión de los oficiales, la investigación y resolución de las
@@ -4843,27 +4843,27 @@ protestas, y todos los demás asuntos del torneo. El Comité TUIC es
 la máxima autoridad del torneo, con jurisdicción sobre todos los
 asuntos y, como tal, sus decisiones son definitivas y vinculantes.
 
-Competidor:                                 Un miembro registrado de una organización afiliada a la I.T.F. Los
+Competidor: Un miembro registrado de una organización afiliada a la I.T.F. Los
 competidores deben estar en regla y haber obtenido y recibido una
 acreditación oficial de la I.T.F. Certificado de Grado, verificado
 mediante la Tarjeta de Identificación de Cinturón Negro ITF y el
 Número de Certificado de Grado.
 
-Concejo del Ring                            Los ocho (8) oficiales asignados a un ring para administrar, dirigir, y
+Concejo del Ring Los ocho (8) oficiales asignados a un ring para administrar, dirigir, y
 calificar el desempeño de los competidores. El concejo de ring está
 compuesto por un (1) presidente del jurado, un (1) miembro del
 jurado, un (1) árbitro de TI, un (1) árbitro central y cuatro (4)
 árbitros de esquina.
 
-Conducta Antideportiva:                     Incluye cualquier acción del competidor que muestre falta de
+Conducta Antideportiva: Incluye cualquier acción del competidor que muestre falta de
 respeto, incumplimiento de instrucciones u otros comportamientos
 inaceptables hacia el árbitro, otros competidores u oficiales,
 incluyendo, entre otros: incumplimiento o negativa a seguir las
-instrucciones    del árbitro, abandono           intencional del
+instrucciones del árbitro, abandono intencional del
 ring/manipulación del tiempo, comportamiento/lenguaje
 inapropiado, etc.
 
-Conmoción cerebral:                         Una lesión cerebral o traumatismo craneoencefálico (TCE) grave
+Conmoción cerebral: Una lesión cerebral o traumatismo craneoencefálico (TCE) grave
 resultante de una sacudida repentina del cerebro o la médula
 espinal, generalmente causada por un golpe o una caída, que puede
 provocar un fuerte dolor de cabeza, alteración del estado de alerta
@@ -4872,7 +4872,7 @@ temporalmente con el funcionamiento del cerebro y puede afectar
 la memoria, el juicio, los reflejos, el habla, el equilibrio, la
 coordinación y los patrones de sueño.
 
-Contacto Excesivo.                          Cualquier contacto interpersonal durante una competición de
+Contacto Excesivo. Cualquier contacto interpersonal durante una competición de
 sparring, intencional o no, cometido en grave violación de las
 reglas, que tenga la intención o pueda causar lesiones al oponente;
 que se ejecute de forma insegura, descontrolada, irrespetuosa o
@@ -4881,14 +4881,14 @@ y/o ser resultado de Responsabilidad Negativa. Esto constituye una
 infracción grave de las reglas que conlleva la descalificación del
 infractor.
 
-Contacto Fuerte:                            Cualquier contacto interpersonal administrado con emoción,
+Contacto Fuerte: Cualquier contacto interpersonal administrado con emoción,
 agresión, mala intención y/o pérdida de control, o cualquier técnica
 que se ejecute sin intentar controlar o retraer el objeto de ataque,
 y/o que provoque que el cuerpo del oponente (cabeza o torso) se
 desplace más de lo aceptable para la situación. Esta infracción de
 las reglas resulta en una falta.
 
-Contacto Ligero.                            Cualquier contacto interpersonal durante una competencia de
+Contacto Ligero. Cualquier contacto interpersonal durante una competencia de
 sparring, intencional o no, que se ejecuta con cuidado, control y
 comportamiento deportivo, con el intento de controlar y retraer la
 herramienta de ataque, y que no resulte en un desplazamiento
@@ -4897,11 +4897,11 @@ considera aceptable y no resulta en una advertencia ni en la
 imposición de una falta. Este nivel de contacto no tiene la intención
 ni es probable que cause daño o perjuicio al oponente.
 
-Cuadrilátero/Ring                           El área de juego de competición real, revestida con colchonetas de
+Cuadrilátero/Ring El área de juego de competición real, revestida con colchonetas de
 seguridad de espuma adecuadas de un (1) color sólido, rodeada por
 un perímetro de un (1) metro de colchonetas de un color opuesto.
 
-Cubierta de la Cabeza/Cuello:               Todos los competidores pueden usar cubiertas para la cabeza y/o
+Cubierta de la Cabeza/Cuello: Todos los competidores pueden usar cubiertas para la cabeza y/o
 el cuello. Deben ser de color blanco sólido, estar hechas de un
 material suave y/o elástico y no deben contener materiales duros,
 metal, empuñaduras ni deslizadores.
@@ -4911,37 +4911,37 @@ deben ajustarse completamente dentro del casco de seguridad, y
 las cubiertas para el cuello deben ajustarse y permanecer dentro
 de los límites de la chaqueta del Dobok.
 
-Decisión Médica:                            La decisión o declaración final del Personal Médico Cualificado del
+Decisión Médica: La decisión o declaración final del Personal Médico Cualificado del
 torneo con respecto al tratamiento de lesiones y/o la capacidad
 posterior de un competidor para continuar en la competición, ya
 sea de inmediato o en un futuro próximo.
 
 La decisión del Personal Médico Cualificado del torneo es definitiva
 e irrefutable; por lo tanto, debe ser respetada y acatada por todas
-las personas* (es decir, competidor, entrenador, oficiales, familia).
+las personas\* (es decir, competidor, entrenador, oficiales, familia).
 Cualquier persona que insista en contravenir la Decisión Médica
 será inmediatamente descalificada del torneo y sujeta a futuras
 Medidas Administrativas.
 
-*NOTA: El TUIC se reserva el derecho de anular una Decisión
+\*NOTA: El TUIC se reserva el derecho de anular una Decisión
 Médica e impedir que un atleta regrese a la competición si, en su
 opinión, existe un riesgo continuo para el competidor, el oponente,
 la ética de la competición u otra preocupación similar. Sin embargo,
 el TUIC no puede anular una Decisión Médica y permitir que un
 competidor continúe en contra del consejo médico.
 
-Deducción de puntos.                        El resultado de que un competidor haya recibido tres (3)
+Deducción de puntos. El resultado de que un competidor haya recibido tres (3)
 advertencias por infracciones menores de las reglas. (Las
 deducciones de puntos no son lo mismo que las faltas y, por lo
 tanto, la acumulación de tres (3) deducciones de puntos no resulta
 en una descalificación).
 
-Delegado:                                   Persona con autoridad administrativa o especial asignada en
+Delegado: Persona con autoridad administrativa o especial asignada en
 nombre de una escuela u organización miembro, quien está
 facultado para tomar decisiones y acciones en nombre de los
 miembros de la escuela/organización
 
-Descalificación:                            La prohibición de que un competidor continúe en un combate
+Descalificación: La prohibición de que un competidor continúe en un combate
 debido a acciones, palabras o comportamientos prohibidos o
 antideportivos. Un competidor descalificado no puede ganar un
 combate; sin embargo, aún puede competir en cualquier otro
@@ -4952,16 +4952,16 @@ competidores descalificados aún pueden recibir cualquier premio
 que hayan obtenido hasta el momento de la descalificación,
 inclusive.
 
-Dobok.                                      Uniforme oficial de los practicantes de Taekwon-Do de la ITF.
+Dobok. Uniforme oficial de los practicantes de Taekwon-Do de la ITF.
 Consiste en una chaqueta y un pantalón, con el escudo y el logotipo
 de la ITF correspondientes, fabricado por uno de los Proveedores
 Oficiales de la ITF. (Consulte el Apéndice 2: Ropa Aprobada).
 
-Empujar:                                    El uso intencional de cualquier parte del cuerpo para ejercer fuerza
+Empujar: El uso intencional de cualquier parte del cuerpo para ejercer fuerza
 sobre el oponente, con la intención de desequilibrarlo o reubicarlo,
 y sin la ejecución de una técnica legal destinada a sumar un punto.
 
-Entrenador:                                 El representante oficial de un atleta con una edad mínima de 18
+Entrenador: El representante oficial de un atleta con una edad mínima de 18
 años, registrado y acreditado por el Comité de Torneo e
 Informática. Solo un entrenador registrado, o un competidor
 registrado que actúe como entrenador, podrá estar en la pista de
@@ -4972,8 +4972,8 @@ adecuada, guantes médicos protectores en las manos mientras
 estén en el área de competencia y llevar una toalla. No deben llevar
 ningún otro artículo/equipo a la pista.
 
-Equipo Seguridad Aprobado                   Modelo aprobado de equipo de protección personal (guantes, pies,
-casco)         de un fabricante oficial, aprobado por el Comité de
+Equipo Seguridad Aprobado Modelo aprobado de equipo de protección personal (guantes, pies,
+casco) de un fabricante oficial, aprobado por el Comité de
 Árbitros de la ITF de acuerdo con sus estatutos. El equipo debe estar en
 buen estado, sin daños que comprometan la cobertura o la eficacia de
 los elementos de protección. No se permiten cierres rígidos, plástico,
@@ -4982,18 +4982,18 @@ con cinta adhesiva ni pegamento. (Consulte los comunicados oficiales
 de la ITF para conocer las especificaciones oficiales del equipo de
 seguridad aprobado).
 
-Factor de Vestimenta:                       Un factor (+500 gramos) utilizado como medida estándar para
+Factor de Vestimenta: Un factor (+500 gramos) utilizado como medida estándar para
 compensar cualquier variación en el peso del competidor debido a
 la vestimenta requerida para la verificación del peso. El factor de
 vestimenta NO ES UNA TOLERANCIA Y SOLO PERMITE una variación
 en el peso de la vestimenta.
 
-Falta:                                      Penalización impuesta a un competidor por una infracción de las
+Falta: Penalización impuesta a un competidor por una infracción de las
 reglas, de moderada a grave, que resulta en la deducción
 inmediata de un (1) punto de su puntuación total. La acumulación
 de tres (3) faltas resulta automáticamente en la descalificación.
 
-Fuera del ring:                             El momento en que un competidor entra en contacto con cualquier
+Fuera del ring: El momento en que un competidor entra en contacto con cualquier
 área del suelo, fuera de los límites de la superficie de juego, y
 
 ninguna parte de ninguno de sus pies está en contacto con el área
@@ -5001,45 +5001,45 @@ de juego del ring. (Es decir, dos pies completamente fuera del ring
 y en contacto con el suelo; o un pie fuera del ring, haciendo
 contacto con el suelo, mientras que el otro pie no toca el suelo).
 
-Hong:                                       El competidor "Rojo".
+Hong: El competidor "Rojo".
 
 El competidor cuyo nombre aparece en la primera posición
 (superior) de la llave de competencia, que se coloca a la derecha
 del ring (a la derecha del centro, mirando hacia la mesa del jurado)
 cuando está listo para competir.
 
-Inicio                                      En Formas: Una Forma comienza con la orden "Sijak" y se puntúa
+Inicio En Formas: Una Forma comienza con la orden "Sijak" y se puntúa
 desde el momento en que se emite. Si, al dar la orden "Sijak", el
 competidor no se encuentra en la posición de preparación correcta
 para realizar la Forma, recibirá una puntuación de cero para dicha
 Forma.
 
-Interferir (Interferencia):                 Cualquier acción, articulación, palabra, sonido o comportamiento
+Interferir (Interferencia): Cualquier acción, articulación, palabra, sonido o comportamiento
 que cause una interrupción o distracción, o que influya o manipule
 de cualquier otra forma una competición, el rendimiento de un
 competidor, las funciones de un árbitro o el posible resultado de un
 combate.
 
-Médico.                                     Persona con licencia para ejercer la medicina, como médico o
+Médico. Persona con licencia para ejercer la medicina, como médico o
 cirujano, designada para encargarse de los primeros auxilios, la
 atención médica de emergencia y las decisiones médicas en un
 torneo.
 
-Médico - Torneo.                            El/los médico(s) oficial(es) del torneo, designado(s) por el Comité
+Médico - Torneo. El/los médico(s) oficial(es) del torneo, designado(s) por el Comité
 de Torneos de la ITF, es(son) la autoridad final en cualquier decisión
 médica relativa al torneo y, como tal, su decisión es definitiva y
 vinculante.
 
-Medida.                                     1. Para Rotura de Potencia: La extensión de cualquier herramienta
+Medida. 1. Para Rotura de Potencia: La extensión de cualquier herramienta
 de ataque hacia el/los tableros(s) objetivo.
 
 - 1. Para Técnica Especial: Dar al menos uno (1) paso hacia el
-objetivo.
+     objetivo.
 
-Mezcla de Movimientos:                      En las formas, la mezcla de movimientos ocurre cuando un
+Mezcla de Movimientos: En las formas, la mezcla de movimientos ocurre cuando un
 competidor realiza dos o más movimientos secuenciales de una
 forma diferente a la designada.
-Miembro del Jurado:                         Uno de los dos árbitros que asisten al Presidente del Jurado en la
+Miembro del Jurado: Uno de los dos árbitros que asisten al Presidente del Jurado en la
 administración del Concejo del Ring. El miembro del jurado es
 responsable de asistir en la gestión de la llave de la competición;
 registrar datos (p. ej., faltas, advertencias, número de round,
@@ -5049,34 +5049,34 @@ del Concejo del Ring. Los miembros del jurado son responsables
 ante el presidente del jurado de su Concejo del Ring asignado y
 siguen sus instrucciones.
 
-Obstáculo Desplazado:                       En Técnica Especial, si alguna parte del cuerpo, uniforme o cinturón
+Obstáculo Desplazado: En Técnica Especial, si alguna parte del cuerpo, uniforme o cinturón
 del competidor entra en contacto con la barrera o alguno de sus
 componentes, provocando que la barrera se mueva de su posición
 normal de reposo y se active o desplace, resultando en un intento
 de rotura incompleto y, por lo tanto, inelegible.
 
-Oficial Certificado:                        Cualquier Presidente de Jurado, Miembro del Jurado, Árbitro
+Oficial Certificado: Cualquier Presidente de Jurado, Miembro del Jurado, Árbitro
 Central o Juez de Esquina que haya completado satisfactoriamente
 el Curso Oficial de Formación de Árbitros de la ITF y esté acreditado
 por el Comité de Árbitros de la ITF para calificar el rendimiento en
 cualquier evento de la competición. Los Oficiales Certificados
 deben poseer la cualificación de Árbitro ITF Clase "A".
 
-Olvidar un Movimiento:                      En las Formas, cuando un competidor/equipo realiza menos
+Olvidar un Movimiento: En las Formas, cuando un competidor/equipo realiza menos
 movimientos de los requeridos por las instrucciones técnicas de la
 forma, se considera que ha olvidado un movimiento. Esto
 resultará en una puntuación total de cero (0).
 
-Paso                                        La remoción completa y posterior colocación de uno o más pies en
+Paso La remoción completa y posterior colocación de uno o más pies en
 el suelo, independientemente de que ello produzca algún avance,
 retroceso o movimiento lateral.
 
-Pérdida de Consciencia.                     Un estado mental alterado caracterizado por la incapacidad de
+Pérdida de Consciencia. Un estado mental alterado caracterizado por la incapacidad de
 una persona para responder a estímulos verbales y físicos, a
 menudo como resultado de un impacto o traumatismo en la
 cabeza o la columna vertebral.
 
-Perímetro de Seguridad:                     Zona de seguridad que se extiende alrededor de todo el perímetro
+Perímetro de Seguridad: Zona de seguridad que se extiende alrededor de todo el perímetro
 de la superficie de juego de un ring, delimitando los límites del área
 de juego y en la cual las competiciones de sparring no pueden ser
 calificadas.
@@ -5088,7 +5088,7 @@ elevado sobre el suelo (es decir, sobre una plataforma), el ancho
 del perímetro de advertencia debe extenderse a un mínimo de dos
 (2) metros.
 
-Pesaje – Ropa Requerida                     La ropa que debe usar cada competidor de sparring al subir a la
+Pesaje – Ropa Requerida La ropa que debe usar cada competidor de sparring al subir a la
 báscula para la verificación de peso, de acuerdo con las reglas.
 Todos los competidores que asistan a la verificación de peso deben
 usar pantalones doboks oficiales aprobados por la ITF y una
@@ -5097,13 +5097,13 @@ accesorios ni artículos en la báscula. Los competidores no pueden
 quitarse ninguna de las prendas obligatorias para intentar bajar el
 peso.
 
-Piso de competición:                        El área dentro del recinto de competición donde se ubican los rings,
+Piso de competición: El área dentro del recinto de competición donde se ubican los rings,
 la mesa principal y las mesas del jurado. Solo oficiales,
 competidores, entrenadores y personal médico cualificado pueden
 estar en la pista de competición. La pista de competición debe tener
 una barrera sólida entre ella y los espectadores/seguidores.
 
-Piso de Seguridad                           Un sistema de piso homologado, compuesto de espuma de esponja
+Piso de Seguridad Un sistema de piso homologado, compuesto de espuma de esponja
 o equivalente, diseñado específicamente para proporcionar
 absorción de impactos y resistencia a resbalones y caídas en
 competiciones de artes marciales.
@@ -5115,7 +5115,7 @@ cubrir toda la superficie de juego del ring en un solo color e incluir
 un perímetro de advertencia de un metro de ancho en un color
 contrastante, que delimite la superficie de juego.
 
-Presidente del Jurado.                      El Oficial Principal a cargo y responsable de la administración
+Presidente del Jurado. El Oficial Principal a cargo y responsable de la administración
 general de las reglas de competencia y del funcionamiento justo y
 profesional de un (1) Concejo de Ring en un torneo. El Presidente
 del Jurado es el representante designado del Comité del Torneo
@@ -5123,7 +5123,7 @@ para todos los asuntos relacionados con ese ring y su
 funcionamiento, y es responsable de la supervisión de todos los
 demás Oficiales asignados a dicho Concejo.
 
-Primeros Auxilios:                          Persona acreditada para brindar atención de emergencia en caso
+Primeros Auxilios: Persona acreditada para brindar atención de emergencia en caso
 de lesiones que no pongan en peligro la vida y designada para
 brindar atención en cualquier tratamiento menor de heridas o
 lesiones en un torneo. En caso de que no haya un médico oficial
@@ -5131,12 +5131,12 @@ del torneo, Primeros Auxilios se reserva la autoridad final en
 cualquier decisión médica relacionada con el torneo y, como tal,
 su decisión es definitiva y vinculante.
 
-Primeros Auxilios Aprobados:                Cualquier persona certificada con un mínimo de Nivel Avanzado
+Primeros Auxilios Aprobados: Cualquier persona certificada con un mínimo de Nivel Avanzado
 de Primeros Auxilios o superior, incluyendo, entre otros: médicos,
 fisioterapeutas, paramédicos, personal de primera respuesta y
 personal profesional de primeros auxilios.
 
-Protesta Oficial:                           Una queja formal presentada al Comité del Torneo por un
+Protesta Oficial: Una queja formal presentada al Comité del Torneo por un
 entrenador acreditado, por una acción o decisión que contraviene
 las reglas de competencia, la ética, los protocolos y procedimientos,
 o los conceptos de juego justo y equitativo.
@@ -5152,17 +5152,17 @@ Las protestas se presentan ante el Comité del Torneo, quien se
 reunirá, investigará y decidirá sobre su validez. La decisión del
 Comité del Torneo es definitiva y vinculante.
 
-Rango más bajo.                             Para cinturones de color: El rango más bajo es el 10º Gup y el más
+Rango más bajo. Para cinturones de color: El rango más bajo es el 10º Gup y el más
 alto es el 1º Gup.
 Para cinturones negros: El rango más bajo es el 1º Dan y el más
 alto es el 9º Dan.
 
-Responsable Negativo:                       Un competidor que se considera causante de una lesión o pérdida
+Responsable Negativo: Un competidor que se considera causante de una lesión o pérdida
 de conocimiento por haber realizado una acción considerada ilegal,
 insegura, antideportiva, ejecutada sin control o con la intención de
 dañar al oponente.
 
-Resultado Directo:                          "Como resultado directo" se refiere al término utilizado en U7:
+Resultado Directo: "Como resultado directo" se refiere al término utilizado en U7:
 Derechos y Deberes del Presidente del Jurado; 2(a) Debido Proceso
 para T39, 1(b) Nota: Procedimiento para determinar la
 responsabilidad cuando el competidor AZUL ha resultado lesionado
@@ -5181,13 +5181,13 @@ original, el competidor ROJO no será responsable, ya que NO
 PUEDE SER SANCIONADO UNA SEGUNDA VEZ por la infracción
 anterior (original) y el competidor AZUL deberá rendir el combate.
 
-Ring:                                        Una de las áreas oficiales de competición dentro de un torneo,
+Ring: Una de las áreas oficiales de competición dentro de un torneo,
 donde se llevan a cabo las competiciones. Un ring está compuesto
 por el área de juego de la competición, la colchoneta de seguridad,
 la mesa y las sillas del jurado, las sillas de los árbitros, las sillas de
 los entrenadores y todo el equipo y los suministros asociados.
 
-Ropa interior.                              Solo se permite el uso de ropa interior suave o elástica debajo del
+Ropa interior. Solo se permite el uso de ropa interior suave o elástica debajo del
 Dobok (debajo de la chaqueta y/o los pantalones).
 
 La ropa interior debe ser de color blanco liso, estar hecha de una
@@ -5196,12 +5196,12 @@ protección adicional contra impactos ni contener materiales duros,
 metal, empuñaduras ni deslizadores. La ropa interior no debe
 sobrepasar la porción distal de la muñeca ni del tobillo.
 
-Saltar:                                     Impulsarse rápidamente hacia arriba, de tal manera que el impulso
+Saltar: Impulsarse rápidamente hacia arriba, de tal manera que el impulso
 haga que el cuerpo se eleve en el aire y pierda contacto con el suelo.
 El salto se ejecuta en el momento en que ambos pies ya no están
 en contacto con la superficie del área de juego.
 
-Secuencia Acrobática.                         Una secuencia acrobática se define como una (1) serie continua de
+Secuencia Acrobática. Una secuencia acrobática se define como una (1) serie continua de
 técnicas de naturaleza acrobática, gimnástica, de volteretas o similar,
 realizada por un competidor, que finaliza con la ejecución de una
 técnica de Taekwon-Do intermedia.
@@ -5209,7 +5209,7 @@ técnica de Taekwon-Do intermedia.
 Las secuencias/técnicas acrobáticas incluyen, entre otras: splits,
 volteretas, volteretas, giros, clavados, etc.
 
-Secuencia Final:                            En Lucha Preestablecida, la última serie continua e ininterrumpida
+Secuencia Final: En Lucha Preestablecida, la última serie continua e ininterrumpida
 de golpes, realizada por un miembro del equipo, que no son
 
 defendidos ni interrumpidos de ninguna manera por el oponente.
@@ -5226,7 +5226,7 @@ lógica del golpe final, como volteretas resultantes del impacto final,
 lanzamientos que no se evitan/liberan, barridos que no se evitan o
 se superan, etc.).
 
-Soporte Mecánico:                           Cualquier elemento que proporcione a un competidor un soporte
+Soporte Mecánico: Cualquier elemento que proporcione a un competidor un soporte
 excesivo a una parte de su sistema musculoesquelético durante su
 rendimiento en competición, mediante el uso de:
 • Materiales duros,
@@ -5240,26 +5240,26 @@ de boxeo)
 médica/deportiva
 • Otros
 
-*Ver también: Vendaje deportivo, Vendaje/Faja blanda.
+\*Ver también: Vendaje deportivo, Vendaje/Faja blanda.
 
-Superficie de juego:                         El suelo, o la parte horizontal del área oficial de competición, que
+Superficie de juego: El suelo, o la parte horizontal del área oficial de competición, que
 se considera "en juego" y sobre la cual un competidor puede recibir
 una puntuación por su desempeño. La superficie de juego del ring
 debe estar cubierta con una estera de seguridad antideslizante.
 
-Tabla Doblada:                              Una tabla doblada se define como cualquier tabla que presenta una
+Tabla Doblada: Una tabla doblada se define como cualquier tabla que presenta una
 desviación cóncava notable de su posición normal de unión, y que
 permanece en una posición en la que ya no es plana, con una línea
 de separación visible en la unión.
 
-Tabla Rota:                                 1. En Rotura de Potencia, una tabla rota se define como la
+Tabla Rota: 1. En Rotura de Potencia, una tabla rota se define como la
 separación exitosa y completa de las dos mitades de una tabla
 objetivo, de modo que no quede ninguna parte conectada.
 
 - 1. En Técnicas Especiales, una tabla rota se define como el
-movimiento exitoso de la superficie objetivo desde su plano de
-reposo hasta, o más allá, de uno de los planos de puntuación
-preestablecidos.
+     movimiento exitoso de la superficie objetivo desde su plano de
+     reposo hasta, o más allá, de uno de los planos de puntuación
+     preestablecidos.
 
 Tabla Completamente Rota: Tabla que se ha movido un mínimo de
 90 grados desde su plano de reposo.
@@ -5267,14 +5267,14 @@ Tabla Completamente Rota: Tabla que se ha movido un mínimo de
 Tabla Medio Rota: Tabla que se ha movido entre 45 y 89 grados
 desde su plano de reposo.
 
-Tasa/Impuesto                               Tarifa monetaria que se cobra a un entrenador por iniciar o
+Tasa/Impuesto Tarifa monetaria que se cobra a un entrenador por iniciar o
 presentar una Protesta Oficial. Esta tarifa se cobra para desalentar
 las Protesta infundadas. Si la Protesta se acepta como válida y
 cuenta con el respaldo del Comité del Torneo, se reembolsará el
 impuesto. Si la protesta se considera inválida o sin fundamento, y
 el Comité del Torneo la desestima, se perderá el impuesto.
 
-Tiempo de Descuento:                        El tiempo máximo acumulado de tres (3) minutos durante un
+Tiempo de Descuento: El tiempo máximo acumulado de tres (3) minutos durante un
 combate en el que se detiene el cronómetro oficial, lo que permite
 al personal médico del torneo (médico o auxiliar de primeros
 auxilios) diagnosticar y tratar una lesión sufrida durante el
@@ -5298,11 +5298,11 @@ Independientemente del tiempo de descuento restante, en caso de
 examen por conmoción cerebral, el tiempo de descuento es de al
 menos 2 minutos.
 
-Tocar                                       Cuando cualquier parte del cuerpo del competidor entra en
+Tocar Cuando cualquier parte del cuerpo del competidor entra en
 contacto, ya sea momentáneo o continuo, con cualquier parte del
 objetivo o equipo correspondiente.
 
-Tocar Obstáculo                             En Técnica Especial, cuando cualquier parte del cuerpo, uniforme
+Tocar Obstáculo En Técnica Especial, cuando cualquier parte del cuerpo, uniforme
 o cinturón del competidor entra en contacto con la barrera o
 alguno de sus componentes, sin que esta se haya desplazado y
 permanezca en su posición normal de reposo.
@@ -5310,7 +5310,7 @@ permanezca en su posición normal de reposo.
 Un Obstáculo Tocado puede moverse sin penalización, siempre que
 no se active ni se desplace de su posición normal de reposo.
 
-Venda deportiva:                          Aplicación de cinta deportiva/terapéutica sensible a la presión
+Venda deportiva: Aplicación de cinta deportiva/terapéutica sensible a la presión
 directamente sobre la piel o sobre una venda blanda para mantener la
 posición estable de los huesos y músculos, manteniéndolos físicamente
 en una posición determinada. Se utiliza para reducir el dolor y facilitar la
@@ -5333,9 +5333,9 @@ NOTA: Las vendas de boxeo y otras vendas rígidas diseñadas para
 proporcionar un soporte mecánico excesivo están
 específicamente PROHIBIDAS.
 
-*Ver también: Vendajes/Correas Suaves, Soporte Mecánico
+\*Ver también: Vendajes/Correas Suaves, Soporte Mecánico
 
-Vendaje suave/cintas                        El uso de un vendaje suave y flexible de algodón, elástico u otro
+Vendaje suave/cintas El uso de un vendaje suave y flexible de algodón, elástico u otro
 material similar para:
 • cubrir temporalmente una herida, laceración o lesión similar,
 • controlar o aliviar temporalmente la hinchazón,
@@ -5343,4 +5343,4 @@ material similar para:
 esguinces,
 • sin proporcionar un soporte mecánico excesivo.
 
-*Ver también: Vendaje deportivo, Vendaje/Vendaje suave
+\*Ver también: Vendaje deportivo, Vendaje/Vendaje suave

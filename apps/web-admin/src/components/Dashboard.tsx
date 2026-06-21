@@ -1,25 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import type { User } from 'firebase/auth';
-import type { Tournament } from '@corner-click/types';
-import TournamentList from './TournamentList';
-import TournamentForm from './TournamentForm';
-import TournamentDetail from './TournamentDetail';
-import AdminHeader from './AdminHeader';
-import Footer from './Footer';
-import { auth } from '../lib/firebase';
+import React, { useState, useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import type { User } from "firebase/auth";
+import type { Tournament } from "@corner-click/types";
+import TournamentList from "./TournamentList";
+import TournamentForm from "./TournamentForm";
+import TournamentDetail from "./TournamentDetail";
+import AdminHeader from "./AdminHeader";
+import Footer from "./Footer";
+import { auth } from "../lib/firebase";
 
 export default function Dashboard() {
-  const [view, setView] = useState<'LIST' | 'FORM' | 'DETAIL'>('LIST');
-  const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
-  const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
+  const [view, setView] = useState<"LIST" | "FORM" | "DETAIL">("LIST");
+  const [selectedTournament, setSelectedTournament] =
+    useState<Tournament | null>(null);
+  const [editingTournament, setEditingTournament] = useState<Tournament | null>(
+    null,
+  );
   const [authChecked, setAuthChecked] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
       if (!u) {
-        window.location.href = '/login';
+        window.location.href = "/login";
         return;
       }
       setUser(u);
@@ -30,23 +33,23 @@ export default function Dashboard() {
 
   const handleSelect = (t: Tournament) => {
     setSelectedTournament(t);
-    setView('DETAIL');
+    setView("DETAIL");
   };
 
   const handleBackToList = () => {
     setSelectedTournament(null);
     setEditingTournament(null);
-    setView('LIST');
+    setView("LIST");
   };
 
   const handleEdit = (t: Tournament) => {
     setEditingTournament(t);
-    setView('FORM');
+    setView("FORM");
   };
 
   const handleCreateNew = () => {
     setEditingTournament(null);
-    setView('FORM');
+    setView("FORM");
   };
 
   // Show nothing while checking auth to avoid flash of content
@@ -64,26 +67,26 @@ export default function Dashboard() {
 
       {/* Main Content Area */}
       <main className="flex-1 pb-12">
-        {view === 'LIST' && (
-          <TournamentList 
-            onSelect={handleSelect} 
-            onCreateNew={handleCreateNew} 
+        {view === "LIST" && (
+          <TournamentList
+            onSelect={handleSelect}
+            onCreateNew={handleCreateNew}
             onEdit={handleEdit}
           />
         )}
-        
-        {view === 'FORM' && (
-          <TournamentForm 
+
+        {view === "FORM" && (
+          <TournamentForm
             initialData={editingTournament}
-            onCancel={handleBackToList} 
-            onCreated={handleBackToList} 
+            onCancel={handleBackToList}
+            onCreated={handleBackToList}
           />
         )}
 
-        {view === 'DETAIL' && selectedTournament && (
-          <TournamentDetail 
-            tournament={selectedTournament} 
-            onBack={handleBackToList} 
+        {view === "DETAIL" && selectedTournament && (
+          <TournamentDetail
+            tournament={selectedTournament}
+            onBack={handleBackToList}
           />
         )}
       </main>

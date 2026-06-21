@@ -1,10 +1,10 @@
-import express, { Request, Response } from 'express';
-import { createLogger, toErr } from '@corner-click/logger';
+import express, { Request, Response } from "express";
+import { createLogger, toErr } from "@corner-click/logger";
 
-const log = createLogger('auth');
-import { db, auth } from '../services/firebase.js';
-import { authenticateToken } from '../middlewares/auth.js';
-import settings from '../config/settings.js';
+const log = createLogger("auth");
+import { db, auth } from "../services/firebase.js";
+import { authenticateToken } from "../middlewares/auth.js";
+import settings from "../config/settings.js";
 
 const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
 
@@ -56,25 +56,28 @@ const router = express.Router();
  *       '503':
  *         description: Service Unavailable (Firebase Admin not configured)
  */
-router.post('/pin', async (req: Request, res: Response): Promise<void> => {
+router.post("/pin", async (req: Request, res: Response): Promise<void> => {
   try {
     const { pin } = req.body;
 
     if (!pin) {
-      res.status(400).json({ error: 'PIN is required' });
+      res.status(400).json({ error: "PIN is required" });
       return;
     }
 
     if (!db || !auth) {
-      res.status(503).json({ error: 'Firebase Admin not configured' });
+      res.status(503).json({ error: "Firebase Admin not configured" });
       return;
     }
 
     // 1. Verify PIN in Firestore across all judges (Collection Group)
-    const snapshot = await db.collectionGroup('judges').where('pin', '==', pin).get();
+    const snapshot = await db
+      .collectionGroup("judges")
+      .where("pin", "==", pin)
+      .get();
 
     if (snapshot.empty) {
-      res.status(401).json({ error: 'Invalid PIN' });
+      res.status(401).json({ error: "Invalid PIN" });
       return;
     }
 
@@ -84,35 +87,34 @@ router.post('/pin', async (req: Request, res: Response): Promise<void> => {
     const judgeId = judgeDoc.id;
 
     // Update status to ONLINE and set lastActiveAt timestamp
-    await judgeDoc.ref.update({ 
-      status: 'ONLINE',
-      lastActiveAt: new Date().toISOString()
+    await judgeDoc.ref.update({
+      status: "ONLINE",
+      lastActiveAt: new Date().toISOString(),
     });
 
     // 2. Create Custom Token with Custom Claims
     const customClaims = {
-      role: 'judge',
+      role: "judge",
       tournamentId: judgeData.tournamentId,
       judgeId: judgeId,
-      judgeName: judgeData.name
+      judgeName: judgeData.name,
     };
 
-    log.debug({ judgeId }, 'Creating custom token for judge');
+    log.debug({ judgeId }, "Creating custom token for judge");
     const customToken = await auth.createCustomToken(judgeId, customClaims);
-    log.debug({ judgeId }, 'Custom token created successfully');
+    log.debug({ judgeId }, "Custom token created successfully");
 
-    res.json({ 
+    res.json({
       token: customToken,
       judge: {
         id: judgeId,
         name: judgeData.name,
-        tournamentId: judgeData.tournamentId
-      }
+        tournamentId: judgeData.tournamentId,
+      },
     });
-
   } catch (error) {
-    log.error({ err: toErr(error) }, 'Error in /auth/pin');
-    res.status(500).json({ error: 'Internal Server Error' });
+    log.error({ err: toErr(error) }, "Error in /auth/pin");
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -149,71 +151,73 @@ router.post('/pin', async (req: Request, res: Response): Promise<void> => {
  *       '503':
  *         description: Service Unavailable (Firebase not configured)
  */
-router.post('/admin/login', async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { email, password } = req.body;
+router.post(
+  "/admin/login",
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email, password } = req.body;
 
-    if (!email || !password) {
-      res.status(400).json({ error: 'Email and password are required' });
-      return;
-    }
-
-    if (!db || !auth) {
-      res.status(503).json({ error: 'Firebase Admin not configured' });
-      return;
-    }
-
-    if (!FIREBASE_API_KEY) {
-      res.status(503).json({ error: 'Firebase API Key not configured' });
-      return;
-    }
-
-    // 1. Verify credentials via Firebase Identity Toolkit REST API (server-side)
-    const firebaseRes = await fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, returnSecureToken: true })
+      if (!email || !password) {
+        res.status(400).json({ error: "Email and password are required" });
+        return;
       }
-    );
 
-    if (!firebaseRes.ok) {
-      const errorData = await firebaseRes.json() as any;
-      const errorCode = errorData?.error?.message || 'INVALID_CREDENTIALS';
-      log.error(`[Auth] Firebase login failed for ${email}: ${errorCode}`);
-      res.status(401).json({ error: 'Invalid email or password' });
-      return;
-    }
-
-    const firebaseData = await firebaseRes.json() as any;
-    const uid = firebaseData.localId;
-
-    // 2. Verify the user is an admin in Firestore
-    const adminDoc = await db.collection('admins').doc(uid).get();
-    if (!adminDoc.exists) {
-      console.warn(`[Auth] Non-admin user attempted admin login: ${uid}`);
-      res.status(403).json({ error: 'Forbidden: Admin access required' });
-      return;
-    }
-
-    // 3. Create a Custom Token with admin role claim
-    const customToken = await auth.createCustomToken(uid, { role: 'admin' });
-
-    res.json({
-      token: customToken,
-      admin: {
-        uid,
-        email: firebaseData.email,
-        displayName: firebaseData.displayName || null
+      if (!db || !auth) {
+        res.status(503).json({ error: "Firebase Admin not configured" });
+        return;
       }
-    });
 
-  } catch (error) {
-    log.error({ err: toErr(error) }, 'Error in /auth/admin/login');
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+      if (!FIREBASE_API_KEY) {
+        res.status(503).json({ error: "Firebase API Key not configured" });
+        return;
+      }
+
+      // 1. Verify credentials via Firebase Identity Toolkit REST API (server-side)
+      const firebaseRes = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, returnSecureToken: true }),
+        },
+      );
+
+      if (!firebaseRes.ok) {
+        const errorData = (await firebaseRes.json()) as any;
+        const errorCode = errorData?.error?.message || "INVALID_CREDENTIALS";
+        log.error(`[Auth] Firebase login failed for ${email}: ${errorCode}`);
+        res.status(401).json({ error: "Invalid email or password" });
+        return;
+      }
+
+      const firebaseData = (await firebaseRes.json()) as any;
+      const uid = firebaseData.localId;
+
+      // 2. Verify the user is an admin in Firestore
+      const adminDoc = await db.collection("admins").doc(uid).get();
+      if (!adminDoc.exists) {
+        console.warn(`[Auth] Non-admin user attempted admin login: ${uid}`);
+        res.status(403).json({ error: "Forbidden: Admin access required" });
+        return;
+      }
+
+      // 3. Create a Custom Token with admin role claim
+      const customToken = await auth.createCustomToken(uid, { role: "admin" });
+
+      res.json({
+        token: customToken,
+        admin: {
+          uid,
+          email: firebaseData.email,
+          displayName: firebaseData.displayName || null,
+        },
+      });
+    } catch (error) {
+      log.error({ err: toErr(error) }, "Error in /auth/admin/login");
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+);
 
 /**
  * @swagger
@@ -227,26 +231,35 @@ router.post('/admin/login', async (req: Request, res: Response): Promise<void> =
  *       200:
  *         description: Logged out successfully
  */
-router.post('/logout', authenticateToken, async (req: Request, res: Response): Promise<void> => {
-  try {
-    if (!db) {
-      res.status(503).json({ error: 'Firestore not initialized' });
-      return;
+router.post(
+  "/logout",
+  authenticateToken,
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      if (!db) {
+        res.status(503).json({ error: "Firestore not initialized" });
+        return;
+      }
+
+      const { tournamentId, judgeId } = req.user as any;
+
+      if (tournamentId && judgeId) {
+        await db
+          .collection("tournaments")
+          .doc(tournamentId)
+          .collection("judges")
+          .doc(judgeId)
+          .update({
+            status: "OFFLINE",
+          });
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      log.error({ err: toErr(error) }, "Error in /auth/logout");
+      res.status(500).json({ error: "Internal Server Error" });
     }
-
-    const { tournamentId, judgeId } = req.user as any;
-
-    if (tournamentId && judgeId) {
-      await db.collection('tournaments').doc(tournamentId).collection('judges').doc(judgeId).update({
-        status: 'OFFLINE'
-      });
-    }
-
-    res.json({ success: true });
-  } catch (error) {
-    log.error({ err: toErr(error) }, 'Error in /auth/logout');
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+  },
+);
 
 export default router;

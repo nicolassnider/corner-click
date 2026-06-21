@@ -1,19 +1,22 @@
-import { ref, get, set, remove, push, update } from 'firebase/database';
-import { database } from '../lib/firebase';
-import { fetchWithAuth } from '../utils/apiClient';
-import type { Match, Competitor } from '@corner-click/types';
-import { MatchStatus } from '@corner-click/types';
+import { ref, get, set, remove, push, update } from "firebase/database";
+import { database } from "../lib/firebase";
+import { fetchWithAuth } from "../utils/apiClient";
+import type { Match, Competitor } from "@corner-click/types";
+import { MatchStatus } from "@corner-click/types";
 
 /**
  * Shuffles an array randomly using Fisher-Yates algorithm.
  */
 function shuffle<T>(array: T[]): T[] {
-  let currentIndex = array.length,  randomIndex;
+  let currentIndex = array.length,
+    randomIndex;
   while (currentIndex !== 0) {
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
     [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
+      array[randomIndex],
+      array[currentIndex],
+    ];
   }
   return array;
 }
@@ -23,25 +26,33 @@ function shuffle<T>(array: T[]): T[] {
  * Seeds (isSeeded = true) are placed at extreme ends.
  * Byes are distributed as needed to make the number of competitors a power of 2.
  */
-export const generateBracket = async (tournamentId: string, categoryId: string, areaId: string, competitors: Competitor[]): Promise<Match[]> => {
+export const generateBracket = async (
+  tournamentId: string,
+  categoryId: string,
+  areaId: string,
+  competitors: Competitor[],
+): Promise<Match[]> => {
   if (competitors.length < 2) {
-    throw new Error('Not enough competitors to generate a bracket');
+    throw new Error("Not enough competitors to generate a bracket");
   }
 
   // Separate seeds from regular competitors
-  const seeds = competitors.filter(c => c.isSeeded);
-  let unseeded = shuffle(competitors.filter(c => !c.isSeeded));
+  const seeds = competitors.filter((c) => c.isSeeded);
+  let unseeded = shuffle(competitors.filter((c) => !c.isSeeded));
 
   // Determine power of 2 for bracket size (2, 4, 8, 16, 32...)
   const bracketSize = Math.pow(2, Math.ceil(Math.log2(competitors.length)));
-  
+
   // Create bracket array initialized to null
-  const orderedCompetitors: (Competitor | null)[] = new Array(bracketSize).fill(null);
+  const orderedCompetitors: (Competitor | null)[] = new Array(bracketSize).fill(
+    null,
+  );
 
   // Position seeds: Top 3 logic
   if (seeds.length > 0) orderedCompetitors[0] = seeds[0];
   if (seeds.length > 1) orderedCompetitors[bracketSize - 1] = seeds[1];
-  if (seeds.length > 2) orderedCompetitors[Math.floor(bracketSize / 2) - 1] = seeds[2]; // Bottom of top half
+  if (seeds.length > 2)
+    orderedCompetitors[Math.floor(bracketSize / 2) - 1] = seeds[2]; // Bottom of top half
 
   // Fill remaining spots with unseeded
   for (let i = 0; i < bracketSize; i++) {
@@ -53,8 +64,8 @@ export const generateBracket = async (tournamentId: string, categoryId: string, 
   }
 
   // Create matches
-  const matches: Omit<Match, 'id'>[] = [];
-  
+  const matches: Omit<Match, "id">[] = [];
+
   // Helper to calculate total rounds
   const totalRounds = Math.log2(bracketSize);
 
@@ -80,9 +91,9 @@ export const generateBracket = async (tournamentId: string, categoryId: string, 
       areaId,
       status: isBye ? MatchStatus.COMPLETED : MatchStatus.PENDING,
       round: 1,
-      redCompetitorId: comp1 ? comp1.id : 'BYE',
-      blueCompetitorId: comp2 ? comp2.id : 'BYE',
-      winnerId: isBye ? (comp1 ? comp1.id : (comp2 ? comp2.id : null)) : null,
+      redCompetitorId: comp1 ? comp1.id : "BYE",
+      blueCompetitorId: comp2 ? comp2.id : "BYE",
+      winnerId: isBye ? (comp1 ? comp1.id : comp2 ? comp2.id : null) : null,
       score: { red: 0, blue: 0 },
       warnings: { red: 0, blue: 0 },
       deductions: { red: 0, blue: 0 },
@@ -103,8 +114,8 @@ export const generateBracket = async (tournamentId: string, categoryId: string, 
         areaId,
         status: MatchStatus.PENDING,
         round: r,
-        redCompetitorId: '',
-        blueCompetitorId: '',
+        redCompetitorId: "",
+        blueCompetitorId: "",
         winnerId: null,
         score: { red: 0, blue: 0 },
         warnings: { red: 0, blue: 0 },
@@ -112,30 +123,39 @@ export const generateBracket = async (tournamentId: string, categoryId: string, 
       });
 
       // Update previous round matches to point to this next match
-      const prevMatch1Index = (matches.length - 1 - roundMatchesCount) - (roundMatchesCount * 2 - 1) + (i * 2);
+      const prevMatch1Index =
+        matches.length -
+        1 -
+        roundMatchesCount -
+        (roundMatchesCount * 2 - 1) +
+        i * 2;
       const prevMatch2Index = prevMatch1Index + 1;
-      
+
       // Need a more reliable way to link matches. We will link them after creating all.
     }
   }
 
   // A simpler way to link matches is bottom-up or just saving them and then linking.
   // For simplicity, let's just clear existing category matches and rewrite them all.
-  
+
   // Clean existing matches for category
   const existingMatches = await getMatches(tournamentId, categoryId);
   for (const em of existingMatches) {
-     await remove(ref(database, `tournaments/${tournamentId}/matches/${em.id}`));
+    await remove(ref(database, `tournaments/${tournamentId}/matches/${em.id}`));
   }
 
   // Let's rewrite the match creation with explicit parent/child linking
   const finalMatches: Match[] = [];
-  
-  const createNodes = (round: number, matchCount: number, nextMatchIds: string[] = []): string[] => {
+
+  const createNodes = (
+    round: number,
+    matchCount: number,
+    nextMatchIds: string[] = [],
+  ): string[] => {
     if (round < 1) return [];
-    
+
     const currentIds: string[] = [];
-    for(let i=0; i<matchCount; i++) {
+    for (let i = 0; i < matchCount; i++) {
       const matchRef = push(matchesRef);
       currentIds.push(matchRef.key as string);
     }
@@ -144,21 +164,21 @@ export const generateBracket = async (tournamentId: string, categoryId: string, 
 
     for (let i = 0; i < matchCount; i++) {
       const matchId = currentIds[i];
-      let redId = '';
-      let blueId = '';
+      let redId = "";
+      let blueId = "";
       let status: MatchStatus = MatchStatus.PENDING;
       let winnerId = null;
 
       if (round === 1) {
         const comp1 = orderedCompetitors[i * 2];
         const comp2 = orderedCompetitors[i * 2 + 1];
-        redId = comp1 ? comp1.id : 'BYE';
-        blueId = comp2 ? comp2.id : 'BYE';
-        
+        redId = comp1 ? comp1.id : "BYE";
+        blueId = comp2 ? comp2.id : "BYE";
+
         const isBye = comp1 === null || comp2 === null;
         if (isBye) {
           status = MatchStatus.COMPLETED;
-          winnerId = comp1 ? comp1.id : (comp2 ? comp2.id : null);
+          winnerId = comp1 ? comp1.id : comp2 ? comp2.id : null;
         }
       }
 
@@ -190,40 +210,47 @@ export const generateBracket = async (tournamentId: string, categoryId: string, 
     const { id, ...matchData } = m;
     updates[id] = matchData;
   }
-  
+
   await update(matchesRef, updates);
 
   return finalMatches;
 };
 
-
-export const getMatches = async (tournamentId: string, categoryId?: string): Promise<Match[]> => {
+export const getMatches = async (
+  tournamentId: string,
+  categoryId?: string,
+): Promise<Match[]> => {
   const matchesRef = ref(database, `tournaments/${tournamentId}/matches`);
   const snapshot = await get(matchesRef);
-  
+
   if (!snapshot.exists()) return [];
 
   const data = snapshot.val();
-  const matches: Match[] = Object.keys(data).map(key => ({
+  const matches: Match[] = Object.keys(data).map((key) => ({
     id: key,
-    ...data[key]
+    ...data[key],
   }));
 
   if (categoryId) {
-    return matches.filter(m => m.categoryId === categoryId);
+    return matches.filter((m) => m.categoryId === categoryId);
   }
 
   return matches;
 };
 
-export const advanceWinner = async (tournamentId: string, matchId: string, winnerId: string, nextMatchId?: string): Promise<void> => {
+export const advanceWinner = async (
+  tournamentId: string,
+  matchId: string,
+  winnerId: string,
+  nextMatchId?: string,
+): Promise<void> => {
   const res = await fetchWithAuth(`/api/matches/${matchId}/winner`, {
-    method: 'POST',
-    body: JSON.stringify({ winnerId, tournamentId, nextMatchId })
+    method: "POST",
+    body: JSON.stringify({ winnerId, tournamentId, nextMatchId }),
   });
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({})) as any;
-    throw new Error(err.error || 'Failed to advance winner');
+    const err = (await res.json().catch(() => ({}))) as any;
+    throw new Error(err.error || "Failed to advance winner");
   }
 };

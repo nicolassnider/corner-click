@@ -1,10 +1,11 @@
 {
   "name": "corner-click",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "devDependencies": {
     "@vitest/coverage-v8": "^4.1.9",
     "@vitest/ui": "^4.1.9",
     "prettier": "^3.0.0",
+    "prettier-plugin-astro": "^0.14.1",
     "syncpack": "^15.3.2",
     "turbo": "^2.0.0",
     "vitest": "^4.1.9"
@@ -14,7 +15,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "format": "prettier --write \"**/*.{ts,tsx,md,json,astro}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,astro}\" --plugin=prettier-plugin-astro",
     "lint": "turbo run lint",
     "lint:deps": "syncpack lint && syncpack format --check",
     "start:api": "node apps/api/dist/index.js",

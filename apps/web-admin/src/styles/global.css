@@ -1,3 +1,63 @@
 @import "tailwindcss";
 
-/* Any custom overrides can go here, but for now we rely 100% on Tailwind classes */
+/* Height-based responsive scaling for TV Scoreboard to prevent footer clipping on shorter viewports (e.g. 1600x900) */
+@media (max-height: 950px) {
+  .tv-root {
+    padding-top: 2vh !important;
+    padding-bottom: 2vh !important;
+  }
+  .tv-header {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+  .tv-main {
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+    gap: 1.5rem !important;
+  }
+  .tv-panel {
+    padding: 1.5rem !important;
+  }
+  .tv-panel-title {
+    margin-top: 1rem !important;
+    font-size: 3rem !important; /* approx 48px */
+    line-height: 1 !important;
+  }
+  .tv-panel-subtitle {
+    margin-top: 0.5rem !important;
+    font-size: 1.25rem !important;
+  }
+  .tv-score {
+    font-size: 8rem !important;
+  }
+  .tv-timer {
+    font-size: 7.5rem !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  .tv-footer {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+}
+
+@media (max-height: 750px) {
+  .tv-panel-title {
+    font-size: 2.25rem !important;
+    margin-top: 0.5rem !important;
+  }
+  .tv-panel-subtitle {
+    font-size: 1rem !important;
+    margin-top: 0.25rem !important;
+  }
+  .tv-score {
+    font-size: 6rem !important;
+  }
+  .tv-timer {
+    font-size: 5.5rem !important;
+  }
+}
