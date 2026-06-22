@@ -208,6 +208,9 @@ export const generateBracket = async (
   const updates: Record<string, any> = {};
   for (const m of finalMatches) {
     const { id, ...matchData } = m;
+    if (matchData.nextMatchId === undefined) {
+      delete matchData.nextMatchId;
+    }
     updates[id] = matchData;
   }
 
