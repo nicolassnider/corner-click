@@ -44,6 +44,4 @@ firebase-debug.*.log
 corner-check-8d397-firebase-adminsdk-fbsvc-d42f3d9cfe.json
 node_modules/*
 apps/web-admin/pss.txt
-apps/api/coverage/*
-coverage/coverage-final.json
-coverage/coverage-final.json
+coverage/
