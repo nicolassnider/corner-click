@@ -6,6 +6,7 @@ import { BracketManager } from "./BracketManager";
 import { CategoryManager } from "./CategoryManager";
 import { CategoryAdjuster } from "./CategoryAdjuster";
 import { getCategories } from "../services/categoryService";
+import { getDynamicAnalyticsUrl } from "../utils/apiClient";
 
 interface Props {
   tournament: Tournament;
@@ -230,30 +231,42 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           <div className="mb-6">{renderNavigation()}</div>
 
           {(activeTab === "competitors" || activeTab === "brackets") && (
-            <div className="mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-              <label
-                htmlFor="category-select"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Seleccionar Categoría
-              </label>
-              <select
-                id="category-select"
-                aria-label="Seleccionar Categoría"
-                title="Seleccionar Categoría"
-                value={selectedCategoryId}
-                onChange={(e) => setSelectedCategoryId(e.target.value)}
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
-              >
-                <option value="" disabled>
-                  -- Selecciona una categoría --
-                </option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
+            <div className="mb-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div className="flex-1">
+                <label
+                  htmlFor="category-select"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Seleccionar Categoría
+                </label>
+                <select
+                  id="category-select"
+                  aria-label="Seleccionar Categoría"
+                  title="Seleccionar Categoría"
+                  value={selectedCategoryId}
+                  onChange={(e) => setSelectedCategoryId(e.target.value)}
+                  className="mt-1 block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
+                >
+                  <option value="" disabled>
+                    -- Selecciona una categoría --
                   </option>
-                ))}
-              </select>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {selectedCategoryId && (
+                <a
+                  href={`${getDynamicAnalyticsUrl(import.meta.env.PUBLIC_ANALYTICS_URL || "http://localhost:4323")}/?tournament=${encodeURIComponent(tournament.id!)}&category=${encodeURIComponent(selectedCategoryId)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center px-6 py-2.5 border border-transparent text-sm font-bold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shrink-0 shadow-sm"
+                >
+                  Ver Estadísticas Públicas ↗
+                </a>
+              )}
             </div>
           )}
 

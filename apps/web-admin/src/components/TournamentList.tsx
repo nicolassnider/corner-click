@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import type { Tournament } from "@corner-click/types";
-import { fetchWithAuth } from "../utils/apiClient";
+import { fetchWithAuth, getDynamicAnalyticsUrl } from "../utils/apiClient";
 
 const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:4000";
 
@@ -150,6 +150,15 @@ export default function TournamentList({
             {t.areas || 1} Áreas
           </p>
           <div className="flex space-x-2">
+            <a
+              href={`${getDynamicAnalyticsUrl(import.meta.env.PUBLIC_ANALYTICS_URL || "http://localhost:4323")}/?tournament=${encodeURIComponent(t.id!)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="px-3 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded text-xs transition-colors cursor-pointer border border-indigo-200 flex items-center justify-center shadow-sm"
+            >
+              Stats ↗
+            </a>
             {t.status !== "COMPLETED" && (
               <>
                 <button
