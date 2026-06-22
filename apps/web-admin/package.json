@@ -4,6 +4,7 @@
   "dependencies": {
     "@astrojs/react": "^5.0.7",
     "@corner-click/api-client": "0.0.1",
+    "@corner-click/audio": "0.0.1",
     "@corner-click/tsconfig": "0.0.1",
     "@corner-click/types": "0.0.1",
     "@tailwindcss/vite": "^4.3.1",

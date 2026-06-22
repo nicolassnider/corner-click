@@ -16,6 +16,7 @@ import {
   MatchControlAction,
   ScoreUpdateType,
 } from "@corner-click/types";
+import { AudioService } from "@corner-click/audio";
 
 interface ScoreData {
   redScore: number;
@@ -100,6 +101,7 @@ export const useActiveMatch = (
     extraTimeOverride?: boolean,
   ) => {
     if (!selectedMatch) return;
+    AudioService.playBeep();
     const nextExtraTime =
       extraTimeOverride !== undefined ? extraTimeOverride : isExtraTime;
 
@@ -167,6 +169,7 @@ export const useActiveMatch = (
 
   const handleDeclareWinner = async (winnerId: string) => {
     if (!selectedMatch) return;
+    AudioService.playBeep();
 
     if (useLocal) {
       // Buffer the result to localStorage for later synchronization

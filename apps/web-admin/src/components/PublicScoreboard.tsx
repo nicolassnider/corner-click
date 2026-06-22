@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ref, onValue, get } from "firebase/database";
 import { database } from "../lib/firebase";
 import {
@@ -16,6 +16,7 @@ import {
   APP_NAME,
   SYSTEM_OFFICIAL_TITLE,
 } from "@corner-click/types";
+import { AudioService } from "@corner-click/audio";
 import { API_URL } from "../utils/apiClient";
 import "../styles/global.css";
 
@@ -96,6 +97,35 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
     });
     return () => unsubscribe();
   }, []);
+
+  const prevStatusRef = useRef<MatchStatus | null>(null);
+  const prevTimeRef = useRef<number | null>(null);
+
+  // Play start gong when status changes to ACTIVE
+  useEffect(() => {
+    if (
+      prevStatusRef.current !== null &&
+      prevStatusRef.current !== MatchStatus.ACTIVE &&
+      matchStatus === MatchStatus.ACTIVE
+    ) {
+      AudioService.playGong();
+    }
+    prevStatusRef.current = matchStatus;
+  }, [matchStatus]);
+
+  // Play buzzer when time reaches 00:00 while the match is active
+  useEffect(() => {
+    if (
+      timeRemaining === 0 &&
+      prevTimeRef.current !== 0 &&
+      prevTimeRef.current !== null &&
+      (matchStatus === MatchStatus.ACTIVE ||
+        matchStatus === MatchStatus.GOLDEN_POINT)
+    ) {
+      AudioService.playBuzzer();
+    }
+    prevTimeRef.current = timeRemaining;
+  }, [timeRemaining, matchStatus]);
 
   // Connect to local WebSocket fallback if offline
   useEffect(() => {

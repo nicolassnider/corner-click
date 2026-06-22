@@ -9,6 +9,7 @@ import {
   SocketRole,
   ScoreUpdateType,
 } from "@corner-click/types";
+import { AudioService } from "@corner-click/audio";
 import { submitScores } from "../services/scoreService";
 import {
   connectSocket,
@@ -185,6 +186,8 @@ export default function ScorePad({
     )
       return;
 
+    AudioService.playClick();
+
     if (color === CornerRole.RED) setRedScore((prev) => prev + points);
     if (color === CornerRole.BLUE) setBlueScore((prev) => prev + points);
 
@@ -208,6 +211,8 @@ export default function ScorePad({
     )
       return;
 
+    AudioService.playClick();
+
     if (color === CornerRole.RED) setRedWarnings((prev) => prev + 1);
     if (color === CornerRole.BLUE) setBlueWarnings((prev) => prev + 1);
 
@@ -230,6 +235,8 @@ export default function ScorePad({
       matchStatus !== MatchStatus.GOLDEN_POINT
     )
       return;
+
+    AudioService.playClick();
 
     if (color === CornerRole.RED) setRedDeductions((prev) => prev + 1);
     if (color === CornerRole.BLUE) setBlueDeductions((prev) => prev + 1);

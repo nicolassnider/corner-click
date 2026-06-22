@@ -63,7 +63,7 @@ describe("TournamentList Component", () => {
         onSelect={onSelect}
         onCreateNew={onCreateNew}
         onEdit={onEdit}
-      />
+      />,
     );
 
     // Wait for the tournaments to load and render
@@ -91,7 +91,7 @@ describe("TournamentList Component", () => {
         onSelect={vi.fn()}
         onCreateNew={vi.fn()}
         onEdit={vi.fn()}
-      />
+      />,
     );
 
     await waitFor(() => {
@@ -101,8 +101,12 @@ describe("TournamentList Component", () => {
     // Check that Edit/Delete buttons exist for the active tournament card
     const activeCard = screen.getByText("Torneo Activo").closest(".p-6");
     expect(activeCard).toBeTruthy();
-    expect(activeCard?.querySelector("button:nth-of-type(1)")?.textContent).toBe("Edit");
-    expect(activeCard?.querySelector("button:nth-of-type(2)")?.textContent).toBe("Delete");
+    expect(
+      activeCard?.querySelector("button:nth-of-type(1)")?.textContent,
+    ).toBe("Edit");
+    expect(
+      activeCard?.querySelector("button:nth-of-type(2)")?.textContent,
+    ).toBe("Delete");
 
     // Check that Edit/Delete buttons DO NOT exist inside the completed tournament card
     const completedCard = screen.getByText("Torneo Finalizado").closest(".p-6");
