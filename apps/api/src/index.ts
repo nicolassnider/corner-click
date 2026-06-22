@@ -63,7 +63,10 @@ const swaggerOptions = {
     },
     security: [{ bearerAuth: [] }],
   },
-  apis: ["./src/routes/*.ts", "./src/index.ts"],
+  apis: [
+    path.join(__dirname.endsWith("dist") ? path.join(__dirname, "../src") : __dirname, "routes/*.ts"),
+    path.join(__dirname.endsWith("dist") ? path.join(__dirname, "../src") : __dirname, "index.ts"),
+  ],
 };
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions);

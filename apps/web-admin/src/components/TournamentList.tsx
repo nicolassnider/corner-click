@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import type { Tournament } from "@corner-click/types";
 import { fetchWithAuth, getDynamicAnalyticsUrl } from "../utils/apiClient";
 
+import { Button } from "@corner-click/ui";
+
 const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:4000";
 
 interface Props {
@@ -161,24 +163,26 @@ export default function TournamentList({
             </a>
             {t.status !== "COMPLETED" && (
               <>
-                <button
+                <Button
                   onClick={(e) => {
                     e.stopPropagation();
                     onEdit(t);
                   }}
-                  className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded text-xs transition-colors cursor-pointer border border-gray-300"
+                  variant="secondary"
+                  size="sm"
                 >
                   Edit
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDelete(t.id!);
                   }}
-                  className="px-3 py-1 bg-red-50 hover:bg-red-100 text-red-650 font-bold rounded text-xs transition-colors cursor-pointer border border-red-200"
+                  variant="danger"
+                  size="sm"
                 >
                   Delete
-                </button>
+                </Button>
               </>
             )}
           </div>
@@ -193,12 +197,9 @@ export default function TournamentList({
         <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">
           Tournaments
         </h1>
-        <button
-          onClick={onCreateNew}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:-translate-y-1"
-        >
+        <Button onClick={onCreateNew}>
           + New Tournament
-        </button>
+        </Button>
       </div>
 
       {tournaments.length === 0 ? (

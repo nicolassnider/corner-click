@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @source "../../../../packages/auth/src/**/*.{ts,tsx}";
+@source "../../../../packages/ui/src/**/*.{ts,tsx}";
 
 
 

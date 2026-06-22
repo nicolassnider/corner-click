@@ -126,160 +126,96 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
     }
     prevTimeRef.current = timeRemaining;
   }, [timeRemaining, matchStatus]);
-
-  // Connect to local WebSocket fallback if offline
+  // Poll the API for live state (optimized polling) instead of WebSocket/Firebase to save connections
   useEffect(() => {
-    if (!useLocal) return;
+    let active = true;
+    let timerId: NodeJS.Timeout;
 
-    const socket = connectSocket(areaId, SocketRole.SPECTATOR);
-
-    socket.on(SocketEvent.MATCH_STATE, (state: any) => {
-      if (state && state.match) {
-        setActiveMatch({
-          matchId: state.match.id,
-          tournamentId: state.match.tournamentId,
-          categoryId: state.match.categoryId,
-          redCompetitorId: state.match.redCompetitorId,
-          blueCompetitorId: state.match.blueCompetitorId,
-          round: state.match.round || 1,
-          nextMatchId: state.match.nextMatchId || null,
-        });
-        setTimeRemaining(state.timer);
-        setMatchStatus(state.match.status);
-        setIsExtraTime(state.match.isExtraTime || false);
-        if (state.scores) {
-          setJudgesData(state.scores);
-        }
-
-        // Map competitor names from socket payload for offline layout mapping
-        if (state.match.redCompetitorName) {
-          setCompetitors((prev) => ({
-            ...prev,
-            [state.match.redCompetitorId]: {
-              name: state.match.redCompetitorName,
-              club: state.match.redCompetitorClub || "",
-            },
-          }));
-        }
-        if (state.match.blueCompetitorName) {
-          setCompetitors((prev) => ({
-            ...prev,
-            [state.match.blueCompetitorId]: {
-              name: state.match.blueCompetitorName,
-              club: state.match.blueCompetitorClub || "",
-            },
-          }));
-        }
-      }
-    });
-
-    return () => {
-      disconnectSocket();
-    };
-  }, [useLocal, areaId]);
-
-  // 1. Listen to active match of the Area (Online only)
-  useEffect(() => {
-    if (useLocal) return;
-    const areaMatchRef = ref(database, `live_matches_by_area/${areaId}`);
-
-    const unsubscribe = onValue(areaMatchRef, async (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val() as AreaMatchData;
-        setActiveMatch(data);
-
-        // Fetch category details
-        const categoryRef = ref(
-          database,
-          `tournaments/${data.tournamentId}/categories/${data.categoryId}`,
-        );
-        const catSnap = await get(categoryRef);
-        if (catSnap.exists()) {
-          setCategoryName(catSnap.val().name || "");
-        }
-
-        // Fetch all competitors of the tournament for mapping
-        const competitorsRef = ref(
-          database,
-          `tournaments/${data.tournamentId}/competitors`,
-        );
-        const compsSnap = await get(competitorsRef);
-        if (compsSnap.exists()) {
-          const compsData = compsSnap.val();
-          const mapped: Record<string, { name: string; club: string }> = {};
-          Object.keys(compsData).forEach((key) => {
-            const c = compsData[key];
-            mapped[key] = {
-              name: `${c.firstName} ${c.lastName}`,
-              club: c.club || "",
-            };
+    const pollLiveState = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/matches/area/${areaId}/live`);
+        if (!res.ok) return;
+        const state = await res.json();
+        
+        if (state && state.match && state.match.id) {
+          // It's from memory cache format
+          setActiveMatch({
+            matchId: state.match.id,
+            tournamentId: state.match.tournamentId,
+            categoryId: state.match.categoryId,
+            redCompetitorId: state.match.redCompetitorId,
+            blueCompetitorId: state.match.blueCompetitorId,
+            round: state.match.round || 1,
+            nextMatchId: state.match.nextMatchId || null,
           });
-          setCompetitors(mapped);
-        }
-      } else {
-        setActiveMatch(null);
-      }
-    });
+          setTimeRemaining(state.timer ?? 120);
+          setMatchStatus(state.match.status ?? MatchStatus.PENDING);
+          setIsExtraTime(state.match.isExtraTime || false);
+          if (state.scores) setJudgesData(state.scores);
 
-    return () => unsubscribe();
-  }, [areaId, useLocal]);
-
-  // 2. Listen to live match status, timer and scores from Firebase RTDB in real-time (Online only)
-  useEffect(() => {
-    if (useLocal || !activeMatch) return;
-
-    const liveMatchRef = ref(database, `live_matches/${activeMatch.matchId}`);
-
-    const unsubscribe = onValue(liveMatchRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        setTimeRemaining(
-          data.timeRemaining !== undefined ? data.timeRemaining : 120,
-        );
-        setMatchStatus(data.status || MatchStatus.PENDING);
-        setIsExtraTime(data.isExtraTime || false);
-        if (data.scores) {
-          setJudgesData(data.scores);
-        } else {
-          setJudgesData({});
-        }
-      }
-    });
-
-    return () => unsubscribe();
-  }, [activeMatch?.matchId, useLocal]);
-
-  // 3. Listen to score streams when match ends (Online only)
-  useEffect(() => {
-    if (useLocal) return;
-    let eventSource: EventSource | null = null;
-    setJudgesData({});
-
-    if (
-      activeMatch &&
-      (matchStatus === MatchStatus.ENDED ||
-        matchStatus === MatchStatus.COMPLETED)
-    ) {
-      eventSource = new EventSource(
-        `${API_URL}/api/matches/${activeMatch.matchId}/stream-scores`,
-      );
-
-      eventSource.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.scores) {
-            setJudgesData(data.scores);
+          // Map competitors
+          if (state.match.redCompetitorName) {
+             setCompetitors(prev => ({...prev, [state.match.redCompetitorId]: { name: state.match.redCompetitorName, club: "" }}));
           }
-        } catch (err) {
-          console.error("Failed to parse SSE scores:", err);
+          if (state.match.blueCompetitorName) {
+             setCompetitors(prev => ({...prev, [state.match.blueCompetitorId]: { name: state.match.blueCompetitorName, club: "" }}));
+          }
+        } else if (state && state.matchId) {
+          // It's from RTDB format
+          setActiveMatch(state);
+        } else {
+          setActiveMatch(null);
         }
-      };
-    }
+      } catch (err) {
+        console.error("Polling error:", err);
+      } finally {
+        if (active) {
+          timerId = setTimeout(pollLiveState, 2000); // 2 second polling
+        }
+      }
+    };
+
+    pollLiveState();
 
     return () => {
-      if (eventSource) eventSource.close();
+      active = false;
+      if (timerId) clearTimeout(timerId);
     };
-  }, [activeMatch?.matchId, matchStatus, useLocal]);
+  }, [areaId]);
+
+  // Fetch category and competitors when activeMatch changes
+  useEffect(() => {
+    if (!activeMatch || !firebaseConnected) return;
+
+    const fetchDetails = async () => {
+      const redId = activeMatch.redCompetitorId;
+      const blueId = activeMatch.blueCompetitorId;
+      const tId = activeMatch.tournamentId;
+      const cId = activeMatch.categoryId;
+
+      // Category name
+      const categoryRef = ref(database, `tournaments/${tId}/categories/${cId}`);
+      const catSnap = await get(categoryRef);
+      if (catSnap.exists()) setCategoryName(catSnap.val().name || "");
+
+      // Competitors
+      if (!competitors[redId]) {
+        const cRef = ref(database, `tournaments/${tId}/competitors/${redId}`);
+        const snap = await get(cRef);
+        if (snap.exists()) setCompetitors(prev => ({...prev, [redId]: snap.val()}));
+      }
+      if (!competitors[blueId]) {
+        const cRef = ref(database, `tournaments/${tId}/competitors/${blueId}`);
+        const snap = await get(cRef);
+        if (snap.exists()) setCompetitors(prev => ({...prev, [blueId]: snap.val()}));
+      }
+    };
+
+    fetchDetails();
+  }, [activeMatch?.matchId, firebaseConnected]);
+
+  // Firebase listeners removed in favor of polling `/api/matches/area/:areaId/live` 
+  // to reduce WebSocket and Firebase connection overhead for spectators.
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60)

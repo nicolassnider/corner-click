@@ -1,5 +1,5 @@
 import { auth } from "../lib/firebase";
-import { createFetchWithAuth } from "@corner-click/api-client";
+import { createFetchWithAuth, syncOfflineQueue } from "@corner-click/api-client";
 
 const CONFIGURED_API_URL =
   import.meta.env.PUBLIC_API_URL || "http://localhost:4000";
@@ -24,4 +24,12 @@ export const getDynamicApiUrl = (configuredUrl: string): string => {
 
 export const API_URL = getDynamicApiUrl(CONFIGURED_API_URL);
 
-export const fetchWithAuth = createFetchWithAuth(auth, API_URL);
+// Pass true to enable offline-first queueing for mutations in the judge UI
+export const fetchWithAuth = createFetchWithAuth(auth, API_URL, true);
+
+if (typeof window !== "undefined") {
+  window.addEventListener('online', () => {
+    console.log('[Network] Back online, syncing queue...');
+    syncOfflineQueue(fetchWithAuth);
+  });
+}

@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@source "../../../../packages/ui/src/**/*.{ts,tsx}";
 /* 
   Custom styles for elements that are too complex for utility classes,
   though we aim to use Tailwind for 99% of styling.

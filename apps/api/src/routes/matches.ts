@@ -427,4 +427,64 @@ router.post(
   },
 );
 
+import { localStore } from "../services/socketService.js";
+
+/**
+ * @swagger
+ * /matches/area/{areaId}/live:
+ *   get:
+ *     tags: [Matches]
+ *     summary: Get live match state for an area (Cached)
+ *     description: Polling endpoint for spectators to get current score, timer, and status. Pulls from memory cache or RTDB.
+ *     parameters:
+ *       - in: path
+ *         name: areaId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Live state
+ */
+router.get("/area/:areaId/live", async (req: Request, res: Response): Promise<void> => {
+  const areaId = req.params.areaId as string;
+  res.setHeader("Cache-Control", "public, max-age=2"); // Cache for 2 seconds to reduce load
+
+  try {
+    // Check local memory first (if being managed via websockets locally)
+    const localState = localStore.getMatchState(areaId);
+    if (localState && localState.match.status !== "PENDING") {
+      res.json(localState);
+      return;
+    }
+
+    // Fallback to RTDB
+    if (rtdb) {
+      const liveRef = rtdb.ref(`live_matches_by_area/${areaId}`);
+      const snap = await liveRef.once("value");
+      if (snap.exists()) {
+        const areaData = snap.val();
+        // Here we'd ideally also get the timer and scores, but for now we just return the area data
+        // RTDB usually stores `live_matches/${areaData.matchId}` as well
+        if (areaData.matchId) {
+           const matchSnap = await rtdb.ref(`live_matches/${areaData.matchId}`).once("value");
+           const timerSnap = await rtdb.ref(`live_matches/${areaData.matchId}/timer`).once("value");
+           const scoresSnap = await rtdb.ref(`live_matches/${areaData.matchId}/scores`).once("value");
+           res.json({
+             match: matchSnap.val() || {},
+             timer: timerSnap.val() || 0,
+             scores: scoresSnap.val() || {}
+           });
+           return;
+        }
+      }
+    }
+
+    res.json({ match: null });
+  } catch (err) {
+    log.error({ err: toErr(err) }, "Error fetching live state");
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
 export default router;
