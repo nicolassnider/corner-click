@@ -3,8 +3,14 @@ import { ref, get } from "firebase/database";
 import { database } from "../lib/firebase";
 import { getCategories } from "../services/categoryService";
 import AnalyticsManager from "./AnalyticsManager";
+import { fetchWithAuth, API_URL } from "../utils/apiClient";
+import AnalyticsHeader from "./AnalyticsHeader";
+import AnalyticsFooter from "./AnalyticsFooter";
+import { auth } from "../lib/firebase";
+import { AuthProvider, useAuth, LoginForm } from "@corner-click/auth";
 
-export default function AnalyticsApp() {
+function AnalyticsAppContent() {
+  const { user, loading } = useAuth();
   const [tournaments, setTournaments] = useState<
     { id: string; name: string }[]
   >([]);
@@ -16,32 +22,41 @@ export default function AnalyticsApp() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [loadingCategories, setLoadingCategories] = useState(false);
 
+  const selectedCategory = categories.find((c) => c.id === selectedCategoryId);
+  const selectedCategoryName = selectedCategory?.name;
+
+  const selectedTournament = tournaments.find((t) => t.id === selectedTournamentId);
+  const selectedTournamentName = selectedTournament?.name;
+
   // Load URL params if any
   useEffect(() => {
+    if (!user) return;
+
     const params = new URLSearchParams(window.location.search);
     const tId = params.get("tournament");
     const cId = params.get("category");
     if (tId) setSelectedTournamentId(tId);
     if (cId) setSelectedCategoryId(cId);
 
-    // Fetch tournaments list from RTDB publicly
-    const tournamentsRef = ref(database, "tournaments");
-    get(tournamentsRef)
-      .then((snap) => {
-        if (snap.exists()) {
-          const data = snap.val();
-          const list = Object.keys(data).map((key) => ({
-            id: key,
-            name: data[key].name || "Torneo Sin Nombre",
+    // Fetch tournaments list from API publicly (since Firestore holds their names)
+    fetchWithAuth(`${API_URL}/api/tournaments`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const list = data.map((t: any) => ({
+            id: t.id,
+            name: t.name || "Torneo Sin Nombre",
           }));
           setTournaments(list);
         }
       })
       .catch((err) => console.error("Failed to load tournaments:", err));
-  }, []);
+  }, [user]);
 
   // Update URL params when selections change
   useEffect(() => {
+    if (!user) return;
+
     const url = new URL(window.location.href);
     if (selectedTournamentId) {
       url.searchParams.set("tournament", selectedTournamentId);
@@ -56,10 +71,12 @@ export default function AnalyticsApp() {
     }
 
     window.history.replaceState({}, "", url.toString());
-  }, [selectedTournamentId, selectedCategoryId]);
+  }, [selectedTournamentId, selectedCategoryId, user]);
 
   // Fetch categories when tournament is selected
   useEffect(() => {
+    if (!user) return;
+
     if (selectedTournamentId) {
       setLoadingCategories(true);
       getCategories(selectedTournamentId)
@@ -78,24 +95,34 @@ export default function AnalyticsApp() {
       setCategories([]);
       setSelectedCategoryId("");
     }
-  }, [selectedTournamentId]);
+  }, [selectedTournamentId, user]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center bg-[#0A0F1C]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <LoginForm
+        title="CORNERCLICK"
+        subtitle="Public Analytics"
+        onLoginSuccess={() => {
+          // reload the page to initialize session state correctly
+          window.location.reload();
+        }}
+      />
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-6 md:p-12 print:p-0">
-      <div className="max-w-6xl mx-auto space-y-8">
-        {/* Header */}
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-6 gap-4 print:hidden">
-          <div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-800">
-              Corner Click &mdash; Analíticas Públicas
-            </h1>
-            <p className="text-slate-500 text-sm mt-1">
-              Consulta estadísticas de competencia, llaves completadas y
-              consistencia de jueces.
-            </p>
-          </div>
-        </header>
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col">
+      <AnalyticsHeader />
 
+      <main className="flex-1 max-w-6xl w-full mx-auto p-6 md:p-12 space-y-8 print:p-0">
         {/* Selection panel - hidden on print */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-xl border border-slate-200 shadow-sm print:hidden">
           {/* Tournament selection */}
@@ -162,6 +189,8 @@ export default function AnalyticsApp() {
           <AnalyticsManager
             tournamentId={selectedTournamentId}
             categoryId={selectedCategoryId}
+            categoryName={selectedCategoryName}
+            tournamentName={selectedTournamentName}
           />
         ) : (
           <div className="bg-slate-100/50 rounded-2xl border border-slate-200 border-dashed p-12 text-center text-slate-400 print:hidden">
@@ -185,7 +214,17 @@ export default function AnalyticsApp() {
             </p>
           </div>
         )}
-      </div>
+      </main>
+
+      <AnalyticsFooter />
     </div>
+  );
+}
+
+export default function AnalyticsApp() {
+  return (
+    <AuthProvider auth={auth} fetchWithAuth={fetchWithAuth}>
+      <AnalyticsAppContent />
+    </AuthProvider>
   );
 }

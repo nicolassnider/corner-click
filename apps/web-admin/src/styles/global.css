@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@source "../../../../packages/auth/src/**/*.{ts,tsx}";
+
 
 /* Height-based responsive scaling for TV Scoreboard to prevent footer clipping on shorter viewports (e.g. 1600x900) */
 @media (max-height: 950px) {

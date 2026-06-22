@@ -3,27 +3,27 @@ import { fetchWithAuth } from "../utils/apiClient";
 import { getMatches } from "../services/bracketService";
 import { getCompetitors } from "../services/competitorService";
 import type { Match, Competitor } from "@corner-click/types";
-import { MatchStatus, calculateNetScore } from "@corner-click/types";
+import { MatchStatus } from "@corner-click/types";
+import {
+  calculateStatsAndAudits,
+  generateMarkdownReport,
+  GeneralStats,
+  JudgeAudit,
+} from "@corner-click/stats";
 
 interface Props {
   tournamentId: string;
   categoryId: string;
+  categoryName?: string;
+  tournamentName?: string;
 }
 
-interface JudgeMatchStats {
-  matchId: string;
-  agreedWithWinner: boolean;
-  scoreGiven: { red: number; blue: number };
-}
-
-interface JudgeAudit {
-  judgeName: string;
-  totalMatches: number;
-  agreements: number;
-  consistencyRate: number;
-}
-
-export default function AnalyticsManager({ tournamentId, categoryId }: Props) {
+export default function AnalyticsManager({
+  tournamentId,
+  categoryId,
+  categoryName,
+  tournamentName,
+}: Props) {
   const [competitors, setCompetitors] = useState<Record<string, Competitor>>(
     {},
   );
@@ -61,14 +61,6 @@ export default function AnalyticsManager({ tournamentId, categoryId }: Props) {
           (m) => m.status === MatchStatus.COMPLETED && m.winnerId,
         );
 
-        // Fetch detailed judge scores for each completed match
-        const judgeDataMap: Record<string, { total: number; matched: number }> =
-          {};
-
-        let points = 0;
-        let warnings = 0;
-        let deductions = 0;
-
         const fetchScoresPromises = completed.map(async (match) => {
           try {
             const res = await fetchWithAuth(`/api/matches/${match.id}/scores`);
@@ -83,76 +75,19 @@ export default function AnalyticsManager({ tournamentId, categoryId }: Props) {
         });
 
         const allScoresResults = await Promise.all(fetchScoresPromises);
+        const matchScores: Record<string, Record<string, any>> = {};
+        allScoresResults.forEach((result) => {
+          if (result) {
+            matchScores[result.match.id] = result.scores;
+          }
+        });
 
-        for (const result of allScoresResults) {
-          if (!result) continue;
-          const { match, scores } = result;
-          const winnerId = match.winnerId;
-
-          Object.entries(scores).forEach(([judgeName, card]: [string, any]) => {
-            const rScore = calculateNetScore(
-              card.redScore || 0,
-              card.redWarnings || 0,
-              card.redDeductions || 0,
-            );
-            const bScore = calculateNetScore(
-              card.blueScore || 0,
-              card.blueWarnings || 0,
-              card.blueDeductions || 0,
-            );
-
-            let judgeWinner = null;
-            if (rScore > bScore) judgeWinner = match.redCompetitorId;
-            else if (bScore > rScore) judgeWinner = match.blueCompetitorId;
-
-            const agreed = judgeWinner === winnerId;
-
-            if (!judgeDataMap[judgeName]) {
-              judgeDataMap[judgeName] = { total: 0, matched: 0 };
-            }
-            judgeDataMap[judgeName].total += 1;
-            if (agreed) {
-              judgeDataMap[judgeName].matched += 1;
-            }
-
-            // Add to aggregate counts
-            points += (card.redScore || 0) + (card.blueScore || 0);
-            warnings += (card.redWarnings || 0) + (card.blueWarnings || 0);
-            deductions +=
-              (card.redDeductions || 0) + (card.blueDeductions || 0);
-          });
-        }
-
-        const audits: JudgeAudit[] = Object.entries(judgeDataMap).map(
-          ([judgeName, stats]) => ({
-            judgeName,
-            totalMatches: stats.total,
-            agreements: stats.matched,
-            consistencyRate:
-              stats.total > 0
-                ? Math.round((stats.matched / stats.total) * 100)
-                : 100,
-          }),
-        );
+        const { generalStats: computedGeneralStats, judgeAudits: computedAudits } =
+          calculateStatsAndAudits(fetchedMatches, matchScores);
 
         if (active) {
-          setJudgeAudits(audits);
-
-          // Estimate technique distribution based on standard Taekwon-Do point ratios
-          // 1 Pt (Punch) ~ 55%, 2 Pt (Body Kick) ~ 30%, 3 Pt (Head Kick) ~ 15%
-          const t1 = Math.round(points * 0.55);
-          const t2 = Math.round((points * 0.3) / 2);
-          const t3 = Math.round((points * 0.15) / 3);
-
-          setGeneralStats({
-            totalPoints: points,
-            totalWarnings: warnings,
-            totalDeductions: deductions,
-            completedMatches: completed.length,
-            technique1Pt: t1,
-            technique2Pt: t2,
-            technique3Pt: t3,
-          });
+          setJudgeAudits(computedAudits);
+          setGeneralStats(computedGeneralStats);
           setLoading(false);
         }
       } catch (err) {
@@ -178,38 +113,16 @@ export default function AnalyticsManager({ tournamentId, categoryId }: Props) {
   };
 
   const handleDownloadMarkdown = () => {
-    // Build Markdown report
-    let md = `# Reporte Analítico del Torneo\n\n`;
-    md += `**Categoría:** ${categoryId}\n`;
-    md += `**Combates Completados:** ${generalStats.completedMatches} de ${matches.length}\n`;
-    md += `**Fecha de Generación:** ${new Date().toLocaleString()}\n\n`;
-
-    md += `## 1. Estadísticas Generales\n\n`;
-    md += `| Métrica | Total |\n`;
-    md += `| --- | --- |\n`;
-    md += `| Puntos Registrados | ${generalStats.totalPoints} |\n`;
-    md += `| Advertencias (Warnings) | ${generalStats.totalWarnings} |\n`;
-    md += `| Deducciones (Faltas) | ${generalStats.totalDeductions} |\n\n`;
-
-    md += `## 2. Distribución de Técnicas (Estimación)\n\n`;
-    md += `- **Punches (1 Pt):** ${generalStats.technique1Pt} veces\n`;
-    md += `- **Body Kicks (2 Pts):** ${generalStats.technique2Pt} veces\n`;
-    md += `- **Head Kicks (3 Pts):** ${generalStats.technique3Pt} veces\n\n`;
-
-    md += `## 3. Resultados de Combates\n\n`;
-    md += `| Combate | Competidor Rojo | Competidor Azul | Ganador | Estado |\n`;
-    md += `| --- | --- | --- | --- | --- |\n`;
-    matches.forEach((m, idx) => {
-      const winner = m.winnerId ? getCompetitorName(m.winnerId) : "TBD";
-      md += `| R${m.round} - M${idx + 1} | ${getCompetitorName(m.redCompetitorId)} | ${getCompetitorName(m.blueCompetitorId)} | **${winner}** | ${m.status} |\n`;
-    });
-    md += `\n`;
-
-    md += `## 4. Auditoría y Consistencia de Jueces\n\n`;
-    md += `| Nombre del Juez | Combates Evaluados | Votos en Consenso | Tasa de Consistencia |\n`;
-    md += `| --- | --- | --- | --- |\n`;
-    judgeAudits.forEach((j) => {
-      md += `| ${j.judgeName} | ${j.totalMatches} | ${j.agreements} | ${j.consistencyRate}% |\n`;
+    const md = generateMarkdownReport({
+      categoryId,
+      categoryName,
+      tournamentName,
+      completedMatchesCount: generalStats.completedMatches,
+      totalMatchesCount: matches.length,
+      generalStats,
+      matches,
+      judgeAudits,
+      getCompetitorName,
     });
 
     // Create Blob & download
@@ -217,7 +130,15 @@ export default function AnalyticsManager({ tournamentId, categoryId }: Props) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `reporte_categoria_${categoryId}.md`);
+    const cleanTournamentName = (tournamentName || tournamentId)
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9_-]+/g, "_");
+    const cleanCategoryName = (categoryName || categoryId)
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9_-]+/g, "_");
+    link.setAttribute("download", `reporte_${cleanTournamentName}_${cleanCategoryName}.md`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

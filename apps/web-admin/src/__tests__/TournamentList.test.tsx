@@ -11,6 +11,7 @@ vi.mock("../utils/apiClient", () => {
   return {
     fetchWithAuth: vi.fn(),
     API_URL: "http://localhost:4000",
+    getDynamicAnalyticsUrl: vi.fn((url) => url || "http://localhost:4323"),
   };
 });
 
