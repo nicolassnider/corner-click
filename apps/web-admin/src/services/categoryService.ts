@@ -173,3 +173,15 @@ export const mergeCategoriesWithFewCompetitors = async (
     );
   }
 };
+
+export const updateCategoryBracketType = async (
+  tournamentId: string,
+  categoryId: string,
+  bracketType: any,
+): Promise<void> => {
+  const categoryRef = ref(
+    database,
+    `tournaments/${tournamentId}/categories/${categoryId}`,
+  );
+  await update(categoryRef, { bracketType });
+};

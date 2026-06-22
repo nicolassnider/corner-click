@@ -6,12 +6,13 @@ Corner Click is a comprehensive web application designed for managing ITF Taekwo
 
 ## Core Features
 
-- **Bracket Management:** Automatically and manually generate tournament brackets (llaves) with support for seeding and byes.
+- **Bracket Management:** Automatically and manually generate tournament brackets (llaves) with support for seeding, byes, and multiple tournament formats: **Single Elimination, Double Elimination (with Losers/Repesca Bracket)**, and **Round Robin (group phase)**.
 - **Match Listing:** Keep track of all matches, their statuses (pending, active, completed), and assigned areas.
 - **Live Scoring Interface:** A real-time, low-latency dashboard for Corner Referees to award points (1, 2, or 3) and record warnings or deductions, fully compliant with ITF Official Competition Rules.
 - **TV Spectator View:** High-visibility, full-screen read-only scoreboard for public projectors. Features a **5% Safe Zone (Overscan)** layout margin for physical TV monitors.
 - **Closed Scoreboard Mode:** TV displays remain locked ("Marcador Cerrado") during active rounds to prevent bias, automatically unlocking and glowing in Red/Blue neon values once the round ends.
 - **Golden Point Automation:** Automated tie-breaker mode that tracks judges' clicks and instantly declares the winner once a consensus majority is reached.
+- **Public Analytics & Audits:** Dedicated, auth-protected portal (`web-analytics`) for viewers and coaches to check live standings, technique distribution charts, and audit judges' voting consistency (consensus coincidence rate).
 - **Role-Based Access Control:** Secure access separated by roles (Admin, Organizer, Jury, Judge).
 - **Frictionless Judge Login & Offline Mode (PIN 9999):** Judges log in instantly using temporary PIN codes. PIN `9999` activates a local offline mockup mode that works in memory, bypassing all server/database dependencies.
 - **Internationalization (i18n):** Built from the ground up to support multiple languages.
@@ -19,7 +20,7 @@ Corner Click is a comprehensive web application designed for managing ITF Taekwo
 ## Technology Stack
 
 - **Astro:** Core framework for routing and fast page loads.
-- **React:** UI library used for complex, stateful components like the interactive scoring pad and tournament brackets.
+- **React:** UI library used for complex, stateful components like the interactive scoring pad, tournament brackets, and standings tables.
 - **Node.js & Express (API):** Central hub for all business logic, score processing, and tournament rules.
 - **Firebase:** Persistent storage for tournament structures (Firestore) and Authentication. Handled exclusively via the API.
 - **Netlify:** Hosting platform for web apps.
@@ -67,10 +68,10 @@ The API is configured to be deployed as a Web Service on **Render** using Render
 
 Each web app has its own `netlify.toml` pre-configured to build from the monorepo root.
 
-To deploy `web-admin` or `web-judges` on Netlify:
+To deploy `web-admin`, `web-judges`, or `web-analytics` on Netlify:
 
 1. Create a new site on Netlify from Git.
-2. Set the **Base directory** to the folder of the app you are deploying (e.g. `apps/web-admin` or `apps/web-judges`).
+2. Set the **Base directory** to the folder of the app you are deploying (e.g. `apps/web-admin`, `apps/web-judges`, or `apps/web-analytics`).
 3. Netlify will automatically detect and apply the configuration from the corresponding `netlify.toml` in that directory.
 4. Configure the environment variables in Netlify's settings:
    - `PUBLIC_API_URL` (points to your Render API URL, e.g., `https://corner-click-api.onrender.com`)
