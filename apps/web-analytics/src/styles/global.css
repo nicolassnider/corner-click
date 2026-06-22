@@ -1,42 +1,6 @@
 @import "tailwindcss";
 
+
 /* Print styles for cleaner reports and bracket printing */
-@media print {
-  body {
-    background: white !important;
-    color: black !important;
-  }
-  .print\:hidden,
-  button,
-  header,
-  footer,
-  select,
-  nav,
-  input,
-  .print-hidden,
-  aside {
-    display: none !important;
-  }
-  .print\:block {
-    display: block !important;
-  }
-  main {
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-  .bg-white {
-    background: none !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-  /* Keep tables borders clean for printing */
-  table {
-    border-collapse: collapse !important;
-    width: 100% !important;
-  }
-  th,
-  td {
-    border: 1px solid #94a3b8 !important;
-    color: black !important;
-  }
-}
+@import "../../../../packages/shared-styles/print.css";
+

@@ -69,54 +69,58 @@ export default function AnalyticsManager({ tournamentId, categoryId }: Props) {
         let warnings = 0;
         let deductions = 0;
 
-        for (const match of completed) {
+        const fetchScoresPromises = completed.map(async (match) => {
           try {
             const res = await fetchWithAuth(`/api/matches/${match.id}/scores`);
             if (res.ok) {
               const { scores } = await res.json();
-              // Calculate judge agreement with consensus winner
-              const winnerId = match.winnerId;
-
-              Object.entries(scores).forEach(
-                ([judgeName, card]: [string, any]) => {
-                  const rScore = calculateNetScore(
-                    card.redScore || 0,
-                    card.redWarnings || 0,
-                    card.redDeductions || 0,
-                  );
-                  const bScore = calculateNetScore(
-                    card.blueScore || 0,
-                    card.blueWarnings || 0,
-                    card.blueDeductions || 0,
-                  );
-
-                  let judgeWinner = null;
-                  if (rScore > bScore) judgeWinner = match.redCompetitorId;
-                  else if (bScore > rScore)
-                    judgeWinner = match.blueCompetitorId;
-
-                  const agreed = judgeWinner === winnerId;
-
-                  if (!judgeDataMap[judgeName]) {
-                    judgeDataMap[judgeName] = { total: 0, matched: 0 };
-                  }
-                  judgeDataMap[judgeName].total += 1;
-                  if (agreed) {
-                    judgeDataMap[judgeName].matched += 1;
-                  }
-
-                  // Add to aggregate counts
-                  points += (card.redScore || 0) + (card.blueScore || 0);
-                  warnings +=
-                    (card.redWarnings || 0) + (card.blueWarnings || 0);
-                  deductions +=
-                    (card.redDeductions || 0) + (card.blueDeductions || 0);
-                },
-              );
+              return { match, scores };
             }
           } catch (err) {
             console.error(`Failed to load scores for match ${match.id}`, err);
           }
+          return null;
+        });
+
+        const allScoresResults = await Promise.all(fetchScoresPromises);
+
+        for (const result of allScoresResults) {
+          if (!result) continue;
+          const { match, scores } = result;
+          const winnerId = match.winnerId;
+
+          Object.entries(scores).forEach(([judgeName, card]: [string, any]) => {
+            const rScore = calculateNetScore(
+              card.redScore || 0,
+              card.redWarnings || 0,
+              card.redDeductions || 0,
+            );
+            const bScore = calculateNetScore(
+              card.blueScore || 0,
+              card.blueWarnings || 0,
+              card.blueDeductions || 0,
+            );
+
+            let judgeWinner = null;
+            if (rScore > bScore) judgeWinner = match.redCompetitorId;
+            else if (bScore > rScore) judgeWinner = match.blueCompetitorId;
+
+            const agreed = judgeWinner === winnerId;
+
+            if (!judgeDataMap[judgeName]) {
+              judgeDataMap[judgeName] = { total: 0, matched: 0 };
+            }
+            judgeDataMap[judgeName].total += 1;
+            if (agreed) {
+              judgeDataMap[judgeName].matched += 1;
+            }
+
+            // Add to aggregate counts
+            points += (card.redScore || 0) + (card.blueScore || 0);
+            warnings += (card.redWarnings || 0) + (card.blueWarnings || 0);
+            deductions +=
+              (card.redDeductions || 0) + (card.blueDeductions || 0);
+          });
         }
 
         const audits: JudgeAudit[] = Object.entries(judgeDataMap).map(

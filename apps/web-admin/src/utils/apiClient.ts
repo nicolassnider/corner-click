@@ -24,4 +24,19 @@ export const getDynamicApiUrl = (configuredUrl: string): string => {
 
 export const API_URL = getDynamicApiUrl(CONFIGURED_API_URL);
 
+export const getDynamicAnalyticsUrl = (configuredUrl: string): string => {
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    const isLocal =
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      /^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/.test(hostname);
+
+    if (isLocal) {
+      return `http://${hostname}:4323`;
+    }
+  }
+  return configuredUrl;
+};
+
 export const fetchWithAuth = createFetchWithAuth(auth, API_URL);

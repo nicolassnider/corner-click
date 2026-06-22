@@ -6,6 +6,7 @@ import { BracketManager } from "./BracketManager";
 import { CategoryManager } from "./CategoryManager";
 import { CategoryAdjuster } from "./CategoryAdjuster";
 import { getCategories } from "../services/categoryService";
+import { getDynamicAnalyticsUrl } from "../utils/apiClient";
 
 interface Props {
   tournament: Tournament;
@@ -258,7 +259,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
               </div>
               {selectedCategoryId && (
                 <a
-                  href={`http://localhost:4323/?tournament=${tournament.id}&category=${selectedCategoryId}`}
+                  href={`${getDynamicAnalyticsUrl(import.meta.env.PUBLIC_ANALYTICS_URL || "http://localhost:4323")}/?tournament=${encodeURIComponent(tournament.id!)}&category=${encodeURIComponent(selectedCategoryId)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center px-6 py-2.5 border border-transparent text-sm font-bold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shrink-0 shadow-sm"
