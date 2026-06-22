@@ -19,10 +19,10 @@ export interface JudgeAudit {
 
 export function calculateStatsAndAudits(
   matches: Match[],
-  matchScores: Record<string, Record<string, any>> // matchId -> judgeName -> scoreCard
+  matchScores: Record<string, Record<string, any>>, // matchId -> judgeName -> scoreCard
 ): { generalStats: GeneralStats; judgeAudits: JudgeAudit[] } {
   const completed = matches.filter(
-    (m) => m.status === MatchStatus.COMPLETED && m.winnerId
+    (m) => m.status === MatchStatus.COMPLETED && m.winnerId,
   );
 
   const judgeDataMap: Record<string, { total: number; matched: number }> = {};
@@ -39,12 +39,12 @@ export function calculateStatsAndAudits(
       const rScore = calculateNetScore(
         card.redScore || 0,
         card.redWarnings || 0,
-        card.redDeductions || 0
+        card.redDeductions || 0,
       );
       const bScore = calculateNetScore(
         card.blueScore || 0,
         card.blueWarnings || 0,
-        card.blueDeductions || 0
+        card.blueDeductions || 0,
       );
 
       let judgeWinner = null;
@@ -73,10 +73,8 @@ export function calculateStatsAndAudits(
       totalMatches: stats.total,
       agreements: stats.matched,
       consistencyRate:
-        stats.total > 0
-          ? Math.round((stats.matched / stats.total) * 100)
-          : 100,
-    })
+        stats.total > 0 ? Math.round((stats.matched / stats.total) * 100) : 100,
+    }),
   );
 
   const t1 = Math.round(points * 0.55);

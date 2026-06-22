@@ -25,7 +25,9 @@ function AnalyticsAppContent() {
   const selectedCategory = categories.find((c) => c.id === selectedCategoryId);
   const selectedCategoryName = selectedCategory?.name;
 
-  const selectedTournament = tournaments.find((t) => t.id === selectedTournamentId);
+  const selectedTournament = tournaments.find(
+    (t) => t.id === selectedTournamentId,
+  );
   const selectedTournamentName = selectedTournament?.name;
 
   // Load URL params if any

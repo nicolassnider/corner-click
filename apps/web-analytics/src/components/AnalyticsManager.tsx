@@ -82,8 +82,10 @@ export default function AnalyticsManager({
           }
         });
 
-        const { generalStats: computedGeneralStats, judgeAudits: computedAudits } =
-          calculateStatsAndAudits(fetchedMatches, matchScores);
+        const {
+          generalStats: computedGeneralStats,
+          judgeAudits: computedAudits,
+        } = calculateStatsAndAudits(fetchedMatches, matchScores);
 
         if (active) {
           setJudgeAudits(computedAudits);
@@ -138,7 +140,10 @@ export default function AnalyticsManager({
       .toLowerCase()
       .trim()
       .replace(/[^a-z0-9_-]+/g, "_");
-    link.setAttribute("download", `reporte_${cleanTournamentName}_${cleanCategoryName}.md`);
+    link.setAttribute(
+      "download",
+      `reporte_${cleanTournamentName}_${cleanCategoryName}.md`,
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
