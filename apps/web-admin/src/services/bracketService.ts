@@ -1,26 +1,9 @@
-import { ref, get, set, remove, push, update } from "firebase/database";
+import { ref, get, remove, push, update } from "firebase/database";
 import { database } from "../lib/firebase";
 import { fetchWithAuth } from "../utils/apiClient";
 import type { Match, Competitor } from "@corner-click/types";
-import { MatchStatus, BracketType } from "@corner-click/types";
-import { BracketFactory } from "./brackets/bracketGenerators";
-
-/**
- * Shuffles an array randomly using Fisher-Yates algorithm.
- */
-function shuffle<T>(array: T[]): T[] {
-  let currentIndex = array.length,
-    randomIndex;
-  while (currentIndex !== 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
-  return array;
-}
+import { BracketType } from "@corner-click/types";
+import { BracketFactory } from "@corner-click/core-domain";
 
 /**
  * Generates a bracket for a list of competitors depending on the category's configured modal.

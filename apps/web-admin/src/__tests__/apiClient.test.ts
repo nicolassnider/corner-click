@@ -6,7 +6,50 @@ vi.mock("../lib/firebase", () => ({
   db: {},
 }));
 
-import { getDynamicApiUrl } from "../utils/apiClient";
+import { getDynamicApiUrl, getDynamicAnalyticsUrl } from "../utils/apiClient";
+
+describe("getDynamicAnalyticsUrl helper", () => {
+  const originalWindow = global.window;
+
+  beforeEach(() => {
+    global.window = {
+      location: {
+        hostname: "localhost",
+        origin: "http://localhost:4321",
+        port: "4321",
+      },
+    } as any;
+  });
+
+  afterEach(() => {
+    global.window = originalWindow;
+  });
+
+  it("should return configured URL when window is undefined (SSR)", () => {
+    // @ts-ignore
+    global.window = undefined;
+    const configured = "https://analytics.netlify.app";
+    expect(getDynamicAnalyticsUrl(configured)).toBe(configured);
+  });
+
+  it("should override with port 4323 if hostname is localhost", () => {
+    const configured = "https://analytics.netlify.app";
+    global.window.location.hostname = "localhost";
+    expect(getDynamicAnalyticsUrl(configured)).toBe("http://localhost:4323");
+  });
+
+  it("should override with port 4323 if hostname is a local IP", () => {
+    const configured = "https://analytics.netlify.app";
+    global.window.location.hostname = "192.168.1.15";
+    expect(getDynamicAnalyticsUrl(configured)).toBe("http://192.168.1.15:4323");
+  });
+
+  it("should return production URL if not local", () => {
+    const configured = "https://analytics.netlify.app";
+    global.window.location.hostname = "corner-click.netlify.app";
+    expect(getDynamicAnalyticsUrl(configured)).toBe(configured);
+  });
+});
 
 describe("getDynamicApiUrl helper", () => {
   const originalWindow = global.window;

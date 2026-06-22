@@ -3,7 +3,6 @@ node_modules/
 
 # Environment Variables
 .env
-.env
 .env.local
 .env.development.local
 .env.test.local
@@ -27,6 +26,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Coverage
 # Editor directories and files
 .idea/
 .vscode/
@@ -42,8 +42,6 @@ lerna-debug.log*
 firebase-debug.log
 firebase-debug.*.log
 corner-check-8d397-firebase-adminsdk-fbsvc-d42f3d9cfe.json
-node_modules/*
+
+# Local files
 apps/web-admin/pss.txt
-apps/api/coverage/*
-coverage/coverage-final.json
-coverage/coverage-final.json

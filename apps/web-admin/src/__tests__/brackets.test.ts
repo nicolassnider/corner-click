@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { BracketFactory } from "../services/brackets/bracketGenerators";
+import { BracketFactory } from "@corner-click/core-domain";
 import { BracketType, MatchStatus } from "@corner-click/types";
 import type { Competitor } from "@corner-click/types";
 

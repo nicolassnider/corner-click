@@ -114,4 +114,145 @@ describe("TournamentList Component", () => {
     expect(completedCard).toBeTruthy();
     expect(completedCard?.querySelector("button")).toBeNull();
   });
+
+  it("should call onSelect when a tournament card is clicked", async () => {
+    (fetchWithAuth as any).mockResolvedValue({
+      ok: true,
+      json: async () => [mockTournaments[0]],
+    });
+
+    const onSelect = vi.fn();
+    render(
+      <TournamentList
+        onSelect={onSelect}
+        onCreateNew={vi.fn()}
+        onEdit={vi.fn()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Torneo Activo")).toBeInTheDocument();
+    });
+
+    screen.getByText("Torneo Activo").click();
+    expect(onSelect).toHaveBeenCalledWith(mockTournaments[0]);
+  });
+
+  it("should call onEdit when Edit button is clicked", async () => {
+    (fetchWithAuth as any).mockResolvedValue({
+      ok: true,
+      json: async () => [mockTournaments[0]],
+    });
+
+    const onEdit = vi.fn();
+    render(
+      <TournamentList
+        onSelect={vi.fn()}
+        onCreateNew={vi.fn()}
+        onEdit={onEdit}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Torneo Activo")).toBeInTheDocument();
+    });
+
+    const editBtn = screen.getByText("Edit");
+    editBtn.click();
+    expect(onEdit).toHaveBeenCalledWith(mockTournaments[0]);
+  });
+
+  it("should handle Delete tournament correctly when confirmed", async () => {
+    (fetchWithAuth as any).mockResolvedValue({
+      ok: true,
+      json: async () => [mockTournaments[0]],
+    });
+
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+    const deleteMock = vi.fn().mockResolvedValue({ ok: true });
+    (fetchWithAuth as any).mockImplementation((url: string, init?: any) => {
+      if (init?.method === "DELETE") {
+        return deleteMock();
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => [mockTournaments[0]],
+      });
+    });
+
+    render(
+      <TournamentList
+        onSelect={vi.fn()}
+        onCreateNew={vi.fn()}
+        onEdit={vi.fn()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Torneo Activo")).toBeInTheDocument();
+    });
+
+    const deleteBtn = screen.getByText("Delete");
+    deleteBtn.click();
+
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(deleteMock).toHaveBeenCalled();
+    confirmSpy.mockRestore();
+  });
+
+  it("should not delete tournament if confirmation is cancelled", async () => {
+    (fetchWithAuth as any).mockResolvedValue({
+      ok: true,
+      json: async () => [mockTournaments[0]],
+    });
+
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
+    const deleteMock = vi.fn().mockResolvedValue({ ok: true });
+    (fetchWithAuth as any).mockImplementation((url: string, init?: any) => {
+      if (init?.method === "DELETE") {
+        return deleteMock();
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => [mockTournaments[0]],
+      });
+    });
+
+    render(
+      <TournamentList
+        onSelect={vi.fn()}
+        onCreateNew={vi.fn()}
+        onEdit={vi.fn()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Torneo Activo")).toBeInTheDocument();
+    });
+
+    const deleteBtn = screen.getByText("Delete");
+    deleteBtn.click();
+
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(deleteMock).not.toHaveBeenCalled();
+    confirmSpy.mockRestore();
+  });
+
+  it("should log error if fetch tournaments fails", async () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    (fetchWithAuth as any).mockRejectedValue(new Error("API failure"));
+
+    render(
+      <TournamentList
+        onSelect={vi.fn()}
+        onCreateNew={vi.fn()}
+        onEdit={vi.fn()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalled();
+    });
+    consoleSpy.mockRestore();
+  });
 });
