@@ -315,7 +315,7 @@ router.post(
       }
 
       const matchId = req.params.id as string;
-      const { winnerId, tournamentId, nextMatchId } = req.body;
+      const { winnerId, tournamentId, nextMatchId, losersMatchId, loserId } = req.body;
 
       if (!winnerId || !tournamentId) {
         res
@@ -335,6 +335,14 @@ router.post(
       }
       if (nextMatchId && !isSafeId(nextMatchId)) {
         res.status(400).json({ error: "Invalid nextMatchId" });
+        return;
+      }
+      if (losersMatchId && !isSafeId(losersMatchId)) {
+        res.status(400).json({ error: "Invalid losersMatchId" });
+        return;
+      }
+      if (loserId && !isSafeId(loserId)) {
+        res.status(400).json({ error: "Invalid loserId" });
         return;
       }
 
@@ -361,6 +369,25 @@ router.post(
             updates[
               `tournaments/${tournamentId}/matches/${nextMatchId}/blueCompetitorId`
             ] = winnerId;
+          }
+        }
+      }
+
+      // Advance loser to losers/repesca match if applicable
+      if (losersMatchId && loserId) {
+        const losersMatchSnap = await rtdb
+          .ref(`tournaments/${tournamentId}/matches/${losersMatchId}`)
+          .once("value");
+        if (losersMatchSnap.exists()) {
+          const losersMatch = losersMatchSnap.val();
+          if (!losersMatch.redCompetitorId) {
+            updates[
+              `tournaments/${tournamentId}/matches/${losersMatchId}/redCompetitorId`
+            ] = loserId;
+          } else if (!losersMatch.blueCompetitorId) {
+            updates[
+              `tournaments/${tournamentId}/matches/${losersMatchId}/blueCompetitorId`
+            ] = loserId;
           }
         }
       }

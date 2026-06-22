@@ -43,6 +43,12 @@ export interface Tournament {
   createdAt?: string;
 }
 
+export enum BracketType {
+  SINGLE_ELIMINATION = "SINGLE_ELIMINATION",
+  DOUBLE_ELIMINATION = "DOUBLE_ELIMINATION",
+  ROUND_ROBIN = "ROUND_ROBIN",
+}
+
 export interface Category {
   id: string;
   tournamentId: string;
@@ -53,6 +59,7 @@ export interface Category {
   weightClass: string;
   matchDuration: number;
   rounds: number;
+  bracketType?: BracketType;
 }
 
 export interface Competitor {
@@ -92,6 +99,8 @@ export interface Match {
   status: MatchStatus;
   round?: number;
   nextMatchId?: string;
+  losersMatchId?: string;
+  isLosersBracket?: boolean;
   redCompetitorId: string;
   blueCompetitorId: string;
   winnerId: string | null;

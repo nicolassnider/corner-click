@@ -21,6 +21,9 @@ Esta es la consola de mando para el Organizador del Torneo y los Presidentes de 
 
 - **UC-1.2.1: Generación de Llaves (Brackets)**: Dado un grupo de competidores en una categoría, el sistema genera automáticamente el árbol de torneo.
 - **UC-1.2.2: Sorteos y Pases Directos (Byes)**: Si el número de competidores no es par o potencia de 2, el sistema asigna automáticamente pases directos (`BYE`) de manera equilibrada.
+- **UC-1.2.3: Configuración de Modalidad de Llave (BracketType)**: El organizador puede configurar en la categoría la modalidad de cruces (Eliminación Simple, Doble Eliminación/Repesca, o Round Robin).
+- **UC-1.2.4: Doble Eliminación con Repesca**: El sistema genera tanto la llave principal de ganadores como la llave de perdedores. Al perder en la llave principal, el competidor es relegado al Losers Bracket en lugar de ser eliminado.
+- **UC-1.2.5: Sorteo de Round Robin**: Para categorías en formato Round Robin, el sistema genera enfrentamientos cruzados todos contra todos y calcula la tabla de posiciones con criterios de desempate de la ITF (combates jugados, ganados, puntos de combate, advertencias, puntos de clasificación).
 
 ### 1.3 Live Match Control / Jury Dashboard & Spectator TV (Jury President)
 
@@ -28,7 +31,7 @@ Esta es la consola de mando para el Organizador del Torneo y los Presidentes de 
 - **UC-1.3.2: Control de Tiempo (Start/Pause)**: El presidente controla el inicio (`ACTIVE`), pausa (`PAUSED`) y fin (`ENDED`) del combate, bloqueando controles si hay competidores en `TBD` o `BYE`.
 - **UC-1.3.3: Sincronización en Tiempo Real**: El cronómetro local del Admin se sincroniza constantemente con Firebase. Las puntuaciones de los jueces se reciben en tiempo real vía Server-Sent Events (SSE).
 - **UC-1.3.4: Manejo de Empates y Punto de Oro**: Si hay empate al finalizar el tiempo reglamentario, el presidente puede iniciar "Golden Point". En este modo tie-breaker, el sistema monitorea los clics de puntos en tiempo real; el primer competidor que consiga una mayoría de votos (consenso) es declarado ganador y el combate se cierra automáticamente.
-- **UC-1.3.5: Avance Automático de Llaves**: Al declarar un ganador ("Red Wins" / "Blue Wins"), el combate se marca como `COMPLETED` y el ganador avanza a su siguiente posición en el árbol de forma automática.
+- **UC-1.3.5: Avance Automático de Llaves**: Al declarar un ganador ("Red Wins" / "Blue Wins"), el combate se marca como `COMPLETED` y el ganador avanza a su siguiente posición en el árbol de forma automática. En Doble Eliminación, el perdedor es reubicado automáticamente en su respectivo nodo del cuadro de repesca.
 - **UC-1.3.6: Pantalla Pública de TV (Marcador Cerrado)**: La vista `/area/[areaId]/tv` muestra el marcador para el público y coaches. Durante el combate activo, los votos finales se ocultan en valor `0` ("MARCADOR CERRADO") para evitar sesgos o presiones, y se revelan automáticamente iluminados en colores neón en el instante en que el combate finaliza (`ENDED` o `COMPLETED`). Cuenta con márgenes de seguridad (Safe Zone al 5%) contra overscan en TVs físicas.
 
 ---
@@ -67,3 +70,17 @@ El servidor central Node/Express que maneja la lógica de negocio y permanencia 
 - **UC-3.1.2: Consenso Mayoritario**: Identifica al ganador calculando los votos de las esquinas y resolviendo desempates técnicos.
 - **UC-3.1.3: Actualización de Estado (Status Webhook)**: Endpoint para procesar cambios forzados de estado del combate validados.
 - **UC-3.1.4: Migración a Histórico**: Una vez que un combate pasa a estado `COMPLETED`, el API puede transferir el registro desde Firebase Realtime Database hacia Firestore para tener un historial permanente y limpiar el nodo de "live_matches".
+
+---
+
+## 4. Aplicación: Web-Analytics (Estadísticas Públicas)
+
+_Directorio: `apps/web-analytics`_
+
+Esta aplicación pública de analítica post-combate y post-torneo permite visualizar datos sin requerir accesos de administrador.
+
+### 4.1 Consulta y Auditoría de Resultados (Public / Jury)
+
+- **UC-4.1.1: Visualización del Reporte de Torneo**: Cualquier usuario puede seleccionar un torneo y categoría completados para ver estadísticas de técnicas y amonestaciones en gráficos SVG interactivos.
+- **UC-4.1.2: Auditoría del Consenso de Jueces**: El sistema analiza y expone el porcentaje de coincidencia de cada juez con respecto al consenso del jurado para auditar la consistencia arbitral.
+- **UC-4.1.3: Exportación en Formatos Markdown/PDF**: Los presidentes de mesa u organizadores pueden descargar los reportes de llaves terminadas y tablas de posiciones de grupo a Markdown imprimible u optimizado para PDF físico.

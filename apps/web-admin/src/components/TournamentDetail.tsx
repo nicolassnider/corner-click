@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import type { Tournament, Category } from "@corner-click/types";
+import { BracketType } from "@corner-click/types";
 import JudgeManager from "./JudgeManager";
 import { CompetitorManager } from "./CompetitorManager";
 import { BracketManager } from "./BracketManager";
 import { CategoryManager } from "./CategoryManager";
 import { CategoryAdjuster } from "./CategoryAdjuster";
-import { getCategories } from "../services/categoryService";
+import { getCategories, updateCategoryBracketType } from "../services/categoryService";
 import { getDynamicAnalyticsUrl } from "../utils/apiClient";
 
 interface Props {
@@ -257,6 +258,44 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                   ))}
                 </select>
               </div>
+
+              {selectedCategoryId && (
+                <div className="flex-1">
+                  <label
+                    htmlFor="bracket-type-select"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Modalidad de Llave
+                  </label>
+                  <select
+                    id="bracket-type-select"
+                    aria-label="Modalidad de Llave"
+                    title="Modalidad de Llave"
+                    value={categories.find((c) => c.id === selectedCategoryId)?.bracketType || BracketType.SINGLE_ELIMINATION}
+                    onChange={async (e) => {
+                      const newType = e.target.value as BracketType;
+                      try {
+                        await updateCategoryBracketType(tournament.id!, selectedCategoryId, newType);
+                        setCategories((prev) =>
+                          prev.map((c) =>
+                            c.id === selectedCategoryId ? { ...c, bracketType: newType } : c
+                          )
+                        );
+                      } catch (err) {
+                        console.error(err);
+                        alert("Error al actualizar la modalidad");
+                      }
+                    }}
+                    disabled={tournament.status === "COMPLETED"}
+                    className="mt-1 block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
+                  >
+                    <option value={BracketType.SINGLE_ELIMINATION}>Eliminación Simple</option>
+                    <option value={BracketType.DOUBLE_ELIMINATION}>Doble Eliminación (Repesca)</option>
+                    <option value={BracketType.ROUND_ROBIN}>Round Robin (Todos contra todos)</option>
+                  </select>
+                </div>
+              )}
+
               {selectedCategoryId && (
                 <a
                   href={`${getDynamicAnalyticsUrl(import.meta.env.PUBLIC_ANALYTICS_URL || "http://localhost:4323")}/?tournament=${encodeURIComponent(tournament.id!)}&category=${encodeURIComponent(selectedCategoryId)}`}
