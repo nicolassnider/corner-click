@@ -2,8 +2,11 @@
   "name": "corner-click",
   "version": "1.0.8",
   "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
     "@vitest/coverage-v8": "^4.1.9",
     "@vitest/ui": "^4.1.9",
+    "cross-env": "^7.0.3",
+    "firebase-tools": "^13.10.0",
     "prettier": "^3.0.0",
     "prettier-plugin-astro": "^0.14.1",
     "syncpack": "^15.3.2",
@@ -15,6 +18,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:e2e": "cross-env PUBLIC_USE_EMULATOR=true USE_FIREBASE_EMULATOR=true firebase emulators:exec --project demo-corner-click \"turbo run dev\"",
     "format": "prettier --write \"**/*.{ts,tsx,md,json,astro}\" --plugin=prettier-plugin-astro",
     "lint": "turbo run lint",
     "lint:deps": "syncpack lint && syncpack format --check",
@@ -22,6 +26,7 @@
     "sync-deps": "syncpack fix && syncpack format",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "npm run test -w apps-e2e",
     "test:ui": "vitest --ui",
     "test:watch": "vitest"
   },

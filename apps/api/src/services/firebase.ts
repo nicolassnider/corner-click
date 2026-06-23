@@ -4,7 +4,17 @@ import { getAuth } from "firebase-admin/auth";
 import { getDatabase } from "firebase-admin/database";
 import settings from "../config/settings.js";
 
-if (
+if (process.env.USE_FIREBASE_EMULATOR === "true") {
+  try {
+    initializeApp({
+      projectId: "demo-corner-click",
+      databaseURL: "http://127.0.0.1:9000/?ns=demo-corner-click",
+    });
+    console.log("Firebase Admin initialized for Emulator.");
+  } catch (err: any) {
+    console.error("Error initializing Firebase Admin Emulator:", err.message);
+  }
+} else if (
   settings.firebase.projectId &&
   settings.firebase.privateKey &&
   settings.firebase.clientEmail

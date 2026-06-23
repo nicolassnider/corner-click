@@ -45,3 +45,26 @@ corner-check-8d397-firebase-adminsdk-fbsvc-d42f3d9cfe.json
 
 # Local files
 apps/web-admin/pss.txt
+apps/e2e/playwright-report/index.html
+apps/e2e/playwright-report/data/bbacea45937b4ace7b46b6bebae23c72ca478d07.zip
+apps/e2e/playwright-report/trace/codeMirrorModule.DYBRYzYX.css
+apps/e2e/playwright-report/trace/codicon.DCmgc-ay.ttf
+apps/e2e/playwright-report/trace/defaultSettingsView.CjdS-WJx.css
+apps/e2e/playwright-report/trace/index.CzXZzn5A.css
+apps/e2e/playwright-report/trace/index.DEBl1tfz.js
+apps/e2e/playwright-report/trace/index.html
+apps/e2e/playwright-report/trace/manifest.webmanifest
+apps/e2e/playwright-report/trace/playwright-logo.svg
+apps/e2e/playwright-report/trace/snapshot.html
+apps/e2e/playwright-report/trace/snapshot.v8KI4P3m.js
+apps/e2e/playwright-report/trace/sw.bundle.js
+apps/e2e/playwright-report/trace/uiMode.BZQ54Kgt.css
+apps/e2e/playwright-report/trace/uiMode.html
+apps/e2e/playwright-report/trace/uiMode.Ut8wwJNp.js
+apps/e2e/playwright-report/trace/xtermModule.DYP7pi_n.css
+apps/e2e/playwright-report/trace/assets/codeMirrorModule-LEHpjmcn.js
+apps/e2e/playwright-report/trace/assets/defaultSettingsView-BNmKHKpQ.js
+apps/e2e/playwright-report/trace/assets/urlMatch-BYQrIQwR.js
+apps/e2e/test-results/tournament-multiarea-flow--3eb73-ador-y-3-Jueces-interactúan-chromium/trace.zip
+database-debug.log
+.gitignore
