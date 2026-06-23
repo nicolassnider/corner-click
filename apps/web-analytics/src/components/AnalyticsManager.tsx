@@ -461,8 +461,7 @@ export default function AnalyticsManager({
               </tbody>
             </table>
           </div>
-      </div>
-      </div>
+        </div>
 
       {/* Estadísticas por Combate Table */}
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6 mt-8">
@@ -588,6 +587,7 @@ export default function AnalyticsManager({
           </tbody>
         </table>
       </div>
+    </div>
     </div>
   );
 }

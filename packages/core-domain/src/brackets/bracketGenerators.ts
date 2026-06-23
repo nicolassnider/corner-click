@@ -26,6 +26,11 @@ function shuffle<T>(array: T[]): T[] {
 export function resolveByes(matches: Match[]): Match[] {
   const propagatedNext = new Set<string>();
   const propagatedLoser = new Set<string>();
+  
+  const matchMap = new Map<string, Match>();
+  for (const m of matches) {
+    matchMap.set(m.id, m);
+  }
 
   let changed = true;
   while (changed) {
@@ -50,7 +55,7 @@ export function resolveByes(matches: Match[]): Match[] {
 
       // 2. Propagate COMPLETED match winner to nextMatchId
       if (match.status === MatchStatus.COMPLETED && match.nextMatchId && !propagatedNext.has(match.id)) {
-        const nextMatch = matches.find((m) => m.id === match.nextMatchId);
+        const nextMatch = matchMap.get(match.nextMatchId);
         if (nextMatch) {
           const winnerToPropagate = match.winnerId || "BYE";
           if (nextMatch.redCompetitorId === "") {
@@ -67,7 +72,7 @@ export function resolveByes(matches: Match[]): Match[] {
 
       // 3. Propagate COMPLETED match loser to losersMatchId
       if (match.status === MatchStatus.COMPLETED && match.losersMatchId && !propagatedLoser.has(match.id)) {
-        const losersMatch = matches.find((m) => m.id === match.losersMatchId);
+        const losersMatch = matchMap.get(match.losersMatchId);
         if (losersMatch) {
           let loserToPropagate = "BYE";
           if (match.winnerId) {

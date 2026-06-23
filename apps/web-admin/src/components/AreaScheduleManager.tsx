@@ -149,7 +149,7 @@ export const AreaScheduleManager: React.FC<AreaScheduleManagerProps> = ({
                   
                   <div className="flex items-center gap-4 text-sm font-medium">
                     <div className="flex-1 flex items-center justify-end">
-                      <span className="truncate">{getCompetitorName(match.competitor1Id)}</span>
+                      <span className="truncate">{getCompetitorName(match.redCompetitorId)}</span>
                       <div className="ml-3 w-3 h-3 bg-red-500 rounded-full shrink-0"></div>
                     </div>
                     
@@ -157,7 +157,7 @@ export const AreaScheduleManager: React.FC<AreaScheduleManagerProps> = ({
                     
                     <div className="flex-1 flex items-center justify-start">
                       <div className="mr-3 w-3 h-3 bg-blue-500 rounded-full shrink-0"></div>
-                      <span className="truncate">{getCompetitorName(match.competitor2Id)}</span>
+                      <span className="truncate">{getCompetitorName(match.blueCompetitorId)}</span>
                     </div>
                   </div>
                 </div>
