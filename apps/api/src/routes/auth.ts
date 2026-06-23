@@ -221,6 +221,48 @@ router.post(
 
 /**
  * @swagger
+ * /auth/admin/guest-login:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Authenticate as Guest
+ *     description: Returns a Firebase Custom Token for a demo guest user without requiring a password.
+ *     responses:
+ *       '200':
+ *         description: Successfully authenticated. Returns Firebase custom token.
+ *       '503':
+ *         description: Service Unavailable (Firebase not configured)
+ */
+router.post(
+  "/admin/guest-login",
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      if (!auth) {
+        res.status(503).json({ error: "Firebase Admin not configured" });
+        return;
+      }
+
+      const uid = "guest-demo-uid";
+
+      // Create a Custom Token with guest role claim
+      const customToken = await auth.createCustomToken(uid, { role: "guest" });
+
+      res.json({
+        token: customToken,
+        admin: {
+          uid,
+          email: "demo@cornerclick.com",
+          displayName: "Invitado (Demo)",
+        },
+      });
+    } catch (error) {
+      log.error({ err: toErr(error) }, "Error in /auth/admin/guest-login");
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+);
+
+/**
+ * @swagger
  * /auth/logout:
  *   post:
  *     summary: Log out a judge and set their status to offline

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import type { Competitor, Category } from "@corner-click/types";
 import {
   getCompetitors,
@@ -31,6 +32,8 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
     Competitor | undefined
   >();
   const [loading, setLoading] = useState(true);
+  const [isMockModalOpen, setIsMockModalOpen] = useState(false);
+  const [mockAmount, setMockAmount] = useState(tournamentAreas * 20);
 
   useEffect(() => {
     loadCompetitors();
@@ -85,20 +88,20 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
     }
   };
 
+  const handleOpenMockModal = () => {
+    setMockAmount(tournamentAreas * 20);
+    setIsMockModalOpen(true);
+  };
+
   const generateMockCompetitors = async () => {
-    const defaultAmount = tournamentAreas * 20;
-    const input = prompt(
-      `¿Cuántos competidores deseas generar en total? (Recomendado para ${tournamentAreas} área(s): ${defaultAmount})`,
-      defaultAmount.toString(),
-    );
+    const amount = mockAmount;
 
-    if (!input) return;
-
-    const amount = parseInt(input, 10);
     if (isNaN(amount) || amount <= 0) {
       alert("Por favor ingresa un número válido mayor a 0.");
       return;
     }
+
+    setIsMockModalOpen(false);
 
     if (!categories || categories.length === 0) {
       alert("No hay categorías creadas para asignar competidores.");
@@ -248,7 +251,7 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
         {!isReadOnly && (
           <div className="flex space-x-2">
             <button
-              onClick={generateMockCompetitors}
+              onClick={handleOpenMockModal}
               disabled={loading}
               className={`px-4 py-2 text-white rounded-md ${loading ? "bg-purple-400 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700"}`}
             >
@@ -403,6 +406,40 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Mock Generation Modal */}
+      {isMockModalOpen && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
+          <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl shadow-2xl p-6 w-full max-w-md">
+            <h3 className="text-xl font-bold text-white mb-2">Generar Competidores</h3>
+            <p className="text-gray-400 text-sm mb-4">
+              ¿Cuántos competidores deseas generar en total? <br/>
+              (Recomendado para {tournamentAreas} área(s): {tournamentAreas * 20})
+            </p>
+            <input
+              type="number"
+              min="1"
+              value={mockAmount}
+              onChange={(e) => setMockAmount(parseInt(e.target.value, 10))}
+              className="w-full px-4 py-3 bg-[#121A2F] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all mb-6"
+            />
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setIsMockModalOpen(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors border border-white/10"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={generateMockCompetitors}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-lg shadow-blue-500/25"
+              >
+                Aceptar
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
