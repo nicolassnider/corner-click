@@ -1,9 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
-import type { Judge, Match, Competitor } from "@corner-click/types";
+import React, { useState, useEffect } from "react";
+import type { Judge } from "@corner-click/types";
 import { CornerRole } from "@corner-click/types";
-import { getMatches } from "../services/bracketService";
-import { getCompetitors } from "../services/competitorService";
-import { getCompetitorFullName } from "../utils/competitorUtils";
 
 interface Props {
   isOpen: boolean;
@@ -14,7 +11,7 @@ interface Props {
   tournamentId: string;
   onAssign: (
     judgeId: string,
-    assignment: { areaId: string; cornerId: string; matchId: string },
+    assignment: { areaId: string; cornerId: string },
   ) => Promise<void>;
 }
 
@@ -29,63 +26,23 @@ export default function AssignJudgeModal({
 }: Props) {
   const [areaId, setAreaId] = useState("1");
   const [cornerId, setCornerId] = useState(CornerRole.CORNER_1 as string);
-  const [matchId, setMatchId] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [competitors, setCompetitors] = useState<Record<string, Competitor>>(
-    {},
-  );
-  const [loadingMatches, setLoadingMatches] = useState(false);
-
-  const filteredMatches = useMemo(
-    () => matches.filter((m) => m.areaId === areaId),
-    [matches, areaId],
-  );
 
   // Reset form when opened with a new judge
   useEffect(() => {
     if (judge) {
       setAreaId(judge.currentAssignment?.areaId || "1");
       setCornerId(judge.currentAssignment?.cornerId || CornerRole.CORNER_1);
-      setMatchId(judge.currentAssignment?.matchId || "");
     }
   }, [judge]);
 
-  useEffect(() => {
-    if (isOpen && tournamentId) {
-      setLoadingMatches(true);
-      Promise.all([getMatches(tournamentId), getCompetitors(tournamentId)])
-        .then(([fetchedMatches, fetchedCompetitors]) => {
-          setMatches(fetchedMatches);
-          const compMap: Record<string, Competitor> = {};
-          fetchedCompetitors.forEach((c) => (compMap[c.id] = c));
-          setCompetitors(compMap);
-        })
-        .catch(console.error)
-        .finally(() => setLoadingMatches(false));
-    }
-  }, [isOpen, tournamentId]);
 
-  // Ensure match selection stays consistent with selected area
-  useEffect(() => {
-    if (!matchId || loadingMatches) return;
-
-    const matchInSelectedArea = matches.some(
-      (m) => m.id === matchId && m.areaId === areaId,
-    );
-
-    if (!matchInSelectedArea) {
-      setMatchId("");
-    }
-  }, [areaId, matchId, matches, loadingMatches]);
 
   if (!isOpen || !judge) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!matchId.trim()) return;
 
     const existingAssignment = judges.find(
       (j) =>
@@ -103,7 +60,7 @@ export default function AssignJudgeModal({
 
     setSubmitting(true);
     try {
-      await onAssign(judge.id!, { areaId, cornerId, matchId });
+      await onAssign(judge.id!, { areaId, cornerId });
       onClose();
     } catch (error) {
       console.error("Failed to assign", error);
@@ -198,117 +155,8 @@ export default function AssignJudgeModal({
                 <option value={CornerRole.CORNER_1}>Corner 1</option>
                 <option value={CornerRole.CORNER_2}>Corner 2</option>
                 <option value={CornerRole.CORNER_3}>Corner 3</option>
+                <option value={CornerRole.CORNER_4}>Corner 4</option>
               </select>
-            </div>
-
-            <div className="relative">
-              <label className="block text-sm font-bold text-gray-700 mb-1">
-                Match
-              </label>
-              <button
-                type="button"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-gray-50 text-left flex justify-between items-center"
-              >
-                {matchId ? (
-                  (() => {
-                    const m = matches.find((x) => x.id === matchId);
-                    if (!m)
-                      return (
-                        <span className="text-gray-900 font-medium">
-                          {matchId}
-                        </span>
-                      );
-                    return (
-                      <div className="flex items-center gap-2 truncate">
-                        <span className="font-bold text-gray-700">
-                          R{m.round}:
-                        </span>
-                        <span className="text-red-600 font-bold truncate">
-                          {getCompetitorFullName(
-                            m.redCompetitorId,
-                            competitors,
-                          )}
-                        </span>
-                        <span className="text-xs text-gray-400">vs</span>
-                        <span className="text-blue-600 font-bold truncate">
-                          {getCompetitorFullName(
-                            m.blueCompetitorId,
-                            competitors,
-                          )}
-                        </span>
-                      </div>
-                    );
-                  })()
-                ) : (
-                  <span className="text-gray-400 font-medium">
-                    -- Select a Match --
-                  </span>
-                )}
-                <svg
-                  className={`w-5 h-5 text-gray-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  ></path>
-                </svg>
-              </button>
-
-              {dropdownOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setDropdownOpen(false)}
-                  ></div>
-                  <ul className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-xl shadow-2xl max-h-60 overflow-y-auto">
-                    {filteredMatches.map((m) => (
-                      <li
-                        key={m.id}
-                        onClick={() => {
-                          setMatchId(m.id);
-                          setDropdownOpen(false);
-                        }}
-                        className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-0 transition-colors"
-                      >
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
-                          Round {m.round}{" "}
-                          <span className="font-mono text-gray-400 ml-1">
-                            ({m.id})
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-red-600 font-black">
-                            {getCompetitorFullName(
-                              m.redCompetitorId,
-                              competitors,
-                            )}
-                          </span>
-                          <span className="text-xs text-gray-400 italic">
-                            vs
-                          </span>
-                          <span className="text-blue-600 font-black">
-                            {getCompetitorFullName(
-                              m.blueCompetitorId,
-                              competitors,
-                            )}
-                          </span>
-                        </div>
-                      </li>
-                    ))}
-                    {filteredMatches.length === 0 && (
-                      <li className="px-4 py-4 text-center text-gray-500 italic">
-                        No matches available in Area {areaId}.
-                      </li>
-                    )}
-                  </ul>
-                </>
-              )}
             </div>
 
             <div className="pt-4 flex gap-3">
@@ -321,7 +169,7 @@ export default function AssignJudgeModal({
               </button>
               <button
                 type="submit"
-                disabled={submitting || !matchId.trim()}
+                disabled={submitting}
                 className="flex-1 px-4 py-3 text-white font-bold bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-95"
               >
                 {submitting ? "Assigning..." : "Confirm Assignment"}

@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import type { Tournament, Category } from "@corner-click/types";
 import { BracketType } from "@corner-click/types";
+import toast from "react-hot-toast";
 import JudgeManager from "./JudgeManager";
 import { CompetitorManager } from "./CompetitorManager";
 import { BracketManager } from "./BracketManager";
 import { CategoryManager } from "./CategoryManager";
+import { AreaScheduleManager } from "./AreaScheduleManager";
 import { CategoryAdjuster } from "./CategoryAdjuster";
 import { getCategories, updateCategoryBracketType } from "../services/categoryService";
+import { generateBracket } from "../services/bracketService";
+import { getCompetitors } from "../services/competitorService";
 import { getDynamicAnalyticsUrl } from "../utils/apiClient";
 
 interface Props {
@@ -19,16 +23,56 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
     "categories" | "competitors" | "adjust-categories" | "judges" | "brackets"
   >("categories");
   const [categories, setCategories] = useState<Category[]>([]);
+  const [competitorCounts, setCompetitorCounts] = useState<Record<string, number>>({});
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [bracketsViewMode, setBracketsViewMode] = useState<"CATEGORY" | "AREA">("CATEGORY");
+  const [generatingAll, setGeneratingAll] = useState(false);
 
   const defaultArea = "1";
 
+  const handleGenerateAllBrackets = async () => {
+    if (!confirm("Esto regenerará las llaves para TODAS las categorías. ¿Estás seguro?")) return;
+    setGeneratingAll(true);
+    const toastId = toast.loading("Generando llaves para todas las categorías...");
+    try {
+      let generated = 0;
+      const totalAreas = tournament.areas || 1;
+      let areaIndex = 0;
+      
+      for (const cat of categories) {
+        const comps = await getCompetitors(tournament.id!, cat.id);
+        if (comps.length >= 2) {
+          const areaId = `${(areaIndex % totalAreas) + 1}`;
+          await generateBracket(tournament.id!, cat.id, areaId, comps);
+          generated++;
+          areaIndex++;
+        }
+      }
+      toast.success(`Se generaron llaves para ${generated} categorías distribuidas en ${totalAreas} áreas con éxito.`, { id: toastId });
+    } catch (err) {
+      console.error(err);
+      toast.error("Hubo un error al generar las llaves.", { id: toastId });
+    } finally {
+      setGeneratingAll(false);
+    }
+  };
+
   useEffect(() => {
-    // Load categories so we can select them in the dropdown
-    getCategories(tournament.id!).then((data) => {
-      setCategories(data);
-      if (data.length > 0 && !selectedCategoryId) {
-        setSelectedCategoryId(data[0].id);
+    // Load categories and competitors so we can show counts in the dropdown
+    Promise.all([
+      getCategories(tournament.id!),
+      getCompetitors(tournament.id!)
+    ]).then(([cats, comps]) => {
+      setCategories(cats);
+      
+      const counts: Record<string, number> = {};
+      comps.forEach((c) => {
+        counts[c.categoryId] = (counts[c.categoryId] || 0) + 1;
+      });
+      setCompetitorCounts(counts);
+
+      if (cats.length > 0 && !selectedCategoryId) {
+        setSelectedCategoryId(cats[0].id);
       }
     });
   }, [tournament.id, activeTab]);
@@ -38,8 +82,8 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
       "categories",
       "competitors",
       "adjust-categories",
-      "judges",
       "brackets",
+      "judges",
     ];
     const currentIndex = tabs.indexOf(activeTab);
 
@@ -71,7 +115,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
         </button>
 
         <button
-          disabled={activeTab === "brackets"}
+          disabled={activeTab === "judges"}
           onClick={() => {
             if (currentIndex < tabs.length - 1) {
               setActiveTab(tabs[currentIndex + 1]);
@@ -172,7 +216,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
       )}
 
       {/* Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Left Column: Quick Stats */}
         <div className="lg:col-span-1 space-y-6">
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
@@ -193,7 +237,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
         </div>
 
         {/* Right Column: Manage Content */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-3">
           {/* Tabs */}
           <div className="flex space-x-4 border-b border-gray-200 mb-6 overflow-x-auto">
             <button
@@ -215,23 +259,56 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
               3. Ajustar Categorías
             </button>
             <button
-              className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === "judges" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500 hover:text-gray-700"}`}
-              onClick={() => setActiveTab("judges")}
-            >
-              4. Jueces
-            </button>
-            <button
               className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === "brackets" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500 hover:text-gray-700"}`}
               onClick={() => setActiveTab("brackets")}
             >
-              5. Llaves
+              4. Llaves
+            </button>
+            <button
+              className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === "judges" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500 hover:text-gray-700"}`}
+              onClick={() => setActiveTab("judges")}
+            >
+              5. Jueces
             </button>
           </div>
 
           {/* Navigation (Top) */}
           <div className="mb-6">{renderNavigation()}</div>
 
-          {(activeTab === "competitors" || activeTab === "brackets") && (
+          {activeTab === "brackets" && (
+            <div className="mb-6 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setBracketsViewMode("CATEGORY")}
+                  className={`px-4 py-2 rounded-lg font-bold text-sm ${bracketsViewMode === "CATEGORY" ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+                >
+                  Ver por Categoría
+                </button>
+                <button
+                  onClick={() => setBracketsViewMode("AREA")}
+                  className={`px-4 py-2 rounded-lg font-bold text-sm ${bracketsViewMode === "AREA" ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+                >
+                  Ver por Área (Cronograma)
+                </button>
+              </div>
+              
+              {!tournament.status || tournament.status !== "COMPLETED" ? (
+                <button
+                  onClick={handleGenerateAllBrackets}
+                  disabled={generatingAll}
+                  className={`px-5 py-2.5 text-white rounded-lg font-bold text-sm shadow-sm transition-colors ${
+                    generatingAll 
+                      ? "bg-purple-400 cursor-not-allowed" 
+                      : "bg-purple-600 hover:bg-purple-700"
+                  }`}
+                >
+                  {generatingAll ? "Generando Todas..." : "Generar TODAS las Llaves [DEV]"}
+                </button>
+              ) : null}
+            </div>
+          )}
+
+          {(activeTab === "competitors" || (activeTab === "brackets" && bracketsViewMode === "CATEGORY")) && (
             <div className="mb-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div className="flex-1">
                 <label
@@ -248,14 +325,17 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                   onChange={(e) => setSelectedCategoryId(e.target.value)}
                   className="mt-1 block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
                 >
-                  <option value="" disabled>
-                    -- Selecciona una categoría --
+                  <option value="" disabled={activeTab === "brackets"}>
+                    {activeTab === "competitors" ? "Todas las categorías" : "-- Selecciona una categoría --"}
                   </option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
+                  {categories.map((c) => {
+                    const count = competitorCounts[c.id] || 0;
+                    return (
+                      <option key={c.id} value={c.id}>
+                        [{count}] {c.name}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
 
@@ -331,7 +411,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
             />
           )}
 
-          {activeTab === "competitors" && selectedCategoryId && (
+          {activeTab === "competitors" && (
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
               <CompetitorManager
                 tournamentId={tournament.id!}
@@ -339,17 +419,27 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                 categories={categories}
                 onCategoryChange={setSelectedCategoryId}
                 isReadOnly={tournament.status === "COMPLETED"}
+                tournamentAreas={tournament.areas || 1}
               />
             </div>
           )}
 
-          {activeTab === "brackets" && selectedCategoryId && (
+          {activeTab === "brackets" && bracketsViewMode === "CATEGORY" && selectedCategoryId && (
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
               <BracketManager
                 tournamentId={tournament.id!}
                 categoryId={selectedCategoryId}
                 areaId={defaultArea}
                 isReadOnly={tournament.status === "COMPLETED"}
+              />
+            </div>
+          )}
+
+          {activeTab === "brackets" && bracketsViewMode === "AREA" && (
+            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+              <AreaScheduleManager
+                tournamentId={tournament.id!}
+                tournamentAreas={tournament.areas || 1}
               />
             </div>
           )}

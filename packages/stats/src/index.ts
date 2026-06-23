@@ -17,10 +17,24 @@ export interface JudgeAudit {
   consistencyRate: number;
 }
 
+export interface MatchStats {
+  matchId: string;
+  round: number;
+  redCompetitorId: string;
+  blueCompetitorId: string;
+  winnerId?: string | null;
+  redTotalPoints: number;
+  blueTotalPoints: number;
+  redTotalWarnings: number;
+  blueTotalWarnings: number;
+  redTotalDeductions: number;
+  blueTotalDeductions: number;
+}
+
 export function calculateStatsAndAudits(
   matches: Match[],
   matchScores: Record<string, Record<string, any>>, // matchId -> judgeName -> scoreCard
-): { generalStats: GeneralStats; judgeAudits: JudgeAudit[] } {
+): { generalStats: GeneralStats; judgeAudits: JudgeAudit[]; matchStats: MatchStats[] } {
   const completed = matches.filter(
     (m) => m.status === MatchStatus.COMPLETED && m.winnerId,
   );
@@ -29,11 +43,19 @@ export function calculateStatsAndAudits(
   let points = 0;
   let warnings = 0;
   let deductions = 0;
+  const matchStatsList: MatchStats[] = [];
 
   completed.forEach((match) => {
     const scores = matchScores[match.id];
     if (!scores) return;
     const winnerId = match.winnerId;
+    
+    let redTotalPoints = 0;
+    let blueTotalPoints = 0;
+    let redTotalWarnings = 0;
+    let blueTotalWarnings = 0;
+    let redTotalDeductions = 0;
+    let blueTotalDeductions = 0;
 
     Object.entries(scores).forEach(([judgeName, card]) => {
       const rScore = calculateNetScore(
@@ -61,9 +83,30 @@ export function calculateStatsAndAudits(
         judgeDataMap[judgeName].matched += 1;
       }
 
+      redTotalPoints += card.redScore || 0;
+      blueTotalPoints += card.blueScore || 0;
+      redTotalWarnings += card.redWarnings || 0;
+      blueTotalWarnings += card.blueWarnings || 0;
+      redTotalDeductions += card.redDeductions || 0;
+      blueTotalDeductions += card.blueDeductions || 0;
+
       points += (card.redScore || 0) + (card.blueScore || 0);
       warnings += (card.redWarnings || 0) + (card.blueWarnings || 0);
       deductions += (card.redDeductions || 0) + (card.blueDeductions || 0);
+    });
+    
+    matchStatsList.push({
+      matchId: match.id,
+      round: match.round || 1,
+      redCompetitorId: match.redCompetitorId,
+      blueCompetitorId: match.blueCompetitorId,
+      winnerId: match.winnerId,
+      redTotalPoints,
+      blueTotalPoints,
+      redTotalWarnings,
+      blueTotalWarnings,
+      redTotalDeductions,
+      blueTotalDeductions,
     });
   });
 
@@ -92,6 +135,7 @@ export function calculateStatsAndAudits(
       technique3Pt: t3,
     },
     judgeAudits: audits,
+    matchStats: matchStatsList,
   };
 }
 
@@ -104,6 +148,7 @@ export function generateMarkdownReport({
   generalStats,
   matches,
   judgeAudits,
+  matchStats,
   getCompetitorName,
 }: {
   categoryId: string;
@@ -114,6 +159,7 @@ export function generateMarkdownReport({
   generalStats: GeneralStats;
   matches: Match[];
   judgeAudits: JudgeAudit[];
+  matchStats: MatchStats[];
   getCompetitorName: (id: string) => string;
 }): string {
   let md = `# Reporte Analítico del Torneo: ${tournamentName || "Sin Nombre"}\n\n`;
@@ -142,7 +188,17 @@ export function generateMarkdownReport({
   });
   md += `\n`;
 
-  md += `## 4. Auditoría y Consistencia de Jueces\n\n`;
+  md += `## 4. Estadísticas por Combate\n\n`;
+  md += `| Combate | Pts Rojo | Pts Azul | Faltas Rojo | Faltas Azul | Ded. Rojo | Ded. Azul |\n`;
+  md += `| --- | --- | --- | --- | --- | --- | --- |\n`;
+  matchStats.forEach((ms) => {
+    const redName = getCompetitorName(ms.redCompetitorId);
+    const blueName = getCompetitorName(ms.blueCompetitorId);
+    md += `| R${ms.round} (${redName} vs ${blueName}) | ${ms.redTotalPoints} | ${ms.blueTotalPoints} | ${ms.redTotalWarnings} | ${ms.blueTotalWarnings} | ${ms.redTotalDeductions} | ${ms.blueTotalDeductions} |\n`;
+  });
+  md += `\n`;
+
+  md += `## 5. Auditoría y Consistencia de Jueces\n\n`;
   md += `| Nombre del Juez | Combates Evaluados | Votos en Consenso | Tasa de Consistencia |\n`;
   md += `| --- | --- | --- | --- |\n`;
   judgeAudits.forEach((j) => {

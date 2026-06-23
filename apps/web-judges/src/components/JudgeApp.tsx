@@ -5,7 +5,8 @@ import {
   doc as firestoreDoc,
   onSnapshot as firestoreOnSnapshot,
 } from "firebase/firestore";
-import { auth, db } from "../lib/firebase";
+import { ref, onValue } from "firebase/database";
+import { auth, db, database } from "../lib/firebase";
 import { fetchWithAuth } from "../utils/apiClient";
 import ScorePad from "./ScorePad";
 import {
@@ -20,7 +21,7 @@ interface AssignedData {
   tournamentId: string;
   areaId: string;
   cornerId: string;
-  matchId: string;
+  matchId?: string;
 }
 
 export default function JudgeApp() {
@@ -29,7 +30,32 @@ export default function JudgeApp() {
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [assignment, setAssignment] = useState<AssignedData | null>(null);
+  const [activeMatchId, setActiveMatchId] = useState<string | null>(null);
   const [judgeName, setJudgeName] = useState<string>("");
+
+  // Listen to active match in the assigned area
+  useEffect(() => {
+    if (!assignment) {
+      setActiveMatchId(null);
+      return;
+    }
+    
+    if (assignment.tournamentId === "offline-tournament") {
+      setActiveMatchId("offline-match");
+      return;
+    }
+
+    const areaRef = ref(database, `live_matches_by_area/${assignment.areaId}`);
+    const unsub = onValue(areaRef, (snap) => {
+      if (snap.exists() && snap.val().matchId) {
+        setActiveMatchId(snap.val().matchId);
+      } else {
+        setActiveMatchId(null);
+      }
+    });
+
+    return () => unsub();
+  }, [assignment]);
 
   useEffect(() => {
     let unsubFirestore: (() => void) | undefined;
@@ -116,7 +142,6 @@ export default function JudgeApp() {
         tournamentId: "offline-tournament",
         areaId: "1",
         cornerId: "corner_1",
-        matchId: "offline-match",
       });
       setUser({
         uid: "offline-judge-uid",
@@ -277,7 +302,7 @@ export default function JudgeApp() {
     );
   }
 
-  if (!assignment) {
+  if (!assignment || !activeMatchId) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-950 px-6 text-center">
         <h1 className="text-4xl font-extrabold text-blue-500 mb-2">
@@ -288,7 +313,9 @@ export default function JudgeApp() {
         </p>
         <div className="mt-12 p-8 bg-gray-900 rounded-2xl border border-gray-800 shadow-xl max-w-lg w-full animate-pulse">
           <p className="text-2xl font-bold text-white leading-relaxed">
-            Esperando asignación desde la Mesa Central...
+            {assignment 
+              ? `Esperando que el Presidente de Mesa inicie un combate en el Área ${assignment.areaId}...`
+              : "Esperando asignación desde la Mesa Central..."}
           </p>
           <div className="mt-6 flex justify-center space-x-2">
             <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce [animation-delay:0ms]"></div>
@@ -340,8 +367,8 @@ export default function JudgeApp() {
 
   return (
     <ScorePad
-      key={`${assignment.matchId}-${assignment.cornerId}`}
-      matchId={assignment.matchId}
+      key={`${activeMatchId}-${assignment.cornerId}`}
+      matchId={activeMatchId}
       cornerId={assignment.cornerId}
       areaId={assignment.areaId}
       judgeId={user?.uid || "offline-judge-id"}

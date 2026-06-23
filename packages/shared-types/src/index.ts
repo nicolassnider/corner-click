@@ -87,7 +87,7 @@ export interface Judge {
   currentAssignment: {
     areaId: string;
     cornerId: CornerRole;
-    matchId: string;
+    matchId?: string;
   } | null;
 }
 

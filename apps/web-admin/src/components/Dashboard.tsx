@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import type { User } from "firebase/auth";
 import type { Tournament } from "@corner-click/types";
+import { Toaster } from "react-hot-toast";
 import TournamentList from "./TournamentList";
 import TournamentForm from "./TournamentForm";
 import TournamentDetail from "./TournamentDetail";
@@ -63,6 +64,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900 font-sans">
+      <Toaster position="top-right" />
       <AdminHeader onHomeClick={handleBackToList} user={user} />
 
       {/* Main Content Area */}

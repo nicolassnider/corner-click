@@ -50,7 +50,7 @@ export function useJudges(tournamentId: string) {
 
   const assignJudge = async (
     judgeId: string,
-    assignment: { areaId: string; cornerId: string; matchId: string },
+    assignment: { areaId: string; cornerId: string; matchId?: string },
   ) => {
     try {
       setError(null);

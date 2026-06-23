@@ -148,7 +148,12 @@ export const mergeCategoriesWithFewCompetitors = async (
               competitorUpdates[
                 `tournaments/${tournamentId}/competitors/${comp.id}/categoryId`
               ] = nextC.id;
+              // Update local state so subsequent merges pick it up
+              comp.categoryId = nextC.id;
             });
+          // Update nextC count so it doesn't get incorrectly deleted if it was empty
+          counts[nextC.id] = (counts[nextC.id] || 0) + count;
+          
           // Update nextC name to reflect the merge
           categoryUpdates[
             `tournaments/${tournamentId}/categories/${nextC.id}/name`
