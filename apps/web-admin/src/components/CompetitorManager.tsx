@@ -94,13 +94,14 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
   };
 
   const generateMockCompetitors = async () => {
-    setIsMockModalOpen(false);
     const amount = mockAmount;
 
     if (isNaN(amount) || amount <= 0) {
       alert("Por favor ingresa un número válido mayor a 0.");
       return;
     }
+
+    setIsMockModalOpen(false);
 
     if (!categories || categories.length === 0) {
       alert("No hay categorías creadas para asignar competidores.");

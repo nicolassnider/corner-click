@@ -13,6 +13,17 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const demoDataPath = path.join(__dirname, "../data/demo-data.json");
+let cachedDemoData: any | null = null;
+
+const getDemoData = () => {
+  if (!cachedDemoData) {
+    const fileContents = fs.readFileSync(demoDataPath, "utf-8");
+    cachedDemoData = JSON.parse(fileContents);
+  }
+  return cachedDemoData;
+};
+
 const router = express.Router();
 
 /**
@@ -35,9 +46,7 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
     // Intercept Guest Requests
     const user = req.user as any;
     if (user?.role === "guest") {
-      const demoDataPath = path.join(__dirname, "../data/demo-data.json");
-      const demoData = JSON.parse(fs.readFileSync(demoDataPath, "utf-8"));
-      res.json(demoData);
+      res.json(getDemoData());
       return;
     }
 
@@ -81,8 +90,7 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
     // Intercept Guest Requests
     const user = req.user as any;
     if (user?.role === "guest") {
-      const demoDataPath = path.join(__dirname, "../data/demo-data.json");
-      const demoData = JSON.parse(fs.readFileSync(demoDataPath, "utf-8"));
+      const demoData = getDemoData();
       const tournament = demoData.find((t: any) => t.id === req.params.id);
       if (tournament) {
         res.json(tournament);
