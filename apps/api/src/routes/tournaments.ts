@@ -13,12 +13,22 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const demoDataPath = path.join(__dirname, "../data/demo-data.json");
+const getDemoDataPath = () => {
+  // In dev (tsx), __dirname is src/routes.
+  // In prod (tsc), __dirname is dist/routes.
+  let targetPath = path.join(__dirname, "../data/demo-data.json");
+  if (!fs.existsSync(targetPath)) {
+    targetPath = path.join(__dirname, "../../src/data/demo-data.json");
+  }
+  return targetPath;
+};
+
 let cachedDemoData: any | null = null;
 
 const getDemoData = () => {
   if (!cachedDemoData) {
-    const fileContents = fs.readFileSync(demoDataPath, "utf-8");
+    const dataPath = getDemoDataPath();
+    const fileContents = fs.readFileSync(dataPath, "utf-8");
     cachedDemoData = JSON.parse(fileContents);
   }
   return cachedDemoData;
