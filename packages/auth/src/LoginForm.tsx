@@ -56,6 +56,35 @@ export default function LoginForm({
     }
   };
 
+  const handleGuestLogin = async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetchWithAuth(`/api/auth/admin/guest-login`, {
+        method: "POST",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Error al entrar como invitado");
+        return;
+      }
+
+      await signInWithCustomToken(auth, data.token);
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      } else {
+        window.location.href = "/";
+      }
+    } catch (err: any) {
+      setError("Error de conexión. Verifica que el servidor esté activo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0A0F1C] px-4">
       <div className="max-w-md w-full">
@@ -143,6 +172,17 @@ export default function LoginForm({
               {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
             </button>
           </form>
+
+          <div className="mt-6 pt-6 border-t border-white/10">
+            <button
+              type="button"
+              onClick={handleGuestLogin}
+              disabled={loading}
+              className="w-full py-3 px-4 bg-white/5 text-gray-300 font-semibold rounded-lg hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-[#121A2F] disabled:opacity-50 disabled:cursor-not-allowed transition-all border border-white/10"
+            >
+              Ver Demo como Invitado
+            </button>
+          </div>
         </div>
 
         <p className="text-center text-gray-500 text-xs mt-6">

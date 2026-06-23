@@ -6,6 +6,12 @@ import { db, rtdb } from "../services/firebase.js";
 import type { Tournament } from "@corner-click/types";
 import { TournamentStatus } from "@corner-click/types";
 import { authenticateToken, requireAdmin } from "../middlewares/auth.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
@@ -23,6 +29,15 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
   try {
     if (!db) {
       res.status(503).json({ error: "Database not initialized" });
+      return;
+    }
+
+    // Intercept Guest Requests
+    const user = req.user as any;
+    if (user?.role === "guest") {
+      const demoDataPath = path.join(__dirname, "../data/demo-data.json");
+      const demoData = JSON.parse(fs.readFileSync(demoDataPath, "utf-8"));
+      res.json(demoData);
       return;
     }
 
@@ -60,6 +75,20 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
   try {
     if (!db) {
       res.status(503).json({ error: "Database not initialized" });
+      return;
+    }
+
+    // Intercept Guest Requests
+    const user = req.user as any;
+    if (user?.role === "guest") {
+      const demoDataPath = path.join(__dirname, "../data/demo-data.json");
+      const demoData = JSON.parse(fs.readFileSync(demoDataPath, "utf-8"));
+      const tournament = demoData.find((t: any) => t.id === req.params.id);
+      if (tournament) {
+        res.json(tournament);
+      } else {
+        res.status(404).json({ error: "Tournament not found" });
+      }
       return;
     }
 
@@ -115,6 +144,13 @@ router.post(
     try {
       if (!db) {
         res.status(503).json({ error: "Database not initialized" });
+        return;
+      }
+
+      // Intercept Guest Requests
+      const user = req.user as any;
+      if (user?.role === "guest") {
+        res.status(403).json({ error: "Modo Solo Lectura: No se pueden crear datos en la Demo" });
         return;
       }
 
@@ -192,6 +228,13 @@ router.put(
         return;
       }
 
+      // Intercept Guest Requests
+      const user = req.user as any;
+      if (user?.role === "guest") {
+        res.status(403).json({ error: "Modo Solo Lectura: No se pueden editar datos en la Demo" });
+        return;
+      }
+
       const id = req.params.id as string;
       const docRef = db.collection("tournaments").doc(id);
       const doc = await docRef.get();
@@ -245,6 +288,13 @@ router.delete(
     try {
       if (!db) {
         res.status(503).json({ error: "Database not initialized" });
+        return;
+      }
+
+      // Intercept Guest Requests
+      const user = req.user as any;
+      if (user?.role === "guest") {
+        res.status(403).json({ error: "Modo Solo Lectura: No se pueden borrar datos en la Demo" });
         return;
       }
 

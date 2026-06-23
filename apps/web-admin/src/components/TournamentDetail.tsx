@@ -87,10 +87,6 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
         counts[c.categoryId] = (counts[c.categoryId] || 0) + 1;
       });
       setCompetitorCounts(counts);
-
-      if (cats.length > 0 && !selectedCategoryId) {
-        setSelectedCategoryId(cats[0].id);
-      }
     });
   }, [tournament.id, activeTab]);
 
@@ -471,6 +467,14 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                   areaId={defaultArea}
                   isReadOnly={tournament.status === "COMPLETED"}
                 />
+              </div>
+            )}
+
+          {activeTab === "brackets" &&
+            bracketsViewMode === "CATEGORY" &&
+            !selectedCategoryId && (
+              <div className="bg-gray-50 border-2 border-dashed border-gray-300 p-12 rounded-xl text-center">
+                <p className="text-gray-500 text-lg">Selecciona una categoría para ver su llave.</p>
               </div>
             )}
 

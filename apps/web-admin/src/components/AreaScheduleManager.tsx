@@ -90,6 +90,7 @@ export const AreaScheduleManager: React.FC<AreaScheduleManagerProps> = ({
 
   const getCompetitorName = (id?: string) => {
     if (!id) return "TBD";
+    if (id === "BYE") return "BYE (Libre)";
     const c = competitors[id];
     return c ? `${c.firstName} ${c.lastName}` : "Unknown";
   };
