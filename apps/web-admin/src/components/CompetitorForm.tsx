@@ -5,7 +5,11 @@ import type {
   AgeGroupDef,
   WeightClass,
 } from "@corner-click/types";
-import { LOCAL_AGES, WORLD_CUP_AGES, WORLD_CHAMPIONSHIP_AGES } from "@corner-click/types";
+import {
+  LOCAL_AGES,
+  WORLD_CUP_AGES,
+  WORLD_CHAMPIONSHIP_AGES,
+} from "@corner-click/types";
 
 interface CompetitorFormProps {
   initialData?: Competitor;
@@ -47,11 +51,15 @@ export const CompetitorForm: React.FC<CompetitorFormProps> = ({
   useEffect(() => {
     if (initialData) {
       // Validate if the assigned category still exists (it might have been deleted/merged)
-      const isCategoryValid = categories.some((c) => c.id === initialData.categoryId);
+      const isCategoryValid = categories.some(
+        (c) => c.id === initialData.categoryId,
+      );
       const initialCategoryId = isCategoryValid ? initialData.categoryId : "";
 
       setFormData({
-        categoryId: initialCategoryId || (categories.some(c => c.id === categoryId) ? categoryId : ""),
+        categoryId:
+          initialCategoryId ||
+          (categories.some((c) => c.id === categoryId) ? categoryId : ""),
         firstName: initialData.firstName || "",
         lastName: initialData.lastName || "",
         club: initialData.club || "",
@@ -161,26 +169,26 @@ export const CompetitorForm: React.FC<CompetitorFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Remove the string values of height/weight from the base object
     const { weight, height, ...rest } = formData;
-    
+
     // Use null instead of undefined because Firebase does not support undefined values.
     // Setting a field to null effectively deletes it from the database.
     const submitData: any = { ...rest };
-    
+
     if (weight) {
       submitData.weight = Number(weight);
     } else {
       submitData.weight = null;
     }
-    
+
     if (height) {
       submitData.height = Number(height);
     } else {
       submitData.height = null;
     }
-    
+
     onSave(submitData);
   };
 

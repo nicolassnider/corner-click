@@ -28,7 +28,6 @@ export default function AssignJudgeModal({
   const [cornerId, setCornerId] = useState(CornerRole.CORNER_1 as string);
   const [submitting, setSubmitting] = useState(false);
 
-
   // Reset form when opened with a new judge
   useEffect(() => {
     if (judge) {
@@ -36,8 +35,6 @@ export default function AssignJudgeModal({
       setCornerId(judge.currentAssignment?.cornerId || CornerRole.CORNER_1);
     }
   }, [judge]);
-
-
 
   if (!isOpen || !judge) return null;
 

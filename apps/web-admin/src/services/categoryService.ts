@@ -153,7 +153,7 @@ export const mergeCategoriesWithFewCompetitors = async (
             });
           // Update nextC count so it doesn't get incorrectly deleted if it was empty
           counts[nextC.id] = (counts[nextC.id] || 0) + count;
-          
+
           // Update nextC name to reflect the merge
           categoryUpdates[
             `tournaments/${tournamentId}/categories/${nextC.id}/name`

@@ -26,7 +26,7 @@ function shuffle<T>(array: T[]): T[] {
 export function resolveByes(matches: Match[]): Match[] {
   const propagatedNext = new Set<string>();
   const propagatedLoser = new Set<string>();
-  
+
   const matchMap = new Map<string, Match>();
   for (const m of matches) {
     matchMap.set(m.id, m);
@@ -37,7 +37,11 @@ export function resolveByes(matches: Match[]): Match[] {
     changed = false;
     for (const match of matches) {
       // 1. If match is PENDING but both spots are filled, and one or both is BYE -> auto-complete
-      if (match.status === MatchStatus.PENDING && match.redCompetitorId !== "" && match.blueCompetitorId !== "") {
+      if (
+        match.status === MatchStatus.PENDING &&
+        match.redCompetitorId !== "" &&
+        match.blueCompetitorId !== ""
+      ) {
         const isRedBye = match.redCompetitorId === "BYE";
         const isBlueBye = match.blueCompetitorId === "BYE";
         if (isRedBye || isBlueBye) {
@@ -54,7 +58,11 @@ export function resolveByes(matches: Match[]): Match[] {
       }
 
       // 2. Propagate COMPLETED match winner to nextMatchId
-      if (match.status === MatchStatus.COMPLETED && match.nextMatchId && !propagatedNext.has(match.id)) {
+      if (
+        match.status === MatchStatus.COMPLETED &&
+        match.nextMatchId &&
+        !propagatedNext.has(match.id)
+      ) {
         const nextMatch = matchMap.get(match.nextMatchId);
         if (nextMatch) {
           const winnerToPropagate = match.winnerId || "BYE";
@@ -71,12 +79,19 @@ export function resolveByes(matches: Match[]): Match[] {
       }
 
       // 3. Propagate COMPLETED match loser to losersMatchId
-      if (match.status === MatchStatus.COMPLETED && match.losersMatchId && !propagatedLoser.has(match.id)) {
+      if (
+        match.status === MatchStatus.COMPLETED &&
+        match.losersMatchId &&
+        !propagatedLoser.has(match.id)
+      ) {
         const losersMatch = matchMap.get(match.losersMatchId);
         if (losersMatch) {
           let loserToPropagate = "BYE";
           if (match.winnerId) {
-            loserToPropagate = match.winnerId === match.redCompetitorId ? match.blueCompetitorId : match.redCompetitorId;
+            loserToPropagate =
+              match.winnerId === match.redCompetitorId
+                ? match.blueCompetitorId
+                : match.redCompetitorId;
           }
           if (loserToPropagate === "") loserToPropagate = "BYE";
 
@@ -102,7 +117,7 @@ export interface BracketGenerator {
     categoryId: string,
     areaId: string,
     competitors: Competitor[],
-    nextId: () => string
+    nextId: () => string,
   ): Match[];
 }
 
@@ -115,7 +130,7 @@ export class SingleEliminationGenerator implements BracketGenerator {
     categoryId: string,
     areaId: string,
     competitors: Competitor[],
-    nextId: () => string
+    nextId: () => string,
   ): Match[] {
     if (competitors.length < 2) {
       throw new Error("Not enough competitors to generate a bracket");
@@ -125,7 +140,9 @@ export class SingleEliminationGenerator implements BracketGenerator {
     const unseeded = shuffle(competitors.filter((c) => !c.isSeeded));
     const bracketSize = Math.pow(2, Math.ceil(Math.log2(competitors.length)));
 
-    const orderedCompetitors: (Competitor | null)[] = new Array(bracketSize).fill(null);
+    const orderedCompetitors: (Competitor | null)[] = new Array(
+      bracketSize,
+    ).fill(null);
 
     // Position seeds
     if (seeds.length > 0) orderedCompetitors[0] = seeds[0];
@@ -149,7 +166,7 @@ export class SingleEliminationGenerator implements BracketGenerator {
     const createNodes = (
       round: number,
       matchCount: number,
-      nextMatchIds: string[] = []
+      nextMatchIds: string[] = [],
     ): string[] => {
       if (round < 1) return [];
 
@@ -214,7 +231,7 @@ export class DoubleEliminationGenerator implements BracketGenerator {
     categoryId: string,
     areaId: string,
     competitors: Competitor[],
-    nextId: () => string
+    nextId: () => string,
   ): Match[] {
     if (competitors.length < 2) {
       throw new Error("Not enough competitors to generate a bracket");
@@ -222,13 +239,23 @@ export class DoubleEliminationGenerator implements BracketGenerator {
 
     // 1. Generate Winners Bracket using Single Elimination structure
     const singleGen = new SingleEliminationGenerator();
-    const winnersMatches = singleGen.generate(tournamentId, categoryId, areaId, competitors, nextId);
+    const winnersMatches = singleGen.generate(
+      tournamentId,
+      categoryId,
+      areaId,
+      competitors,
+      nextId,
+    );
 
     // Filter winners matches to exclude the Grand Final if we want to custom-route it
     // But we can just use the Winners final as a normal final, and append the Losers Bracket.
     // Let's identify the Winners Final Match: it's the match with round = maxRound, and no nextMatchId.
-    const maxWinnersRound = Math.max(...winnersMatches.map(m => m.round || 1));
-    const winnersFinal = winnersMatches.find(m => m.round === maxWinnersRound);
+    const maxWinnersRound = Math.max(
+      ...winnersMatches.map((m) => m.round || 1),
+    );
+    const winnersFinal = winnersMatches.find(
+      (m) => m.round === maxWinnersRound,
+    );
 
     if (!winnersFinal) {
       return winnersMatches;
@@ -316,7 +343,7 @@ export class DoubleEliminationGenerator implements BracketGenerator {
       // and then Winners Round 2 losers drop to subsequent Losers rounds.
       // For simplicity and robust generic double elimination:
       // Let's create a Losers match for every Winners match of Round 1.
-      const round1Winners = winnersMatches.filter(m => m.round === 1);
+      const round1Winners = winnersMatches.filter((m) => m.round === 1);
       const losersRound1Ids: string[] = [];
 
       for (let i = 0; i < round1Winners.length; i += 2) {
@@ -350,7 +377,9 @@ export class DoubleEliminationGenerator implements BracketGenerator {
 
       while (currentRound < maxWinnersRound) {
         const nextLosersMatches: Match[] = [];
-        const winnersOfCurrentRound = winnersMatches.filter(m => m.round === currentRound + 1);
+        const winnersOfCurrentRound = winnersMatches.filter(
+          (m) => m.round === currentRound + 1,
+        );
 
         for (let i = 0; i < currentLosersMatches.length; i++) {
           const lMatchId = nextId();
@@ -403,7 +432,7 @@ export class RoundRobinGenerator implements BracketGenerator {
     categoryId: string,
     areaId: string,
     competitors: Competitor[],
-    nextId: () => string
+    nextId: () => string,
   ): Match[] {
     if (competitors.length < 2) {
       throw new Error("Not enough competitors to generate a bracket");

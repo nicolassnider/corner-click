@@ -39,7 +39,7 @@ export default function JudgeApp() {
       setActiveMatchId(null);
       return;
     }
-    
+
     if (assignment.tournamentId === "offline-tournament") {
       setActiveMatchId("offline-match");
       return;
@@ -313,7 +313,7 @@ export default function JudgeApp() {
         </p>
         <div className="mt-12 p-8 bg-gray-900 rounded-2xl border border-gray-800 shadow-xl max-w-lg w-full animate-pulse">
           <p className="text-2xl font-bold text-white leading-relaxed">
-            {assignment 
+            {assignment
               ? `Esperando que el Presidente de Mesa inicie un combate en el Área ${assignment.areaId}...`
               : "Esperando asignación desde la Mesa Central..."}
           </p>

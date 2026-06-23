@@ -304,9 +304,7 @@ router.put(
       const { areaId, cornerId, matchId } = req.body;
 
       if (!areaId || !cornerId) {
-        res
-          .status(400)
-          .json({ error: "areaId and cornerId are required" });
+        res.status(400).json({ error: "areaId and cornerId are required" });
         return;
       }
 

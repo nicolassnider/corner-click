@@ -89,7 +89,7 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
     const defaultAmount = tournamentAreas * 20;
     const input = prompt(
       `¿Cuántos competidores deseas generar en total? (Recomendado para ${tournamentAreas} área(s): ${defaultAmount})`,
-      defaultAmount.toString()
+      defaultAmount.toString(),
     );
 
     if (!input) return;
@@ -104,29 +104,66 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
       alert("No hay categorías creadas para asignar competidores.");
       return;
     }
-    
+
     setLoading(true);
 
     const maleNames = [
-      "Liam", "Noah", "Oliver", "Elijah", "Mateo", "Lucas", "Hugo", "Martin",
-      "Benjamin", "James", "Alexander", "Daniel",
+      "Liam",
+      "Noah",
+      "Oliver",
+      "Elijah",
+      "Mateo",
+      "Lucas",
+      "Hugo",
+      "Martin",
+      "Benjamin",
+      "James",
+      "Alexander",
+      "Daniel",
     ];
     const femaleNames = [
-      "Emma", "Olivia", "Ava", "Charlotte", "Sophia", "Mia", "Lucia", "Martina",
-      "Isabella", "Amelia", "Harper", "Evelyn",
+      "Emma",
+      "Olivia",
+      "Ava",
+      "Charlotte",
+      "Sophia",
+      "Mia",
+      "Lucia",
+      "Martina",
+      "Isabella",
+      "Amelia",
+      "Harper",
+      "Evelyn",
     ];
     const lastNames = [
-      "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller",
-      "Davis", "Rodriguez", "Martinez", "Gomez", "Lopez", "Diaz", "Perez",
+      "Smith",
+      "Johnson",
+      "Williams",
+      "Brown",
+      "Jones",
+      "Garcia",
+      "Miller",
+      "Davis",
+      "Rodriguez",
+      "Martinez",
+      "Gomez",
+      "Lopez",
+      "Diaz",
+      "Perez",
     ];
     const clubs = [
-      "Tigers TKD", "Dragon Martial Arts", "Elite Fighters", "Kick Masters",
-      "Do San", "Chon Ji",
+      "Tigers TKD",
+      "Dragon Martial Arts",
+      "Elite Fighters",
+      "Kick Masters",
+      "Do San",
+      "Chon Ji",
     ];
     const countries = ["ARG", "BRA", "USA", "CAN", "CHI", "URU", "ESP"];
 
     const mockCompetitors = Array.from({ length: amount }).map(() => {
-      const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+      const randomCategory =
+        categories[Math.floor(Math.random() * categories.length)];
       const targetGender = randomCategory.gender || "MALE";
       const namesList = targetGender === "FEMALE" ? femaleNames : maleNames;
 
@@ -141,12 +178,18 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
       else if (randomCategory.ageGroup.includes("Adulto")) age = 25;
       else if (randomCategory.ageGroup.includes("Senior")) age = 40;
       else if (randomCategory.ageGroup.includes("Veterano")) age = 50;
-      
+
       // Añadir algo de variabilidad a la edad (+/- 1 año, excepto micro)
       age += Math.floor(Math.random() * 3) - 1;
       const birthYear = new Date().getFullYear() - age;
-      const birthMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, "0");
-      const birthDay = String(Math.floor(Math.random() * 28) + 1).padStart(2, "0");
+      const birthMonth = String(Math.floor(Math.random() * 12) + 1).padStart(
+        2,
+        "0",
+      );
+      const birthDay = String(Math.floor(Math.random() * 28) + 1).padStart(
+        2,
+        "0",
+      );
 
       // Peso aproximado
       let weight = 60 + Math.floor(Math.random() * 30);
@@ -166,7 +209,9 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
       };
     });
 
-    const toastId = toast.loading(`Generando ${amount} competidores aleatorios...`);
+    const toastId = toast.loading(
+      `Generando ${amount} competidores aleatorios...`,
+    );
     try {
       console.log(`Iniciando generación de ${amount} competidores...`);
       await Promise.all(
@@ -179,7 +224,9 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
         }),
       );
       console.log("¡Generación completada!");
-      toast.success(`${amount} competidores generados con éxito`, { id: toastId });
+      toast.success(`${amount} competidores generados con éxito`, {
+        id: toastId,
+      });
       await loadCompetitors();
     } catch (err) {
       console.error("Error generating mock data", err);
@@ -193,7 +240,10 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
     <div className="mt-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-gray-900">
-          {categoryId ? "Competidores en esta categoría" : "Todos los competidores"} ({competitors.length})
+          {categoryId
+            ? "Competidores en esta categoría"
+            : "Todos los competidores"}{" "}
+          ({competitors.length})
         </h2>
         {!isReadOnly && (
           <div className="flex space-x-2">
@@ -218,14 +268,26 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
       {isFormOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
           <div className="relative w-full max-w-3xl bg-white rounded-xl shadow-2xl p-6 max-h-[90vh] overflow-y-auto">
-            <button 
+            <button
               onClick={() => {
                 setIsFormOpen(false);
                 setEditingCompetitor(undefined);
               }}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
             </button>
             <div className="mt-2">
               <CompetitorForm
@@ -283,13 +345,18 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900 font-medium mb-1">
-                      {categories.find(c => c.id === comp.categoryId)?.name || "Sin categoría"}
+                      {categories.find((c) => c.id === comp.categoryId)?.name ||
+                        "Sin categoría"}
                     </div>
                     <div className="flex gap-2 text-xs font-mono">
                       <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md font-bold">
-                        {comp.birthDate ? `${new Date().getFullYear() - new Date(comp.birthDate).getFullYear()}y` : "-"}
+                        {comp.birthDate
+                          ? `${new Date().getFullYear() - new Date(comp.birthDate).getFullYear()}y`
+                          : "-"}
                       </span>
-                      <span className={`px-2 py-0.5 rounded-md font-bold ${comp.gender === "MALE" ? "bg-cyan-50 text-cyan-700" : "bg-pink-50 text-pink-700"}`}>
+                      <span
+                        className={`px-2 py-0.5 rounded-md font-bold ${comp.gender === "MALE" ? "bg-cyan-50 text-cyan-700" : "bg-pink-50 text-pink-700"}`}
+                      >
                         {comp.gender === "MALE" ? "M" : "F"}
                       </span>
                       <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-md font-bold">

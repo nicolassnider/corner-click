@@ -38,7 +38,9 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
 }) => {
   const [matches, setMatches] = useState<Match[]>([]);
   const [competitors, setCompetitors] = useState<Competitor[]>([]);
-  const [bracketType, setBracketType] = useState<BracketType>(BracketType.SINGLE_ELIMINATION);
+  const [bracketType, setBracketType] = useState<BracketType>(
+    BracketType.SINGLE_ELIMINATION,
+  );
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
 
@@ -57,9 +59,13 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
       setCompetitors(compsData);
 
       // Fetch category data for bracketType
-      const catSnap = await get(ref(database, `tournaments/${tournamentId}/categories/${categoryId}`));
+      const catSnap = await get(
+        ref(database, `tournaments/${tournamentId}/categories/${categoryId}`),
+      );
       if (catSnap.exists()) {
-        setBracketType(catSnap.val().bracketType || BracketType.SINGLE_ELIMINATION);
+        setBracketType(
+          catSnap.val().bracketType || BracketType.SINGLE_ELIMINATION,
+        );
       }
     } catch (error) {
       console.error("Failed to load bracket data:", error);
@@ -75,7 +81,11 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
     }
 
     if (matches.length > 0) {
-      if (!confirm("Esto sobrescribirá las llaves actuales de esta categoría. ¿Estás seguro?")) {
+      if (
+        !confirm(
+          "Esto sobrescribirá las llaves actuales de esta categoría. ¿Estás seguro?",
+        )
+      ) {
         return;
       }
     }
@@ -104,14 +114,17 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
 
     if (confirm("Are you sure you want to advance this competitor?")) {
       try {
-        const loserId = winnerId === match.redCompetitorId ? match.blueCompetitorId : match.redCompetitorId;
+        const loserId =
+          winnerId === match.redCompetitorId
+            ? match.blueCompetitorId
+            : match.redCompetitorId;
         await advanceWinner(
           tournamentId,
           matchId,
           winnerId,
           nextMatchId,
           match.losersMatchId,
-          loserId
+          loserId,
         );
         await loadData();
       } catch (error) {
@@ -192,7 +205,9 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
 
   // Group matches by round
   const filterMatches = (losersOnly: boolean) => {
-    return matches.filter((m) => (losersOnly ? m.isLosersBracket : !m.isLosersBracket));
+    return matches.filter((m) =>
+      losersOnly ? m.isLosersBracket : !m.isLosersBracket,
+    );
   };
 
   const getRounds = (matchesList: Match[]) => {
@@ -213,7 +228,9 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
 
     return (
       <div className="mb-10">
-        <h3 className="text-lg font-bold text-slate-800 mb-4 uppercase tracking-wider">{title}</h3>
+        <h3 className="text-lg font-bold text-slate-800 mb-4 uppercase tracking-wider">
+          {title}
+        </h3>
         <div className="overflow-x-auto pb-8">
           <div className="flex space-x-8 min-w-max">
             {Array.from({ length: maxRounds }).map((_, i) => {
@@ -221,7 +238,10 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
               const roundMatches = roundsMap[r] || [];
 
               return (
-                <div key={r} className="flex flex-col space-y-4 w-64 justify-around">
+                <div
+                  key={r}
+                  className="flex flex-col space-y-4 w-64 justify-around"
+                >
                   <h4 className="text-center font-semibold text-gray-700 mb-2 border-b pb-2">
                     Ronda {r}
                   </h4>
@@ -246,7 +266,13 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
                       >
                         <div className="truncate w-3/4 flex items-center">
                           <span className="w-3 h-3 bg-red-600 rounded-full mr-2"></span>
-                          <span className={m.redCompetitorId ? "text-gray-900" : "text-gray-400"}>
+                          <span
+                            className={
+                              m.redCompetitorId
+                                ? "text-gray-900"
+                                : "text-gray-400"
+                            }
+                          >
                             {getCompetitorName(m.redCompetitorId)}
                           </span>
                         </div>
@@ -257,7 +283,11 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleAdvanceWinner(m.id, m.redCompetitorId, m.nextMatchId);
+                                handleAdvanceWinner(
+                                  m.id,
+                                  m.redCompetitorId,
+                                  m.nextMatchId,
+                                );
                               }}
                               className="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded cursor-pointer"
                               title="Advance as winner"
@@ -273,7 +303,13 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
                       >
                         <div className="truncate w-3/4 flex items-center">
                           <span className="w-3 h-3 bg-blue-600 rounded-full mr-2"></span>
-                          <span className={m.blueCompetitorId ? "text-gray-900" : "text-gray-400"}>
+                          <span
+                            className={
+                              m.blueCompetitorId
+                                ? "text-gray-900"
+                                : "text-gray-400"
+                            }
+                          >
                             {getCompetitorName(m.blueCompetitorId)}
                           </span>
                         </div>
@@ -284,7 +320,11 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleAdvanceWinner(m.id, m.blueCompetitorId, m.nextMatchId);
+                                handleAdvanceWinner(
+                                  m.id,
+                                  m.blueCompetitorId,
+                                  m.nextMatchId,
+                                );
                               }}
                               className="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded cursor-pointer"
                               title="Advance as winner"
@@ -324,7 +364,9 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
     // the loser of losers final is 3rd place.
     // For single elimination, the two semi-finalists who lost are sharing 3rd.
     if (bracketType === BracketType.DOUBLE_ELIMINATION) {
-      const losersFinal = matches.find((m) => m.nextMatchId === finalMatch.id && m.isLosersBracket);
+      const losersFinal = matches.find(
+        (m) => m.nextMatchId === finalMatch.id && m.isLosersBracket,
+      );
       if (losersFinal && losersFinal.status === "COMPLETED") {
         const loserId =
           losersFinal.winnerId === losersFinal.redCompetitorId
@@ -357,34 +399,69 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
       <div className="space-y-8">
         {/* Positions Table */}
         <div className="bg-slate-900/10 border border-slate-200 rounded-xl p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-slate-800 mb-4 uppercase tracking-wider">Tabla de Posiciones</h3>
+          <h3 className="text-lg font-bold text-slate-800 mb-4 uppercase tracking-wider">
+            Tabla de Posiciones
+          </h3>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 text-sm">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase tracking-wider">Puesto</th>
-                  <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase tracking-wider">Competidor</th>
-                  <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase tracking-wider">Club</th>
-                  <th className="px-6 py-3 text-center font-bold text-gray-500 uppercase tracking-wider">Jugados</th>
-                  <th className="px-6 py-3 text-center font-bold text-gray-500 uppercase tracking-wider">Ganados</th>
-                  <th className="px-6 py-3 text-center font-bold text-gray-500 uppercase tracking-wider">Puntos Marcados</th>
-                  <th className="px-6 py-3 text-center font-bold text-gray-500 uppercase tracking-wider">Warnings</th>
-                  <th className="px-6 py-3 text-center font-bold text-gray-500 uppercase tracking-wider">Puntos</th>
+                  <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase tracking-wider">
+                    Puesto
+                  </th>
+                  <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase tracking-wider">
+                    Competidor
+                  </th>
+                  <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase tracking-wider">
+                    Club
+                  </th>
+                  <th className="px-6 py-3 text-center font-bold text-gray-500 uppercase tracking-wider">
+                    Jugados
+                  </th>
+                  <th className="px-6 py-3 text-center font-bold text-gray-500 uppercase tracking-wider">
+                    Ganados
+                  </th>
+                  <th className="px-6 py-3 text-center font-bold text-gray-500 uppercase tracking-wider">
+                    Puntos Marcados
+                  </th>
+                  <th className="px-6 py-3 text-center font-bold text-gray-500 uppercase tracking-wider">
+                    Warnings
+                  </th>
+                  <th className="px-6 py-3 text-center font-bold text-gray-500 uppercase tracking-wider">
+                    Puntos
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {standings.map((std, idx) => (
-                  <tr key={std.competitorId} className={idx === 0 ? "bg-yellow-50/50" : ""}>
+                  <tr
+                    key={std.competitorId}
+                    className={idx === 0 ? "bg-yellow-50/50" : ""}
+                  >
                     <td className="px-6 py-4 whitespace-nowrap font-bold text-gray-900">
                       {idx + 1}º {idx === 0 && "🏆"}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-900">{std.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-gray-500">{std.club}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-center text-gray-900 font-semibold">{std.played}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-center text-gray-900 font-semibold">{std.won}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-center text-gray-900">{std.scorePoints}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-center text-red-500 font-semibold">{std.warnings}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-center text-blue-600 font-black">{std.points}</td>
+                    <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-900">
+                      {std.name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-500">
+                      {std.club}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center text-gray-900 font-semibold">
+                      {std.played}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center text-gray-900 font-semibold">
+                      {std.won}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center text-gray-900">
+                      {std.scorePoints}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center text-red-500 font-semibold">
+                      {std.warnings}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center text-blue-600 font-black">
+                      {std.points}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -394,7 +471,9 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
 
         {/* Matches List */}
         <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-slate-800 mb-4 uppercase tracking-wider">Lista de Combates (Round Robin)</h3>
+          <h3 className="text-lg font-bold text-slate-800 mb-4 uppercase tracking-wider">
+            Lista de Combates (Round Robin)
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {matches.map((m) => (
               <div
@@ -405,12 +484,20 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
                 }}
               >
                 <div className="flex justify-between items-center text-xs text-slate-500 mb-3">
-                  <span className="font-bold">Match {m.id.substring(m.id.length - 4)}</span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${m.status === "COMPLETED" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}>{m.status}</span>
+                  <span className="font-bold">
+                    Match {m.id.substring(m.id.length - 4)}
+                  </span>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${m.status === "COMPLETED" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}
+                  >
+                    {m.status}
+                  </span>
                 </div>
 
                 <div className="space-y-2">
-                  <div className={`flex justify-between items-center p-2 rounded ${m.winnerId === m.redCompetitorId ? "bg-red-50 border border-red-200 font-bold" : ""}`}>
+                  <div
+                    className={`flex justify-between items-center p-2 rounded ${m.winnerId === m.redCompetitorId ? "bg-red-50 border border-red-200 font-bold" : ""}`}
+                  >
                     <span className="truncate flex items-center gap-2">
                       <span className="w-2.5 h-2.5 bg-red-600 rounded-full shrink-0"></span>
                       {getCompetitorName(m.redCompetitorId)}
@@ -428,7 +515,9 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
                     )}
                   </div>
 
-                  <div className={`flex justify-between items-center p-2 rounded ${m.winnerId === m.blueCompetitorId ? "bg-blue-50 border border-blue-200 font-bold" : ""}`}>
+                  <div
+                    className={`flex justify-between items-center p-2 rounded ${m.winnerId === m.blueCompetitorId ? "bg-blue-50 border border-blue-200 font-bold" : ""}`}
+                  >
                     <span className="truncate flex items-center gap-2">
                       <span className="w-2.5 h-2.5 bg-blue-600 rounded-full shrink-0"></span>
                       {getCompetitorName(m.blueCompetitorId)}
@@ -537,15 +626,18 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
 
       {matches.length === 0 ? (
         <p className="text-gray-500 text-center py-8 bg-gray-50 rounded-lg">
-          Aún no se ha generado la llave de combates. Haz clic en "Generar Cruces / Llave" para iniciar.
+          Aún no se ha generado la llave de combates. Haz clic en "Generar
+          Cruces / Llave" para iniciar.
         </p>
       ) : bracketType === BracketType.ROUND_ROBIN ? (
         renderRoundRobin()
       ) : (
         <div className="space-y-6">
           {renderTree(
-            bracketType === BracketType.DOUBLE_ELIMINATION ? "Cuadro Principal (Ganadores)" : "Llaves de Combates",
-            filterMatches(false)
+            bracketType === BracketType.DOUBLE_ELIMINATION
+              ? "Cuadro Principal (Ganadores)"
+              : "Llaves de Combates",
+            filterMatches(false),
           )}
           {bracketType === BracketType.DOUBLE_ELIMINATION &&
             renderTree("Cuadro de Repesca (Perdedores)", filterMatches(true))}

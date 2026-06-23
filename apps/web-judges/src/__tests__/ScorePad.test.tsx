@@ -66,13 +66,7 @@ describe("ScorePad Component", () => {
   });
 
   it("should render correctly with initial scores", () => {
-    render(
-      <ScorePad
-        matchId="match-1"
-        cornerId="red"
-        isOffline={true}
-      />
-    );
+    render(<ScorePad matchId="match-1" cornerId="red" isOffline={true} />);
 
     // Verify initial scores
     expect(screen.getByText("ROJO")).toBeInTheDocument();
@@ -80,13 +74,7 @@ describe("ScorePad Component", () => {
   });
 
   it("should increment red and blue scores and emit socket event when offline/local", () => {
-    render(
-      <ScorePad
-        matchId="match-1"
-        cornerId="red"
-        isOffline={true}
-      />
-    );
+    render(<ScorePad matchId="match-1" cornerId="red" isOffline={true} />);
 
     // Get all buttons with "+1"
     const plusOneButtons = screen.getAllByText("+1");
@@ -98,18 +86,12 @@ describe("ScorePad Component", () => {
       expect.objectContaining({
         corner: "red",
         value: 1,
-      })
+      }),
     );
   });
 
   it("should handle warnings increment and emit event", () => {
-    render(
-      <ScorePad
-        matchId="match-1"
-        cornerId="red"
-        isOffline={true}
-      />
-    );
+    render(<ScorePad matchId="match-1" cornerId="red" isOffline={true} />);
 
     const warnButtons = screen.getAllByText("Warn");
     // Click the first one (Red)
@@ -120,18 +102,12 @@ describe("ScorePad Component", () => {
       expect.objectContaining({
         corner: "red",
         type: "warning",
-      })
+      }),
     );
   });
 
   it("should handle deductions increment and emit event", () => {
-    render(
-      <ScorePad
-        matchId="match-1"
-        cornerId="red"
-        isOffline={true}
-      />
-    );
+    render(<ScorePad matchId="match-1" cornerId="red" isOffline={true} />);
 
     const deductButtons = screen.getAllByText("Deduct");
     // Click the first one (Red)
@@ -142,7 +118,7 @@ describe("ScorePad Component", () => {
       expect.objectContaining({
         corner: "red",
         type: "deduction",
-      })
+      }),
     );
   });
 });

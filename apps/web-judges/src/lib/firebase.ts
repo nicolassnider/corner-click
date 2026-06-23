@@ -6,11 +6,14 @@ import { getAuth, connectAuthEmulator } from "firebase/auth";
 const firebaseConfig = {
   apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY || "demo-api-key",
   authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
-  databaseURL: import.meta.env.PUBLIC_FIREBASE_DATABASE_URL || "http://127.0.0.1:9000/?ns=demo-corner-click",
+  databaseURL:
+    import.meta.env.PUBLIC_FIREBASE_DATABASE_URL ||
+    "http://127.0.0.1:9000/?ns=demo-corner-click",
   projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID || "demo-corner-click",
   storageBucket: import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.PUBLIC_FIREBASE_APP_ID || "1:1234567890:web:1234567890",
+  appId:
+    import.meta.env.PUBLIC_FIREBASE_APP_ID || "1:1234567890:web:1234567890",
 };
 
 const app = initializeApp(firebaseConfig);

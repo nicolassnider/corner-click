@@ -20,11 +20,19 @@ describe("Fábrica de Brackets y Algoritmos de Generación", () => {
   describe("SingleEliminationGenerator", () => {
     it("debe generar una llave de eliminación simple para 4 competidores", () => {
       const competitors = mockCompetitors(4);
-      const generator = BracketFactory.getGenerator(BracketType.SINGLE_ELIMINATION);
+      const generator = BracketFactory.getGenerator(
+        BracketType.SINGLE_ELIMINATION,
+      );
       let idCounter = 1;
       const nextId = () => `match-${idCounter++}`;
 
-      const matches = generator.generate("t-1", "c-1", "area-1", competitors, nextId);
+      const matches = generator.generate(
+        "t-1",
+        "c-1",
+        "area-1",
+        competitors,
+        nextId,
+      );
 
       // N = 4 competitors -> total rounds = log2(4) = 2 rounds.
       // Semis: 2 matches (round 1). Final: 1 match (round 2). Total: 3 matches.
@@ -43,17 +51,25 @@ describe("Fábrica de Brackets y Algoritmos de Generación", () => {
 
     it("debe distribuir Byes correctamente cuando no es potencia de 2", () => {
       const competitors = mockCompetitors(3); // 3 competitors -> size 4 with 1 Bye
-      const generator = BracketFactory.getGenerator(BracketType.SINGLE_ELIMINATION);
+      const generator = BracketFactory.getGenerator(
+        BracketType.SINGLE_ELIMINATION,
+      );
       let idCounter = 1;
       const nextId = () => `match-${idCounter++}`;
 
-      const matches = generator.generate("t-1", "c-1", "area-1", competitors, nextId);
+      const matches = generator.generate(
+        "t-1",
+        "c-1",
+        "area-1",
+        competitors,
+        nextId,
+      );
 
       expect(matches.length).toBe(3);
       const round1Matches = matches.filter((m) => m.round === 1);
       // One of the round 1 matches must have a BYE and be completed
       const byeMatch = round1Matches.find(
-        (m) => m.redCompetitorId === "BYE" || m.blueCompetitorId === "BYE"
+        (m) => m.redCompetitorId === "BYE" || m.blueCompetitorId === "BYE",
       );
       expect(byeMatch).toBeDefined();
       expect(byeMatch!.status).toBe(MatchStatus.COMPLETED);
@@ -65,11 +81,19 @@ describe("Fábrica de Brackets y Algoritmos de Generación", () => {
   describe("DoubleEliminationGenerator", () => {
     it("debe generar la estructura de doble eliminación con repesca para 4 competidores", () => {
       const competitors = mockCompetitors(4);
-      const generator = BracketFactory.getGenerator(BracketType.DOUBLE_ELIMINATION);
+      const generator = BracketFactory.getGenerator(
+        BracketType.DOUBLE_ELIMINATION,
+      );
       let idCounter = 1;
       const nextId = () => `match-${idCounter++}`;
 
-      const matches = generator.generate("t-1", "c-1", "area-1", competitors, nextId);
+      const matches = generator.generate(
+        "t-1",
+        "c-1",
+        "area-1",
+        competitors,
+        nextId,
+      );
 
       // 4 competitors double elimination:
       // Winners Bracket: 2 Semis (Round 1) + 1 Final (Round 2) -> 3 matches
@@ -78,7 +102,9 @@ describe("Fábrica de Brackets y Algoritmos de Generación", () => {
       // Total matches: 3 + 2 + 1 = 6 matches.
       expect(matches.length).toBe(6);
 
-      const winnersFinal = matches.find((m) => m.round === 2 && !m.isLosersBracket);
+      const winnersFinal = matches.find(
+        (m) => m.round === 2 && !m.isLosersBracket,
+      );
       expect(winnersFinal!.losersMatchId).toBeDefined(); // Loser of winners final goes to losers final
       expect(winnersFinal!.nextMatchId).toBeDefined(); // Winner of winners final goes to Grand Final
 
@@ -95,7 +121,13 @@ describe("Fábrica de Brackets y Algoritmos de Generación", () => {
       let idCounter = 1;
       const nextId = () => `match-${idCounter++}`;
 
-      const matches = generator.generate("t-1", "c-1", "area-1", competitors, nextId);
+      const matches = generator.generate(
+        "t-1",
+        "c-1",
+        "area-1",
+        competitors,
+        nextId,
+      );
 
       // N = 4 -> N * (N - 1) / 2 = 6 matches
       expect(matches.length).toBe(6);

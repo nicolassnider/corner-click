@@ -34,7 +34,11 @@ export interface MatchStats {
 export function calculateStatsAndAudits(
   matches: Match[],
   matchScores: Record<string, Record<string, any>>, // matchId -> judgeName -> scoreCard
-): { generalStats: GeneralStats; judgeAudits: JudgeAudit[]; matchStats: MatchStats[] } {
+): {
+  generalStats: GeneralStats;
+  judgeAudits: JudgeAudit[];
+  matchStats: MatchStats[];
+} {
   const completed = matches.filter(
     (m) => m.status === MatchStatus.COMPLETED && m.winnerId,
   );
@@ -49,7 +53,7 @@ export function calculateStatsAndAudits(
     const scores = matchScores[match.id];
     if (!scores) return;
     const winnerId = match.winnerId;
-    
+
     let redTotalPoints = 0;
     let blueTotalPoints = 0;
     let redTotalWarnings = 0;
@@ -94,7 +98,7 @@ export function calculateStatsAndAudits(
       warnings += (card.redWarnings || 0) + (card.blueWarnings || 0);
       deductions += (card.redDeductions || 0) + (card.blueDeductions || 0);
     });
-    
+
     matchStatsList.push({
       matchId: match.id,
       round: match.round || 1,

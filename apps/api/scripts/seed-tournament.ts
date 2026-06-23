@@ -43,12 +43,60 @@ async function seed() {
   console.log(`Tournament created with ID: ${tournamentRef.id}`);
 
   const categories = [
-    { name: "Infantil", gender: "MALE", ageGroup: "8-10", beltLevel: "Blanco a Verde", weightClass: "-30kg", matchDuration: 90, rounds: 2 },
-    { name: "Infantil", gender: "FEMALE", ageGroup: "8-10", beltLevel: "Blanco a Verde", weightClass: "-30kg", matchDuration: 90, rounds: 2 },
-    { name: "Cadetes", gender: "MALE", ageGroup: "11-13", beltLevel: "Azul a Rojo", weightClass: "-45kg", matchDuration: 120, rounds: 2 },
-    { name: "Cadetes", gender: "FEMALE", ageGroup: "11-13", beltLevel: "Azul a Rojo", weightClass: "-45kg", matchDuration: 120, rounds: 2 },
-    { name: "Adultos", gender: "MALE", ageGroup: "18-35", beltLevel: "Negro", weightClass: "-68kg", matchDuration: 120, rounds: 2 },
-    { name: "Adultos", gender: "FEMALE", ageGroup: "18-35", beltLevel: "Negro", weightClass: "-57kg", matchDuration: 120, rounds: 2 },
+    {
+      name: "Infantil",
+      gender: "MALE",
+      ageGroup: "8-10",
+      beltLevel: "Blanco a Verde",
+      weightClass: "-30kg",
+      matchDuration: 90,
+      rounds: 2,
+    },
+    {
+      name: "Infantil",
+      gender: "FEMALE",
+      ageGroup: "8-10",
+      beltLevel: "Blanco a Verde",
+      weightClass: "-30kg",
+      matchDuration: 90,
+      rounds: 2,
+    },
+    {
+      name: "Cadetes",
+      gender: "MALE",
+      ageGroup: "11-13",
+      beltLevel: "Azul a Rojo",
+      weightClass: "-45kg",
+      matchDuration: 120,
+      rounds: 2,
+    },
+    {
+      name: "Cadetes",
+      gender: "FEMALE",
+      ageGroup: "11-13",
+      beltLevel: "Azul a Rojo",
+      weightClass: "-45kg",
+      matchDuration: 120,
+      rounds: 2,
+    },
+    {
+      name: "Adultos",
+      gender: "MALE",
+      ageGroup: "18-35",
+      beltLevel: "Negro",
+      weightClass: "-68kg",
+      matchDuration: 120,
+      rounds: 2,
+    },
+    {
+      name: "Adultos",
+      gender: "FEMALE",
+      ageGroup: "18-35",
+      beltLevel: "Negro",
+      weightClass: "-57kg",
+      matchDuration: 120,
+      rounds: 2,
+    },
   ];
 
   let totalCompetitors = 0;
@@ -56,7 +104,7 @@ async function seed() {
   for (let c = 0; c < categories.length; c++) {
     const cat = categories[c];
     const catRef = await tournamentRef.collection("categories").add(cat);
-    
+
     // Create 10 competitors per category
     for (let i = 1; i <= 10; i++) {
       await tournamentRef.collection("competitors").add({
@@ -69,10 +117,14 @@ async function seed() {
       });
       totalCompetitors++;
     }
-    console.log(`Created category ${cat.name} ${cat.gender} with 10 competitors.`);
+    console.log(
+      `Created category ${cat.name} ${cat.gender} with 10 competitors.`,
+    );
   }
 
-  console.log(`Successfully seeded ${totalCompetitors} competitors across ${categories.length} categories.`);
+  console.log(
+    `Successfully seeded ${totalCompetitors} competitors across ${categories.length} categories.`,
+  );
   console.log("Done!");
 }
 

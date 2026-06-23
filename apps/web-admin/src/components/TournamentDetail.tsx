@@ -8,7 +8,10 @@ import { BracketManager } from "./BracketManager";
 import { CategoryManager } from "./CategoryManager";
 import { AreaScheduleManager } from "./AreaScheduleManager";
 import { CategoryAdjuster } from "./CategoryAdjuster";
-import { getCategories, updateCategoryBracketType } from "../services/categoryService";
+import {
+  getCategories,
+  updateCategoryBracketType,
+} from "../services/categoryService";
 import { generateBracket } from "../services/bracketService";
 import { getCompetitors } from "../services/competitorService";
 import { getDynamicAnalyticsUrl } from "../utils/apiClient";
@@ -23,22 +26,33 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
     "categories" | "competitors" | "adjust-categories" | "judges" | "brackets"
   >("categories");
   const [categories, setCategories] = useState<Category[]>([]);
-  const [competitorCounts, setCompetitorCounts] = useState<Record<string, number>>({});
+  const [competitorCounts, setCompetitorCounts] = useState<
+    Record<string, number>
+  >({});
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
-  const [bracketsViewMode, setBracketsViewMode] = useState<"CATEGORY" | "AREA">("CATEGORY");
+  const [bracketsViewMode, setBracketsViewMode] = useState<"CATEGORY" | "AREA">(
+    "CATEGORY",
+  );
   const [generatingAll, setGeneratingAll] = useState(false);
 
   const defaultArea = "1";
 
   const handleGenerateAllBrackets = async () => {
-    if (!confirm("Esto regenerará las llaves para TODAS las categorías. ¿Estás seguro?")) return;
+    if (
+      !confirm(
+        "Esto regenerará las llaves para TODAS las categorías. ¿Estás seguro?",
+      )
+    )
+      return;
     setGeneratingAll(true);
-    const toastId = toast.loading("Generando llaves para todas las categorías...");
+    const toastId = toast.loading(
+      "Generando llaves para todas las categorías...",
+    );
     try {
       let generated = 0;
       const totalAreas = tournament.areas || 1;
       let areaIndex = 0;
-      
+
       for (const cat of categories) {
         const comps = await getCompetitors(tournament.id!, cat.id);
         if (comps.length >= 2) {
@@ -48,7 +62,10 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           areaIndex++;
         }
       }
-      toast.success(`Se generaron llaves para ${generated} categorías distribuidas en ${totalAreas} áreas con éxito.`, { id: toastId });
+      toast.success(
+        `Se generaron llaves para ${generated} categorías distribuidas en ${totalAreas} áreas con éxito.`,
+        { id: toastId },
+      );
     } catch (err) {
       console.error(err);
       toast.error("Hubo un error al generar las llaves.", { id: toastId });
@@ -61,10 +78,10 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
     // Load categories and competitors so we can show counts in the dropdown
     Promise.all([
       getCategories(tournament.id!),
-      getCompetitors(tournament.id!)
+      getCompetitors(tournament.id!),
     ]).then(([cats, comps]) => {
       setCategories(cats);
-      
+
       const counts: Record<string, number> = {};
       comps.forEach((c) => {
         counts[c.categoryId] = (counts[c.categoryId] || 0) + 1;
@@ -291,24 +308,27 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                   Ver por Área (Cronograma)
                 </button>
               </div>
-              
+
               {!tournament.status || tournament.status !== "COMPLETED" ? (
                 <button
                   onClick={handleGenerateAllBrackets}
                   disabled={generatingAll}
                   className={`px-5 py-2.5 text-white rounded-lg font-bold text-sm shadow-sm transition-colors ${
-                    generatingAll 
-                      ? "bg-purple-400 cursor-not-allowed" 
+                    generatingAll
+                      ? "bg-purple-400 cursor-not-allowed"
                       : "bg-purple-600 hover:bg-purple-700"
                   }`}
                 >
-                  {generatingAll ? "Generando Todas..." : "Generar TODAS las Llaves [DEV]"}
+                  {generatingAll
+                    ? "Generando Todas..."
+                    : "Generar TODAS las Llaves [DEV]"}
                 </button>
               ) : null}
             </div>
           )}
 
-          {(activeTab === "competitors" || (activeTab === "brackets" && bracketsViewMode === "CATEGORY")) && (
+          {(activeTab === "competitors" ||
+            (activeTab === "brackets" && bracketsViewMode === "CATEGORY")) && (
             <div className="mb-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div className="flex-1">
                 <label
@@ -326,7 +346,9 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                   className="mt-1 block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
                 >
                   <option value="" disabled={activeTab === "brackets"}>
-                    {activeTab === "competitors" ? "Todas las categorías" : "-- Selecciona una categoría --"}
+                    {activeTab === "competitors"
+                      ? "Todas las categorías"
+                      : "-- Selecciona una categoría --"}
                   </option>
                   {categories.map((c) => {
                     const count = competitorCounts[c.id] || 0;
@@ -351,15 +373,24 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                     id="bracket-type-select"
                     aria-label="Modalidad de Llave"
                     title="Modalidad de Llave"
-                    value={categories.find((c) => c.id === selectedCategoryId)?.bracketType || BracketType.SINGLE_ELIMINATION}
+                    value={
+                      categories.find((c) => c.id === selectedCategoryId)
+                        ?.bracketType || BracketType.SINGLE_ELIMINATION
+                    }
                     onChange={async (e) => {
                       const newType = e.target.value as BracketType;
                       try {
-                        await updateCategoryBracketType(tournament.id!, selectedCategoryId, newType);
+                        await updateCategoryBracketType(
+                          tournament.id!,
+                          selectedCategoryId,
+                          newType,
+                        );
                         setCategories((prev) =>
                           prev.map((c) =>
-                            c.id === selectedCategoryId ? { ...c, bracketType: newType } : c
-                          )
+                            c.id === selectedCategoryId
+                              ? { ...c, bracketType: newType }
+                              : c,
+                          ),
                         );
                       } catch (err) {
                         console.error(err);
@@ -369,9 +400,15 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                     disabled={tournament.status === "COMPLETED"}
                     className="mt-1 block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
                   >
-                    <option value={BracketType.SINGLE_ELIMINATION}>Eliminación Simple</option>
-                    <option value={BracketType.DOUBLE_ELIMINATION}>Doble Eliminación (Repesca)</option>
-                    <option value={BracketType.ROUND_ROBIN}>Round Robin (Todos contra todos)</option>
+                    <option value={BracketType.SINGLE_ELIMINATION}>
+                      Eliminación Simple
+                    </option>
+                    <option value={BracketType.DOUBLE_ELIMINATION}>
+                      Doble Eliminación (Repesca)
+                    </option>
+                    <option value={BracketType.ROUND_ROBIN}>
+                      Round Robin (Todos contra todos)
+                    </option>
                   </select>
                 </div>
               )}
@@ -424,16 +461,18 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
             </div>
           )}
 
-          {activeTab === "brackets" && bracketsViewMode === "CATEGORY" && selectedCategoryId && (
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-              <BracketManager
-                tournamentId={tournament.id!}
-                categoryId={selectedCategoryId}
-                areaId={defaultArea}
-                isReadOnly={tournament.status === "COMPLETED"}
-              />
-            </div>
-          )}
+          {activeTab === "brackets" &&
+            bracketsViewMode === "CATEGORY" &&
+            selectedCategoryId && (
+              <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <BracketManager
+                  tournamentId={tournament.id!}
+                  categoryId={selectedCategoryId}
+                  areaId={defaultArea}
+                  isReadOnly={tournament.status === "COMPLETED"}
+                />
+              </div>
+            )}
 
           {activeTab === "brackets" && bracketsViewMode === "AREA" && (
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">

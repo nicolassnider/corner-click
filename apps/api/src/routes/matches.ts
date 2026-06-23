@@ -315,7 +315,8 @@ router.post(
       }
 
       const matchId = req.params.id as string;
-      const { winnerId, tournamentId, nextMatchId, losersMatchId, loserId } = req.body;
+      const { winnerId, tournamentId, nextMatchId, losersMatchId, loserId } =
+        req.body;
 
       if (!winnerId || !tournamentId) {
         res

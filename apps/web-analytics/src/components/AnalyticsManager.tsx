@@ -463,131 +463,131 @@ export default function AnalyticsManager({
           </div>
         </div>
 
-      {/* Estadísticas por Combate Table */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6 mt-8">
-        <h3 className="text-lg font-bold text-gray-800 border-b pb-3">
-          Estadísticas Detalladas por Combate
-        </h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+        {/* Estadísticas por Combate Table */}
+        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6 mt-8">
+          <h3 className="text-lg font-bold text-gray-800 border-b pb-3">
+            Estadísticas Detalladas por Combate
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    Combate
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-red-600">
+                    Pts Rojo
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-blue-600">
+                    Pts Azul
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-red-600">
+                    Faltas Rojo
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-blue-600">
+                    Faltas Azul
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-red-600">
+                    Ded. Rojo
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-blue-600">
+                    Ded. Azul
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {matchStats.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="text-center py-8 text-gray-400 font-medium"
+                    >
+                      No hay estadísticas de combates completados.
+                    </td>
+                  </tr>
+                ) : (
+                  matchStats.map((ms, idx) => {
+                    const redName = getCompetitorName(ms.redCompetitorId);
+                    const blueName = getCompetitorName(ms.blueCompetitorId);
+                    return (
+                      <tr key={idx}>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm font-bold text-gray-800">
+                          R{ms.round} - {redName} vs {blueName}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-bold text-red-600">
+                          {ms.redTotalPoints}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-bold text-blue-600">
+                          {ms.blueTotalPoints}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-medium text-red-400">
+                          {ms.redTotalWarnings}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-medium text-blue-400">
+                          {ms.blueTotalWarnings}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-medium text-red-400">
+                          {ms.redTotalDeductions}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-medium text-blue-400">
+                          {ms.blueTotalDeductions}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Printable Area Details - hidden on web view, visible on print */}
+        <div className="hidden print:block border-t-2 pt-6 mt-8">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">
+            Resumen Técnico de Combates
+          </h3>
+          <table className="min-w-full divide-y divide-slate-300 border">
             <thead>
-              <tr className="bg-gray-50">
-                <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                  Combate
+              <tr className="bg-slate-100">
+                <th className="px-3 py-2 text-left text-xs font-bold uppercase">
+                  Ronda
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-red-600">
-                  Pts Rojo
+                <th className="px-3 py-2 text-left text-xs font-bold uppercase">
+                  Competidor Rojo
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-blue-600">
-                  Pts Azul
+                <th className="px-3 py-2 text-left text-xs font-bold uppercase">
+                  Competidor Azul
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-red-600">
-                  Faltas Rojo
+                <th className="px-3 py-2 text-left text-xs font-bold uppercase">
+                  Ganador
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-blue-600">
-                  Faltas Azul
-                </th>
-                <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-red-600">
-                  Ded. Rojo
-                </th>
-                <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-blue-600">
-                  Ded. Azul
+                <th className="px-3 py-2 text-center text-xs font-bold uppercase">
+                  Estado
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
-              {matchStats.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="text-center py-8 text-gray-400 font-medium"
-                  >
-                    No hay estadísticas de combates completados.
+            <tbody className="divide-y divide-slate-200 text-sm">
+              {matches.map((m, idx) => (
+                <tr key={idx}>
+                  <td className="px-3 py-2">R{m.round}</td>
+                  <td className="px-3 py-2 font-bold">
+                    {getCompetitorName(m.redCompetitorId)}
+                  </td>
+                  <td className="px-3 py-2 font-bold">
+                    {getCompetitorName(m.blueCompetitorId)}
+                  </td>
+                  <td className="px-3 py-2 font-extrabold text-blue-700">
+                    {m.winnerId ? getCompetitorName(m.winnerId) : "TBD"}
+                  </td>
+                  <td className="px-3 py-2 text-center uppercase text-[10px] font-bold">
+                    {m.status}
                   </td>
                 </tr>
-              ) : (
-                matchStats.map((ms, idx) => {
-                  const redName = getCompetitorName(ms.redCompetitorId);
-                  const blueName = getCompetitorName(ms.blueCompetitorId);
-                  return (
-                    <tr key={idx}>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm font-bold text-gray-800">
-                        R{ms.round} - {redName} vs {blueName}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-bold text-red-600">
-                        {ms.redTotalPoints}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-bold text-blue-600">
-                        {ms.blueTotalPoints}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-medium text-red-400">
-                        {ms.redTotalWarnings}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-medium text-blue-400">
-                        {ms.blueTotalWarnings}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-medium text-red-400">
-                        {ms.redTotalDeductions}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-medium text-blue-400">
-                        {ms.blueTotalDeductions}
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
+              ))}
             </tbody>
           </table>
         </div>
       </div>
-
-      {/* Printable Area Details - hidden on web view, visible on print */}
-      <div className="hidden print:block border-t-2 pt-6 mt-8">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">
-          Resumen Técnico de Combates
-        </h3>
-        <table className="min-w-full divide-y divide-slate-300 border">
-          <thead>
-            <tr className="bg-slate-100">
-              <th className="px-3 py-2 text-left text-xs font-bold uppercase">
-                Ronda
-              </th>
-              <th className="px-3 py-2 text-left text-xs font-bold uppercase">
-                Competidor Rojo
-              </th>
-              <th className="px-3 py-2 text-left text-xs font-bold uppercase">
-                Competidor Azul
-              </th>
-              <th className="px-3 py-2 text-left text-xs font-bold uppercase">
-                Ganador
-              </th>
-              <th className="px-3 py-2 text-center text-xs font-bold uppercase">
-                Estado
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200 text-sm">
-            {matches.map((m, idx) => (
-              <tr key={idx}>
-                <td className="px-3 py-2">R{m.round}</td>
-                <td className="px-3 py-2 font-bold">
-                  {getCompetitorName(m.redCompetitorId)}
-                </td>
-                <td className="px-3 py-2 font-bold">
-                  {getCompetitorName(m.blueCompetitorId)}
-                </td>
-                <td className="px-3 py-2 font-extrabold text-blue-700">
-                  {m.winnerId ? getCompetitorName(m.winnerId) : "TBD"}
-                </td>
-                <td className="px-3 py-2 text-center uppercase text-[10px] font-bold">
-                  {m.status}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
     </div>
   );
 }

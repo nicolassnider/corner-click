@@ -37,7 +37,11 @@ vi.mock("firebase/database", () => {
           exists: () => true,
           val: () => ({
             "c-red": { firstName: "Lionel", lastName: "Messi", club: "Inter" },
-            "c-blue": { firstName: "Cristiano", lastName: "Ronaldo", club: "Al" },
+            "c-blue": {
+              firstName: "Cristiano",
+              lastName: "Ronaldo",
+              club: "Al",
+            },
           }),
         });
       }
@@ -81,7 +85,7 @@ describe("PublicScoreboard Component", () => {
   it("should render waiting screen initially", () => {
     render(<PublicScoreboard areaId="1" />);
     expect(
-      screen.getByText(/Esperando inicio de combate/i)
+      screen.getByText(/Esperando inicio de combate/i),
     ).toBeInTheDocument();
   });
 

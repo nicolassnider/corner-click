@@ -25,10 +25,14 @@ export const generateBracket = async (
   }
 
   // Get category to read bracketType
-  const categoryRef = ref(database, `tournaments/${tournamentId}/categories/${categoryId}`);
+  const categoryRef = ref(
+    database,
+    `tournaments/${tournamentId}/categories/${categoryId}`,
+  );
   const catSnap = await get(categoryRef);
   const categoryData = catSnap.exists() ? catSnap.val() : {};
-  const bracketType = categoryData.bracketType || BracketType.SINGLE_ELIMINATION;
+  const bracketType =
+    categoryData.bracketType || BracketType.SINGLE_ELIMINATION;
 
   const matchesRef = ref(database, `tournaments/${tournamentId}/matches`);
 
@@ -44,7 +48,7 @@ export const generateBracket = async (
     () => {
       const matchRef = push(matchesRef);
       return matchRef.key as string;
-    }
+    },
   );
 
   // Guardar en la base de datos
@@ -97,7 +101,13 @@ export const advanceWinner = async (
 ): Promise<void> => {
   const res = await fetchWithAuth(`/api/matches/${matchId}/winner`, {
     method: "POST",
-    body: JSON.stringify({ winnerId, tournamentId, nextMatchId, losersMatchId, loserId }),
+    body: JSON.stringify({
+      winnerId,
+      tournamentId,
+      nextMatchId,
+      losersMatchId,
+      loserId,
+    }),
   });
 
   if (!res.ok) {
