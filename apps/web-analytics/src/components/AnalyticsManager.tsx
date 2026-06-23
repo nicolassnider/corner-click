@@ -9,6 +9,7 @@ import {
   generateMarkdownReport,
   GeneralStats,
   JudgeAudit,
+  MatchStats,
 } from "@corner-click/stats";
 
 interface Props {
@@ -30,6 +31,7 @@ export default function AnalyticsManager({
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const [judgeAudits, setJudgeAudits] = useState<JudgeAudit[]>([]);
+  const [matchStats, setMatchStats] = useState<MatchStats[]>([]);
   const [generalStats, setGeneralStats] = useState({
     totalPoints: 0,
     totalWarnings: 0,
@@ -85,11 +87,13 @@ export default function AnalyticsManager({
         const {
           generalStats: computedGeneralStats,
           judgeAudits: computedAudits,
+          matchStats: computedMatchStats,
         } = calculateStatsAndAudits(fetchedMatches, matchScores);
 
         if (active) {
           setJudgeAudits(computedAudits);
           setGeneralStats(computedGeneralStats);
+          setMatchStats(computedMatchStats);
           setLoading(false);
         }
       } catch (err) {
@@ -124,6 +128,7 @@ export default function AnalyticsManager({
       generalStats,
       matches,
       judgeAudits,
+      matchStats,
       getCompetitorName,
     });
 
@@ -457,6 +462,83 @@ export default function AnalyticsManager({
             </table>
           </div>
         </div>
+
+      {/* Estadísticas por Combate Table */}
+      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6 mt-8">
+        <h3 className="text-lg font-bold text-gray-800 border-b pb-3">
+          Estadísticas Detalladas por Combate
+        </h3>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr className="bg-gray-50">
+                <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                  Combate
+                </th>
+                <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-red-600">
+                  Pts Rojo
+                </th>
+                <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-blue-600">
+                  Pts Azul
+                </th>
+                <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-red-600">
+                  Faltas Rojo
+                </th>
+                <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-blue-600">
+                  Faltas Azul
+                </th>
+                <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-red-600">
+                  Ded. Rojo
+                </th>
+                <th className="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider text-blue-600">
+                  Ded. Azul
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {matchStats.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="text-center py-8 text-gray-400 font-medium"
+                  >
+                    No hay estadísticas de combates completados.
+                  </td>
+                </tr>
+              ) : (
+                matchStats.map((ms, idx) => {
+                  const redName = getCompetitorName(ms.redCompetitorId);
+                  const blueName = getCompetitorName(ms.blueCompetitorId);
+                  return (
+                    <tr key={idx}>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm font-bold text-gray-800">
+                        R{ms.round} - {redName} vs {blueName}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-bold text-red-600">
+                        {ms.redTotalPoints}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-bold text-blue-600">
+                        {ms.blueTotalPoints}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-medium text-red-400">
+                        {ms.redTotalWarnings}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-medium text-blue-400">
+                        {ms.blueTotalWarnings}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-medium text-red-400">
+                        {ms.redTotalDeductions}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-medium text-blue-400">
+                        {ms.blueTotalDeductions}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Printable Area Details - hidden on web view, visible on print */}
@@ -505,6 +587,7 @@ export default function AnalyticsManager({
           </tbody>
         </table>
       </div>
+    </div>
     </div>
   );
 }

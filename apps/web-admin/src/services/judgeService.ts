@@ -20,7 +20,7 @@ export const judgeService = {
   async assignJudge(
     tournamentId: string,
     judgeId: string,
-    assignment: { areaId: string; cornerId: string; matchId: string },
+    assignment: { areaId: string; cornerId: string; matchId?: string },
   ): Promise<void> {
     const res = await fetchWithAuth(
       `/api/tournaments/${tournamentId}/judges/${judgeId}/assign`,

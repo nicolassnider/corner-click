@@ -144,9 +144,6 @@ export default function JudgeManager({
                             {j.currentAssignment.cornerId}
                           </span>
                         </span>
-                        <span className="text-xs font-mono text-gray-500">
-                          {j.currentAssignment.matchId}
-                        </span>
                       </div>
                     ) : (
                       <span className="text-gray-400 italic font-medium">

@@ -19,6 +19,83 @@ function shuffle<T>(array: T[]): T[] {
   return arr;
 }
 
+/**
+ * Propagates "BYE"s through any generic bracket structure.
+ * It iterates until a fixed point is reached (no more changes).
+ */
+export function resolveByes(matches: Match[]): Match[] {
+  const propagatedNext = new Set<string>();
+  const propagatedLoser = new Set<string>();
+  
+  const matchMap = new Map<string, Match>();
+  for (const m of matches) {
+    matchMap.set(m.id, m);
+  }
+
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const match of matches) {
+      // 1. If match is PENDING but both spots are filled, and one or both is BYE -> auto-complete
+      if (match.status === MatchStatus.PENDING && match.redCompetitorId !== "" && match.blueCompetitorId !== "") {
+        const isRedBye = match.redCompetitorId === "BYE";
+        const isBlueBye = match.blueCompetitorId === "BYE";
+        if (isRedBye || isBlueBye) {
+          match.status = MatchStatus.COMPLETED;
+          if (isRedBye && isBlueBye) {
+            match.winnerId = null;
+          } else if (isRedBye) {
+            match.winnerId = match.blueCompetitorId;
+          } else {
+            match.winnerId = match.redCompetitorId;
+          }
+          changed = true;
+        }
+      }
+
+      // 2. Propagate COMPLETED match winner to nextMatchId
+      if (match.status === MatchStatus.COMPLETED && match.nextMatchId && !propagatedNext.has(match.id)) {
+        const nextMatch = matchMap.get(match.nextMatchId);
+        if (nextMatch) {
+          const winnerToPropagate = match.winnerId || "BYE";
+          if (nextMatch.redCompetitorId === "") {
+            nextMatch.redCompetitorId = winnerToPropagate;
+            propagatedNext.add(match.id);
+            changed = true;
+          } else if (nextMatch.blueCompetitorId === "") {
+            nextMatch.blueCompetitorId = winnerToPropagate;
+            propagatedNext.add(match.id);
+            changed = true;
+          }
+        }
+      }
+
+      // 3. Propagate COMPLETED match loser to losersMatchId
+      if (match.status === MatchStatus.COMPLETED && match.losersMatchId && !propagatedLoser.has(match.id)) {
+        const losersMatch = matchMap.get(match.losersMatchId);
+        if (losersMatch) {
+          let loserToPropagate = "BYE";
+          if (match.winnerId) {
+            loserToPropagate = match.winnerId === match.redCompetitorId ? match.blueCompetitorId : match.redCompetitorId;
+          }
+          if (loserToPropagate === "") loserToPropagate = "BYE";
+
+          if (losersMatch.redCompetitorId === "") {
+            losersMatch.redCompetitorId = loserToPropagate;
+            propagatedLoser.add(match.id);
+            changed = true;
+          } else if (losersMatch.blueCompetitorId === "") {
+            losersMatch.blueCompetitorId = loserToPropagate;
+            propagatedLoser.add(match.id);
+            changed = true;
+          }
+        }
+      }
+    }
+  }
+  return matches;
+}
+
 export interface BracketGenerator {
   generate(
     tournamentId: string,
@@ -124,7 +201,7 @@ export class SingleEliminationGenerator implements BracketGenerator {
     };
 
     createNodes(totalRounds, 1);
-    return finalMatches;
+    return resolveByes(finalMatches);
   }
 }
 
@@ -313,7 +390,7 @@ export class DoubleEliminationGenerator implements BracketGenerator {
       }
     }
 
-    return [...winnersMatches, ...losersMatches, grandFinal];
+    return resolveByes([...winnersMatches, ...losersMatches, grandFinal]);
   }
 }
 

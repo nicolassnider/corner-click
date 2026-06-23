@@ -303,10 +303,10 @@ router.put(
       const judgeId = req.params.judgeId as string;
       const { areaId, cornerId, matchId } = req.body;
 
-      if (!areaId || !cornerId || !matchId) {
+      if (!areaId || !cornerId) {
         res
           .status(400)
-          .json({ error: "areaId, cornerId, and matchId are required" });
+          .json({ error: "areaId and cornerId are required" });
         return;
       }
 

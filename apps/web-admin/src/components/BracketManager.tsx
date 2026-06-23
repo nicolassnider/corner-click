@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import type { Match, Competitor } from "@corner-click/types";
 import { BracketType, MatchStatus } from "@corner-click/types";
 import {
@@ -69,23 +70,25 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
 
   const handleGenerateBracket = async () => {
     if (competitors.length < 2) {
-      alert("Need at least 2 competitors to generate a bracket.");
+      toast.error("Se necesitan al menos 2 competidores para generar llaves.");
       return;
     }
 
     if (matches.length > 0) {
-      if (!confirm("This will overwrite the current bracket. Are you sure?")) {
+      if (!confirm("Esto sobrescribirá las llaves actuales de esta categoría. ¿Estás seguro?")) {
         return;
       }
     }
 
     setGenerating(true);
+    const toastId = toast.loading("Generando llaves...");
     try {
       await generateBracket(tournamentId, categoryId, areaId, competitors);
       await loadData();
+      toast.success("Llaves generadas con éxito.", { id: toastId });
     } catch (error) {
       console.error("Failed to generate bracket:", error);
-      alert("Error generating bracket. Check console for details.");
+      toast.error("Error al generar las llaves.", { id: toastId });
     } finally {
       setGenerating(false);
     }
@@ -466,7 +469,7 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
             disabled={generating}
             className="px-5 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 font-bold transition-all shadow-sm"
           >
-            {generating ? "Generando..." : "Generar Cruces / Llave"}
+            {generating ? "Generando..." : "Generar Cruces / Llave [DEV]"}
           </button>
         )}
       </div>

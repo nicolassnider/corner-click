@@ -26,6 +26,31 @@ Corner Click is a comprehensive web application designed for managing ITF Taekwo
 - **Netlify:** Hosting platform for web apps.
 - **Vanilla CSS:** Custom, modern, and premium design system featuring glassmorphism and dynamic micro-animations.
 
+## Project Structure (Modules)
+
+This project uses a monorepo setup managed by Turborepo, containing the following applications and shared packages.
+
+### Apps
+
+- **`apps/api`**: The central Node.js/Express backend handling business logic, scoring, and rules.
+- **`apps/web-admin`**: The organizer dashboard for managing brackets and tournaments.
+- **`apps/web-judges`**: The real-time scoring interface for Corner Referees.
+- **`apps/web-analytics`**: Public portal for live standings, statistics, and audits.
+- **`apps/e2e`**: End-to-end testing suite for the platform.
+
+### Packages (Shared)
+
+- **`packages/api-client`**: Typed client for interacting with the backend API.
+- **`packages/audio`**: Shared audio utilities and assets for match sounds (bells, warnings).
+- **`packages/auth`**: Shared Firebase authentication logic and context providers.
+- **`packages/core-domain`**: Core business models, interfaces, and logic.
+- **`packages/logger`**: Unified logging utilities.
+- **`packages/pwa-config`**: Shared Progressive Web App (PWA) configurations.
+- **`packages/shared-styles`**: Global CSS variables, design tokens, and shared stylesheets.
+- **`packages/shared-types`**: Shared TypeScript interfaces across the monorepo.
+- **`packages/stats`**: Utilities for computing tournament statistics.
+- **`packages/tsconfig`**: Shared TypeScript configuration files.
+
 ## Business Rules
 
 Corner Click strictly adheres to the official ITF Sparring Business Rules (Version 2026-1). Detailed business rules regarding competitor eligibility, scoring criteria, match durations, and officiating can be found in `documentos/itf_sparring_business_rules.md`.
