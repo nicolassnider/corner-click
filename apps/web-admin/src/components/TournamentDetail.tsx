@@ -156,7 +156,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
   };
 
   return (
-    <div className="p-8 max-w-[95vw] 2xl:max-w-[1700px] mx-auto space-y-8">
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center space-x-6">
@@ -228,10 +228,10 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
         </div>
       )}
 
-      {/* Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      {/* Flex Layout */}
+      <div className="flex flex-col lg:flex-row gap-8">
         {/* Left Column: Quick Stats */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="w-full lg:w-64 shrink-0 space-y-6">
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
             <h3 className="text-lg font-bold text-gray-800 mb-4 uppercase tracking-wide">
               Status
@@ -250,7 +250,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
         </div>
 
         {/* Right Column: Manage Content */}
-        <div className="lg:col-span-3">
+        <div className="flex-1 min-w-0">
           {/* Tabs */}
           <div className="flex space-x-4 border-b border-gray-200 mb-6 overflow-x-auto">
             <button
