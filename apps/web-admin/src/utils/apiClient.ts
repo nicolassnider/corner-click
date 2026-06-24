@@ -24,6 +24,11 @@ export const getDynamicApiUrl = (configuredUrl: string): string => {
 
 export const API_URL = getDynamicApiUrl(CONFIGURED_API_URL);
 
+// Wake up the API on Render (helps when the API 'sleeps' after inactivity)
+if (typeof window !== "undefined") {
+  fetch(`${API_URL}/health`).catch(() => {});
+}
+
 export const getDynamicAnalyticsUrl = (configuredUrl: string): string => {
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
