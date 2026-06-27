@@ -24,6 +24,11 @@ export const getDynamicApiUrl = (configuredUrl: string): string => {
 
 export const API_URL = getDynamicApiUrl(CONFIGURED_API_URL);
 
+// Wake up the API on Render (helps when the API 'sleeps' after inactivity)
+if (typeof window !== "undefined") {
+  fetch(`${API_URL}/health`).catch(() => {});
+}
+
 export const getDynamicAnalyticsUrl = (configuredUrl: string): string => {
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
@@ -40,3 +45,17 @@ export const getDynamicAnalyticsUrl = (configuredUrl: string): string => {
 };
 
 export const fetchWithAuth = createFetchWithAuth(auth, API_URL);
+
+export const wakeUpApi = () => {
+  // Wake up the API on Render (helps when the API 'sleeps' after inactivity)
+  if (typeof window !== "undefined") {
+    fetch(`${API_URL}/health`).catch((error) => {
+      // Intentionally ignore errors from this warm-up request.
+      // In non-production, log at debug level to help diagnose connectivity/config issues.
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.debug("API warm-up /health request failed", error);
+      }
+    });
+  }
+};

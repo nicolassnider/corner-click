@@ -413,10 +413,13 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
       {isMockModalOpen && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
           <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl shadow-2xl p-6 w-full max-w-md">
-            <h3 className="text-xl font-bold text-white mb-2">Generar Competidores</h3>
+            <h3 className="text-xl font-bold text-white mb-2">
+              Generar Competidores
+            </h3>
             <p className="text-gray-400 text-sm mb-4">
-              ¿Cuántos competidores deseas generar en total? <br/>
-              (Recomendado para {tournamentAreas} área(s): {tournamentAreas * 20})
+              ¿Cuántos competidores deseas generar en total? <br />
+              (Recomendado para {tournamentAreas} área(s):{" "}
+              {tournamentAreas * 20})
             </p>
             <input
               type="number"

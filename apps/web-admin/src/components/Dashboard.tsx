@@ -9,6 +9,7 @@ import TournamentDetail from "./TournamentDetail";
 import AdminHeader from "./AdminHeader";
 import Footer from "./Footer";
 import { auth } from "../lib/firebase";
+import { wakeUpApi } from "../utils/apiClient";
 
 export default function Dashboard() {
   const [view, setView] = useState<"LIST" | "FORM" | "DETAIL">("LIST");
@@ -21,6 +22,8 @@ export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    wakeUpApi();
+
     const unsub = onAuthStateChanged(auth, (u) => {
       if (!u) {
         window.location.href = "/login";

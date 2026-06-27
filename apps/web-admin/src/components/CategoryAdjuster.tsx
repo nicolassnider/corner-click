@@ -4,7 +4,10 @@ import {
   getCategories,
   mergeCategoriesWithFewCompetitors,
 } from "../services/categoryService";
-import { getCompetitors, updateCompetitor } from "../services/competitorService";
+import {
+  getCompetitors,
+  updateCompetitor,
+} from "../services/competitorService";
 import {
   DndContext,
   useDraggable,
@@ -97,7 +100,9 @@ function CategoryDroppable({
       }`}
     >
       <div className="mb-4 pb-3 border-b border-gray-200/60">
-        <h4 className="font-bold text-gray-900 truncate" title={category.name}>{category.name}</h4>
+        <h4 className="font-bold text-gray-900 truncate" title={category.name}>
+          {category.name}
+        </h4>
         <div className="text-xs text-gray-500 mt-1">
           {category.ageGroup} | {category.beltLevel}
         </div>
@@ -121,7 +126,9 @@ function CategoryDroppable({
         ))}
         {competitors.length === 0 && (
           <div className="h-full flex items-center justify-center border-2 border-dashed border-gray-300/60 rounded-lg">
-            <span className="text-sm text-gray-400 font-medium">Arrastra aquí</span>
+            <span className="text-sm text-gray-400 font-medium">
+              Arrastra aquí
+            </span>
           </div>
         )}
       </div>
@@ -138,7 +145,8 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
   const [loading, setLoading] = useState(true);
   const [merging, setMerging] = useState(false);
   const [filterText, setFilterText] = useState("");
-  const [activeDragCompetitor, setActiveDragCompetitor] = useState<Competitor | null>(null);
+  const [activeDragCompetitor, setActiveDragCompetitor] =
+    useState<Competitor | null>(null);
 
   useEffect(() => {
     loadData();
@@ -207,10 +215,10 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
     const { active, over } = event;
 
     if (!over) return; // Dropped outside
-    
+
     const competitorId = active.id as string;
     const newCategoryId = over.id as string;
-    
+
     const competitor = competitors.find((c) => c.id === competitorId);
     if (!competitor || competitor.categoryId === newCategoryId) return;
 
@@ -218,13 +226,15 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
     const previousCategoryId = competitor.categoryId;
     setCompetitors((prev) =>
       prev.map((c) =>
-        c.id === competitorId ? { ...c, categoryId: newCategoryId } : c
-      )
+        c.id === competitorId ? { ...c, categoryId: newCategoryId } : c,
+      ),
     );
 
     try {
       if (isReadOnly) throw new Error("Solo lectura");
-      await updateCompetitor(tournamentId, competitorId, { categoryId: newCategoryId });
+      await updateCompetitor(tournamentId, competitorId, {
+        categoryId: newCategoryId,
+      });
       toast.success("Competidor movido con éxito");
     } catch (error) {
       console.error("Error updating competitor:", error);
@@ -232,8 +242,8 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
       // Revert on failure
       setCompetitors((prev) =>
         prev.map((c) =>
-          c.id === competitorId ? { ...c, categoryId: previousCategoryId } : c
-        )
+          c.id === competitorId ? { ...c, categoryId: previousCategoryId } : c,
+        ),
       );
     }
   };
@@ -246,8 +256,8 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
             Ajuste Manual de Categorías
           </h2>
           <p className="text-sm text-gray-500 mt-1">
-            Reorganiza a los competidores arrastrándolos entre categorías, o utiliza
-            el algoritmo de fusión automática.
+            Reorganiza a los competidores arrastrándolos entre categorías, o
+            utiliza el algoritmo de fusión automática.
           </p>
         </div>
         {!isReadOnly && (
@@ -293,12 +303,14 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
               <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center z-10 rounded-xl">
                 <div className="flex flex-col items-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-2"></div>
-                  <span className="text-indigo-800 font-semibold">Procesando...</span>
+                  <span className="text-indigo-800 font-semibold">
+                    Procesando...
+                  </span>
                 </div>
               </div>
             )}
-            
-            <DndContext 
+
+            <DndContext
               collisionDetection={closestCenter}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
@@ -306,23 +318,30 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
               <div className="flex overflow-x-auto pb-6 pt-2 gap-4 snap-x">
                 {filteredCategories.map((cat) => (
                   <div key={cat.id} className="snap-start">
-                    <CategoryDroppable 
-                      category={cat} 
-                      competitors={competitors.filter(c => c.categoryId === cat.id)} 
+                    <CategoryDroppable
+                      category={cat}
+                      competitors={competitors.filter(
+                        (c) => c.categoryId === cat.id,
+                      )}
                     />
                   </div>
                 ))}
               </div>
-              
+
               <DragOverlay>
                 {activeDragCompetitor ? (
                   <div className="p-3 bg-white border-2 border-indigo-500 rounded-lg shadow-xl opacity-90 scale-105 cursor-grabbing">
                     <div className="font-bold text-sm text-gray-800">
-                      {activeDragCompetitor.firstName} {activeDragCompetitor.lastName}
+                      {activeDragCompetitor.firstName}{" "}
+                      {activeDragCompetitor.lastName}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      {activeDragCompetitor.club || "Sin Club"} • {activeDragCompetitor.weight ? `${activeDragCompetitor.weight}kg` : "N/A kg"}
-                      {calculateAge(activeDragCompetitor.birthDate) !== null && ` • ${calculateAge(activeDragCompetitor.birthDate)} años`}
+                      {activeDragCompetitor.club || "Sin Club"} •{" "}
+                      {activeDragCompetitor.weight
+                        ? `${activeDragCompetitor.weight}kg`
+                        : "N/A kg"}
+                      {calculateAge(activeDragCompetitor.birthDate) !== null &&
+                        ` • ${calculateAge(activeDragCompetitor.birthDate)} años`}
                     </div>
                   </div>
                 ) : null}

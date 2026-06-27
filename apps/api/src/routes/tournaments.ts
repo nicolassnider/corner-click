@@ -168,7 +168,11 @@ router.post(
       // Intercept Guest Requests
       const user = req.user as any;
       if (user?.role === "guest") {
-        res.status(403).json({ error: "Modo Solo Lectura: No se pueden crear datos en la Demo" });
+        res
+          .status(403)
+          .json({
+            error: "Modo Solo Lectura: No se pueden crear datos en la Demo",
+          });
         return;
       }
 
@@ -249,7 +253,11 @@ router.put(
       // Intercept Guest Requests
       const user = req.user as any;
       if (user?.role === "guest") {
-        res.status(403).json({ error: "Modo Solo Lectura: No se pueden editar datos en la Demo" });
+        res
+          .status(403)
+          .json({
+            error: "Modo Solo Lectura: No se pueden editar datos en la Demo",
+          });
         return;
       }
 
@@ -312,7 +320,11 @@ router.delete(
       // Intercept Guest Requests
       const user = req.user as any;
       if (user?.role === "guest") {
-        res.status(403).json({ error: "Modo Solo Lectura: No se pueden borrar datos en la Demo" });
+        res
+          .status(403)
+          .json({
+            error: "Modo Solo Lectura: No se pueden borrar datos en la Demo",
+          });
         return;
       }
 
