@@ -474,7 +474,9 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
             bracketsViewMode === "CATEGORY" &&
             !selectedCategoryId && (
               <div className="bg-gray-50 border-2 border-dashed border-gray-300 p-12 rounded-xl text-center">
-                <p className="text-gray-500 text-lg">Selecciona una categoría para ver su llave.</p>
+                <p className="text-gray-500 text-lg">
+                  Selecciona una categoría para ver su llave.
+                </p>
               </div>
             )}
 
