@@ -9,7 +9,9 @@ import { authenticateToken, requireAdmin } from "../middlewares/auth.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { FirebaseTournamentRepository } from "../data/repositories/FirebaseTournamentRepository.js";
 
+const tournamentRepo = new FirebaseTournamentRepository();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -60,11 +62,7 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const snapshot = await db.collection("tournaments").get();
-    const tournaments = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const tournaments = await tournamentRepo.findAll();
     res.json(tournaments);
   } catch (error) {
     log.error({ err: toErr(error) }, "Error fetching tournaments");
@@ -101,24 +99,21 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
     const user = req.user as any;
     if (user?.role === "guest") {
       const demoData = getDemoData();
-      const tournament = demoData.find((t: any) => t.id === req.params.id);
-      if (tournament) {
-        res.json(tournament);
+      const demoTournament = demoData.find((t: any) => t.id === req.params.id);
+      if (demoTournament) {
+        res.json(demoTournament);
       } else {
         res.status(404).json({ error: "Tournament not found" });
       }
       return;
     }
 
-    const doc = await db
-      .collection("tournaments")
-      .doc(req.params.id as string)
-      .get();
-    if (!doc.exists) {
+    const tournament = await tournamentRepo.findById(req.params.id as string);
+    if (!tournament) {
       res.status(404).json({ error: "Tournament not found" });
       return;
     }
-    res.json({ id: doc.id, ...doc.data() });
+    res.json(tournament);
   } catch (error) {
     log.error({ err: toErr(error) }, "Error fetching tournament");
     res.status(500).json({ error: "Internal Server Error" });
@@ -192,8 +187,8 @@ router.post(
         createdAt: new Date().toISOString(),
       };
 
-      const docRef = await db.collection("tournaments").add(newTournament);
-      res.status(201).json({ id: docRef.id, ...newTournament });
+      const createdTournament = await tournamentRepo.create(newTournament);
+      res.status(201).json(createdTournament);
     } catch (error) {
       log.error({ err: toErr(error) }, "Error creating tournament");
       res.status(500).json({ error: "Internal Server Error" });
@@ -258,10 +253,9 @@ router.put(
       }
 
       const id = req.params.id as string;
-      const docRef = db.collection("tournaments").doc(id);
-      const doc = await docRef.get();
+      const tournament = await tournamentRepo.findById(id);
 
-      if (!doc.exists) {
+      if (!tournament) {
         res.status(404).json({ error: "Tournament not found" });
         return;
       }
@@ -275,8 +269,12 @@ router.put(
       if (areas !== undefined) updates.areas = areas;
       if (status !== undefined) updates.status = status;
 
-      await docRef.update(updates);
-      res.json({ id, ...doc.data(), ...updates });
+      const updatedTournament = await tournamentRepo.update(id, updates);
+      if (!updatedTournament) {
+        res.status(404).json({ error: "Tournament not found" });
+        return;
+      }
+      res.json(updatedTournament);
     } catch (error) {
       log.error({ err: toErr(error) }, "Error updating tournament");
       res.status(500).json({ error: "Internal Server Error" });
@@ -322,67 +320,15 @@ router.delete(
         return;
       }
 
-      const firestoreDb = db;
       const id = req.params.id as string;
-      const docRef = firestoreDb.collection("tournaments").doc(id);
-      const doc = await docRef.get();
+      const tournament = await tournamentRepo.findById(id);
 
-      if (!doc.exists) {
+      if (!tournament) {
         res.status(404).json({ error: "Tournament not found" });
         return;
       }
 
-      // 1. Get the list of match IDs from RTDB to delete associated Firestore match documents
-      const matchIds: string[] = [];
-      if (rtdb) {
-        const matchesSnap = await rtdb
-          .ref(`tournaments/${id}/matches`)
-          .once("value");
-        const matchesData = matchesSnap.val();
-        if (matchesData) {
-          matchIds.push(...Object.keys(matchesData));
-        }
-      }
-
-      // Helper to chunk arrays for Firestore batch operations (500 limit)
-      const chunk = <T>(arr: T[], size: number): T[][] => {
-        const chunks: T[][] = [];
-        for (let i = 0; i < arr.length; i += size) {
-          chunks.push(arr.slice(i, i + size));
-        }
-        return chunks;
-      };
-
-      // 2. Delete Firestore judges subcollection in chunks of 450
-      const judgesSnapshot = await docRef.collection("judges").get();
-      const judgeChunks = chunk(judgesSnapshot.docs, 450);
-      for (const chunkDocs of judgeChunks) {
-        const batch = firestoreDb.batch();
-        chunkDocs.forEach((judgeDoc) => {
-          batch.delete(judgeDoc.ref);
-        });
-        await batch.commit();
-      }
-
-      // 3. Delete Firestore match records in chunks of 450
-      if (matchIds.length > 0) {
-        const matchChunks = chunk(matchIds, 450);
-        for (const chunkIds of matchChunks) {
-          const batch = firestoreDb.batch();
-          chunkIds.forEach((mId) => {
-            batch.delete(firestoreDb.collection("matches").doc(mId));
-          });
-          await batch.commit();
-        }
-      }
-
-      // 4. Delete the main tournament document in Firestore
-      await docRef.delete();
-
-      // 5. Delete RTDB data if RTDB is initialized
-      if (rtdb) {
-        await rtdb.ref(`tournaments/${id}`).remove();
-      }
+      await tournamentRepo.delete(id);
 
       res.json({
         message: "Tournament and all associated data deleted successfully",

@@ -2,9 +2,11 @@ import express, { Request, Response } from "express";
 import { createLogger, toErr } from "@corner-click/logger";
 import { db, rtdb } from "../services/firebase.js";
 import { authenticateToken, requireAdmin } from "../middlewares/auth.js";
+import { FirebaseMatchRepository } from "../data/repositories/FirebaseMatchRepository.js";
 
 const log = createLogger("matches");
 
+const matchRepo = new FirebaseMatchRepository();
 const router = express.Router();
 
 /** Validate that an ID is a safe alphanumeric Firebase key (no path traversal) */
@@ -56,40 +58,7 @@ router.post(
         return;
       }
 
-      // Update status in Realtime Database to broadcast to judges
-      await rtdb.ref(`live_matches/${matchId}`).update({ status });
-
-      // Auto-advance tournament status: UPCOMING → IN_PROGRESS on first ACTIVE match
-      if (status === "ACTIVE" && db) {
-        const matchSnap = await rtdb.ref(`tournaments`).once("value");
-        const allTournaments = matchSnap.val() as Record<
-          string,
-          { matches?: Record<string, any> }
-        > | null;
-
-        // Find which tournament owns this match
-        let tournamentId: string | null = null;
-        if (allTournaments) {
-          for (const [tId, tData] of Object.entries(allTournaments)) {
-            if (tData.matches && tData.matches[matchId]) {
-              tournamentId = tId;
-              break;
-            }
-          }
-        }
-
-        if (tournamentId) {
-          const tournamentRef = db.collection("tournaments").doc(tournamentId);
-          const tournamentDoc = await tournamentRef.get();
-          if (
-            tournamentDoc.exists &&
-            tournamentDoc.data()?.status === "UPCOMING"
-          ) {
-            await tournamentRef.update({ status: "IN_PROGRESS" });
-            log.info(`[Tournament] ${tournamentId} → IN_PROGRESS`);
-          }
-        }
-      }
+      await matchRepo.updateStatus(matchId, status);
 
       res.json({ success: true, status });
     } catch (error) {
