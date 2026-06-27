@@ -10,7 +10,7 @@
     "prettier": "^3.0.0",
     "prettier-plugin-astro": "^0.14.1",
     "syncpack": "^15.3.2",
-    "turbo": "^2.0.0",
+    "turbo": "^2.10.0",
     "vitest": "^4.1.9"
   },
   "packageManager": "npm@11.9.0",
