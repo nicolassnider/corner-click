@@ -15,10 +15,6 @@ export default defineConfig({
   ],
 
   vite: {
-    plugins: [tailwindcss()],
-    build: {
-      target: ['es2015', 'chrome58', 'safari11'],
-      cssTarget: ['chrome58']
-    }
+    plugins: [tailwindcss()]
   }
 });

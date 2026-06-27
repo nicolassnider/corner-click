@@ -1,3 +1,9 @@
+/**
+ * @param {string} appName
+ * @param {string} shortName
+ * @param {string} description
+ * @returns {any}
+ */
 export function getPWAConfig(appName, shortName, description) {
   return {
     registerType: 'autoUpdate',
