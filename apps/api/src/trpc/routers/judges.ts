@@ -31,6 +31,35 @@ export const judgesRouter = router({
       }
     }),
 
+  getById: protectedProcedure
+    .input(z.object({ tournamentId: z.string(), judgeId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      if (!ctx.db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database not initialized",
+        });
+      }
+
+      try {
+        const judges = await judgeRepo.findByTournament(input.tournamentId);
+        const judge = judges.find((j) => j.id === input.judgeId);
+        if (!judge) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Judge not found",
+          });
+        }
+        return judge;
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching judge",
+        });
+      }
+    }),
+
   create: protectedProcedure
     .input(
       z.object({

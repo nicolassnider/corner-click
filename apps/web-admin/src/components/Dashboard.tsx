@@ -18,7 +18,7 @@ const queryClient = new QueryClient();
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: `${API_URL}/trpc`,
+      url: `${API_URL}/api/trpc`,
       async headers() {
         const user = auth.currentUser;
         const token = user ? await user.getIdToken() : "";

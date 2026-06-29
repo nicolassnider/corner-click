@@ -13,9 +13,6 @@ import { createContext } from "./trpc/trpc.js";
 const log = createLogger("server");
 
 import authRoutes from "./routes/auth.js";
-import tournamentsRoutes from "./routes/tournaments.js";
-import judgesRoutes from "./routes/judges.js";
-import matchesRoutes from "./routes/matches.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
 
@@ -106,9 +103,6 @@ app.use(
 );
 
 app.use(`${apiPrefix}/auth`, authRoutes);
-app.use(`${apiPrefix}/tournaments`, authenticateToken, tournamentsRoutes);
-app.use(`${apiPrefix}/tournaments`, authenticateToken, judgesRoutes);
-app.use(`${apiPrefix}/matches`, authenticateToken, matchesRoutes);
 
 // Root endpoint for quick deployment verification
 app.get("/", (req: Request, res: Response) => {

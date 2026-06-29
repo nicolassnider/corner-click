@@ -4,7 +4,6 @@ import { database } from "../lib/firebase";
 import {
   connectSocket,
   disconnectSocket,
-  getSocket,
 } from "../lib/socketClient";
 import {
   MatchStatus,
@@ -18,6 +17,7 @@ import {
 } from "@corner-click/types";
 import { AudioService } from "@corner-click/audio";
 import { API_URL } from "../utils/apiClient";
+import { motion, AnimatePresence } from "framer-motion";
 import "../styles/global.css";
 
 interface PublicScoreboardProps {
@@ -43,7 +43,6 @@ interface ScoreData {
   blueDeductions: number;
 }
 
-// UI Spanish Translation Constants to eliminate magic strings
 const LABELS = {
   WAITING_MATCH:
     "Esperando inicio de combate. La pantalla se actualizará automáticamente.",
@@ -89,7 +88,6 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
   const [firebaseConnected, setFirebaseConnected] = useState(true);
   const useLocal = !firebaseConnected;
 
-  // Track Firebase connection state
   useEffect(() => {
     const connectedRef = ref(database, ".info/connected");
     const unsubscribe = onValue(connectedRef, (snap) => {
@@ -101,7 +99,6 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
   const prevStatusRef = useRef<MatchStatus | null>(null);
   const prevTimeRef = useRef<number | null>(null);
 
-  // Play start gong when status changes to ACTIVE
   useEffect(() => {
     if (
       prevStatusRef.current !== null &&
@@ -113,7 +110,6 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
     prevStatusRef.current = matchStatus;
   }, [matchStatus]);
 
-  // Play buzzer when time reaches 00:00 while the match is active
   useEffect(() => {
     if (
       timeRemaining === 0 &&
@@ -127,7 +123,6 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
     prevTimeRef.current = timeRemaining;
   }, [timeRemaining, matchStatus]);
 
-  // Connect to local WebSocket fallback if offline
   useEffect(() => {
     if (!useLocal) return;
 
@@ -151,7 +146,6 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
           setJudgesData(state.scores);
         }
 
-        // Map competitor names from socket payload for offline layout mapping
         if (state.match.redCompetitorName) {
           setCompetitors((prev) => ({
             ...prev,
@@ -178,7 +172,6 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
     };
   }, [useLocal, areaId]);
 
-  // 1. Listen to active match of the Area (Online only)
   useEffect(() => {
     if (useLocal) return;
     const areaMatchRef = ref(database, `live_matches_by_area/${areaId}`);
@@ -188,7 +181,6 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
         const data = snapshot.val() as AreaMatchData;
         setActiveMatch(data);
 
-        // Fetch category details
         const categoryRef = ref(
           database,
           `tournaments/${data.tournamentId}/categories/${data.categoryId}`,
@@ -198,7 +190,6 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
           setCategoryName(catSnap.val().name || "");
         }
 
-        // Fetch all competitors of the tournament for mapping
         const competitorsRef = ref(
           database,
           `tournaments/${data.tournamentId}/competitors`,
@@ -224,7 +215,6 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
     return () => unsubscribe();
   }, [areaId, useLocal]);
 
-  // 2. Listen to live match status, timer and scores from Firebase RTDB in real-time (Online only)
   useEffect(() => {
     if (useLocal || !activeMatch) return;
 
@@ -249,7 +239,6 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
     return () => unsubscribe();
   }, [activeMatch?.matchId, useLocal]);
 
-  // 3. Listen to score streams when match ends (Online only)
   useEffect(() => {
     if (useLocal) return;
     let eventSource: EventSource | null = null;
@@ -289,7 +278,6 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
     return `${m}:${s}`;
   };
 
-  // Consolidate Judge votes and scores
   let redVotes = 0;
   let blueVotes = 0;
   let tieVotes = 0;
@@ -328,10 +316,23 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
 
   if (!activeMatch) {
     return (
-      <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center text-white font-sans">
-        <div className="text-center p-8 bg-gray-900/60 rounded-3xl border border-gray-800 backdrop-blur max-w-lg shadow-2xl">
-          <svg
-            className="w-16 h-16 text-blue-500 mx-auto mb-6 opacity-80"
+      <div className="h-[100vh] w-[100vw] bg-slate-950 flex flex-col items-center justify-center text-white font-sans overflow-hidden relative">
+        <motion.div
+          initial={{ opacity: 0, y: 50, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="text-center p-[4vw] bg-slate-900/40 rounded-[3vw] border border-slate-800 backdrop-blur-xl w-[60vw] max-w-[1200px] shadow-[0_0_80px_rgba(59,130,246,0.1)] relative z-10"
+        >
+          <motion.svg
+            animate={{ 
+              rotate: 360,
+              scale: [1, 1.1, 1]
+            }}
+            transition={{ 
+              rotate: { duration: 20, repeat: Infinity, ease: "linear" },
+              scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+            }}
+            className="w-[10vw] max-w-[150px] text-blue-500 mx-auto mb-[2vw] opacity-80"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -342,17 +343,22 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
               strokeWidth="1.5"
               d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
             />
-          </svg>
-          <h2 className="text-3xl font-black uppercase tracking-wider mb-2">
+          </motion.svg>
+          <h2 className="text-[4vw] font-black uppercase tracking-[0.2em] mb-[1vw] text-slate-100">
             ÁREA {areaId}
           </h2>
-          <p className="text-gray-400 text-lg">{LABELS.WAITING_MATCH}</p>
-        </div>
+          <p className="text-slate-400 text-[1.5vw] font-semibold tracking-wider">
+            {LABELS.WAITING_MATCH}
+          </p>
+        </motion.div>
+
+        {/* Ambient Lights */}
+        <div className="absolute top-0 left-0 w-[50vw] h-[50vw] bg-blue-600/10 rounded-full blur-[10vw] pointer-events-none mix-blend-screen animate-pulse-slow"></div>
+        <div className="absolute bottom-0 right-0 w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[10vw] pointer-events-none mix-blend-screen animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
       </div>
     );
   }
 
-  // Helper to map technical MatchStatus to friendly Spanish labels for spectator view
   const getStatusLabel = (status: MatchStatus) => {
     if (isExtraTime && status === MatchStatus.ACTIVE) {
       return LABELS.EXTRA_TIME;
@@ -363,82 +369,119 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
   const showFinalScores =
     matchStatus === MatchStatus.ENDED || matchStatus === MatchStatus.COMPLETED;
 
+  const timerColor = 
+    isExtraTime && matchStatus === MatchStatus.ACTIVE
+      ? "text-amber-400 drop-shadow-[0_0_5vh_rgba(245,158,11,0.6)]"
+      : matchStatus === MatchStatus.ACTIVE
+        ? "text-emerald-400 drop-shadow-[0_0_5vh_rgba(52,211,153,0.6)]"
+        : matchStatus === MatchStatus.GOLDEN_POINT
+          ? "text-amber-400 drop-shadow-[0_0_5vh_rgba(245,158,11,0.6)]"
+          : "text-slate-500 drop-shadow-none";
+
   return (
-    <div className="h-screen w-screen bg-slate-950 text-white font-sans flex flex-col justify-between p-[4vh] px-[4vw] relative overflow-hidden select-none tv-root">
-      {/* Background decoration */}
-      <div className="absolute inset-0 opacity-[0.02] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
-      <div className="absolute -top-60 -left-60 w-[500px] h-[500px] bg-rose-600/10 rounded-full filter blur-[180px] pointer-events-none"></div>
-      <div className="absolute -bottom-60 -right-60 w-[500px] h-[500px] bg-indigo-600/10 rounded-full filter blur-[180px] pointer-events-none"></div>
+    <div className="h-[100vh] w-[100vw] bg-slate-950 text-slate-100 font-sans flex flex-col justify-between p-[3vh] px-[3vw] relative overflow-hidden select-none">
+      
+      {/* Cinematic Background */}
+      <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
+      <motion.div 
+        animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.15, 0.1] }} 
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} 
+        className="absolute -top-[20vh] -left-[10vw] w-[60vw] h-[60vw] bg-rose-600/20 rounded-full filter blur-[15vw] pointer-events-none mix-blend-screen"
+      />
+      <motion.div 
+        animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.15, 0.1] }} 
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 5 }} 
+        className="absolute -bottom-[20vh] -right-[10vw] w-[60vw] h-[60vw] bg-blue-600/20 rounded-full filter blur-[15vw] pointer-events-none mix-blend-screen"
+      />
 
       {/* Top Header - TV Optimized */}
-      <header className="flex justify-between items-center bg-slate-900/60 border border-slate-800/80 px-12 py-6 rounded-3xl backdrop-blur-md z-10 tv-header">
+      <motion.header 
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 100, damping: 20 }}
+        className="flex justify-between items-center bg-slate-900/70 border border-slate-800/80 px-[3vw] py-[2vh] rounded-[2vw] backdrop-blur-xl z-10 shadow-[0_2vh_5vh_rgba(0,0,0,0.5)]"
+      >
         <div>
-          <span className="text-emerald-400 font-black tracking-widest text-sm uppercase">
+          <span className="text-emerald-400 font-black tracking-[0.3em] text-[1.2vw] uppercase drop-shadow-[0_0_1vw_rgba(52,211,153,0.3)]">
             {LABELS.CHAMPIONSHIP_TITLE}
           </span>
-          <h1 className="text-4xl font-black uppercase tracking-tight mt-1 text-slate-100">
+          <h1 className="text-[3vw] font-black uppercase tracking-tight mt-[0.5vh] text-slate-100 leading-none">
             {categoryName || LABELS.LOADING_CATEGORY}
           </h1>
         </div>
-        <div className="text-right">
-          <span className="bg-slate-800 text-slate-200 font-black px-4 sm:px-10 py-2 sm:py-4 rounded-full border border-slate-700 uppercase tracking-widest text-sm sm:text-lg md:text-xl lg:text-2xl shadow-lg whitespace-nowrap">
-            ÁREA{" "}
-            {areaId.toLowerCase().startsWith("area-")
-              ? areaId.replace(/area-/i, "")
-              : areaId}
+        <div className="text-right flex flex-col items-end">
+          <span className="bg-slate-950 text-slate-100 font-black px-[2vw] py-[1vh] rounded-full border-2 border-slate-700 uppercase tracking-widest text-[2vw] shadow-lg whitespace-nowrap">
+            ÁREA {areaId.toLowerCase().replace("area-", "")}
           </span>
-          <div className="text-sm sm:text-lg mt-2.5 font-bold tracking-wider">
+          <div className="text-[1.2vw] mt-[1.5vh] font-bold tracking-widest">
             {!activeMatch.nextMatchId ? (
-              <span className="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-4 py-1.5 rounded-full text-xs uppercase animate-pulse shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-                🏆 Por el Campeonato
-              </span>
+              <motion.span 
+                animate={{ opacity: [1, 0.5, 1] }} 
+                transition={{ duration: 2, repeat: Infinity }}
+                className="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-[1.5vw] py-[0.5vh] rounded-full uppercase shadow-[0_0_2vw_rgba(245,158,11,0.2)]"
+              >
+                🏆 Final
+              </motion.span>
             ) : (
-              <span className="text-slate-400">
+              <span className="text-slate-400 uppercase">
                 {LABELS.ROUND} {activeMatch.round}
               </span>
             )}
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* Main Scoreboard Layout - TV Optimized */}
-      <main className="flex-1 my-8 grid grid-cols-12 gap-10 items-center z-10 h-full overflow-hidden tv-main">
+      <main className="flex-1 my-[3vh] flex items-stretch gap-[3vw] z-10 h-full overflow-hidden">
+        
         {/* Red Corner Panel */}
-        <div className="col-span-4 bg-gradient-to-br from-rose-950/60 via-slate-900/40 to-slate-900/40 border-2 border-rose-500/30 p-10 rounded-3xl backdrop-blur-md text-center flex flex-col justify-between h-full shadow-[0_0_50px_rgba(239,68,68,0.05)] tv-panel">
-          <div className="pt-4">
-            <span className="bg-rose-600 text-white font-black text-base px-8 py-2.5 rounded-full tracking-widest uppercase shadow-md whitespace-nowrap">
+        <motion.div 
+          initial={{ x: "-20vw", opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 70, damping: 20, delay: 0.1 }}
+          className="flex-1 bg-gradient-to-br from-rose-950/80 via-slate-900/50 to-slate-950/80 border-[0.3vw] border-rose-500/40 p-[3vw] rounded-[3vw] backdrop-blur-xl text-center flex flex-col justify-between shadow-[0_0_5vw_rgba(225,29,72,0.15)] relative overflow-hidden group"
+        >
+          <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(225,29,72,0.05)_50%,transparent_75%,transparent_100%)] bg-[length:250px_250px] animate-[shine_5s_linear_infinite]" />
+          
+          <div className="pt-[1vh] relative z-10">
+            <span className="bg-rose-600 text-white font-black text-[1.5vw] px-[2vw] py-[1vh] rounded-full tracking-widest uppercase shadow-lg shadow-rose-900/50 inline-block">
               {LABELS.RED_CORNER}
             </span>
-            <h2 className="text-6xl lg:text-7xl font-black text-rose-500 mt-10 tracking-tight uppercase line-clamp-2 leading-none tv-panel-title">
+            <h2 className="text-[5vw] leading-[1.1] font-black text-rose-500 mt-[4vh] tracking-tighter uppercase drop-shadow-[0_0_1vw_rgba(244,63,94,0.3)] line-clamp-2">
               {getCompName(activeMatch.redCompetitorId)}
             </h2>
-            <p className="text-slate-400 text-2xl font-bold uppercase tracking-wider mt-4 tv-panel-subtitle">
+            <p className="text-slate-400 text-[1.8vw] font-bold uppercase tracking-widest mt-[2vh]">
               {getCompClub(activeMatch.redCompetitorId)}
             </p>
           </div>
 
-          <div className="flex flex-col items-center justify-center my-auto py-6">
-            <div
-              className={`text-[14rem] font-black leading-none font-mono transition-all duration-500 tv-score ${
-                showFinalScores
-                  ? "text-rose-500 drop-shadow-[0_0_35px_rgba(244,63,94,0.6)]"
-                  : "text-slate-800"
-              }`}
-            >
-              {showFinalScores ? redVotes : 0}
-            </div>
-            <div className="text-rose-400 font-black uppercase tracking-widest text-xs mt-4 bg-rose-950/40 border border-rose-900/50 px-6 py-2 rounded-full">
+          <div className="flex flex-col items-center justify-center my-auto py-[2vh] relative z-10">
+            <AnimatePresence mode="popLayout">
+              <motion.div
+                key={showFinalScores ? redVotes : "0"}
+                initial={{ scale: 0.5, opacity: 0, y: 50 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 1.5, opacity: 0, y: -50 }}
+                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                className={`text-[18vw] font-black leading-none font-mono tracking-tighter ${
+                  showFinalScores
+                    ? "text-rose-500 drop-shadow-[0_0_3vw_rgba(244,63,94,0.8)]"
+                    : "text-slate-800/80 drop-shadow-none"
+                }`}
+              >
+                {showFinalScores ? redVotes : 0}
+              </motion.div>
+            </AnimatePresence>
+            <div className="text-rose-400 font-black uppercase tracking-[0.2em] text-[1.2vw] mt-[3vh] bg-rose-950/60 border border-rose-900/80 px-[2vw] py-[1vh] rounded-full shadow-inner backdrop-blur-md">
               {showFinalScores ? LABELS.JUDGE_VOTES : LABELS.CLOSED_SCOREBOARD}
             </div>
           </div>
-
-          {/* Bottom spacer to align with Blue Corner Panel */}
-          <div className="h-2"></div>
-        </div>
+          <div className="h-[2vh]"></div>
+        </motion.div>
 
         {/* Center: TV Timer and Status */}
-        <div className="col-span-4 flex flex-col items-center justify-center text-center p-4 h-full my-auto">
-          <div className="text-slate-500 font-black tracking-widest text-xl uppercase">
+        <div className="w-[30vw] flex flex-col items-center justify-center text-center px-[2vw] h-full relative z-10">
+          <div className="text-slate-400 font-black tracking-[0.3em] text-[1.8vw] uppercase drop-shadow-md">
             {matchStatus === MatchStatus.GOLDEN_POINT
               ? LABELS.GOLDEN_POINT
               : isExtraTime
@@ -446,91 +489,116 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
                 : LABELS.MATCH_TIME}
           </div>
 
-          <div
-            className={`font-mono text-[8vw] lg:text-[10rem] xl:text-[11rem] 2xl:text-[13rem] font-black tracking-tighter leading-none my-6 tv-timer ${
-              isExtraTime && matchStatus === MatchStatus.ACTIVE
-                ? "text-amber-400 drop-shadow-[0_0_40px_rgba(245,158,11,0.5)]"
-                : matchStatus === MatchStatus.ACTIVE
-                  ? "text-emerald-400 drop-shadow-[0_0_40px_rgba(52,211,153,0.5)]"
-                  : matchStatus === MatchStatus.GOLDEN_POINT
-                    ? "text-amber-400 drop-shadow-[0_0_40px_rgba(245,158,11,0.5)]"
-                    : "text-slate-600"
-            }`}
+          <motion.div
+            layout
+            className={`font-mono text-[11vw] font-black tracking-tighter leading-none my-[3vh] transition-colors duration-500 ${timerColor}`}
           >
             {formatTime(timeRemaining)}
-          </div>
+          </motion.div>
 
-          <div className="mt-2">
+          <motion.div layout className="mt-[1vh]">
             <span
-              className={`px-4 sm:px-10 py-2.5 sm:py-4 rounded-full text-xs sm:text-sm md:text-base font-black uppercase tracking-widest border-2 shadow-lg ${
+              className={`px-[3vw] py-[1.5vh] rounded-full text-[1.5vw] font-black uppercase tracking-[0.2em] border-[0.2vw] shadow-[0_1vh_3vh_rgba(0,0,0,0.5)] inline-block transition-colors duration-500 ${
                 matchStatus === MatchStatus.GOLDEN_POINT
                   ? "bg-amber-500/20 border-amber-500 text-amber-400 animate-pulse"
                   : isExtraTime && matchStatus === MatchStatus.ACTIVE
-                    ? "bg-amber-500/10 border-amber-500 text-amber-400 animate-pulse"
+                    ? "bg-amber-500/20 border-amber-500 text-amber-400 animate-pulse"
                     : matchStatus === MatchStatus.ACTIVE
-                      ? "bg-emerald-500/10 border-emerald-500 text-emerald-400 animate-pulse"
+                      ? "bg-emerald-500/20 border-emerald-500 text-emerald-400 animate-pulse"
                       : matchStatus === MatchStatus.PAUSED
-                        ? "bg-yellow-500/10 border-yellow-500 text-yellow-400"
+                        ? "bg-yellow-500/20 border-yellow-500 text-yellow-400"
                         : matchStatus === MatchStatus.ENDED
-                          ? "bg-rose-500/10 border-rose-500 text-rose-400"
+                          ? "bg-rose-500/20 border-rose-500 text-rose-400"
                           : matchStatus === MatchStatus.PENDING
-                            ? "bg-slate-800/80 border-slate-700 text-slate-300"
-                            : "bg-slate-800 border-slate-700 text-slate-400"
+                            ? "bg-slate-800/80 border-slate-600 text-slate-200"
+                            : "bg-slate-900 border-slate-700 text-slate-500"
               }`}
             >
               {getStatusLabel(matchStatus)}
             </span>
-          </div>
+          </motion.div>
 
-          {matchStatus === MatchStatus.ENDED && (
-            <div className="mt-12 text-slate-400 text-base font-black uppercase tracking-widest bg-slate-900/60 border border-slate-800 px-8 py-4 rounded-2xl animate-pulse">
-              {LABELS.WAITING_JURY}
-            </div>
-          )}
+          <AnimatePresence>
+            {matchStatus === MatchStatus.ENDED && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="mt-[6vh] text-slate-300 text-[1.5vw] font-black uppercase tracking-widest bg-slate-900/80 border border-slate-700/80 px-[3vw] py-[2vh] rounded-2xl animate-pulse backdrop-blur-md shadow-2xl"
+              >
+                {LABELS.WAITING_JURY}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Blue Corner Panel */}
-        <div className="col-span-4 bg-gradient-to-br from-indigo-950/60 via-slate-900/40 to-slate-900/40 border-2 border-indigo-500/30 p-10 rounded-3xl backdrop-blur-md text-center flex flex-col justify-between h-full shadow-[0_0_50px_rgba(59,130,246,0.05)] tv-panel">
-          <div className="pt-4">
-            <span className="bg-indigo-600 text-white font-black text-base px-8 py-2.5 rounded-full tracking-widest uppercase shadow-md whitespace-nowrap">
+        <motion.div 
+          initial={{ x: "20vw", opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 70, damping: 20, delay: 0.1 }}
+          className="flex-1 bg-gradient-to-br from-indigo-950/80 via-slate-900/50 to-slate-950/80 border-[0.3vw] border-blue-500/40 p-[3vw] rounded-[3vw] backdrop-blur-xl text-center flex flex-col justify-between shadow-[0_0_5vw_rgba(59,130,246,0.15)] relative overflow-hidden group"
+        >
+          <div className="absolute inset-0 bg-[linear-gradient(-45deg,transparent_25%,rgba(59,130,246,0.05)_50%,transparent_75%,transparent_100%)] bg-[length:250px_250px] animate-[shine_5s_linear_infinite]" />
+          
+          <div className="pt-[1vh] relative z-10">
+            <span className="bg-blue-600 text-white font-black text-[1.5vw] px-[2vw] py-[1vh] rounded-full tracking-widest uppercase shadow-lg shadow-blue-900/50 inline-block">
               {LABELS.BLUE_CORNER}
             </span>
-            <h2 className="text-6xl lg:text-7xl font-black text-indigo-400 mt-10 tracking-tight uppercase line-clamp-2 leading-none tv-panel-title">
+            <h2 className="text-[5vw] leading-[1.1] font-black text-blue-500 mt-[4vh] tracking-tighter uppercase drop-shadow-[0_0_1vw_rgba(59,130,246,0.3)] line-clamp-2">
               {getCompName(activeMatch.blueCompetitorId)}
             </h2>
-            <p className="text-slate-400 text-2xl font-bold uppercase tracking-wider mt-4 tv-panel-subtitle">
+            <p className="text-slate-400 text-[1.8vw] font-bold uppercase tracking-widest mt-[2vh]">
               {getCompClub(activeMatch.blueCompetitorId)}
             </p>
           </div>
 
-          <div className="flex flex-col items-center justify-center my-auto py-6">
-            <div
-              className={`text-[14rem] font-black leading-none font-mono transition-all duration-500 tv-score ${
-                showFinalScores
-                  ? "text-indigo-400 drop-shadow-[0_0_35px_rgba(96,165,250,0.6)]"
-                  : "text-slate-800"
-              }`}
-            >
-              {showFinalScores ? blueVotes : 0}
-            </div>
-            <div className="text-indigo-400 font-black uppercase tracking-widest text-sm mt-4 bg-indigo-950/40 border border-indigo-900/50 px-6 py-2 rounded-full">
+          <div className="flex flex-col items-center justify-center my-auto py-[2vh] relative z-10">
+            <AnimatePresence mode="popLayout">
+              <motion.div
+                key={showFinalScores ? blueVotes : "0"}
+                initial={{ scale: 0.5, opacity: 0, y: 50 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 1.5, opacity: 0, y: -50 }}
+                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                className={`text-[18vw] font-black leading-none font-mono tracking-tighter ${
+                  showFinalScores
+                    ? "text-blue-500 drop-shadow-[0_0_3vw_rgba(59,130,246,0.8)]"
+                    : "text-slate-800/80 drop-shadow-none"
+                }`}
+              >
+                {showFinalScores ? blueVotes : 0}
+              </motion.div>
+            </AnimatePresence>
+            <div className="text-blue-400 font-black uppercase tracking-[0.2em] text-[1.2vw] mt-[3vh] bg-blue-950/60 border border-blue-900/80 px-[2vw] py-[1vh] rounded-full shadow-inner backdrop-blur-md">
               {showFinalScores ? LABELS.JUDGE_VOTES : LABELS.CLOSED_SCOREBOARD}
             </div>
           </div>
-
-          {/* Bottom spacer to align with Red Corner Panel */}
-          <div className="h-2"></div>
-        </div>
+          <div className="h-[2vh]"></div>
+        </motion.div>
       </main>
 
       {/* Footer / Status Log - TV Optimized */}
-      <footer className="text-center bg-slate-900/40 border border-slate-800/60 py-5 rounded-2xl z-10 text-slate-400 text-sm font-black tracking-widest flex justify-between px-12 gap-2 tv-footer">
+      <motion.footer 
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="text-center bg-slate-900/50 border border-slate-800/60 py-[2vh] rounded-[1.5vw] z-10 text-slate-500 text-[1.2vw] font-black tracking-widest flex justify-between px-[4vw] gap-2 backdrop-blur-md"
+      >
         <span>
           {APP_NAME.toUpperCase()} &copy; {new Date().getFullYear()}
         </span>
-        <span className="italic text-slate-300">&ldquo;{APP_MOTTO}&rdquo;</span>
+        <span className="italic text-slate-400">&ldquo;{APP_MOTTO}&rdquo;</span>
         <span>{SYSTEM_OFFICIAL_TITLE}</span>
-      </footer>
+      </motion.footer>
+
+      {/* Add keyframes globally for shine effect */}
+      <style>{`
+        @keyframes shine {
+          0% { background-position: -250px -250px; }
+          100% { background-position: 250px 250px; }
+        }
+      `}</style>
     </div>
   );
 }
