@@ -6,9 +6,12 @@ import { db, auth } from "../services/firebase.js";
 import { authenticateToken } from "../middlewares/auth.js";
 import settings from "../config/settings.js";
 
-const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
+import { FirebaseAuthService } from "../data/repositories/FirebaseAuthService.js";
+import { FirebaseJudgeRepository } from "../data/repositories/FirebaseJudgeRepository.js";
 
 const router = express.Router();
+const authService = new FirebaseAuthService();
+const judgeRepo = new FirebaseJudgeRepository();
 
 /**
  * @swagger
@@ -71,26 +74,22 @@ router.post("/pin", async (req: Request, res: Response): Promise<void> => {
     }
 
     // 1. Verify PIN in Firestore across all judges (Collection Group)
-    const snapshot = await db
-      .collectionGroup("judges")
-      .where("pin", "==", pin)
-      .get();
+    const judgeRecord = await judgeRepo.findByPin(pin);
 
-    if (snapshot.empty) {
+    if (!judgeRecord) {
       res.status(401).json({ error: "Invalid PIN" });
       return;
     }
 
-    // Assuming PINs are globally unique
-    const judgeDoc = snapshot.docs[0];
-    const judgeData = judgeDoc.data();
-    const judgeId = judgeDoc.id;
+    const { id: judgeId, data: judgeData } = judgeRecord;
 
     // Update status to ONLINE and set lastActiveAt timestamp
-    await judgeDoc.ref.update({
-      status: "ONLINE",
-      lastActiveAt: new Date().toISOString(),
-    });
+    await judgeRepo.updateStatus(
+      judgeData.tournamentId,
+      judgeId,
+      "ONLINE",
+      new Date().toISOString()
+    );
 
     // 2. Create Custom Token with Custom Claims
     const customClaims = {
@@ -101,7 +100,7 @@ router.post("/pin", async (req: Request, res: Response): Promise<void> => {
     };
 
     log.debug({ judgeId }, "Creating custom token for judge");
-    const customToken = await auth.createCustomToken(judgeId, customClaims);
+    const customToken = await authService.createJudgeToken(judgeId, customClaims);
     log.debug({ judgeId }, "Custom token created successfully");
 
     res.json({
@@ -167,49 +166,13 @@ router.post(
         return;
       }
 
-      if (!FIREBASE_API_KEY) {
-        res.status(503).json({ error: "Firebase API Key not configured" });
-        return;
-      }
-
-      // 1. Verify credentials via Firebase Identity Toolkit REST API (server-side)
-      const firebaseRes = await fetch(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password, returnSecureToken: true }),
-        },
-      );
-
-      if (!firebaseRes.ok) {
-        const errorData = (await firebaseRes.json()) as any;
-        const errorCode = errorData?.error?.message || "INVALID_CREDENTIALS";
-        log.error(`[Auth] Firebase login failed for ${email}: ${errorCode}`);
-        res.status(401).json({ error: "Invalid email or password" });
-        return;
-      }
-
-      const firebaseData = (await firebaseRes.json()) as any;
-      const uid = firebaseData.localId;
-
-      // 2. Verify the user is an admin in Firestore
-      const adminDoc = await db.collection("admins").doc(uid).get();
-      if (!adminDoc.exists) {
-        console.warn(`[Auth] Non-admin user attempted admin login: ${uid}`);
-        res.status(403).json({ error: "Forbidden: Admin access required" });
-        return;
-      }
-
-      // 3. Create a Custom Token with admin role claim
-      const customToken = await auth.createCustomToken(uid, { role: "admin" });
-
+      const adminData = await authService.loginAdmin(email, password);
       res.json({
-        token: customToken,
+        token: adminData.token,
         admin: {
-          uid,
-          email: firebaseData.email,
-          displayName: firebaseData.displayName || null,
+          uid: adminData.uid,
+          email: adminData.email,
+          displayName: adminData.displayName,
         },
       });
     } catch (error) {
@@ -241,15 +204,11 @@ router.post(
         return;
       }
 
-      const uid = "guest-demo-uid";
-
-      // Create a Custom Token with guest role claim
-      const customToken = await auth.createCustomToken(uid, { role: "guest" });
-
+      const guestData = await authService.createGuestToken();
       res.json({
-        token: customToken,
+        token: guestData.token,
         admin: {
-          uid,
+          uid: guestData.uid,
           email: "demo@cornerclick.com",
           displayName: "Invitado (Demo)",
         },
@@ -286,14 +245,7 @@ router.post(
       const { tournamentId, judgeId } = req.user as any;
 
       if (tournamentId && judgeId) {
-        await db
-          .collection("tournaments")
-          .doc(tournamentId)
-          .collection("judges")
-          .doc(judgeId)
-          .update({
-            status: "OFFLINE",
-          });
+        await judgeRepo.updateStatus(tournamentId, judgeId, "OFFLINE");
       }
 
       res.json({ success: true });

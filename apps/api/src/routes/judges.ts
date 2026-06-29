@@ -4,8 +4,10 @@ import { createLogger, toErr } from "@corner-click/logger";
 const log = createLogger("judges");
 import { db } from "../services/firebase.js";
 import { authenticateToken, requireAdmin } from "../middlewares/auth.js";
+import { FirebaseJudgeRepository } from "../data/repositories/FirebaseJudgeRepository.js";
 
 const router = express.Router();
+const judgeRepo = new FirebaseJudgeRepository();
 
 const generatePin = (): string =>
   Math.floor(1000 + Math.random() * 9000).toString();
@@ -64,37 +66,23 @@ router.post(
       let pin = "";
       let isUnique = false;
 
-      // Ensure the PIN is unique across the tournament (or globally, but checking the subcollection)
       while (!isUnique) {
         pin = generatePin();
-        // To keep PINs truly unique globally (since login only asks for PIN, no tournament ID)
-        // we must query across all judges in all tournaments (Collection Group Query)
-        // Wait, let's keep it simple: we can make PIN the Document ID in a top level collection,
-        // or we can just query all judges. Let's query across all tournaments for this PIN.
-        const snapshot = await db
-          .collectionGroup("judges")
-          .where("pin", "==", pin)
-          .get();
-        if (snapshot.empty) isUnique = true;
+        const existing = await judgeRepo.findByPin(pin);
+        if (!existing) isUnique = true;
       }
 
       const judgeData = {
         name,
         pin,
         tournamentId,
-        status: "OFFLINE",
+        status: "OFFLINE" as any,
         currentAssignment: null,
         createdAt: new Date().toISOString(),
       };
 
-      // Store the judge in the tournament's subcollection
-      const docRef = await db
-        .collection("tournaments")
-        .doc(tournamentId)
-        .collection("judges")
-        .add(judgeData);
-
-      res.status(201).json({ id: docRef.id, ...judgeData });
+      const createdJudge = await judgeRepo.create(tournamentId, judgeData);
+      res.status(201).json(createdJudge);
     } catch (error) {
       log.error({ err: toErr(error) }, "Error creating judge");
       res.status(500).json({ error: "Internal Server Error" });
@@ -120,46 +108,9 @@ router.post(
  *         description: List of judges
  */
 const cleanupExpiredJudges = async (tournamentId: string): Promise<void> => {
-  if (!db) return;
-  try {
-    const snapshot = await db
-      .collection("tournaments")
-      .doc(tournamentId)
-      .collection("judges")
-      .get();
-    const now = new Date();
-    const batch = db.batch();
-    let hasUpdates = false;
-
-    snapshot.docs.forEach((doc) => {
-      const data = doc.data();
-      if (data.status === "ONLINE") {
-        const lastActive = data.lastActiveAt
-          ? new Date(data.lastActiveAt)
-          : data.createdAt
-            ? new Date(data.createdAt)
-            : new Date(0);
-        const diffMs = now.getTime() - lastActive.getTime();
-        const diffHours = diffMs / (1000 * 60 * 60);
-
-        if (diffHours >= 24) {
-          batch.update(doc.ref, { status: "OFFLINE", currentAssignment: null });
-          hasUpdates = true;
-        }
-      }
-    });
-
-    if (hasUpdates) {
-      await batch.commit();
-      log.info({ tournamentId }, "Cleaned up expired judges (> 24 hours)");
-    }
-  } catch (error) {
-    log.error(
-      { err: toErr(error), tournamentId },
-      "Error running cleanupExpiredJudges",
-    );
-  }
+  await judgeRepo.cleanupExpiredJudges(tournamentId);
 };
+
 
 /**
  * @swagger
@@ -191,15 +142,7 @@ router.get(
       // Run cleanup for expired judges before returning the list
       await cleanupExpiredJudges(tournamentId);
 
-      const snapshot = await db
-        .collection("tournaments")
-        .doc(tournamentId)
-        .collection("judges")
-        .get();
-      const judges = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const judges = await judgeRepo.findByTournament(tournamentId);
 
       res.json(judges);
     } catch (error) {
@@ -234,11 +177,7 @@ router.get("/:id/judges/stream", (req: Request, res: Response) => {
     log.error({ err }, "Error cleaning up judges in stream"),
   );
 
-  const judgesRef = db
-    .collection("tournaments")
-    .doc(tournamentId)
-    .collection("judges");
-
+  const judgesRef = db.collection("tournaments").doc(tournamentId).collection("judges");
   const unsubscribe = judgesRef.onSnapshot(
     (snapshot) => {
       const judges = snapshot.docs.map((doc) => ({
@@ -249,7 +188,7 @@ router.get("/:id/judges/stream", (req: Request, res: Response) => {
     },
     (error) => {
       log.error({ err: toErr(error) }, "SSE Error");
-    },
+    }
   );
 
   req.on("close", () => {
@@ -308,32 +247,25 @@ router.put(
         return;
       }
 
-      const judgesRef = db
-        .collection("tournaments")
-        .doc(tournamentId)
-        .collection("judges");
-
-      // Check if another judge is already assigned to this area and corner
-      const duplicateQuery = await judgesRef
-        .where("currentAssignment.areaId", "==", areaId)
-        .where("currentAssignment.cornerId", "==", cornerId)
-        .get();
-
-      const existingAssignment = duplicateQuery.docs.find(
-        (doc) => doc.id !== judgeId,
+      // We still use db for the duplicate check since it's a specific query not in the generic repo
+      // Ideally this duplicate logic is inside a usecase or the repo itself. Let's keep it here for now
+      // using the generic findByTournament
+      const allJudges = await judgeRepo.findByTournament(tournamentId);
+      const existingAssignment = allJudges.find(
+        (j) => j.id !== judgeId && j.currentAssignment?.areaId === areaId && j.currentAssignment?.cornerId === cornerId
       );
+
       if (existingAssignment) {
-        const existingName = existingAssignment.data().name || "Another judge";
+        const existingName = existingAssignment.name || "Another judge";
         res.status(409).json({
           error: `${existingName} is already assigned to Area ${areaId} as ${cornerId}.`,
         });
         return;
       }
 
-      const judgeRef = judgesRef.doc(judgeId);
-      const judgeDoc = await judgeRef.get();
+      const judgeDoc = allJudges.find(j => j.id === judgeId);
 
-      if (!judgeDoc.exists) {
+      if (!judgeDoc) {
         res.status(404).json({ error: "Judge not found" });
         return;
       }
@@ -345,7 +277,7 @@ router.put(
         matchId,
       };
 
-      await judgeRef.update({ currentAssignment });
+      await judgeRepo.updateAssignment(tournamentId, judgeId, currentAssignment);
 
       res.json({ message: "Judge assigned successfully", currentAssignment });
     } catch (error) {
@@ -374,15 +306,8 @@ router.put(
       const id = req.params.id as string;
       const judgeId = req.params.judgeId as string;
 
-      await db
-        .collection("tournaments")
-        .doc(id)
-        .collection("judges")
-        .doc(judgeId)
-        .update({
-          currentAssignment: null,
-          status: "OFFLINE",
-        });
+      await judgeRepo.updateStatus(id, judgeId, "OFFLINE");
+      await judgeRepo.updateAssignment(id, judgeId, null);
 
       res.json({ message: "Judge disconnected successfully" });
     } catch (error) {
@@ -412,12 +337,7 @@ router.delete(
       const id = req.params.id as string;
       const judgeId = req.params.judgeId as string;
 
-      await db
-        .collection("tournaments")
-        .doc(id)
-        .collection("judges")
-        .doc(judgeId)
-        .delete();
+      await judgeRepo.delete(id, judgeId);
 
       res.json({ message: "Judge deleted successfully" });
     } catch (error) {

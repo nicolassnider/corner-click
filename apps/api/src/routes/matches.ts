@@ -133,25 +133,16 @@ router.post(
         return;
       }
 
-      // Store the judge's score submission in Firestore for permanent record
-      const matchRef = db.collection("matches").doc(matchId);
+      const scores = {
+        redScore: redScore || 0,
+        blueScore: blueScore || 0,
+        redWarnings: redWarnings || 0,
+        blueWarnings: blueWarnings || 0,
+        redDeductions: redDeductions || 0,
+        blueDeductions: blueDeductions || 0,
+      };
 
-      await matchRef.set(
-        {
-          scores: {
-            [cornerId]: {
-              redScore: redScore || 0,
-              blueScore: blueScore || 0,
-              redWarnings: redWarnings || 0,
-              blueWarnings: blueWarnings || 0,
-              redDeductions: redDeductions || 0,
-              blueDeductions: blueDeductions || 0,
-              submittedAt: new Date().toISOString(),
-            },
-          },
-        },
-        { merge: true },
-      );
+      await matchRepo.submitScores(matchId, cornerId, scores);
 
       res.json({ success: true, message: "Scores submitted successfully" });
     } catch (error) {
@@ -188,14 +179,8 @@ router.get(
       }
 
       const matchId = req.params.id as string;
-      const doc = await db.collection("matches").doc(matchId).get();
-
-      if (!doc.exists) {
-        res.json({ scores: {} });
-        return;
-      }
-      const data = doc.data();
-      res.json({ scores: data?.scores || {} });
+      const scores = await matchRepo.getScores(matchId);
+      res.json({ scores });
     } catch (error) {
       log.error({ err: toErr(error) }, "Error fetching scores");
       res.status(500).json({ error: "Internal Server Error" });
@@ -222,16 +207,15 @@ router.get("/:id/stream-scores", (req: Request, res: Response) => {
   res.setHeader("Connection", "keep-alive");
 
   const matchId = req.params.id as string;
-  const matchRef = db.collection("matches").doc(matchId);
-
-  const unsubscribe = matchRef.onSnapshot(
-    (doc) => {
-      const data = doc.data();
-      res.write(`data: ${JSON.stringify({ scores: data?.scores || {} })}\n\n`);
+  
+  const unsubscribe = matchRepo.streamScores(
+    matchId,
+    (data) => {
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
     },
     (error) => {
       log.error({ err: toErr(error) }, "SSE Error");
-    },
+    }
   );
 
   req.on("close", () => {
@@ -316,78 +300,13 @@ router.post(
         return;
       }
 
-      const updates: Record<string, string> = {};
-
-      // Mark current match as completed with winner
-      updates[`tournaments/${tournamentId}/matches/${matchId}/winnerId`] =
-        winnerId;
-      updates[`tournaments/${tournamentId}/matches/${matchId}/status`] =
-        "COMPLETED";
-
-      // Advance winner to next match if applicable
-      if (nextMatchId) {
-        const nextMatchSnap = await rtdb
-          .ref(`tournaments/${tournamentId}/matches/${nextMatchId}`)
-          .once("value");
-        if (nextMatchSnap.exists()) {
-          const nextMatch = nextMatchSnap.val();
-          if (!nextMatch.redCompetitorId) {
-            updates[
-              `tournaments/${tournamentId}/matches/${nextMatchId}/redCompetitorId`
-            ] = winnerId;
-          } else if (!nextMatch.blueCompetitorId) {
-            updates[
-              `tournaments/${tournamentId}/matches/${nextMatchId}/blueCompetitorId`
-            ] = winnerId;
-          }
-        }
-      }
-
-      // Advance loser to losers/repesca match if applicable
-      if (losersMatchId && loserId) {
-        const losersMatchSnap = await rtdb
-          .ref(`tournaments/${tournamentId}/matches/${losersMatchId}`)
-          .once("value");
-        if (losersMatchSnap.exists()) {
-          const losersMatch = losersMatchSnap.val();
-          if (!losersMatch.redCompetitorId) {
-            updates[
-              `tournaments/${tournamentId}/matches/${losersMatchId}/redCompetitorId`
-            ] = loserId;
-          } else if (!losersMatch.blueCompetitorId) {
-            updates[
-              `tournaments/${tournamentId}/matches/${losersMatchId}/blueCompetitorId`
-            ] = loserId;
-          }
-        }
-      }
-
-      await rtdb.ref().update(updates);
-
-      // Auto-complete tournament: check if ALL matches have a winnerId
-      if (db) {
-        const allMatchesSnap = await rtdb
-          .ref(`tournaments/${tournamentId}/matches`)
-          .once("value");
-        const allMatches = allMatchesSnap.val() as Record<string, any> | null;
-
-        if (allMatches) {
-          const allDone = Object.values(allMatches).every(
-            (m: any) =>
-              m.winnerId !== null &&
-              m.winnerId !== undefined &&
-              m.winnerId !== "",
-          );
-
-          if (allDone) {
-            await db
-              .collection("tournaments")
-              .doc(tournamentId)
-              .update({ status: "COMPLETED" });
-            log.info(`[Tournament] ${tournamentId} → COMPLETED`);
-          }
-        }
-      }
+      await matchRepo.declareWinner(matchId, {
+        winnerId,
+        tournamentId,
+        nextMatchId,
+        losersMatchId,
+        loserId
+      });
 
       res.json({ success: true });
     } catch (error) {
