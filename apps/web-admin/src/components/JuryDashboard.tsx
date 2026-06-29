@@ -3,20 +3,23 @@ import { onAuthStateChanged } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { fetchWithAuth } from "../utils/apiClient";
 import "../styles/global.css";
-import { getCategories } from "../services/categoryService";
 import { getMatches } from "../services/bracketService";
-import { getCompetitors } from "../services/competitorService";
 import type {
   Tournament,
   Category,
   Match,
   Competitor,
 } from "@corner-click/types";
+import { trpc } from "@corner-click/api-client";
 import { MatchStatus, calculateNetScore } from "@corner-click/types";
 import { getCompetitorFullName } from "../utils/competitorUtils";
 import { useActiveMatch } from "../hooks/useActiveMatch";
 import Footer from "./Footer";
 import { auth } from "../lib/firebase";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { httpBatchLink } from "@trpc/client";
+import { API_URL } from "../utils/apiClient";
 
 interface Toast {
   id: string;
@@ -24,17 +27,57 @@ interface Toast {
   type: "success" | "error" | "warning" | "info";
 }
 
-export default function JuryDashboard() {
-  const [tournaments, setTournaments] = useState<Tournament[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [competitors, setCompetitors] = useState<Record<string, Competitor>>(
-    {},
-  );
+const queryClient = new QueryClient();
+const trpcClient = trpc.createClient({
+  links: [
+    httpBatchLink({
+      url: `${API_URL}/trpc`,
+      async headers() {
+        const user = auth.currentUser;
+        const token = user ? await user.getIdToken() : "";
+        return {
+          authorization: token ? `Bearer ${token}` : "",
+        };
+      },
+    }),
+  ],
+});
 
+export default function JuryDashboardApp() {
+  return (
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <JuryDashboard />
+      </QueryClientProvider>
+    </trpc.Provider>
+  );
+}
+
+function JuryDashboard() {
+  const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [selectedTournamentId, setSelectedTournamentId] = useState<string>("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+
+  const { data: categories = [] } = trpc.categories.getAll.useQuery(
+    { tournamentId: selectedTournamentId },
+    { enabled: !!selectedTournamentId }
+  );
+
+  const { data: competitorsList = [] } = trpc.competitors.getAll.useQuery(
+    { tournamentId: selectedTournamentId },
+    { enabled: !!selectedTournamentId }
+  );
+
+  const competitors: Record<string, Competitor> = React.useMemo(() => {
+    const map: Record<string, Competitor> = {};
+    competitorsList.forEach((c) => {
+      map[c.id] = c;
+    });
+    return map;
+  }, [competitorsList]);
+
+  const [matches, setMatches] = useState<Match[]>([]);
 
   // Custom Toast state
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -114,36 +157,27 @@ export default function JuryDashboard() {
     window.history.replaceState({}, "", url.toString());
   }, [selectedTournamentId, selectedCategoryId]);
 
+  const [activeCategoryIds, setActiveCategoryIds] = useState<Set<string>>(new Set());
+
   // Fetch categories and competitors when tournament changes
   useEffect(() => {
     if (selectedTournamentId) {
-      Promise.all([
-        getCategories(selectedTournamentId),
-        getMatches(selectedTournamentId), // Fetch all matches to see active categories
-        getCompetitors(selectedTournamentId),
-      ])
-        .then(([fetchedCategories, allMatches, fetchedCompetitors]) => {
-          const activeCategoryIds = new Set(
-            allMatches.map((m) => m.categoryId),
-          );
-          const populatedCategories = fetchedCategories.filter((c) =>
-            activeCategoryIds.has(c.id),
-          );
-          setCategories(populatedCategories);
-
-          const compMap: Record<string, Competitor> = {};
-          fetchedCompetitors.forEach((c) => (compMap[c.id] = c));
-          setCompetitors(compMap);
+      getMatches(selectedTournamentId)
+        .then((allMatches) => {
+          setActiveCategoryIds(new Set(allMatches.map((m) => m.categoryId)));
         })
         .catch((err) => {
           console.error(err);
           showToast("Error al cargar datos del torneo", "error");
         });
     } else {
-      setCategories([]);
-      setCompetitors({});
+      setActiveCategoryIds(new Set());
     }
   }, [selectedTournamentId]);
+
+  const activeCategories = React.useMemo(() => {
+    return categories.filter((c) => activeCategoryIds.has(c.id));
+  }, [categories, activeCategoryIds]);
 
   // Fetch matches when category changes
   useEffect(() => {
@@ -307,14 +341,14 @@ export default function JuryDashboard() {
               value={selectedCategoryId}
               onChange={(e) => setSelectedCategoryId(e.target.value)}
               className="bg-slate-950 text-slate-200 px-3 py-2 rounded-lg border border-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium transition-all w-full sm:w-52 min-w-[200px] disabled:opacity-50 disabled:bg-slate-900 disabled:text-slate-500 disabled:border-slate-850 disabled:cursor-not-allowed"
-              disabled={!selectedTournamentId || categories.length === 0}
+              disabled={!selectedTournamentId || activeCategories.length === 0}
             >
-              {selectedTournamentId && categories.length === 0 ? (
+              {selectedTournamentId && activeCategories.length === 0 ? (
                 <option value="">No categories available</option>
               ) : (
                 <option value="">Select Category...</option>
               )}
-              {categories.map((c) => (
+              {activeCategories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>

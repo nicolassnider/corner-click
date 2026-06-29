@@ -7,7 +7,7 @@ import {
   generateBracket,
   advanceWinner,
 } from "../services/bracketService";
-import { getCompetitors } from "../services/competitorService";
+import { trpc } from "@corner-click/api-client";
 import { ref, get } from "firebase/database";
 import { database } from "../lib/firebase";
 
@@ -37,26 +37,30 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
   isReadOnly = false,
 }) => {
   const [matches, setMatches] = useState<Match[]>([]);
-  const [competitors, setCompetitors] = useState<Competitor[]>([]);
   const [bracketType, setBracketType] = useState<BracketType>(
     BracketType.SINGLE_ELIMINATION,
   );
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
 
-  useEffect(() => {
-    loadData();
-  }, [tournamentId, categoryId]);
+  const { data: competitors = [] } = trpc.competitors.getAll.useQuery(
+    { tournamentId, categoryId },
+    { enabled: !!tournamentId && !!categoryId }
+  );
 
-  const loadData = async () => {
+  useEffect(() => {
+    if (competitors.length > 0) {
+      loadBracketData();
+    }
+  }, [competitors, tournamentId, categoryId, areaId]);
+
+  const loadBracketData = async () => {
     setLoading(true);
     try {
-      const [matchesData, compsData] = await Promise.all([
+      const [matchesData] = await Promise.all([
         getMatches(tournamentId, categoryId),
-        getCompetitors(tournamentId, categoryId),
       ]);
       setMatches(matchesData);
-      setCompetitors(compsData);
 
       // Fetch category data for bracketType
       const catSnap = await get(

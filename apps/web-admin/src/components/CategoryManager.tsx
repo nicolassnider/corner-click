@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
-import type { Category, TournamentType } from "@corner-click/types";
-import {
-  getCategories,
-  generateOfficialCategories,
-} from "../services/categoryService";
+import React, { useState } from "react";
+import type { TournamentType } from "@corner-click/types";
+import { trpc } from "@corner-click/api-client";
+import { Button, Card } from "@corner-click/ui";
 
 interface CategoryManagerProps {
   tournamentId: string;
@@ -14,27 +12,14 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({
   tournamentId,
   isReadOnly = false,
 }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [generating, setGenerating] = useState(false);
-  const [selectedType, setSelectedType] =
-    useState<TournamentType>("LOCAL_OPEN");
+  const [selectedType, setSelectedType] = useState<TournamentType>("LOCAL_OPEN");
 
-  useEffect(() => {
-    loadCategories();
-  }, [tournamentId]);
+  const utils = trpc.useUtils();
+  const { data: categories = [], isLoading: loading } = trpc.categories.getAll.useQuery({
+    tournamentId,
+  });
 
-  const loadCategories = async () => {
-    setLoading(true);
-    try {
-      const data = await getCategories(tournamentId);
-      setCategories(data);
-    } catch (error) {
-      console.error("Failed to load categories:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const generateMutation = trpc.categories.generateOfficial.useMutation();
 
   const handleGenerate = async () => {
     if (categories.length > 0) {
@@ -43,23 +28,23 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({
       }
     }
 
-    setGenerating(true);
     try {
-      await generateOfficialCategories(tournamentId, selectedType);
-      await loadCategories();
+      await generateMutation.mutateAsync({
+        tournamentId,
+        type: selectedType,
+      });
+      utils.categories.getAll.invalidate({ tournamentId });
       alert("Categorías generadas exitosamente.");
     } catch (error) {
       console.error("Failed to generate categories:", error);
       alert("Error al generar categorías.");
-    } finally {
-      setGenerating(false);
     }
   };
 
   return (
     <div className="space-y-6">
       {!isReadOnly && (
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+        <Card padding="md">
           <h2 className="text-xl font-bold mb-4">
             Generador de Categorías ITF
           </h2>
@@ -127,19 +112,20 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({
             </div>
 
             <div className="flex flex-col justify-center space-y-4">
-              <button
+              <Button
                 onClick={handleGenerate}
                 disabled={generating}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                variant="primary"
+                className="w-full"
               >
                 {generating ? "Generando..." : "Generar Categorías Oficiales"}
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Card>
       )}
 
-      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+      <Card padding="md">
         <h3 className="text-lg font-medium text-gray-900 mb-4">
           Categorías Actuales ({categories.length})
         </h3>
@@ -184,7 +170,7 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({
             </table>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 };

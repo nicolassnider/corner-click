@@ -9,7 +9,26 @@ import TournamentDetail from "./TournamentDetail";
 import AdminHeader from "./AdminHeader";
 import Footer from "./Footer";
 import { auth } from "../lib/firebase";
-import { wakeUpApi } from "../utils/apiClient";
+import { wakeUpApi, API_URL } from "../utils/apiClient";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { trpc } from "@corner-click/api-client";
+import { httpBatchLink } from "@trpc/client";
+
+const queryClient = new QueryClient();
+const trpcClient = trpc.createClient({
+  links: [
+    httpBatchLink({
+      url: `${API_URL}/trpc`,
+      async headers() {
+        const user = auth.currentUser;
+        const token = user ? await user.getIdToken() : "";
+        return {
+          authorization: token ? `Bearer ${token}` : "",
+        };
+      },
+    }),
+  ],
+});
 
 export default function Dashboard() {
   const [view, setView] = useState<"LIST" | "FORM" | "DETAIL">("LIST");
@@ -66,37 +85,41 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900 font-sans">
-      <Toaster position="top-right" />
-      <AdminHeader onHomeClick={handleBackToList} user={user} />
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900 font-sans">
+          <Toaster position="top-right" />
+          <AdminHeader onHomeClick={handleBackToList} user={user} />
 
-      {/* Main Content Area */}
-      <main className="flex-1 pb-12">
-        {view === "LIST" && (
-          <TournamentList
-            onSelect={handleSelect}
-            onCreateNew={handleCreateNew}
-            onEdit={handleEdit}
-          />
-        )}
+          {/* Main Content Area */}
+          <main className="flex-1 pb-12">
+            {view === "LIST" && (
+              <TournamentList
+                onSelect={handleSelect}
+                onCreateNew={handleCreateNew}
+                onEdit={handleEdit}
+              />
+            )}
 
-        {view === "FORM" && (
-          <TournamentForm
-            initialData={editingTournament}
-            onCancel={handleBackToList}
-            onCreated={handleBackToList}
-          />
-        )}
+            {view === "FORM" && (
+              <TournamentForm
+                initialData={editingTournament}
+                onCancel={handleBackToList}
+                onCreated={handleBackToList}
+              />
+            )}
 
-        {view === "DETAIL" && selectedTournament && (
-          <TournamentDetail
-            tournament={selectedTournament}
-            onBack={handleBackToList}
-          />
-        )}
-      </main>
+            {view === "DETAIL" && selectedTournament && (
+              <TournamentDetail
+                tournament={selectedTournament}
+                onBack={handleBackToList}
+              />
+            )}
+          </main>
 
-      <Footer />
-    </div>
+          <Footer />
+        </div>
+      </QueryClientProvider>
+    </trpc.Provider>
   );
 }

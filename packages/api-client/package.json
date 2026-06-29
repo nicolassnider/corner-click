@@ -2,6 +2,10 @@
   "name": "@corner-click/api-client",
   "version": "0.0.1",
   "dependencies": {
+    "api": "*",
+    "@tanstack/react-query": "^5.101.2",
+    "@trpc/client": "^11.18.0",
+    "@trpc/react-query": "^11.18.0",
     "firebase": "^12.14.0"
   },
   "devDependencies": {

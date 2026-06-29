@@ -6,6 +6,9 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import { initSocketService } from "./services/socketService.js";
+import * as trpcExpress from "@trpc/server/adapters/express";
+import { appRouter } from "./trpc/routers/_app.js";
+import { createContext } from "./trpc/trpc.js";
 
 const log = createLogger("server");
 
@@ -94,6 +97,14 @@ app.use((req: Request, _res, next) => {
 import { authenticateToken } from "./middlewares/auth.js";
 
 // Routes
+app.use(
+  `${apiPrefix}/trpc`,
+  trpcExpress.createExpressMiddleware({
+    router: appRouter,
+    createContext,
+  }),
+);
+
 app.use(`${apiPrefix}/auth`, authRoutes);
 app.use(`${apiPrefix}/tournaments`, authenticateToken, tournamentsRoutes);
 app.use(`${apiPrefix}/tournaments`, authenticateToken, judgesRoutes);

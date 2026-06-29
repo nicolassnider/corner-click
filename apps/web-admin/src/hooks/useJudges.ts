@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Judge } from "@corner-click/types";
-import { judgeService } from "../services/judgeService";
+import { trpc } from "@corner-click/api-client";
 
 const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:4000";
 
@@ -8,6 +8,11 @@ export function useJudges(tournamentId: string) {
   const [judges, setJudges] = useState<Judge[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const createMutation = trpc.judges.create.useMutation();
+  const assignMutation = trpc.judges.assign.useMutation();
+  const disconnectMutation = trpc.judges.disconnect.useMutation();
+  const deleteMutation = trpc.judges.delete.useMutation();
 
   useEffect(() => {
     if (!tournamentId) return;
@@ -41,7 +46,7 @@ export function useJudges(tournamentId: string) {
   const addJudge = async (name: string) => {
     try {
       setError(null);
-      await judgeService.addJudge(tournamentId, name);
+      await createMutation.mutateAsync({ tournamentId, name });
     } catch (err: any) {
       setError(err.message || "Failed to add judge");
       throw err;
@@ -54,7 +59,11 @@ export function useJudges(tournamentId: string) {
   ) => {
     try {
       setError(null);
-      await judgeService.assignJudge(tournamentId, judgeId, assignment);
+      await assignMutation.mutateAsync({
+        tournamentId,
+        judgeId,
+        ...assignment,
+      });
     } catch (err: any) {
       setError(err.message || "Failed to assign judge");
       throw err;
@@ -64,7 +73,7 @@ export function useJudges(tournamentId: string) {
   const disconnectJudge = async (judgeId: string) => {
     try {
       setError(null);
-      await judgeService.disconnectJudge(tournamentId, judgeId);
+      await disconnectMutation.mutateAsync({ tournamentId, judgeId });
     } catch (err: any) {
       setError(err.message || "Failed to disconnect judge");
       throw err;
@@ -74,7 +83,7 @@ export function useJudges(tournamentId: string) {
   const deleteJudge = async (judgeId: string) => {
     try {
       setError(null);
-      await judgeService.deleteJudge(tournamentId, judgeId);
+      await deleteMutation.mutateAsync({ tournamentId, judgeId });
     } catch (err: any) {
       setError(err.message || "Failed to delete judge");
       throw err;

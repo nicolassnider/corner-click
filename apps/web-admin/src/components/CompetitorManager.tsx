@@ -1,13 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import type { Competitor, Category } from "@corner-click/types";
-import {
-  getCompetitors,
-  addCompetitor,
-  updateCompetitor,
-  deleteCompetitor,
-} from "../services/competitorService";
+import { trpc } from "@corner-click/api-client";
 import { CompetitorForm } from "./CompetitorForm";
+import { Button } from "@corner-click/ui";
 
 interface CompetitorManagerProps {
   tournamentId: string;
@@ -26,51 +22,53 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
   isReadOnly = false,
   tournamentAreas = 1,
 }) => {
-  const [competitors, setCompetitors] = useState<Competitor[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCompetitor, setEditingCompetitor] = useState<
     Competitor | undefined
   >();
-  const [loading, setLoading] = useState(true);
   const [isMockModalOpen, setIsMockModalOpen] = useState(false);
   const [mockAmount, setMockAmount] = useState(tournamentAreas * 20);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  useEffect(() => {
-    loadCompetitors();
-  }, [tournamentId, categoryId]);
+  const utils = trpc.useUtils();
+  const { data: competitors = [], isLoading: loading } = trpc.competitors.getAll.useQuery({
+    tournamentId,
+    categoryId: categoryId || undefined,
+  });
 
-  const loadCompetitors = async () => {
-    setLoading(true);
-    try {
-      const data = await getCompetitors(tournamentId, categoryId);
-      setCompetitors(data);
-    } catch (error) {
-      console.error("Failed to load competitors:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const createMutation = trpc.competitors.create.useMutation();
+  const updateMutation = trpc.competitors.update.useMutation();
+  const deleteMutation = trpc.competitors.delete.useMutation();
 
   const handleSave = async (
     competitorData: Omit<Competitor, "id" | "tournamentId">,
   ) => {
     try {
       if (editingCompetitor) {
-        await updateCompetitor(
+        await updateMutation.mutateAsync({
           tournamentId,
-          editingCompetitor.id,
-          competitorData,
-        );
+          competitorId: editingCompetitor.id,
+          ...competitorData,
+        });
       } else {
-        await addCompetitor(tournamentId, competitorData);
+        await createMutation.mutateAsync({
+          tournamentId,
+          firstName: competitorData.firstName,
+          lastName: competitorData.lastName,
+          school: competitorData.club,
+          beltLevel: competitorData.belt || "1º – 3º Dan",
+          categoryId: competitorData.categoryId,
+          age: competitorData.birthDate ? new Date().getFullYear() - new Date(competitorData.birthDate).getFullYear() : undefined,
+          weight: competitorData.weight,
+        });
       }
       setIsFormOpen(false);
       setEditingCompetitor(undefined);
 
+      utils.competitors.getAll.invalidate({ tournamentId });
+      
       if (categoryId && competitorData.categoryId !== categoryId) {
         onCategoryChange(competitorData.categoryId);
-      } else {
-        await loadCompetitors();
       }
     } catch (error) {
       console.error("Failed to save competitor:", error);
@@ -80,8 +78,11 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
   const handleDelete = async (competitorId: string) => {
     if (confirm("Are you sure you want to delete this competitor?")) {
       try {
-        await deleteCompetitor(tournamentId, competitorId);
-        await loadCompetitors();
+        await deleteMutation.mutateAsync({
+          tournamentId,
+          competitorId,
+        });
+        utils.competitors.getAll.invalidate({ tournamentId });
       } catch (error) {
         console.error("Failed to delete competitor:", error);
       }
@@ -108,7 +109,7 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
       return;
     }
 
-    setLoading(true);
+    setIsGenerating(true);
 
     const maleNames = [
       "Liam",
@@ -202,13 +203,10 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
         categoryId: randomCategory.id,
         firstName: namesList[Math.floor(Math.random() * namesList.length)],
         lastName: lastNames[Math.floor(Math.random() * lastNames.length)],
-        club: clubs[Math.floor(Math.random() * clubs.length)],
-        country: countries[Math.floor(Math.random() * countries.length)],
-        gender: targetGender,
-        birthDate: `${birthYear}-${birthMonth}-${birthDay}`,
+        school: clubs[Math.floor(Math.random() * clubs.length)],
+        beltLevel: randomCategory.beltLevel || "1º – 3º Dan",
+        age: age,
         weight: weight,
-        belt: randomCategory.beltLevel || "1º – 3º Dan",
-        isSeeded: Math.random() > 0.8,
       };
     });
 
@@ -219,7 +217,10 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
       console.log(`Iniciando generación de ${amount} competidores...`);
       await Promise.all(
         mockCompetitors.map(async (comp, index) => {
-          const result = await addCompetitor(tournamentId, comp);
+          const result = await createMutation.mutateAsync({
+            tournamentId,
+            ...comp,
+          });
           console.log(
             `Competidor ${index + 1}/${amount} creado: ${comp.firstName} ${comp.lastName}`,
           );
@@ -230,12 +231,12 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
       toast.success(`${amount} competidores generados con éxito`, {
         id: toastId,
       });
-      await loadCompetitors();
+      utils.competitors.getAll.invalidate({ tournamentId });
     } catch (err) {
       console.error("Error generating mock data", err);
       toast.error("Hubo un error al generar los competidores", { id: toastId });
     } finally {
-      setLoading(false);
+      setIsGenerating(false);
     }
   };
 
@@ -250,20 +251,21 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
         </h2>
         {!isReadOnly && (
           <div className="flex space-x-2">
-            <button
+            <Button
               onClick={handleOpenMockModal}
-              disabled={loading}
-              className={`px-4 py-2 text-white rounded-md ${loading ? "bg-purple-400 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700"}`}
+              disabled={isGenerating}
+              variant="primary"
+              className={isGenerating ? "!bg-purple-400" : "!bg-purple-600"}
             >
-              {loading ? "Generando..." : "Generar Random [DEV]"}
-            </button>
-            <button
+              {isGenerating ? "Generando..." : "Generar Random [DEV]"}
+            </Button>
+            <Button
               onClick={() => setIsFormOpen(true)}
               disabled={loading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400"
+              variant="primary"
             >
               Add Competitor
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -277,6 +279,8 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
                 setEditingCompetitor(undefined);
               }}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"
+              aria-label="Cerrar"
+              title="Cerrar"
             >
               <svg
                 className="w-6 h-6"
@@ -421,26 +425,30 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
               (Recomendado para {tournamentAreas} área(s):{" "}
               {tournamentAreas * 20})
             </p>
+            <label htmlFor="mockAmount" className="text-gray-400 text-sm mb-2 block">
+              Cantidad de competidores
+            </label>
             <input
+              id="mockAmount"
               type="number"
               min="1"
               value={mockAmount}
               onChange={(e) => setMockAmount(parseInt(e.target.value, 10))}
               className="w-full px-4 py-3 bg-[#121A2F] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all mb-6"
             />
-            <div className="flex justify-end space-x-3">
-              <button
+            <div className="flex justify-end space-x-3 mt-6">
+              <Button
                 onClick={() => setIsMockModalOpen(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors border border-white/10"
+                variant="secondary"
               >
                 Cancelar
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={generateMockCompetitors}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-lg shadow-blue-500/25"
+                variant="primary"
               >
                 Aceptar
-              </button>
+              </Button>
             </div>
           </div>
         </div>

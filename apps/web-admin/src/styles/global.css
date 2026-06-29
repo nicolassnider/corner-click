@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@corner-click/ui/styles/base.css";
 @source "../../../../packages/auth/src/**/*.{ts,tsx}";
 
 

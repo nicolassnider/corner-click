@@ -1,13 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import type { Category, Competitor } from "@corner-click/types";
-import {
-  getCategories,
-  mergeCategoriesWithFewCompetitors,
-} from "../services/categoryService";
-import {
-  getCompetitors,
-  updateCompetitor,
-} from "../services/competitorService";
+import { trpc } from "@corner-click/api-client";
 import {
   DndContext,
   useDraggable,
@@ -18,6 +11,7 @@ import {
   closestCenter,
 } from "@dnd-kit/core";
 import toast from "react-hot-toast";
+import { Button, Card, Input } from "@corner-click/ui";
 
 interface CategoryAdjusterProps {
   tournamentId: string;
@@ -43,10 +37,11 @@ function DraggableCompetitor({ competitor }: { competitor: Competitor }) {
       data: { competitor },
     });
 
+  // Inline style is necessary here for dynamic transform during drag and drop
   const style = transform
     ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-      }
+      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+    }
     : undefined;
 
   return (
@@ -55,11 +50,10 @@ function DraggableCompetitor({ competitor }: { competitor: Competitor }) {
       style={style}
       {...listeners}
       {...attributes}
-      className={`p-3 mb-2 bg-white border rounded-lg shadow-sm cursor-grab active:cursor-grabbing ${
-        isDragging
+      className={`p-3 mb-2 bg-white border rounded-lg shadow-sm cursor-grab active:cursor-grabbing ${isDragging
           ? "opacity-40 z-50 relative border-indigo-500"
           : "border-gray-200 hover:border-indigo-300"
-      }`}
+        }`}
     >
       <div className="font-medium text-sm text-gray-800">
         {competitor.firstName} {competitor.lastName}
@@ -93,11 +87,10 @@ function CategoryDroppable({
   return (
     <div
       ref={setNodeRef}
-      className={`flex-shrink-0 w-80 p-4 rounded-xl border-2 flex flex-col ${
-        isOver
+      className={`flex-shrink-0 w-80 p-4 rounded-xl border-2 flex flex-col ${isOver
           ? "bg-indigo-50 border-indigo-400 shadow-inner"
           : "bg-gray-50/80 border-gray-200"
-      }`}
+        }`}
     >
       <div className="mb-4 pb-3 border-b border-gray-200/60">
         <h4 className="font-bold text-gray-900 truncate" title={category.name}>
@@ -108,13 +101,12 @@ function CategoryDroppable({
         </div>
         <div className="flex items-center gap-2 mt-2">
           <span
-            className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-              competitors.length >= 4
+            className={`px-2 py-0.5 rounded-full text-xs font-medium ${competitors.length >= 4
                 ? "bg-green-100 text-green-700"
                 : competitors.length === 0
                   ? "bg-gray-200 text-gray-700"
                   : "bg-amber-100 text-amber-700"
-            }`}
+              }`}
           >
             {competitors.length} inscritos
           </span>
@@ -140,59 +132,65 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
   tournamentId,
   isReadOnly = false,
 }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [competitors, setCompetitors] = useState<Competitor[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [merging, setMerging] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const [filterText, setFilterText] = useState("");
   const [activeDragCompetitor, setActiveDragCompetitor] =
     useState<Competitor | null>(null);
 
-  useEffect(() => {
-    loadData();
-  }, [tournamentId]);
+  const { data: categories = [], isLoading: loadingCategories } = trpc.categories.getAll.useQuery({
+    tournamentId,
+  });
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const [catsData, compsData] = await Promise.all([
-        getCategories(tournamentId),
-        getCompetitors(tournamentId),
-      ]);
-      setCategories(catsData);
-      setCompetitors(compsData);
-    } catch (error) {
-      console.error("Failed to load data for adjuster:", error);
-      toast.error("Error al cargar datos");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: competitors = [], isLoading: loadingCompetitors } = trpc.competitors.getAll.useQuery({
+    tournamentId,
+  });
 
-  const handleMerge = async () => {
+  const utils = trpc.useUtils();
+  const mergeEmptyMutation = trpc.categories.mergeEmpty.useMutation();
+  const updateCompetitorMutation = trpc.competitors.update.useMutation();
+
+  const handleMergeEmpty = async () => {
     if (
       !confirm(
-        "Esto moverá a los competidores de categorías con menos de 4 inscritos a la siguiente categoría de peso y eliminará las categorías vacías. ¿Estás seguro?",
+        "Esto eliminará categorías vacías y unirá automáticamente las que tengan menos de 4 competidores. ¿Proceder?",
       )
     ) {
       return;
     }
-
-    setMerging(true);
+    setProcessing(true);
     try {
-      await mergeCategoriesWithFewCompetitors(tournamentId);
-      await loadData();
-      toast.success("Fusión y optimización completada.");
-    } catch (error) {
-      console.error("Failed to merge categories:", error);
-      toast.error("Error al fusionar categorías.");
+      await mergeEmptyMutation.mutateAsync({ tournamentId });
+      utils.categories.getAll.invalidate({ tournamentId });
+      utils.competitors.getAll.invalidate({ tournamentId });
+      toast.success("Categorías ajustadas automáticamente.");
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al ajustar categorías.");
     } finally {
-      setMerging(false);
+      setProcessing(false);
+    }
+  };
+
+  const moveCompetitor = async (competitorId: string, newCategoryId: string) => {
+    setProcessing(true);
+    try {
+      await updateCompetitorMutation.mutateAsync({
+        tournamentId,
+        competitorId,
+        categoryId: newCategoryId,
+      });
+      utils.competitors.getAll.invalidate({ tournamentId });
+      toast.success("Competidor movido con éxito.");
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al mover competidor.");
+    } finally {
+      setProcessing(false);
     }
   };
 
   const filteredCategories = useMemo(() => {
-    return categories.filter((c) => {
+    return categories.filter((c: Category) => {
       if (!filterText) return true;
       const search = filterText.toLowerCase();
       return (
@@ -206,7 +204,7 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
   // Drag and Drop Handlers
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
-    const comp = competitors.find((c) => c.id === active.id);
+    const comp = competitors.find((c: Competitor) => c.id === active.id);
     if (comp) setActiveDragCompetitor(comp);
   };
 
@@ -219,20 +217,25 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
     const competitorId = active.id as string;
     const newCategoryId = over.id as string;
 
-    const competitor = competitors.find((c) => c.id === competitorId);
+    const competitor = competitors.find((c: Competitor) => c.id === competitorId);
     if (!competitor || competitor.categoryId === newCategoryId) return;
 
     // Optimistic UI update
-    const previousCategoryId = competitor.categoryId;
-    setCompetitors((prev) =>
-      prev.map((c) =>
-        c.id === competitorId ? { ...c, categoryId: newCategoryId } : c,
-      ),
-    );
+    const previousCompetitors = utils.competitors.getAll.getData({ tournamentId });
+    if (previousCompetitors) {
+      utils.competitors.getAll.setData(
+        { tournamentId },
+        previousCompetitors.map((c: Competitor) =>
+          c.id === competitorId ? { ...c, categoryId: newCategoryId } : c,
+        ),
+      );
+    }
 
     try {
       if (isReadOnly) throw new Error("Solo lectura");
-      await updateCompetitor(tournamentId, competitorId, {
+      await updateCompetitorMutation.mutateAsync({
+        tournamentId,
+        competitorId,
         categoryId: newCategoryId,
       });
       toast.success("Competidor movido con éxito");
@@ -240,11 +243,9 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
       console.error("Error updating competitor:", error);
       toast.error("No se pudo mover el competidor");
       // Revert on failure
-      setCompetitors((prev) =>
-        prev.map((c) =>
-          c.id === competitorId ? { ...c, categoryId: previousCategoryId } : c,
-        ),
-      );
+      if (previousCompetitors) {
+        utils.competitors.getAll.setData({ tournamentId }, previousCompetitors);
+      }
     }
   };
 
@@ -262,34 +263,33 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
         </div>
         {!isReadOnly && (
           <div>
-            <button
-              onClick={handleMerge}
-              disabled={merging || loading}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            <Button
+              onClick={handleMergeEmpty}
+              disabled={processing || loadingCategories || loadingCompetitors}
+              variant="primary"
             >
-              {merging ? "Fusionando..." : "Fusión Automática (< 4)"}
-            </button>
+              {processing ? "Fusionando..." : "Fusión Automática (< 4)"}
+            </Button>
           </div>
         )}
       </div>
 
-      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
+      <Card padding="md" className="space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <h3 className="text-lg font-semibold text-gray-950">
             Tablero de Categorías ({categories.length})
           </h3>
           <div className="w-full md:w-72">
-            <input
+            <Input
               type="text"
               placeholder="Buscar categoría..."
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
-              className="w-full pl-3 pr-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>
         </div>
 
-        {loading ? (
+        {loadingCategories || loadingCompetitors ? (
           <div className="py-12 text-center text-gray-500">
             Cargando tablero...
           </div>
@@ -299,7 +299,7 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
           </div>
         ) : (
           <div className="relative mt-4">
-            {merging && (
+            {processing && (
               <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center z-10 rounded-xl">
                 <div className="flex flex-col items-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-2"></div>
@@ -316,12 +316,12 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
               onDragEnd={handleDragEnd}
             >
               <div className="flex overflow-x-auto pb-6 pt-2 gap-4 snap-x">
-                {filteredCategories.map((cat) => (
+                {filteredCategories.map((cat: Category) => (
                   <div key={cat.id} className="snap-start">
                     <CategoryDroppable
                       category={cat}
                       competitors={competitors.filter(
-                        (c) => c.categoryId === cat.id,
+                        (c: Competitor) => c.categoryId === cat.id,
                       )}
                     />
                   </div>
@@ -349,7 +349,7 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
             </DndContext>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 };

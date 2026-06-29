@@ -8,13 +8,10 @@ import { BracketManager } from "./BracketManager";
 import { CategoryManager } from "./CategoryManager";
 import { AreaScheduleManager } from "./AreaScheduleManager";
 import { CategoryAdjuster } from "./CategoryAdjuster";
-import {
-  getCategories,
-  updateCategoryBracketType,
-} from "../services/categoryService";
 import { generateBracket } from "../services/bracketService";
-import { getCompetitors } from "../services/competitorService";
 import { getDynamicAnalyticsUrl } from "../utils/apiClient";
+import { Button, Card } from "@corner-click/ui";
+import { trpc } from "@corner-click/api-client";
 
 interface Props {
   tournament: Tournament;
@@ -25,10 +22,6 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
   const [activeTab, setActiveTab] = useState<
     "categories" | "competitors" | "adjust-categories" | "judges" | "brackets"
   >("categories");
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [competitorCounts, setCompetitorCounts] = useState<
-    Record<string, number>
-  >({});
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [bracketsViewMode, setBracketsViewMode] = useState<"CATEGORY" | "AREA">(
     "CATEGORY",
@@ -74,21 +67,28 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
     }
   };
 
-  useEffect(() => {
-    // Load categories and competitors so we can show counts in the dropdown
-    Promise.all([
-      getCategories(tournament.id!),
-      getCompetitors(tournament.id!),
-    ]).then(([cats, comps]) => {
-      setCategories(cats);
+  const { data: categories = [] } = trpc.categories.getAll.useQuery({
+    tournamentId: tournament.id!,
+  });
 
-      const counts: Record<string, number> = {};
-      comps.forEach((c) => {
-        counts[c.categoryId] = (counts[c.categoryId] || 0) + 1;
-      });
-      setCompetitorCounts(counts);
+  const { data: competitors = [] } = trpc.competitors.getAll.useQuery({
+    tournamentId: tournament.id!,
+  });
+
+  const [competitorCounts, setCompetitorCounts] = useState<
+    Record<string, number>
+  >({});
+
+  const utils = trpc.useUtils();
+  const updateBracketTypeMutation = trpc.categories.updateBracketType.useMutation();
+
+  useEffect(() => {
+    const counts: Record<string, number> = {};
+    competitors.forEach((c) => {
+      counts[c.categoryId] = (counts[c.categoryId] || 0) + 1;
     });
-  }, [tournament.id, activeTab]);
+    setCompetitorCounts(counts);
+  }, [competitors]);
 
   const renderNavigation = () => {
     const tabs: (typeof activeTab)[] = [
@@ -102,14 +102,14 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
 
     return (
       <div className="flex justify-between items-center w-full">
-        <button
+        <Button
           disabled={activeTab === "categories"}
           onClick={() => {
             if (currentIndex > 0) {
               setActiveTab(tabs[currentIndex - 1]);
             }
           }}
-          className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          variant="secondary"
         >
           <svg
             className="w-5 h-5 mr-2 -ml-1"
@@ -125,16 +125,16 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
             ></path>
           </svg>
           Anterior
-        </button>
+        </Button>
 
-        <button
+        <Button
           disabled={activeTab === "judges"}
           onClick={() => {
             if (currentIndex < tabs.length - 1) {
               setActiveTab(tabs[currentIndex + 1]);
             }
           }}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          variant="primary"
         >
           Siguiente
           <svg
@@ -150,7 +150,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
               d="M9 5l7 7-7 7"
             ></path>
           </svg>
-        </button>
+        </Button>
       </div>
     );
   };
@@ -232,14 +232,14 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Left Column: Quick Stats */}
         <div className="w-full lg:w-64 shrink-0 space-y-6">
-          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+          <Card padding="md">
             <h3 className="text-lg font-bold text-gray-800 mb-4 uppercase tracking-wide">
               Status
             </h3>
             <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full font-bold uppercase tracking-wider">
               {tournament.status}
             </span>
-          </div>
+          </Card>
 
           <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-6 rounded-xl shadow-lg text-white">
             <h3 className="text-lg font-bold mb-2 uppercase tracking-wide opacity-90">
@@ -306,19 +306,16 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
               </div>
 
               {!tournament.status || tournament.status !== "COMPLETED" ? (
-                <button
+                <Button
                   onClick={handleGenerateAllBrackets}
                   disabled={generatingAll}
-                  className={`px-5 py-2.5 text-white rounded-lg font-bold text-sm shadow-sm transition-colors ${
-                    generatingAll
-                      ? "bg-purple-400 cursor-not-allowed"
-                      : "bg-purple-600 hover:bg-purple-700"
-                  }`}
+                  variant="primary"
+                  className={generatingAll ? "!bg-purple-400" : "!bg-purple-600"}
                 >
                   {generatingAll
                     ? "Generando Todas..."
                     : "Generar TODAS las Llaves [DEV]"}
-                </button>
+                </Button>
               ) : null}
             </div>
           )}
@@ -376,18 +373,12 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                     onChange={async (e) => {
                       const newType = e.target.value as BracketType;
                       try {
-                        await updateCategoryBracketType(
-                          tournament.id!,
-                          selectedCategoryId,
-                          newType,
-                        );
-                        setCategories((prev) =>
-                          prev.map((c) =>
-                            c.id === selectedCategoryId
-                              ? { ...c, bracketType: newType }
-                              : c,
-                          ),
-                        );
+                        await updateBracketTypeMutation.mutateAsync({
+                          tournamentId: tournament.id!,
+                          categoryId: selectedCategoryId,
+                          bracketType: newType,
+                        });
+                        utils.categories.getAll.invalidate({ tournamentId: tournament.id! });
                       } catch (err) {
                         console.error(err);
                         alert("Error al actualizar la modalidad");
@@ -445,7 +436,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           )}
 
           {activeTab === "competitors" && (
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <Card padding="md">
               <CompetitorManager
                 tournamentId={tournament.id!}
                 categoryId={selectedCategoryId}
@@ -454,7 +445,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                 isReadOnly={tournament.status === "COMPLETED"}
                 tournamentAreas={tournament.areas || 1}
               />
-            </div>
+            </Card>
           )}
 
           {activeTab === "brackets" &&

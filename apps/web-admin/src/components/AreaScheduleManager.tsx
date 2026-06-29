@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ref, get } from "firebase/database";
 import { database } from "../lib/firebase";
 import { getMatches } from "../services/bracketService";
-import { getCompetitors } from "../services/competitorService";
+import { trpc } from "@corner-click/api-client";
 import type { Match, Competitor, Category } from "@corner-click/types";
 import { MatchStatus } from "@corner-click/types";
 
@@ -17,11 +17,20 @@ export const AreaScheduleManager: React.FC<AreaScheduleManagerProps> = ({
 }) => {
   const [selectedAreaId, setSelectedAreaId] = useState<string>("1");
   const [matches, setMatches] = useState<Match[]>([]);
-  const [competitors, setCompetitors] = useState<Record<string, Competitor>>(
-    {},
-  );
   const [categories, setCategories] = useState<Record<string, Category>>({});
   const [loading, setLoading] = useState(true);
+
+  const { data: competitorsList = [] } = trpc.competitors.getAll.useQuery({
+    tournamentId,
+  });
+
+  const competitors: Record<string, Competitor> = React.useMemo(() => {
+    const map: Record<string, Competitor> = {};
+    competitorsList.forEach((c) => {
+      map[c.id] = c;
+    });
+    return map;
+  }, [competitorsList]);
 
   useEffect(() => {
     loadData();
@@ -30,17 +39,8 @@ export const AreaScheduleManager: React.FC<AreaScheduleManagerProps> = ({
   const loadData = async () => {
     setLoading(true);
     try {
-      const [matchesData, compsData] = await Promise.all([
-        getMatches(tournamentId),
-        getCompetitors(tournamentId),
-      ]);
+      const matchesData = await getMatches(tournamentId);
       setMatches(matchesData);
-
-      const compsMap: Record<string, Competitor> = {};
-      compsData.forEach((c) => {
-        compsMap[c.id] = c;
-      });
-      setCompetitors(compsMap);
 
       const catSnap = await get(
         ref(database, `tournaments/${tournamentId}/categories`),
