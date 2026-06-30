@@ -230,38 +230,6 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
     return () => unsubscribe()
   }, [activeMatch?.matchId, useLocal, activeMatch])
 
-  useEffect(() => {
-    if (useLocal) {
-      return
-    }
-    let eventSource: EventSource | null = null
-    setJudgesData({})
-
-    if (
-      activeMatch &&
-      (matchStatus === MatchStatus.ENDED || matchStatus === MatchStatus.COMPLETED)
-    ) {
-      eventSource = new EventSource(`${API_URL}/api/matches/${activeMatch.matchId}/stream-scores`)
-
-      eventSource.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data)
-          if (data.scores) {
-            setJudgesData(data.scores)
-          }
-        } catch (err) {
-          console.error('Failed to parse SSE scores:', err)
-        }
-      }
-    }
-
-    return () => {
-      if (eventSource) {
-        eventSource.close()
-      }
-    }
-  }, [activeMatch?.matchId, matchStatus, useLocal, activeMatch])
-
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60)
       .toString()
