@@ -4,6 +4,7 @@ import { judgesRouter } from "./judges.js";
 import { matchesRouter } from "./matches.js";
 import { categoriesRouter } from "./categories.js";
 import { competitorsRouter } from "./competitors.js";
+import { authRouter } from "./auth.js";
 
 export const appRouter = router({
   health: publicProcedure.query(() => {
@@ -14,6 +15,7 @@ export const appRouter = router({
   matches: matchesRouter,
   categories: categoriesRouter,
   competitors: competitorsRouter,
+  auth: authRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -12,7 +12,8 @@ export const matchesRouter = router({
     .input(
       z.object({
         matchId: z.string(),
-        status: z.enum(["PENDING", "ACTIVE", "PAUSED", "ENDED"]),
+        status: z.string(),
+        isExtraTime: z.boolean().optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -85,6 +86,27 @@ export const matchesRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Error fetching scores",
+        });
+      }
+    }),
+
+  getByTournament: publicProcedure
+    .input(z.object({ tournamentId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      if (!ctx.db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Firestore not initialized",
+        });
+      }
+
+      try {
+        const matches = await matchRepo.findByTournament(input.tournamentId);
+        return matches;
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching matches for tournament",
         });
       }
     }),

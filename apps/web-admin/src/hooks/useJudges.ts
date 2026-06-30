@@ -5,8 +5,6 @@ import { trpc } from "@corner-click/api-client";
 const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:4000";
 
 export function useJudges(tournamentId: string) {
-  const [judges, setJudges] = useState<Judge[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const createMutation = trpc.judges.create.useMutation();
@@ -14,34 +12,26 @@ export function useJudges(tournamentId: string) {
   const disconnectMutation = trpc.judges.disconnect.useMutation();
   const deleteMutation = trpc.judges.delete.useMutation();
 
+  const {
+    data: judges = [],
+    isLoading: loading,
+    error: queryError,
+  } = trpc.judges.getAll.useQuery(
+    { tournamentId },
+    {
+      enabled: !!tournamentId,
+      refetchInterval: 3000, // Poll every 3 seconds
+    },
+  );
+
   useEffect(() => {
-    if (!tournamentId) return;
-
-    setLoading(true);
-    const eventSource = new EventSource(
-      `${API_URL}/api/tournaments/${tournamentId}/judges/stream`,
-    );
-
-    eventSource.onmessage = (event) => {
-      try {
-        const judgesData = JSON.parse(event.data);
-        setJudges(judgesData);
-        setLoading(false);
-      } catch (err) {
-        console.error("Failed to parse SSE data:", err);
-      }
-    };
-
-    eventSource.onerror = (err) => {
-      console.error("SSE Error:", err);
+    if (queryError) {
       setError("Failed to sync judges");
-      setLoading(false);
-    };
-
-    return () => {
-      eventSource.close();
-    };
-  }, [tournamentId]);
+      console.error("TRPC Error:", queryError);
+    } else {
+      setError(null);
+    }
+  }, [queryError]);
 
   const addJudge = async (name: string) => {
     try {

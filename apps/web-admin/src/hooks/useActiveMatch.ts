@@ -17,6 +17,7 @@ import {
   ScoreUpdateType,
 } from "@corner-click/types";
 import { AudioService } from "@corner-click/audio";
+import { trpc } from "@corner-click/api-client";
 
 interface ScoreData {
   redScore: number;
@@ -47,6 +48,10 @@ export const useActiveMatch = (
 
   const [firebaseConnected, setFirebaseConnected] = useState(true);
   const useLocal = !firebaseConnected;
+
+  const updateStatusMutation = trpc.matches.updateStatus.useMutation();
+  const submitScoresMutation = trpc.matches.submitScores.useMutation();
+  const declareWinnerMutation = trpc.matches.declareWinner.useMutation();
 
   // Track Firebase connection state
   useEffect(() => {
@@ -139,9 +144,10 @@ export const useActiveMatch = (
     }
 
     try {
-      await fetchWithAuth(`/api/matches/${selectedMatch.id}/status`, {
-        method: "POST",
-        body: JSON.stringify({ status: newStatus, isExtraTime: nextExtraTime }),
+      await updateStatusMutation.mutateAsync({
+        matchId: selectedMatch.id,
+        status: newStatus,
+        isExtraTime: nextExtraTime,
       });
       setStatus(newStatus);
       showToast?.(`Estado del combate actualizado a: ${newStatus}`, "info");
@@ -207,12 +213,12 @@ export const useActiveMatch = (
     }
 
     try {
-      await advanceWinner(
-        selectedTournamentId,
-        selectedMatch.id,
+      await declareWinnerMutation.mutateAsync({
+        matchId: selectedMatch.id,
         winnerId,
-        selectedMatch.nextMatchId || undefined,
-      );
+        tournamentId: selectedTournamentId,
+        nextMatchId: selectedMatch.nextMatchId || undefined,
+      });
       const updatedMatches = await getMatches(
         selectedTournamentId,
         selectedCategoryId,
@@ -369,22 +375,20 @@ export const useActiveMatch = (
               try {
                 // Post all individual corner scores
                 for (const [cornerId, score] of Object.entries(item.scores)) {
-                  await fetchWithAuth(`/api/matches/${item.matchId}/scores`, {
-                    method: "POST",
-                    body: JSON.stringify({
-                      cornerId,
-                      ...score,
-                    }),
+                  await submitScoresMutation.mutateAsync({
+                    matchId: item.matchId as string,
+                    cornerId,
+                    ...score as any,
                   });
                 }
 
                 // Declare winner & advance bracket
-                await advanceWinner(
-                  item.tournamentId,
-                  item.matchId,
-                  item.winnerId,
-                  item.nextMatchId || undefined,
-                );
+                await declareWinnerMutation.mutateAsync({
+                  tournamentId: item.tournamentId,
+                  matchId: item.matchId,
+                  winnerId: item.winnerId,
+                  nextMatchId: item.nextMatchId || undefined,
+                });
               } catch (e) {
                 console.error("Failed to sync offline match:", e);
               }

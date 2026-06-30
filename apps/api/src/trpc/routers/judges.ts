@@ -160,7 +160,7 @@ export const judgesRouter = router({
           tournamentId: input.tournamentId,
           areaId: input.areaId,
           cornerId: input.cornerId,
-          matchId: input.matchId,
+          matchId: input.matchId || null,
         };
 
         await judgeRepo.updateAssignment(input.tournamentId, input.judgeId, currentAssignment);

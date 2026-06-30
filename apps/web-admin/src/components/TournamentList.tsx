@@ -21,6 +21,8 @@ export default function TournamentList({
   const tournaments = data || [];
   const utils = trpc.useUtils();
 
+  const deleteMutation = trpc.tournaments.delete.useMutation();
+
   const handleDelete = async (id: string) => {
     if (
       !confirm(
@@ -30,16 +32,11 @@ export default function TournamentList({
       return;
     }
     try {
-      const res = await fetchWithAuth(`${API_URL}/api/tournaments/${id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        utils.tournaments.getAll.invalidate();
-      } else {
-        alert("Failed to delete tournament");
-      }
+      await deleteMutation.mutateAsync({ id });
+      utils.tournaments.getAll.invalidate();
     } catch (err) {
       console.error(err);
+      alert("Failed to delete tournament");
     }
   };
 
@@ -181,7 +178,7 @@ export default function TournamentList({
   return (
     <div className="p-8 max-w-[95vw] 2xl:max-w-[1700px] mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">
+        <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
           Tournaments
         </h1>
         <Button
@@ -227,7 +224,7 @@ export default function TournamentList({
           {/* Completed */}
           {completedTournaments.length > 0 && (
             <div>
-              <h2 className="text-xl font-extrabold text-slate-500 mb-4 uppercase tracking-wider flex items-center gap-2">
+              <h2 className="text-xl font-extrabold text-slate-800 dark:text-slate-400 mb-4 uppercase tracking-wider flex items-center gap-2">
                 <span>✓</span> Finalizados / Historial (
                 {completedTournaments.length})
               </h2>

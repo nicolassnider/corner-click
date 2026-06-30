@@ -68,7 +68,7 @@ export default function AssignJudgeModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-200 animate-in fade-in zoom-in duration-200">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-200 dark:border-slate-800 animate-in fade-in zoom-in duration-200">
         <div className="bg-gray-900 px-6 py-4 flex justify-between items-center">
           <h2 className="text-xl font-bold text-white tracking-wide">
             Assign Judge
@@ -101,10 +101,10 @@ export default function AssignJudgeModal({
               {judge.name.charAt(0)}
             </div>
             <div>
-              <h3 className="font-bold text-gray-900 text-lg leading-tight">
+              <h3 className="font-bold text-gray-900 dark:text-gray-100 text-lg leading-tight">
                 {judge.name}
               </h3>
-              <p className="text-sm font-mono text-gray-500 tracking-widest">
+              <p className="text-sm font-mono text-gray-500 dark:text-gray-400 tracking-widest">
                 PIN: {judge.pin}
               </p>
             </div>
@@ -114,7 +114,7 @@ export default function AssignJudgeModal({
             <div>
               <label
                 htmlFor="area-select"
-                className="block text-sm font-bold text-gray-700 mb-1"
+                className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1"
               >
                 Area / Tatami
               </label>
@@ -124,7 +124,7 @@ export default function AssignJudgeModal({
                 title="Area / Tatami"
                 value={areaId}
                 onChange={(e) => setAreaId(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-gray-50 text-gray-900 font-medium"
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-700 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-gray-100 font-medium"
               >
                 {Array.from({ length: tournamentAreas }).map((_, i) => (
                   <option key={i} value={String(i + 1)}>
@@ -137,7 +137,7 @@ export default function AssignJudgeModal({
             <div>
               <label
                 htmlFor="corner-select"
-                className="block text-sm font-bold text-gray-700 mb-1"
+                className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1"
               >
                 Corner / Role
               </label>
@@ -147,7 +147,7 @@ export default function AssignJudgeModal({
                 title="Corner / Role"
                 value={cornerId}
                 onChange={(e) => setCornerId(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-gray-50 text-gray-900 font-medium"
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-slate-700 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-gray-100 font-medium"
               >
                 <option value={CornerRole.CORNER_1}>Corner 1</option>
                 <option value={CornerRole.CORNER_2}>Corner 2</option>
@@ -160,7 +160,7 @@ export default function AssignJudgeModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-3 text-gray-700 font-bold bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors"
+                className="flex-1 px-4 py-3 text-gray-700 dark:text-gray-200 font-bold bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-xl transition-colors"
               >
                 Cancel
               </button>

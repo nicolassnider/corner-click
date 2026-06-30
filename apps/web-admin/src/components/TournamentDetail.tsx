@@ -47,7 +47,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
       let areaIndex = 0;
 
       for (const cat of categories) {
-        const comps = await getCompetitors(tournament.id!, cat.id);
+        const comps = competitors.filter(c => c.categoryId === cat.id);
         if (comps.length >= 2) {
           const areaId = `${(areaIndex % totalAreas) + 1}`;
           await generateBracket(tournament.id!, cat.id, areaId, comps);
@@ -322,11 +322,11 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
 
           {(activeTab === "competitors" ||
             (activeTab === "brackets" && bracketsViewMode === "CATEGORY")) && (
-            <div className="mb-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="mb-6 bg-white dark:bg-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div className="flex-1">
                 <label
                   htmlFor="category-select"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                 >
                   Seleccionar Categoría
                 </label>
@@ -336,7 +336,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                   title="Seleccionar Categoría"
                   value={selectedCategoryId}
                   onChange={(e) => setSelectedCategoryId(e.target.value)}
-                  className="mt-1 block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
+                  className="mt-1 block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-100 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
                 >
                   <option value="" disabled={activeTab === "brackets"}>
                     {activeTab === "competitors"
@@ -358,7 +358,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                 <div className="flex-1">
                   <label
                     htmlFor="bracket-type-select"
-                    className="block text-sm font-medium text-gray-700 mb-2"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                   >
                     Modalidad de Llave
                   </label>
@@ -385,7 +385,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                       }
                     }}
                     disabled={tournament.status === "COMPLETED"}
-                    className="mt-1 block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
+                    className="mt-1 block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-100 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
                   >
                     <option value={BracketType.SINGLE_ELIMINATION}>
                       Eliminación Simple
@@ -451,7 +451,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           {activeTab === "brackets" &&
             bracketsViewMode === "CATEGORY" &&
             selectedCategoryId && (
-              <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+              <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm">
                 <BracketManager
                   tournamentId={tournament.id!}
                   categoryId={selectedCategoryId}
@@ -464,15 +464,15 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           {activeTab === "brackets" &&
             bracketsViewMode === "CATEGORY" &&
             !selectedCategoryId && (
-              <div className="bg-gray-50 border-2 border-dashed border-gray-300 p-12 rounded-xl text-center">
-                <p className="text-gray-500 text-lg">
+              <div className="bg-gray-50 dark:bg-slate-800/50 border-2 border-dashed border-gray-300 dark:border-slate-700 p-12 rounded-xl text-center">
+                <p className="text-gray-500 dark:text-gray-400 text-lg">
                   Selecciona una categoría para ver su llave.
                 </p>
               </div>
             )}
 
           {activeTab === "brackets" && bracketsViewMode === "AREA" && (
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm">
               <AreaScheduleManager
                 tournamentId={tournament.id!}
                 tournamentAreas={tournament.areas || 1}
@@ -481,7 +481,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           )}
 
           {/* Navigation (Bottom) */}
-          <div className="pt-6 border-t border-gray-200 mt-8">
+          <div className="pt-6 border-t border-gray-200 dark:border-slate-800 mt-8">
             {renderNavigation()}
           </div>
         </div>

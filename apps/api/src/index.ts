@@ -12,10 +12,6 @@ import { createContext } from "./trpc/trpc.js";
 
 const log = createLogger("server");
 
-import authRoutes from "./routes/auth.js";
-import swaggerUi from "swagger-ui-express";
-import swaggerJSDoc from "swagger-jsdoc";
-
 const app = express();
 app.use(cors());
 
@@ -34,55 +30,6 @@ const {
   environment,
   isVercel,
 } = settings.app;
-
-// Configure Swagger JSDoc
-const swaggerOptions = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: appName,
-      version: version,
-      description: description,
-    },
-    servers: [
-      {
-        url: apiPrefix,
-        description: `${environment} Server`,
-      },
-    ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-          description:
-            "Firebase ID Token — obtain one from /api/auth/pin (judge) or /api/auth/admin/login (admin)",
-        },
-      },
-    },
-    security: [{ bearerAuth: [] }],
-  },
-  apis: ["./src/routes/*.ts", "./src/index.ts"],
-};
-
-const swaggerSpec = swaggerJSDoc(swaggerOptions);
-
-// Use CDN assets — locally-served static files do not work in serverless environments (Vercel)
-const swaggerUiOptions = {
-  customCssUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui.min.css",
-  customJs: [
-    "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui-bundle.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui-standalone-preset.min.js",
-  ],
-};
-
-app.use(
-  `${apiPrefix}/docs`,
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, swaggerUiOptions),
-);
 app.use(express.json());
 
 // HTTP request logging
@@ -101,9 +48,6 @@ app.use(
     createContext,
   }),
 );
-
-app.use(`${apiPrefix}/auth`, authRoutes);
-
 // Root endpoint for quick deployment verification
 app.get("/", (req: Request, res: Response) => {
   res.json({
@@ -114,7 +58,6 @@ app.get("/", (req: Request, res: Response) => {
         ? "Production (Render)"
         : "Local Development",
     timestamp: new Date().toISOString(),
-    docs: `${apiPrefix}/docs`,
   });
 });
 

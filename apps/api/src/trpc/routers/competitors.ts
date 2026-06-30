@@ -50,10 +50,10 @@ export const competitorsRouter = router({
         tournamentId: z.string(),
         firstName: z.string(),
         lastName: z.string(),
-        school: z.string(),
-        beltLevel: z.string(),
+        club: z.string(),
+        belt: z.string().optional(),
         categoryId: z.string(),
-        age: z.number().optional(),
+        birthDate: z.string().optional(),
         weight: z.number().optional(),
       })
     )
@@ -80,10 +80,10 @@ export const competitorsRouter = router({
         const newCompetitor = {
           firstName: input.firstName,
           lastName: input.lastName,
-          school: input.school,
-          beltLevel: input.beltLevel,
+          club: input.club,
+          belt: input.belt || "1º – 3º Dan",
           categoryId: input.categoryId,
-          age: input.age,
+          birthDate: input.birthDate,
           weight: input.weight,
           tournamentId: input.tournamentId,
         };
@@ -109,10 +109,10 @@ export const competitorsRouter = router({
         competitorId: z.string(),
         firstName: z.string().optional(),
         lastName: z.string().optional(),
-        school: z.string().optional(),
-        beltLevel: z.string().optional(),
+        club: z.string().optional(),
+        belt: z.string().optional(),
         categoryId: z.string().optional(),
-        age: z.number().optional(),
+        birthDate: z.string().optional(),
         weight: z.number().optional(),
       })
     )
@@ -140,10 +140,10 @@ export const competitorsRouter = router({
         const updates: any = {};
         if (input.firstName !== undefined) updates.firstName = input.firstName;
         if (input.lastName !== undefined) updates.lastName = input.lastName;
-        if (input.school !== undefined) updates.school = input.school;
-        if (input.beltLevel !== undefined) updates.beltLevel = input.beltLevel;
+        if (input.club !== undefined) updates.club = input.club;
+        if (input.belt !== undefined) updates.belt = input.belt;
         if (input.categoryId !== undefined) updates.categoryId = input.categoryId;
-        if (input.age !== undefined) updates.age = input.age;
+        if (input.birthDate !== undefined) updates.birthDate = input.birthDate;
         if (input.weight !== undefined) updates.weight = input.weight;
 
         await competitorRef.update(updates);

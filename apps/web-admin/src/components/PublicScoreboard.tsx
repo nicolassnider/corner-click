@@ -402,18 +402,18 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
         className="flex justify-between items-center bg-slate-900/70 border border-slate-800/80 px-[3vw] py-[2vh] rounded-[2vw] backdrop-blur-xl z-10 shadow-[0_2vh_5vh_rgba(0,0,0,0.5)]"
       >
         <div>
-          <span className="text-emerald-400 font-black tracking-[0.3em] text-[1.2vw] uppercase drop-shadow-[0_0_1vw_rgba(52,211,153,0.3)]">
+          <span className="text-emerald-400 font-black tracking-[0.3em] text-[2vh] uppercase drop-shadow-[0_0_1vw_rgba(52,211,153,0.3)]">
             {LABELS.CHAMPIONSHIP_TITLE}
           </span>
-          <h1 className="text-[3vw] font-black uppercase tracking-tight mt-[0.5vh] text-slate-100 leading-none">
+          <h1 className="text-[4vh] font-black uppercase tracking-tight mt-[0.5vh] text-slate-100 leading-none">
             {categoryName || LABELS.LOADING_CATEGORY}
           </h1>
         </div>
         <div className="text-right flex flex-col items-end">
-          <span className="bg-slate-950 text-slate-100 font-black px-[2vw] py-[1vh] rounded-full border-2 border-slate-700 uppercase tracking-widest text-[2vw] shadow-lg whitespace-nowrap">
+          <span className="bg-slate-950 text-slate-100 font-black px-[2vw] py-[1vh] rounded-full border-2 border-slate-700 uppercase tracking-widest text-[3vh] shadow-lg whitespace-nowrap">
             ÁREA {areaId.toLowerCase().replace("area-", "")}
           </span>
-          <div className="text-[1.2vw] mt-[1.5vh] font-bold tracking-widest">
+          <div className="text-[2vh] mt-[1.5vh] font-bold tracking-widest">
             {!activeMatch.nextMatchId ? (
               <motion.span 
                 animate={{ opacity: [1, 0.5, 1] }} 
@@ -443,14 +443,14 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
         >
           <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(225,29,72,0.05)_50%,transparent_75%,transparent_100%)] bg-[length:250px_250px] animate-[shine_5s_linear_infinite]" />
           
-          <div className="pt-[1vh] relative z-10">
-            <span className="bg-rose-600 text-white font-black text-[1.5vw] px-[2vw] py-[1vh] rounded-full tracking-widest uppercase shadow-lg shadow-rose-900/50 inline-block">
+          <div className="pt-[1vh] relative z-10 flex flex-col items-center">
+            <span className="bg-rose-600 text-white font-black text-[2vh] px-[2vw] py-[1vh] rounded-full tracking-widest uppercase shadow-lg shadow-rose-900/50 inline-block">
               {LABELS.RED_CORNER}
             </span>
-            <h2 className="text-[5vw] leading-[1.1] font-black text-rose-500 mt-[4vh] tracking-tighter uppercase drop-shadow-[0_0_1vw_rgba(244,63,94,0.3)] line-clamp-2">
+            <h2 className="text-[6.5vh] leading-[1.1] font-black text-rose-500 mt-[2vh] tracking-tighter uppercase drop-shadow-[0_0_1vw_rgba(244,63,94,0.3)] line-clamp-2">
               {getCompName(activeMatch.redCompetitorId)}
             </h2>
-            <p className="text-slate-400 text-[1.8vw] font-bold uppercase tracking-widest mt-[2vh]">
+            <p className="text-slate-400 text-[2.5vh] font-bold uppercase tracking-widest mt-[1vh]">
               {getCompClub(activeMatch.redCompetitorId)}
             </p>
           </div>
@@ -463,7 +463,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 1.5, opacity: 0, y: -50 }}
                 transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                className={`text-[18vw] font-black leading-none font-mono tracking-tighter ${
+                className={`text-[25vh] font-black leading-none font-mono tracking-tighter ${
                   showFinalScores
                     ? "text-rose-500 drop-shadow-[0_0_3vw_rgba(244,63,94,0.8)]"
                     : "text-slate-800/80 drop-shadow-none"
@@ -472,7 +472,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
                 {showFinalScores ? redVotes : 0}
               </motion.div>
             </AnimatePresence>
-            <div className="text-rose-400 font-black uppercase tracking-[0.2em] text-[1.2vw] mt-[3vh] bg-rose-950/60 border border-rose-900/80 px-[2vw] py-[1vh] rounded-full shadow-inner backdrop-blur-md">
+            <div className="text-rose-400 font-black uppercase tracking-[0.2em] text-[1.8vh] mt-[2vh] bg-rose-950/60 border border-rose-900/80 px-[2vw] py-[1vh] rounded-full shadow-inner backdrop-blur-md">
               {showFinalScores ? LABELS.JUDGE_VOTES : LABELS.CLOSED_SCOREBOARD}
             </div>
           </div>
@@ -481,7 +481,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
 
         {/* Center: TV Timer and Status */}
         <div className="w-[30vw] flex flex-col items-center justify-center text-center px-[2vw] h-full relative z-10">
-          <div className="text-slate-400 font-black tracking-[0.3em] text-[1.8vw] uppercase drop-shadow-md">
+          <div className="text-slate-400 font-black tracking-[0.3em] text-[2.5vh] uppercase drop-shadow-md">
             {matchStatus === MatchStatus.GOLDEN_POINT
               ? LABELS.GOLDEN_POINT
               : isExtraTime
@@ -491,14 +491,14 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
 
           <motion.div
             layout
-            className={`font-mono text-[11vw] font-black tracking-tighter leading-none my-[3vh] transition-colors duration-500 ${timerColor}`}
+            className={`font-mono text-[16vh] font-black tracking-tighter leading-none my-[2vh] transition-colors duration-500 ${timerColor}`}
           >
             {formatTime(timeRemaining)}
           </motion.div>
 
           <motion.div layout className="mt-[1vh]">
             <span
-              className={`px-[3vw] py-[1.5vh] rounded-full text-[1.5vw] font-black uppercase tracking-[0.2em] border-[0.2vw] shadow-[0_1vh_3vh_rgba(0,0,0,0.5)] inline-block transition-colors duration-500 ${
+              className={`px-[3vw] py-[1.5vh] rounded-full text-[2.2vh] font-black uppercase tracking-[0.2em] border-[0.2vw] shadow-[0_1vh_3vh_rgba(0,0,0,0.5)] inline-block transition-colors duration-500 ${
                 matchStatus === MatchStatus.GOLDEN_POINT
                   ? "bg-amber-500/20 border-amber-500 text-amber-400 animate-pulse"
                   : isExtraTime && matchStatus === MatchStatus.ACTIVE
@@ -524,7 +524,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="mt-[6vh] text-slate-300 text-[1.5vw] font-black uppercase tracking-widest bg-slate-900/80 border border-slate-700/80 px-[3vw] py-[2vh] rounded-2xl animate-pulse backdrop-blur-md shadow-2xl"
+                className="mt-[4vh] text-slate-300 text-[2vh] font-black uppercase tracking-widest bg-slate-900/80 border border-slate-700/80 px-[3vw] py-[2vh] rounded-2xl animate-pulse backdrop-blur-md shadow-2xl"
               >
                 {LABELS.WAITING_JURY}
               </motion.div>
@@ -541,14 +541,14 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
         >
           <div className="absolute inset-0 bg-[linear-gradient(-45deg,transparent_25%,rgba(59,130,246,0.05)_50%,transparent_75%,transparent_100%)] bg-[length:250px_250px] animate-[shine_5s_linear_infinite]" />
           
-          <div className="pt-[1vh] relative z-10">
-            <span className="bg-blue-600 text-white font-black text-[1.5vw] px-[2vw] py-[1vh] rounded-full tracking-widest uppercase shadow-lg shadow-blue-900/50 inline-block">
+          <div className="pt-[1vh] relative z-10 flex flex-col items-center">
+            <span className="bg-blue-600 text-white font-black text-[2vh] px-[2vw] py-[1vh] rounded-full tracking-widest uppercase shadow-lg shadow-blue-900/50 inline-block">
               {LABELS.BLUE_CORNER}
             </span>
-            <h2 className="text-[5vw] leading-[1.1] font-black text-blue-500 mt-[4vh] tracking-tighter uppercase drop-shadow-[0_0_1vw_rgba(59,130,246,0.3)] line-clamp-2">
+            <h2 className="text-[6.5vh] leading-[1.1] font-black text-blue-500 mt-[2vh] tracking-tighter uppercase drop-shadow-[0_0_1vw_rgba(59,130,246,0.3)] line-clamp-2">
               {getCompName(activeMatch.blueCompetitorId)}
             </h2>
-            <p className="text-slate-400 text-[1.8vw] font-bold uppercase tracking-widest mt-[2vh]">
+            <p className="text-slate-400 text-[2.5vh] font-bold uppercase tracking-widest mt-[1vh]">
               {getCompClub(activeMatch.blueCompetitorId)}
             </p>
           </div>
@@ -561,7 +561,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 1.5, opacity: 0, y: -50 }}
                 transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                className={`text-[18vw] font-black leading-none font-mono tracking-tighter ${
+                className={`text-[25vh] font-black leading-none font-mono tracking-tighter ${
                   showFinalScores
                     ? "text-blue-500 drop-shadow-[0_0_3vw_rgba(59,130,246,0.8)]"
                     : "text-slate-800/80 drop-shadow-none"
@@ -570,7 +570,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
                 {showFinalScores ? blueVotes : 0}
               </motion.div>
             </AnimatePresence>
-            <div className="text-blue-400 font-black uppercase tracking-[0.2em] text-[1.2vw] mt-[3vh] bg-blue-950/60 border border-blue-900/80 px-[2vw] py-[1vh] rounded-full shadow-inner backdrop-blur-md">
+            <div className="text-blue-400 font-black uppercase tracking-[0.2em] text-[1.8vh] mt-[2vh] bg-blue-950/60 border border-blue-900/80 px-[2vw] py-[1vh] rounded-full shadow-inner backdrop-blur-md">
               {showFinalScores ? LABELS.JUDGE_VOTES : LABELS.CLOSED_SCOREBOARD}
             </div>
           </div>
@@ -583,7 +583,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="text-center bg-slate-900/50 border border-slate-800/60 py-[2vh] rounded-[1.5vw] z-10 text-slate-500 text-[1.2vw] font-black tracking-widest flex justify-between px-[4vw] gap-2 backdrop-blur-md"
+        className="text-center bg-slate-900/50 border border-slate-800/60 py-[1.5vh] rounded-[1.5vw] z-10 text-slate-500 text-[1.5vh] font-black tracking-widest flex justify-between px-[4vw] gap-2 backdrop-blur-md"
       >
         <span>
           {APP_NAME.toUpperCase()} &copy; {new Date().getFullYear()}

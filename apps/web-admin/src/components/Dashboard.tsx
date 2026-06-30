@@ -87,7 +87,7 @@ export default function Dashboard() {
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900 font-sans">
+        <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-slate-100 font-sans">
           <Toaster position="top-right" />
           <AdminHeader onHomeClick={handleBackToList} user={user} />
 

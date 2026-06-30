@@ -63,25 +63,25 @@ export const AreaScheduleManager: React.FC<AreaScheduleManagerProps> = ({
     switch (status) {
       case MatchStatus.ACTIVE:
         return (
-          <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">
+          <span className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 px-2 py-1 rounded text-xs font-bold">
             ACTIVE
           </span>
         );
       case MatchStatus.PENDING:
         return (
-          <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-bold">
+          <span className="bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-300 px-2 py-1 rounded text-xs font-bold">
             PENDING
           </span>
         );
       case MatchStatus.COMPLETED:
         return (
-          <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold">
+          <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 px-2 py-1 rounded text-xs font-bold">
             COMPLETED
           </span>
         );
       default:
         return (
-          <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-bold">
+          <span className="bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-300 px-2 py-1 rounded text-xs font-bold">
             {status}
           </span>
         );
@@ -125,7 +125,7 @@ export const AreaScheduleManager: React.FC<AreaScheduleManagerProps> = ({
       <div>
         <label
           htmlFor="area-select"
-          className="block text-sm font-medium text-gray-700 mb-2"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
         >
           Seleccionar Área para ver cronograma
         </label>
@@ -137,7 +137,7 @@ export const AreaScheduleManager: React.FC<AreaScheduleManagerProps> = ({
               className={`px-4 py-2 rounded-lg font-bold text-sm whitespace-nowrap transition-colors ${
                 selectedAreaId === area
                   ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  : "bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700"
               }`}
             >
               Área {area}
@@ -147,24 +147,24 @@ export const AreaScheduleManager: React.FC<AreaScheduleManagerProps> = ({
       </div>
 
       {/* Lista de Combates */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden">
         {areaMatches.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
+          <div className="p-8 text-center text-gray-500 dark:text-gray-400">
             <p>No hay combates asignados a esta área.</p>
             <p className="text-sm mt-1">
               Los combates aparecerán aquí una vez generadas las llaves.
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-gray-200 dark:divide-slate-700">
             {areaMatches.map((match, idx) => (
               <div
                 key={match.id}
-                className="p-4 hover:bg-gray-50 transition-colors flex flex-col md:flex-row items-center gap-4"
+                className="p-4 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors flex flex-col md:flex-row items-center gap-4"
               >
                 {/* Order & Status */}
-                <div className="flex flex-col items-center justify-center w-16 shrink-0 border-r border-gray-200 pr-4">
-                  <span className="text-xs text-gray-400 font-bold mb-1">
+                <div className="flex flex-col items-center justify-center w-16 shrink-0 border-r border-gray-200 dark:border-slate-700 pr-4">
+                  <span className="text-xs text-gray-400 dark:text-gray-500 font-bold mb-1">
                     #{idx + 1}
                   </span>
                   {getStatusBadge(match.status)}
@@ -172,7 +172,7 @@ export const AreaScheduleManager: React.FC<AreaScheduleManagerProps> = ({
 
                 {/* Match Details */}
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-bold text-indigo-600 mb-1 truncate">
+                  <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400 mb-1 truncate">
                     {categories[match.categoryId]?.name ||
                       "Categoría Desconocida"}
                     {match.round ? ` • Ronda ${match.round}` : ""}
@@ -180,17 +180,17 @@ export const AreaScheduleManager: React.FC<AreaScheduleManagerProps> = ({
 
                   <div className="flex items-center gap-4 text-sm font-medium">
                     <div className="flex-1 flex items-center justify-end">
-                      <span className="truncate">
+                      <span className="truncate text-gray-900 dark:text-gray-200">
                         {getCompetitorName(match.redCompetitorId)}
                       </span>
                       <div className="ml-3 w-3 h-3 bg-red-500 rounded-full shrink-0"></div>
                     </div>
 
-                    <div className="text-gray-400 font-bold px-2">VS</div>
+                    <div className="text-gray-400 dark:text-gray-500 font-bold px-2">VS</div>
 
                     <div className="flex-1 flex items-center justify-start">
                       <div className="mr-3 w-3 h-3 bg-blue-500 rounded-full shrink-0"></div>
-                      <span className="truncate">
+                      <span className="truncate text-gray-900 dark:text-gray-200">
                         {getCompetitorName(match.blueCompetitorId)}
                       </span>
                     </div>

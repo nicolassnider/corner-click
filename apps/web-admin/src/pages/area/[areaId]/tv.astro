@@ -20,8 +20,8 @@ const { areaId } = Astro.params;
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Corner Click - Public TV Scoreboard (Area {areaId}</title></head
-  >)
+    <title>Corner Click - Public TV Scoreboard (Area {areaId})</title>
+  </head>
 
   <body class="bg-slate-950 overflow-hidden h-screen w-screen">
     {areaId && <PublicScoreboard areaId={areaId} client:load />}

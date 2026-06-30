@@ -150,6 +150,9 @@ function JudgeApp() {
     }
   }, [judgeData, queryError]);
 
+  const pinLoginMutation = trpc.auth.pinLogin.useMutation();
+  const logoutMutation = trpc.auth.logout.useMutation();
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -201,20 +204,10 @@ function JudgeApp() {
     }
 
     try {
-      const response = await fetchWithAuth(`/api/auth/pin`, {
-        method: "POST",
-        body: JSON.stringify({ pin }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Login failed");
-      }
-
+      const data = await pinLoginMutation.mutateAsync({ pin });
       await signInWithCustomToken(auth, data.token);
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Error al iniciar sesión");
     }
   };
 
@@ -230,9 +223,7 @@ function JudgeApp() {
 
     if (user) {
       try {
-        await fetchWithAuth(`/api/auth/logout`, {
-          method: "POST",
-        });
+        await logoutMutation.mutateAsync();
       } catch (err) {
         console.error("Failed to logout via API", err);
       }
