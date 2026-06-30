@@ -10,7 +10,7 @@ export const competitorsRouter = router({
       z.object({
         tournamentId: z.string(),
         categoryId: z.string().optional(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       if (!rtdb) {
@@ -20,7 +20,9 @@ export const competitorsRouter = router({
         });
       }
       try {
-        const competitorsRef = rtdb.ref(`tournaments/${input.tournamentId}/competitors`);
+        const competitorsRef = rtdb.ref(
+          `tournaments/${input.tournamentId}/competitors`,
+        );
         const snapshot = await competitorsRef.once("value");
 
         if (!snapshot.exists()) return [];
@@ -32,7 +34,9 @@ export const competitorsRouter = router({
         })) as Competitor[];
 
         if (input.categoryId) {
-          competitors = competitors.filter((c) => c.categoryId === input.categoryId);
+          competitors = competitors.filter(
+            (c) => c.categoryId === input.categoryId,
+          );
         }
 
         return competitors;
@@ -55,7 +59,7 @@ export const competitorsRouter = router({
         categoryId: z.string(),
         birthDate: z.string().optional(),
         weight: z.number().optional(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (!rtdb) {
@@ -74,7 +78,9 @@ export const competitorsRouter = router({
       }
 
       try {
-        const competitorsRef = rtdb.ref(`tournaments/${input.tournamentId}/competitors`);
+        const competitorsRef = rtdb.ref(
+          `tournaments/${input.tournamentId}/competitors`,
+        );
         const newCompetitorRef = competitorsRef.push();
 
         const newCompetitor = {
@@ -114,7 +120,7 @@ export const competitorsRouter = router({
         categoryId: z.string().optional(),
         birthDate: z.string().optional(),
         weight: z.number().optional(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (!rtdb) {
@@ -134,7 +140,7 @@ export const competitorsRouter = router({
 
       try {
         const competitorRef = rtdb.ref(
-          `tournaments/${input.tournamentId}/competitors/${input.competitorId}`
+          `tournaments/${input.tournamentId}/competitors/${input.competitorId}`,
         );
 
         const updates: any = {};
@@ -142,7 +148,8 @@ export const competitorsRouter = router({
         if (input.lastName !== undefined) updates.lastName = input.lastName;
         if (input.club !== undefined) updates.club = input.club;
         if (input.belt !== undefined) updates.belt = input.belt;
-        if (input.categoryId !== undefined) updates.categoryId = input.categoryId;
+        if (input.categoryId !== undefined)
+          updates.categoryId = input.categoryId;
         if (input.birthDate !== undefined) updates.birthDate = input.birthDate;
         if (input.weight !== undefined) updates.weight = input.weight;
 
@@ -161,7 +168,7 @@ export const competitorsRouter = router({
       z.object({
         tournamentId: z.string(),
         competitorId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (!rtdb) {
@@ -181,7 +188,7 @@ export const competitorsRouter = router({
 
       try {
         const competitorRef = rtdb.ref(
-          `tournaments/${input.tournamentId}/competitors/${input.competitorId}`
+          `tournaments/${input.tournamentId}/competitors/${input.competitorId}`,
         );
         await competitorRef.remove();
         return { success: true };

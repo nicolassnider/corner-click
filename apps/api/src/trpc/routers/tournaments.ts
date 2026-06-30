@@ -106,7 +106,7 @@ export const tournamentsRouter = router({
         location: z.string().optional(),
         areas: z.number().optional(),
         rings: z.number().optional(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.db) {
@@ -155,7 +155,7 @@ export const tournamentsRouter = router({
         location: z.string().optional(),
         areas: z.number().optional(),
         status: z.nativeEnum(TournamentStatus).optional(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.db) {
@@ -189,7 +189,10 @@ export const tournamentsRouter = router({
         if (input.areas !== undefined) updates.areas = input.areas;
         if (input.status !== undefined) updates.status = input.status;
 
-        const updatedTournament = await tournamentRepo.update(input.id, updates);
+        const updatedTournament = await tournamentRepo.update(
+          input.id,
+          updates,
+        );
         if (!updatedTournament) {
           throw new TRPCError({
             code: "NOT_FOUND",

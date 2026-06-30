@@ -47,7 +47,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
       let areaIndex = 0;
 
       for (const cat of categories) {
-        const comps = competitors.filter(c => c.categoryId === cat.id);
+        const comps = competitors.filter((c) => c.categoryId === cat.id);
         if (comps.length >= 2) {
           const areaId = `${(areaIndex % totalAreas) + 1}`;
           await generateBracket(tournament.id!, cat.id, areaId, comps);
@@ -80,7 +80,8 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
   >({});
 
   const utils = trpc.useUtils();
-  const updateBracketTypeMutation = trpc.categories.updateBracketType.useMutation();
+  const updateBracketTypeMutation =
+    trpc.categories.updateBracketType.useMutation();
 
   useEffect(() => {
     const counts: Record<string, number> = {};
@@ -310,7 +311,9 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                   onClick={handleGenerateAllBrackets}
                   disabled={generatingAll}
                   variant="primary"
-                  className={generatingAll ? "!bg-purple-400" : "!bg-purple-600"}
+                  className={
+                    generatingAll ? "!bg-purple-400" : "!bg-purple-600"
+                  }
                 >
                   {generatingAll
                     ? "Generando Todas..."
@@ -378,7 +381,9 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                           categoryId: selectedCategoryId,
                           bracketType: newType,
                         });
-                        utils.categories.getAll.invalidate({ tournamentId: tournament.id! });
+                        utils.categories.getAll.invalidate({
+                          tournamentId: tournament.id!,
+                        });
                       } catch (err) {
                         console.error(err);
                         alert("Error al actualizar la modalidad");

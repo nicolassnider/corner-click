@@ -8,7 +8,9 @@ const log = createLogger("match-repo");
 export class FirebaseMatchRepository implements IMatchRepository {
   async findByTournament(tournamentId: string): Promise<Match[]> {
     if (!rtdb) throw new Error("Firebase RTDB not initialized");
-    const snapshot = await rtdb.ref(`tournaments/${tournamentId}/matches`).once("value");
+    const snapshot = await rtdb
+      .ref(`tournaments/${tournamentId}/matches`)
+      .once("value");
     if (!snapshot.exists()) return [];
     const data = snapshot.val();
     return Object.keys(data).map((key) => ({
@@ -113,12 +115,15 @@ export class FirebaseMatchRepository implements IMatchRepository {
     },
   ): Promise<void> {
     if (!rtdb) throw new Error("Firebase RTDB not initialized");
-    const { winnerId, tournamentId, nextMatchId, losersMatchId, loserId } = params;
+    const { winnerId, tournamentId, nextMatchId, losersMatchId, loserId } =
+      params;
     const updates: Record<string, string> = {};
 
     // Mark current match as completed with winner
-    updates[`tournaments/${tournamentId}/matches/${matchId}/winnerId`] = winnerId;
-    updates[`tournaments/${tournamentId}/matches/${matchId}/status`] = "COMPLETED";
+    updates[`tournaments/${tournamentId}/matches/${matchId}/winnerId`] =
+      winnerId;
+    updates[`tournaments/${tournamentId}/matches/${matchId}/status`] =
+      "COMPLETED";
 
     // Advance winner to next match if applicable
     if (nextMatchId) {
@@ -128,9 +133,13 @@ export class FirebaseMatchRepository implements IMatchRepository {
       if (nextMatchSnap.exists()) {
         const nextMatch = nextMatchSnap.val();
         if (!nextMatch.redCompetitorId) {
-          updates[`tournaments/${tournamentId}/matches/${nextMatchId}/redCompetitorId`] = winnerId;
+          updates[
+            `tournaments/${tournamentId}/matches/${nextMatchId}/redCompetitorId`
+          ] = winnerId;
         } else if (!nextMatch.blueCompetitorId) {
-          updates[`tournaments/${tournamentId}/matches/${nextMatchId}/blueCompetitorId`] = winnerId;
+          updates[
+            `tournaments/${tournamentId}/matches/${nextMatchId}/blueCompetitorId`
+          ] = winnerId;
         }
       }
     }
@@ -143,9 +152,13 @@ export class FirebaseMatchRepository implements IMatchRepository {
       if (losersMatchSnap.exists()) {
         const losersMatch = losersMatchSnap.val();
         if (!losersMatch.redCompetitorId) {
-          updates[`tournaments/${tournamentId}/matches/${losersMatchId}/redCompetitorId`] = loserId;
+          updates[
+            `tournaments/${tournamentId}/matches/${losersMatchId}/redCompetitorId`
+          ] = loserId;
         } else if (!losersMatch.blueCompetitorId) {
-          updates[`tournaments/${tournamentId}/matches/${losersMatchId}/blueCompetitorId`] = loserId;
+          updates[
+            `tournaments/${tournamentId}/matches/${losersMatchId}/blueCompetitorId`
+          ] = loserId;
         }
       }
     }
@@ -161,7 +174,10 @@ export class FirebaseMatchRepository implements IMatchRepository {
 
       if (allMatches) {
         const allDone = Object.values(allMatches).every(
-          (m: any) => m.winnerId !== null && m.winnerId !== undefined && m.winnerId !== "",
+          (m: any) =>
+            m.winnerId !== null &&
+            m.winnerId !== undefined &&
+            m.winnerId !== "",
         );
 
         if (allDone) {

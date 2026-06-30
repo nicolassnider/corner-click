@@ -126,9 +126,10 @@ function JudgeApp() {
   const { data: judgeData, error: queryError } = trpc.judges.getById.useQuery(
     { tournamentId: tournamentId!, judgeId: judgeId! },
     {
-      enabled: !!tournamentId && !!judgeId && tournamentId !== "offline-tournament",
+      enabled:
+        !!tournamentId && !!judgeId && tournamentId !== "offline-tournament",
       refetchInterval: 3000,
-    }
+    },
   );
 
   useEffect(() => {
@@ -148,7 +149,7 @@ function JudgeApp() {
       } else if (judgeData.currentAssignment) {
         setAssignment({
           ...judgeData.currentAssignment,
-          tournamentId: tournamentId!,
+          tournamentId: tournamentId || "",
         });
       } else {
         setAssignment(null);
@@ -341,7 +342,7 @@ function JudgeApp() {
           <p className="text-slate-400 font-medium mb-8">
             Has iniciado sesión correctamente.
           </p>
-          
+
           <div className="p-6 bg-slate-950/50 rounded-2xl border border-slate-800 w-full animate-pulse-slow relative overflow-hidden">
             <div className="absolute inset-0 bg-blue-500/5 blur-[40px]" />
             <p className="text-lg font-bold text-slate-200 leading-relaxed relative z-10">

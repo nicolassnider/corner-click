@@ -332,7 +332,7 @@ export const useActiveMatch = (
     if (!selectedMatch || useLocal) return;
     const areaId = selectedMatch.areaId || "1";
     const areaMatchRef = ref(database, `live_matches_by_area/${areaId}`);
-    
+
     // Avoid undefined values for Firebase RTDB
     const payload = {
       matchId: selectedMatch.id || "",
@@ -344,10 +344,10 @@ export const useActiveMatch = (
       nextMatchId: selectedMatch.nextMatchId || null,
     };
 
-    set(areaMatchRef, payload).catch(err => {
+    set(areaMatchRef, payload).catch((err) => {
       console.error("Failed to sync live_matches_by_area:", err);
     });
-  }, [selectedMatch?.id, useLocal]);
+  }, [selectedMatch, useLocal]);
 
   // Listen to live scores in Firebase (Online only)
   useEffect(() => {
@@ -383,7 +383,7 @@ export const useActiveMatch = (
                   await submitScoresMutation.mutateAsync({
                     matchId: item.matchId as string,
                     cornerId,
-                    ...score as any,
+                    ...(score as any),
                   });
                 }
 

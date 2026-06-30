@@ -63,7 +63,7 @@ export default function ScorePad({
   }, []);
 
   const [firebaseConnected, setFirebaseConnected] = useState(true);
-  const useLocal = isOffline;
+  const useLocal = isOffline || !firebaseConnected;
 
   useEffect(() => {
     if (isOffline) {
@@ -105,12 +105,20 @@ export default function ScorePad({
     return () => unsubscribe();
   }, [matchId, useLocal]);
 
-  const displayRedScore = calculateNetScore(redScore, redWarnings, redDeductions);
-  const displayBlueScore = calculateNetScore(blueScore, blueWarnings, blueDeductions);
+  const displayRedScore = calculateNetScore(
+    redScore,
+    redWarnings,
+    redDeductions,
+  );
+  const displayBlueScore = calculateNetScore(
+    blueScore,
+    blueWarnings,
+    blueDeductions,
+  );
 
   useEffect(() => {
     if (matchStatus === MatchStatus.ENDED) {
-      submitScoresMutation.mutateAsync({
+      submitScoresMutation.mutate({
         matchId,
         cornerId,
         redScore,
@@ -119,7 +127,7 @@ export default function ScorePad({
         blueWarnings,
         redDeductions,
         blueDeductions,
-      }).catch((err) => console.error("Failed to submit scores:", err));
+      });
     }
   }, [
     matchStatus,
@@ -165,14 +173,23 @@ export default function ScorePad({
     cornerId,
   ]);
 
-  const handleScore = (color: CornerRole, points: number, e?: React.TouchEvent | React.MouseEvent) => {
-    console.log('handleScore called', { color, points, matchStatus, isOffline });
-    
+  const handleScore = (
+    color: CornerRole,
+    points: number,
+    e?: React.TouchEvent | React.MouseEvent,
+  ) => {
+    console.log("handleScore called", {
+      color,
+      points,
+      matchStatus,
+      isOffline,
+    });
+
     if (
       matchStatus !== MatchStatus.ACTIVE &&
       matchStatus !== MatchStatus.GOLDEN_POINT
     ) {
-      console.log('handleScore blocked by matchStatus:', matchStatus);
+      console.log("handleScore blocked by matchStatus:", matchStatus);
       return;
     }
 
@@ -194,13 +211,21 @@ export default function ScorePad({
     }
   };
 
-  const handleScoreTouchStart = (color: CornerRole, points: number, e: React.TouchEvent) => {
+  const handleScoreTouchStart = (
+    color: CornerRole,
+    points: number,
+    e: React.TouchEvent,
+  ) => {
     // e.preventDefault(); // Passive event warning fix
     const buttonId = `${color}-${points}`;
     setPressedButton(buttonId);
   };
 
-  const handleScoreTouch = (color: CornerRole, points: number, e: React.TouchEvent) => {
+  const handleScoreTouch = (
+    color: CornerRole,
+    points: number,
+    e: React.TouchEvent,
+  ) => {
     setTouchHandled(true);
     handleScore(color, points, e);
     setTimeout(() => setPressedButton(null), 150);
@@ -214,7 +239,10 @@ export default function ScorePad({
     handleScore(color, points);
   };
 
-  const handleWarning = (color: CornerRole, e?: React.TouchEvent | React.MouseEvent) => {
+  const handleWarning = (
+    color: CornerRole,
+    e?: React.TouchEvent | React.MouseEvent,
+  ) => {
     if (
       matchStatus !== MatchStatus.ACTIVE &&
       matchStatus !== MatchStatus.GOLDEN_POINT
@@ -259,7 +287,10 @@ export default function ScorePad({
     handleWarning(color);
   };
 
-  const handleDeduction = (color: CornerRole, e?: React.TouchEvent | React.MouseEvent) => {
+  const handleDeduction = (
+    color: CornerRole,
+    e?: React.TouchEvent | React.MouseEvent,
+  ) => {
     if (
       matchStatus !== MatchStatus.ACTIVE &&
       matchStatus !== MatchStatus.GOLDEN_POINT
@@ -284,7 +315,10 @@ export default function ScorePad({
     }
   };
 
-  const handleDeductionTouchStart = (color: CornerRole, e: React.TouchEvent) => {
+  const handleDeductionTouchStart = (
+    color: CornerRole,
+    e: React.TouchEvent,
+  ) => {
     // e.preventDefault();
     const buttonId = `${color}-deduct`;
     setPressedButton(buttonId);
@@ -401,40 +435,46 @@ export default function ScorePad({
         {/* RED CONTROLS (LEFT HALF) */}
         <div className="flex-1 flex flex-col gap-2 relative">
           <div className="absolute inset-0 bg-gradient-to-b from-rose-600/10 to-transparent rounded-3xl pointer-events-none" />
-          
+
           <button
             onTouchStart={(e) => handleScoreTouchStart(CornerRole.RED, 1, e)}
             onTouchEnd={(e) => handleScoreTouch(CornerRole.RED, 1, e)}
             onClick={() => handleScoreClick(CornerRole.RED, 1)}
-            className={`flex-[3] bg-rose-600 hover:bg-rose-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(225,29,72,0.3)] border-t border-rose-400/30 active:scale-95 transition-all cursor-pointer relative overflow-hidden group ${pressedButton === 'RED-1' ? 'scale-95' : ''}`}
+            className={`flex-[3] bg-rose-600 hover:bg-rose-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(225,29,72,0.3)] border-t border-rose-400/30 active:scale-95 transition-all cursor-pointer relative overflow-hidden group ${pressedButton === "RED-1" ? "scale-95" : ""}`}
           >
-            <div className={`absolute inset-0 bg-white/10 transition-opacity ${pressedButton === 'RED-1' ? 'opacity-100' : 'opacity-0'}`} />
+            <div
+              className={`absolute inset-0 bg-white/10 transition-opacity ${pressedButton === "RED-1" ? "opacity-100" : "opacity-0"}`}
+            />
             <span className="text-7xl font-black drop-shadow-md">+1</span>
             <span className="text-xs font-black uppercase tracking-widest opacity-90 mt-2">
               Mano
             </span>
           </button>
-          
+
           <button
             onTouchStart={(e) => handleScoreTouchStart(CornerRole.RED, 2, e)}
             onTouchEnd={(e) => handleScoreTouch(CornerRole.RED, 2, e)}
             onClick={() => handleScoreClick(CornerRole.RED, 2)}
-            className={`flex-[3] bg-rose-600 hover:bg-rose-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(225,29,72,0.3)] border-t border-rose-400/30 active:scale-95 transition-all cursor-pointer relative overflow-hidden group ${pressedButton === 'RED-2' ? 'scale-95' : ''}`}
+            className={`flex-[3] bg-rose-600 hover:bg-rose-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(225,29,72,0.3)] border-t border-rose-400/30 active:scale-95 transition-all cursor-pointer relative overflow-hidden group ${pressedButton === "RED-2" ? "scale-95" : ""}`}
           >
-            <div className={`absolute inset-0 bg-white/10 transition-opacity ${pressedButton === 'RED-2' ? 'opacity-100' : 'opacity-0'}`} />
+            <div
+              className={`absolute inset-0 bg-white/10 transition-opacity ${pressedButton === "RED-2" ? "opacity-100" : "opacity-0"}`}
+            />
             <span className="text-7xl font-black drop-shadow-md">+2</span>
             <span className="text-xs font-black uppercase tracking-widest opacity-90 mt-2">
               Patada M
             </span>
           </button>
-          
+
           <button
             onTouchStart={(e) => handleScoreTouchStart(CornerRole.RED, 3, e)}
             onTouchEnd={(e) => handleScoreTouch(CornerRole.RED, 3, e)}
             onClick={() => handleScoreClick(CornerRole.RED, 3)}
-            className={`flex-[3] bg-rose-600 hover:bg-rose-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(225,29,72,0.3)] border-t border-rose-400/30 active:scale-95 transition-all cursor-pointer relative overflow-hidden group ${pressedButton === 'RED-3' ? 'scale-95' : ''}`}
+            className={`flex-[3] bg-rose-600 hover:bg-rose-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(225,29,72,0.3)] border-t border-rose-400/30 active:scale-95 transition-all cursor-pointer relative overflow-hidden group ${pressedButton === "RED-3" ? "scale-95" : ""}`}
           >
-            <div className={`absolute inset-0 bg-white/10 transition-opacity ${pressedButton === 'RED-3' ? 'opacity-100' : 'opacity-0'}`} />
+            <div
+              className={`absolute inset-0 bg-white/10 transition-opacity ${pressedButton === "RED-3" ? "opacity-100" : "opacity-0"}`}
+            />
             <span className="text-7xl font-black drop-shadow-md">+3</span>
             <span className="text-xs font-black uppercase tracking-widest opacity-90 mt-2">
               Patada A
@@ -446,7 +486,7 @@ export default function ScorePad({
               onTouchStart={(e) => handleWarningTouchStart(CornerRole.RED, e)}
               onTouchEnd={(e) => handleWarningTouch(CornerRole.RED, e)}
               onClick={() => handleWarningClick(CornerRole.RED)}
-              className={`flex-1 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all flex flex-col items-center justify-center text-xs cursor-pointer border-t border-amber-300/50 ${pressedButton === 'RED-warn' ? 'scale-95' : ''}`}
+              className={`flex-1 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all flex flex-col items-center justify-center text-xs cursor-pointer border-t border-amber-300/50 ${pressedButton === "RED-warn" ? "scale-95" : ""}`}
             >
               Warn
             </button>
@@ -454,7 +494,7 @@ export default function ScorePad({
               onTouchStart={(e) => handleDeductionTouchStart(CornerRole.RED, e)}
               onTouchEnd={(e) => handleDeductionTouch(CornerRole.RED, e)}
               onClick={() => handleDeductionClick(CornerRole.RED)}
-              className={`flex-1 bg-slate-900 border-2 border-rose-900/50 hover:border-rose-700 hover:bg-slate-800 text-rose-500 rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all flex flex-col items-center justify-center text-xs cursor-pointer ${pressedButton === 'RED-deduct' ? 'scale-95' : ''}`}
+              className={`flex-1 bg-slate-900 border-2 border-rose-900/50 hover:border-rose-700 hover:bg-slate-800 text-rose-500 rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all flex flex-col items-center justify-center text-xs cursor-pointer ${pressedButton === "RED-deduct" ? "scale-95" : ""}`}
             >
               Dedct
             </button>
@@ -464,40 +504,46 @@ export default function ScorePad({
         {/* BLUE CONTROLS (RIGHT HALF) */}
         <div className="flex-1 flex flex-col gap-2 relative">
           <div className="absolute inset-0 bg-gradient-to-b from-blue-600/10 to-transparent rounded-3xl pointer-events-none" />
-          
+
           <button
             onTouchStart={(e) => handleScoreTouchStart(CornerRole.BLUE, 1, e)}
             onTouchEnd={(e) => handleScoreTouch(CornerRole.BLUE, 1, e)}
             onClick={() => handleScoreClick(CornerRole.BLUE, 1)}
-            className={`flex-[3] bg-blue-600 hover:bg-blue-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(37,99,235,0.3)] border-t border-blue-400/30 active:scale-95 transition-all cursor-pointer relative overflow-hidden group ${pressedButton === 'BLUE-1' ? 'scale-95' : ''}`}
+            className={`flex-[3] bg-blue-600 hover:bg-blue-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(37,99,235,0.3)] border-t border-blue-400/30 active:scale-95 transition-all cursor-pointer relative overflow-hidden group ${pressedButton === "BLUE-1" ? "scale-95" : ""}`}
           >
-            <div className={`absolute inset-0 bg-white/10 transition-opacity ${pressedButton === 'BLUE-1' ? 'opacity-100' : 'opacity-0'}`} />
+            <div
+              className={`absolute inset-0 bg-white/10 transition-opacity ${pressedButton === "BLUE-1" ? "opacity-100" : "opacity-0"}`}
+            />
             <span className="text-7xl font-black drop-shadow-md">+1</span>
             <span className="text-xs font-black uppercase tracking-widest opacity-90 mt-2">
               Mano
             </span>
           </button>
-          
+
           <button
             onTouchStart={(e) => handleScoreTouchStart(CornerRole.BLUE, 2, e)}
             onTouchEnd={(e) => handleScoreTouch(CornerRole.BLUE, 2, e)}
             onClick={() => handleScoreClick(CornerRole.BLUE, 2)}
-            className={`flex-[3] bg-blue-600 hover:bg-blue-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(37,99,235,0.3)] border-t border-blue-400/30 active:scale-95 transition-all cursor-pointer relative overflow-hidden group ${pressedButton === 'BLUE-2' ? 'scale-95' : ''}`}
+            className={`flex-[3] bg-blue-600 hover:bg-blue-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(37,99,235,0.3)] border-t border-blue-400/30 active:scale-95 transition-all cursor-pointer relative overflow-hidden group ${pressedButton === "BLUE-2" ? "scale-95" : ""}`}
           >
-            <div className={`absolute inset-0 bg-white/10 transition-opacity ${pressedButton === 'BLUE-2' ? 'opacity-100' : 'opacity-0'}`} />
+            <div
+              className={`absolute inset-0 bg-white/10 transition-opacity ${pressedButton === "BLUE-2" ? "opacity-100" : "opacity-0"}`}
+            />
             <span className="text-7xl font-black drop-shadow-md">+2</span>
             <span className="text-xs font-black uppercase tracking-widest opacity-90 mt-2">
               Patada M
             </span>
           </button>
-          
+
           <button
             onTouchStart={(e) => handleScoreTouchStart(CornerRole.BLUE, 3, e)}
             onTouchEnd={(e) => handleScoreTouch(CornerRole.BLUE, 3, e)}
             onClick={() => handleScoreClick(CornerRole.BLUE, 3)}
-            className={`flex-[3] bg-blue-600 hover:bg-blue-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(37,99,235,0.3)] border-t border-blue-400/30 active:scale-95 transition-all cursor-pointer relative overflow-hidden group ${pressedButton === 'BLUE-3' ? 'scale-95' : ''}`}
+            className={`flex-[3] bg-blue-600 hover:bg-blue-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(37,99,235,0.3)] border-t border-blue-400/30 active:scale-95 transition-all cursor-pointer relative overflow-hidden group ${pressedButton === "BLUE-3" ? "scale-95" : ""}`}
           >
-            <div className={`absolute inset-0 bg-white/10 transition-opacity ${pressedButton === 'BLUE-3' ? 'opacity-100' : 'opacity-0'}`} />
+            <div
+              className={`absolute inset-0 bg-white/10 transition-opacity ${pressedButton === "BLUE-3" ? "opacity-100" : "opacity-0"}`}
+            />
             <span className="text-7xl font-black drop-shadow-md">+3</span>
             <span className="text-xs font-black uppercase tracking-widest opacity-90 mt-2">
               Patada A
@@ -509,15 +555,17 @@ export default function ScorePad({
               onTouchStart={(e) => handleWarningTouchStart(CornerRole.BLUE, e)}
               onTouchEnd={(e) => handleWarningTouch(CornerRole.BLUE, e)}
               onClick={() => handleWarningClick(CornerRole.BLUE)}
-              className={`flex-1 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all flex flex-col items-center justify-center text-xs cursor-pointer border-t border-amber-300/50 ${pressedButton === 'BLUE-warn' ? 'scale-95' : ''}`}
+              className={`flex-1 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all flex flex-col items-center justify-center text-xs cursor-pointer border-t border-amber-300/50 ${pressedButton === "BLUE-warn" ? "scale-95" : ""}`}
             >
               Warn
             </button>
             <button
-              onTouchStart={(e) => handleDeductionTouchStart(CornerRole.BLUE, e)}
+              onTouchStart={(e) =>
+                handleDeductionTouchStart(CornerRole.BLUE, e)
+              }
               onTouchEnd={(e) => handleDeductionTouch(CornerRole.BLUE, e)}
               onClick={() => handleDeductionClick(CornerRole.BLUE)}
-              className={`flex-1 bg-slate-900 border-2 border-blue-900/50 hover:border-blue-700 hover:bg-slate-800 text-blue-500 rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all flex flex-col items-center justify-center text-xs cursor-pointer ${pressedButton === 'BLUE-deduct' ? 'scale-95' : ''}`}
+              className={`flex-1 bg-slate-900 border-2 border-blue-900/50 hover:border-blue-700 hover:bg-slate-800 text-blue-500 rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all flex flex-col items-center justify-center text-xs cursor-pointer ${pressedButton === "BLUE-deduct" ? "scale-95" : ""}`}
             >
               Dedct
             </button>

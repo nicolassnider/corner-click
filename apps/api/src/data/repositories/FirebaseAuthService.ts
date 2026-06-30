@@ -15,7 +15,12 @@ export class FirebaseAuthService implements IAuthService {
   async loginAdmin(
     email: string,
     password: string,
-  ): Promise<{ token: string; uid: string; email: string; displayName: string | null }> {
+  ): Promise<{
+    token: string;
+    uid: string;
+    email: string;
+    displayName: string | null;
+  }> {
     if (!auth || !db) throw new Error("Firebase Admin not configured");
     if (!FIREBASE_API_KEY) throw new Error("Firebase API Key not configured");
 

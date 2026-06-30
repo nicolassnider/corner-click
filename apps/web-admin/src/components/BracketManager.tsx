@@ -45,7 +45,7 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
 
   const { data: competitors = [] } = trpc.competitors.getAll.useQuery(
     { tournamentId, categoryId },
-    { enabled: !!tournamentId && !!categoryId }
+    { enabled: !!tournamentId && !!categoryId },
   );
 
   useEffect(() => {
@@ -440,7 +440,9 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
                 {standings.map((std, idx) => (
                   <tr
                     key={std.competitorId}
-                    className={idx === 0 ? "bg-yellow-50/50 dark:bg-yellow-900/20" : ""}
+                    className={
+                      idx === 0 ? "bg-yellow-50/50 dark:bg-yellow-900/20" : ""
+                    }
                   >
                     <td className="px-6 py-4 whitespace-nowrap font-bold text-gray-900 dark:text-gray-100">
                       {idx + 1}º {idx === 0 && "🏆"}
@@ -551,7 +553,9 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
     <div className="mt-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Detalle de Llave</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+            Detalle de Llave
+          </h2>
           <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider mt-1">
             Modalidad: {bracketType.replace("_", " ")}
           </p>

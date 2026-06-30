@@ -28,7 +28,9 @@ export const categoriesRouter = router({
         });
       }
       try {
-        const categoriesRef = rtdb.ref(`tournaments/${input.tournamentId}/categories`);
+        const categoriesRef = rtdb.ref(
+          `tournaments/${input.tournamentId}/categories`,
+        );
         const snapshot = await categoriesRef.once("value");
 
         if (!snapshot.exists()) return [];
@@ -51,7 +53,7 @@ export const categoriesRouter = router({
       z.object({
         tournamentId: z.string(),
         type: z.enum(["LOCAL_OPEN", "WORLD_CUP", "WORLD_CHAMPIONSHIP"]),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (!rtdb) {
@@ -70,14 +72,18 @@ export const categoriesRouter = router({
       }
 
       try {
-        const categoriesRef = rtdb.ref(`tournaments/${input.tournamentId}/categories`);
-        
+        const categoriesRef = rtdb.ref(
+          `tournaments/${input.tournamentId}/categories`,
+        );
+
         // Clear existing
         const existingSnapshot = await categoriesRef.once("value");
         if (existingSnapshot.exists()) {
           const data = existingSnapshot.val();
           for (const key of Object.keys(data)) {
-            await rtdb.ref(`tournaments/${input.tournamentId}/categories/${key}`).remove();
+            await rtdb
+              .ref(`tournaments/${input.tournamentId}/categories/${key}`)
+              .remove();
           }
         }
 
@@ -154,13 +160,21 @@ export const categoriesRouter = router({
         const catRef = rtdb.ref(`tournaments/${input.tournamentId}/categories`);
         const catSnap = await catRef.once("value");
         const categories: Category[] = catSnap.exists()
-          ? Object.keys(catSnap.val()).map((k) => ({ id: k, ...catSnap.val()[k] }))
+          ? Object.keys(catSnap.val()).map((k) => ({
+              id: k,
+              ...catSnap.val()[k],
+            }))
           : [];
 
-        const compRef = rtdb.ref(`tournaments/${input.tournamentId}/competitors`);
+        const compRef = rtdb.ref(
+          `tournaments/${input.tournamentId}/competitors`,
+        );
         const compSnap = await compRef.once("value");
         const allComps: any[] = compSnap.exists()
-          ? Object.keys(compSnap.val()).map((k) => ({ id: k, ...compSnap.val()[k] }))
+          ? Object.keys(compSnap.val()).map((k) => ({
+              id: k,
+              ...compSnap.val()[k],
+            }))
           : [];
 
         const counts: Record<string, number> = {};
@@ -196,11 +210,15 @@ export const categoriesRouter = router({
                 allComps
                   .filter((comp) => comp.categoryId === c.id)
                   .forEach((comp) => {
-                    competitorUpdates[`tournaments/${input.tournamentId}/competitors/${comp.id}/categoryId`] = nextC.id;
+                    competitorUpdates[
+                      `tournaments/${input.tournamentId}/competitors/${comp.id}/categoryId`
+                    ] = nextC.id;
                     comp.categoryId = nextC.id;
                   });
                 counts[nextC.id] = (counts[nextC.id] || 0) + count;
-                categoryUpdates[`tournaments/${input.tournamentId}/categories/${nextC.id}/name`] = `${nextC.name} + ${c.weightClass}`;
+                categoryUpdates[
+                  `tournaments/${input.tournamentId}/categories/${nextC.id}/name`
+                ] = `${nextC.name} + ${c.weightClass}`;
                 categoriesToDelete.push(c.id);
               }
             }
@@ -213,7 +231,9 @@ export const categoriesRouter = router({
         }
 
         for (const categoryId of categoriesToDelete) {
-          await rtdb.ref(`tournaments/${input.tournamentId}/categories/${categoryId}`).remove();
+          await rtdb
+            .ref(`tournaments/${input.tournamentId}/categories/${categoryId}`)
+            .remove();
         }
 
         return { success: true };
@@ -231,7 +251,7 @@ export const categoriesRouter = router({
         tournamentId: z.string(),
         categoryId: z.string(),
         bracketType: z.any(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (!rtdb) {
@@ -250,7 +270,9 @@ export const categoriesRouter = router({
       }
 
       try {
-        const categoryRef = rtdb.ref(`tournaments/${input.tournamentId}/categories/${input.categoryId}`);
+        const categoryRef = rtdb.ref(
+          `tournaments/${input.tournamentId}/categories/${input.categoryId}`,
+        );
         await categoryRef.update({ bracketType: input.bracketType });
         return { success: true };
       } catch (error) {

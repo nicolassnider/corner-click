@@ -14,7 +14,7 @@ export const matchesRouter = router({
         matchId: z.string(),
         status: z.string(),
         isExtraTime: z.boolean().optional(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -39,7 +39,7 @@ export const matchesRouter = router({
         blueWarnings: z.number().optional().default(0),
         redDeductions: z.number().optional().default(0),
         blueDeductions: z.number().optional().default(0),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.db) {
@@ -120,7 +120,7 @@ export const matchesRouter = router({
         nextMatchId: z.string().optional(),
         losersMatchId: z.string().optional(),
         loserId: z.string().optional(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
