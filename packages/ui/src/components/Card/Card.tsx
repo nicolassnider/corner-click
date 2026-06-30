@@ -16,14 +16,14 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
           styles.card,
           { [styles.glass]: glass },
           styles[`padding-${padding}`],
-          className
+          className,
         )}
         {...props}
       >
         {children}
       </div>
     );
-  }
+  },
 );
 
 Card.displayName = "Card";

@@ -65,7 +65,7 @@ export const judgesRouter = router({
       z.object({
         tournamentId: z.string(),
         name: z.string().min(1),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.db) {
@@ -76,7 +76,10 @@ export const judgesRouter = router({
       }
 
       try {
-        const tDoc = await ctx.db.collection("tournaments").doc(input.tournamentId).get();
+        const tDoc = await ctx.db
+          .collection("tournaments")
+          .doc(input.tournamentId)
+          .get();
         if (!tDoc.exists) {
           throw new TRPCError({
             code: "NOT_FOUND",
@@ -102,7 +105,10 @@ export const judgesRouter = router({
           createdAt: new Date().toISOString(),
         };
 
-        const createdJudge = await judgeRepo.create(input.tournamentId, judgeData);
+        const createdJudge = await judgeRepo.create(
+          input.tournamentId,
+          judgeData,
+        );
         return createdJudge;
       } catch (error) {
         if (error instanceof TRPCError) throw error;
@@ -121,7 +127,7 @@ export const judgesRouter = router({
         areaId: z.string(),
         cornerId: z.string(),
         matchId: z.string().optional(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.db) {
@@ -137,7 +143,7 @@ export const judgesRouter = router({
           (j) =>
             j.id !== input.judgeId &&
             j.currentAssignment?.areaId === input.areaId &&
-            j.currentAssignment?.cornerId === input.cornerId
+            j.currentAssignment?.cornerId === input.cornerId,
         );
 
         if (existingAssignment) {
@@ -163,7 +169,11 @@ export const judgesRouter = router({
           matchId: input.matchId || null,
         };
 
-        await judgeRepo.updateAssignment(input.tournamentId, input.judgeId, currentAssignment);
+        await judgeRepo.updateAssignment(
+          input.tournamentId,
+          input.judgeId,
+          currentAssignment,
+        );
         return { message: "Judge assigned successfully", currentAssignment };
       } catch (error) {
         if (error instanceof TRPCError) throw error;
@@ -179,7 +189,7 @@ export const judgesRouter = router({
       z.object({
         tournamentId: z.string(),
         judgeId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.db) {
@@ -190,8 +200,16 @@ export const judgesRouter = router({
       }
 
       try {
-        await judgeRepo.updateStatus(input.tournamentId, input.judgeId, "OFFLINE");
-        await judgeRepo.updateAssignment(input.tournamentId, input.judgeId, null);
+        await judgeRepo.updateStatus(
+          input.tournamentId,
+          input.judgeId,
+          "OFFLINE",
+        );
+        await judgeRepo.updateAssignment(
+          input.tournamentId,
+          input.judgeId,
+          null,
+        );
         return { success: true };
       } catch (error) {
         throw new TRPCError({
@@ -206,7 +224,7 @@ export const judgesRouter = router({
       z.object({
         tournamentId: z.string(),
         judgeId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.db) {

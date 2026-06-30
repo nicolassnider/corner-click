@@ -201,7 +201,10 @@ export const CompetitorForm: React.FC<CompetitorFormProps> = ({
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Category Dropdown */}
         <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
-          <label htmlFor="categoryId" className="block text-sm font-semibold text-gray-700 mb-1">
+          <label
+            htmlFor="categoryId"
+            className="block text-sm font-semibold text-gray-700 mb-1"
+          >
             Categoría Asignada
           </label>
           <select
@@ -256,9 +259,7 @@ export const CompetitorForm: React.FC<CompetitorFormProps> = ({
             type="text"
             required
             value={formData.club}
-            onChange={(e) =>
-              setFormData({ ...formData, club: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, club: e.target.value })}
           />
           <Input
             label="País"
@@ -287,7 +288,10 @@ export const CompetitorForm: React.FC<CompetitorFormProps> = ({
             )}
           </div>
           <div>
-            <label htmlFor="gender" className="block text-sm font-medium text-blue-900">
+            <label
+              htmlFor="gender"
+              className="block text-sm font-medium text-blue-900"
+            >
               Género
             </label>
             <select
@@ -331,7 +335,10 @@ export const CompetitorForm: React.FC<CompetitorFormProps> = ({
             />
           </div>
           <div className="col-span-1 md:col-span-5">
-            <label htmlFor="belt" className="block text-sm font-medium text-blue-900">
+            <label
+              htmlFor="belt"
+              className="block text-sm font-medium text-blue-900"
+            >
               Nivel de Cinturón
             </label>
             <select
@@ -377,17 +384,10 @@ export const CompetitorForm: React.FC<CompetitorFormProps> = ({
         </div>
 
         <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100">
-          <Button
-            type="button"
-            onClick={onCancel}
-            variant="secondary"
-          >
+          <Button type="button" onClick={onCancel} variant="secondary">
             Cancelar
           </Button>
-          <Button
-            type="submit"
-            variant="primary"
-          >
+          <Button type="submit" variant="primary">
             {initialData ? "Guardar Cambios" : "Registrar Competidor"}
           </Button>
         </div>

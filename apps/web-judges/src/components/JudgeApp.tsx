@@ -5,6 +5,7 @@ import { ref, onValue } from "firebase/database";
 import { auth, database } from "../lib/firebase";
 import { fetchWithAuth, API_URL } from "../utils/apiClient";
 import ScorePad from "./ScorePad";
+import InstallPrompt from "./InstallPrompt";
 import {
   APP_MOTTO,
   AUTHOR_NAME,
@@ -125,9 +126,10 @@ function JudgeApp() {
   const { data: judgeData, error: queryError } = trpc.judges.getById.useQuery(
     { tournamentId: tournamentId!, judgeId: judgeId! },
     {
-      enabled: !!tournamentId && !!judgeId && tournamentId !== "offline-tournament",
+      enabled:
+        !!tournamentId && !!judgeId && tournamentId !== "offline-tournament",
       refetchInterval: 3000,
-    }
+    },
   );
 
   useEffect(() => {
@@ -144,11 +146,16 @@ function JudgeApp() {
         setUser(null);
         setTournamentId(null);
         setJudgeId(null);
+      } else if (judgeData.currentAssignment) {
+        setAssignment({
+          ...judgeData.currentAssignment,
+          tournamentId: tournamentId || "",
+        });
       } else {
-        setAssignment(judgeData.currentAssignment || null);
+        setAssignment(null);
       }
     }
-  }, [judgeData, queryError]);
+  }, [judgeData, queryError, tournamentId]);
 
   const pinLoginMutation = trpc.auth.pinLogin.useMutation();
   const logoutMutation = trpc.auth.logout.useMutation();
@@ -335,7 +342,7 @@ function JudgeApp() {
           <p className="text-slate-400 font-medium mb-8">
             Has iniciado sesión correctamente.
           </p>
-          
+
           <div className="p-6 bg-slate-950/50 rounded-2xl border border-slate-800 w-full animate-pulse-slow relative overflow-hidden">
             <div className="absolute inset-0 bg-blue-500/5 blur-[40px]" />
             <p className="text-lg font-bold text-slate-200 leading-relaxed relative z-10">
@@ -368,15 +375,18 @@ function JudgeApp() {
   }
 
   return (
-    <ScorePad
-      key={`${activeMatchId}-${assignment.cornerId}`}
-      matchId={activeMatchId}
-      cornerId={assignment.cornerId}
-      areaId={assignment.areaId}
-      judgeId={user?.uid || "offline-judge-id"}
-      judgeName={judgeName}
-      onLogout={handleLogout}
-      isOffline={assignment.tournamentId === "offline-tournament"}
-    />
+    <>
+      <InstallPrompt />
+      <ScorePad
+        key={`${activeMatchId}-${assignment.cornerId}`}
+        matchId={activeMatchId}
+        cornerId={assignment.cornerId}
+        areaId={assignment.areaId}
+        judgeId={user?.uid || "offline-judge-id"}
+        judgeName={judgeName}
+        onLogout={handleLogout}
+        isOffline={assignment.tournamentId === "offline-tournament"}
+      />
+    </>
   );
 }

@@ -18,7 +18,10 @@ export class FirebaseJudgeRepository implements IJudgeRepository {
 
   async findByPin(pin: string): Promise<{ id: string; data: Judge } | null> {
     if (!db) throw new Error("Database not initialized");
-    const snapshot = await db.collectionGroup("judges").where("pin", "==", pin).get();
+    const snapshot = await db
+      .collectionGroup("judges")
+      .where("pin", "==", pin)
+      .get();
     if (snapshot.empty) return null;
     const doc = snapshot.docs[0];
     return { id: doc.id, data: doc.data() as Judge };
@@ -56,7 +59,11 @@ export class FirebaseJudgeRepository implements IJudgeRepository {
       .update(updateData);
   }
 
-  async updateAssignment(tournamentId: string, judgeId: string, assignment: any): Promise<void> {
+  async updateAssignment(
+    tournamentId: string,
+    judgeId: string,
+    assignment: any,
+  ): Promise<void> {
     if (!db) throw new Error("Database not initialized");
     await db
       .collection("tournaments")
@@ -86,7 +93,7 @@ export class FirebaseJudgeRepository implements IJudgeRepository {
         .get();
       const now = new Date();
       const batch = db.batch();
-      
+
       snapshot.docs.forEach((doc) => {
         const data = doc.data();
         if (data.status === "ONLINE") {
@@ -99,7 +106,10 @@ export class FirebaseJudgeRepository implements IJudgeRepository {
           const diffHours = diffMs / (1000 * 60 * 60);
 
           if (diffHours >= 24) {
-            batch.update(doc.ref, { status: "OFFLINE", currentAssignment: null });
+            batch.update(doc.ref, {
+              status: "OFFLINE",
+              currentAssignment: null,
+            });
           }
         }
       });

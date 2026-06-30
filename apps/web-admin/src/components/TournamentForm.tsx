@@ -126,18 +126,10 @@ export default function TournamentForm({
         />
 
         <div className="flex justify-end space-x-4 pt-6 border-t border-gray-100">
-          <Button
-            type="button"
-            onClick={onCancel}
-            variant="secondary"
-          >
+          <Button type="button" onClick={onCancel} variant="secondary">
             Cancel
           </Button>
-          <Button
-            type="submit"
-            disabled={loading}
-            variant="primary"
-          >
+          <Button type="submit" disabled={loading} variant="primary">
             {loading
               ? "Saving..."
               : initialData
@@ -149,4 +141,3 @@ export default function TournamentForm({
     </Card>
   );
 }
-

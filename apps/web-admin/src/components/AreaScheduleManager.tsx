@@ -186,7 +186,9 @@ export const AreaScheduleManager: React.FC<AreaScheduleManagerProps> = ({
                       <div className="ml-3 w-3 h-3 bg-red-500 rounded-full shrink-0"></div>
                     </div>
 
-                    <div className="text-gray-400 dark:text-gray-500 font-bold px-2">VS</div>
+                    <div className="text-gray-400 dark:text-gray-500 font-bold px-2">
+                      VS
+                    </div>
 
                     <div className="flex-1 flex items-center justify-start">
                       <div className="mr-3 w-3 h-3 bg-blue-500 rounded-full shrink-0"></div>

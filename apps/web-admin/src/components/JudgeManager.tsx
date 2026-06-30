@@ -113,7 +113,10 @@ export default function JudgeManager({
               </tr>
             ) : (
               judges.map((j) => (
-                <tr key={j.id} className="hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors">
+                <tr
+                  key={j.id}
+                  className="hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors"
+                >
                   <td className="px-6 py-4 font-bold text-gray-900 dark:text-gray-100">
                     {j.name}
                   </td>

@@ -27,7 +27,10 @@ export class FirebaseTournamentRepository implements ITournamentRepository {
     return { id: docRef.id, ...tournament } as Tournament;
   }
 
-  async update(id: string, data: Partial<Tournament>): Promise<Tournament | null> {
+  async update(
+    id: string,
+    data: Partial<Tournament>,
+  ): Promise<Tournament | null> {
     if (!db) throw new Error("Database not initialized");
     await db.collection(this.collection).doc(id).update(data);
     return this.findById(id);

@@ -40,7 +40,10 @@ export default function LoginForm({
     } catch (err: any) {
       if (err.message?.includes("Acceso denegado")) {
         setError("Acceso denegado: no eres administrador.");
-      } else if (err.message?.includes("Invalid credentials") || err.data?.code === "UNAUTHORIZED") {
+      } else if (
+        err.message?.includes("Invalid credentials") ||
+        err.data?.code === "UNAUTHORIZED"
+      ) {
         setError("Credenciales inválidas. Verifica tu email y contraseña.");
       } else {
         setError(err.message || "Error al iniciar sesión");
@@ -64,7 +67,10 @@ export default function LoginForm({
         window.location.href = "/";
       }
     } catch (err: any) {
-      setError(err.message || "Error de conexión. Verifica que el servidor esté activo.");
+      setError(
+        err.message ||
+          "Error de conexión. Verifica que el servidor esté activo.",
+      );
     } finally {
       setLoading(false);
     }

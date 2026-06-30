@@ -13,7 +13,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputId = id || React.useId();
 
     return (
-      <div className={clsx(styles.inputWrapper, { [styles.error]: !!error }, wrapperClassName)}>
+      <div
+        className={clsx(
+          styles.inputWrapper,
+          { [styles.error]: !!error },
+          wrapperClassName,
+        )}
+      >
         {label && (
           <label htmlFor={inputId} className={styles.label}>
             {label}
@@ -34,7 +40,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 Input.displayName = "Input";

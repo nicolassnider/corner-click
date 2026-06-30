@@ -18,7 +18,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <button
@@ -28,14 +28,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           styles[variant],
           styles[size],
           { [styles.fullWidth]: fullWidth },
-          className
+          className,
         )}
         {...props}
       >
         {children}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

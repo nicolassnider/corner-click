@@ -31,10 +31,11 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
 
   const utils = trpc.useUtils();
-  const { data: competitors = [], isLoading: loading } = trpc.competitors.getAll.useQuery({
-    tournamentId,
-    categoryId: categoryId || undefined,
-  });
+  const { data: competitors = [], isLoading: loading } =
+    trpc.competitors.getAll.useQuery({
+      tournamentId,
+      categoryId: categoryId || undefined,
+    });
 
   const createMutation = trpc.competitors.create.useMutation();
   const updateMutation = trpc.competitors.update.useMutation();
@@ -59,14 +60,16 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
           belt: competitorData.belt || "1º – 3º Dan",
           categoryId: competitorData.categoryId,
           birthDate: competitorData.birthDate,
-          weight: competitorData.weight ? Number(competitorData.weight) : undefined,
+          weight: competitorData.weight
+            ? Number(competitorData.weight)
+            : undefined,
         });
       }
       setIsFormOpen(false);
       setEditingCompetitor(undefined);
 
       utils.competitors.getAll.invalidate({ tournamentId });
-      
+
       if (categoryId && competitorData.categoryId !== categoryId) {
         onCategoryChange(competitorData.categoryId);
       }
@@ -344,7 +347,10 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
             </thead>
             <tbody className="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-700">
               {competitors.map((comp) => (
-                <tr key={comp.id} className="hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                <tr
+                  key={comp.id}
+                  className="hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {comp.firstName} {comp.lastName}
@@ -375,8 +381,12 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900 dark:text-gray-100">{comp.club}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">{comp.country}</div>
+                    <div className="text-sm text-gray-900 dark:text-gray-100">
+                      {comp.club}
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      {comp.country}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {comp.isSeeded ? (
@@ -384,7 +394,9 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
                         Seed
                       </span>
                     ) : (
-                      <span className="text-gray-400 dark:text-gray-600">-</span>
+                      <span className="text-gray-400 dark:text-gray-600">
+                        -
+                      </span>
                     )}
                   </td>
                   {!isReadOnly && (
@@ -425,7 +437,10 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
               (Recomendado para {tournamentAreas} área(s):{" "}
               {tournamentAreas * 20})
             </p>
-            <label htmlFor="mockAmount" className="text-gray-400 text-sm mb-2 block">
+            <label
+              htmlFor="mockAmount"
+              className="text-gray-400 text-sm mb-2 block"
+            >
               Cantidad de competidores
             </label>
             <input
@@ -443,10 +458,7 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
               >
                 Cancelar
               </Button>
-              <Button
-                onClick={generateMockCompetitors}
-                variant="primary"
-              >
+              <Button onClick={generateMockCompetitors} variant="primary">
                 Aceptar
               </Button>
             </div>

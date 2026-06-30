@@ -68,12 +68,12 @@ function JuryDashboard() {
 
   const { data: categories = [] } = trpc.categories.getAll.useQuery(
     { tournamentId: selectedTournamentId },
-    { enabled: !!selectedTournamentId }
+    { enabled: !!selectedTournamentId },
   );
 
   const { data: competitorsList = [] } = trpc.competitors.getAll.useQuery(
     { tournamentId: selectedTournamentId },
-    { enabled: !!selectedTournamentId }
+    { enabled: !!selectedTournamentId },
   );
 
   const competitors: Record<string, Competitor> = React.useMemo(() => {
@@ -134,10 +134,11 @@ function JuryDashboard() {
     window.history.replaceState({}, "", url.toString());
   }, [selectedTournamentId, selectedCategoryId]);
 
-  const { data: allMatches = [], refetch: refetchMatches } = trpc.matches.getByTournament.useQuery(
-    { tournamentId: selectedTournamentId },
-    { enabled: !!selectedTournamentId }
-  );
+  const { data: allMatches = [], refetch: refetchMatches } =
+    trpc.matches.getByTournament.useQuery(
+      { tournamentId: selectedTournamentId },
+      { enabled: !!selectedTournamentId },
+    );
 
   const activeCategoryIds = React.useMemo(() => {
     return new Set(allMatches.map((m) => m.categoryId));
@@ -305,14 +306,14 @@ function JuryDashboard() {
               value={selectedCategoryId}
               onChange={(e) => setSelectedCategoryId(e.target.value)}
               className="bg-slate-950 text-slate-200 px-3 py-2 rounded-lg border border-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium transition-all w-full sm:w-52 min-w-[200px] disabled:opacity-50 disabled:bg-slate-900 disabled:text-slate-500 disabled:border-slate-850 disabled:cursor-not-allowed"
-              disabled={!selectedTournamentId || activeCategories.length === 0}
+              disabled={!selectedTournamentId || categories.length === 0}
             >
-              {selectedTournamentId && activeCategories.length === 0 ? (
+              {selectedTournamentId && categories.length === 0 ? (
                 <option value="">No categories available</option>
               ) : (
                 <option value="">Select Category...</option>
               )}
-              {activeCategories.map((c) => (
+              {categories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
@@ -452,10 +453,10 @@ function JuryDashboard() {
         <section className="lg:col-span-2 order-1 lg:order-2 flex flex-col">
           <AnimatePresence mode="wait">
             {!selectedMatch ? (
-              <motion.div 
+              <motion.div
                 key="no-match"
-                initial={{ opacity: 0, scale: 0.95 }} 
-                animate={{ opacity: 1, scale: 1 }} 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 className="bg-slate-900/20 backdrop-blur-xl rounded-2xl border border-slate-800 shadow-2xl flex flex-col items-center justify-center p-12 min-h-[450px] flex-grow text-center"
               >
@@ -469,364 +470,378 @@ function JuryDashboard() {
                 </p>
               </motion.div>
             ) : (
-              <motion.div 
+              <motion.div
                 key={selectedMatch.id}
-                initial={{ opacity: 0, y: 20 }} 
-                animate={{ opacity: 1, y: 0 }} 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 className="bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-800/80 shadow-2xl overflow-hidden flex flex-col h-full flex-grow relative"
               >
-              {/* Match Header */}
-              <div className="bg-slate-900/80 border-b border-slate-800 p-4 md:p-6 text-center relative overflow-hidden shrink-0">
-                <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
+                {/* Match Header */}
+                <div className="bg-slate-900/80 border-b border-slate-800 p-4 md:p-6 text-center relative overflow-hidden shrink-0">
+                  <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
 
-                {/* Header Status Bar */}
-                <div className="flex justify-between items-center mb-4">
-                  {/* Status Badge */}
-                  <div>
-                    <span
-                      className={`px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest border ${
-                        status === MatchStatus.ACTIVE
-                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.2)] animate-pulse"
-                          : status === MatchStatus.GOLDEN_POINT
-                            ? "bg-amber-500/10 text-amber-400 border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.2)] animate-pulse"
-                            : status === MatchStatus.PAUSED
-                              ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/40"
-                              : status === MatchStatus.ENDED ||
-                                  selectedMatch.status === MatchStatus.COMPLETED
-                                ? "bg-slate-800 text-slate-400 border-slate-700"
-                                : "bg-blue-500/10 text-blue-400 border-blue-500/40"
-                      }`}
+                  {/* Header Status Bar */}
+                  <div className="flex justify-between items-center mb-4">
+                    {/* Status Badge */}
+                    <div>
+                      <span
+                        className={`px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest border ${
+                          status === MatchStatus.ACTIVE
+                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.2)] animate-pulse"
+                            : status === MatchStatus.GOLDEN_POINT
+                              ? "bg-amber-500/10 text-amber-400 border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.2)] animate-pulse"
+                              : status === MatchStatus.PAUSED
+                                ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/40"
+                                : status === MatchStatus.ENDED ||
+                                    selectedMatch.status ===
+                                      MatchStatus.COMPLETED
+                                  ? "bg-slate-800 text-slate-400 border-slate-700"
+                                  : "bg-blue-500/10 text-blue-400 border-blue-500/40"
+                        }`}
+                      >
+                        {selectedMatch.status === MatchStatus.COMPLETED
+                          ? "COMPLETED"
+                          : status}
+                      </span>
+                    </div>
+
+                    {/* TV Projector View link */}
+                    <button
+                      onClick={() =>
+                        window.open(
+                          `/area/${selectedMatch.areaId}/tv`,
+                          "_blank",
+                        )
+                      }
+                      className="flex items-center gap-2 bg-slate-850 hover:bg-slate-800 text-slate-350 hover:text-slate-100 border border-slate-800 hover:border-slate-700 rounded-lg px-3 py-1.5 text-xs font-bold uppercase transition-all shadow-md active:scale-95"
+                      title="Open Spectator screen for TV display/projectors"
                     >
-                      {selectedMatch.status === MatchStatus.COMPLETED
-                        ? "COMPLETED"
-                        : status}
-                    </span>
+                      <span>📺</span> Spectator View (TV)
+                    </button>
                   </div>
 
-                  {/* TV Projector View link */}
-                  <button
-                    onClick={() =>
-                      window.open(`/area/${selectedMatch.areaId}/tv`, "_blank")
-                    }
-                    className="flex items-center gap-2 bg-slate-850 hover:bg-slate-800 text-slate-350 hover:text-slate-100 border border-slate-800 hover:border-slate-700 rounded-lg px-3 py-1.5 text-xs font-bold uppercase transition-all shadow-md active:scale-95"
-                    title="Open Spectator screen for TV display/projectors"
-                  >
-                    <span>📺</span> Spectator View (TV)
-                  </button>
+                  <div className="relative z-10 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mt-2">
+                    <div className="text-center md:text-right flex-1 min-w-0">
+                      <h3 className="text-2xl md:text-3xl font-black text-rose-500 tracking-tight truncate uppercase">
+                        {getCompetitorFullName(
+                          selectedMatch.redCompetitorId,
+                          competitors,
+                        )}
+                      </h3>
+                      <span className="text-[10px] uppercase font-bold text-rose-700 tracking-widest block mt-0.5">
+                        RED CORNER
+                      </span>
+                    </div>
+                    <div className="text-slate-600 font-black italic flex flex-col items-center mx-2 shrink-0">
+                      <span className="text-lg bg-slate-850 border border-slate-800 text-slate-500 px-3 py-0.5 rounded-full not-italic tracking-wider text-xs uppercase">
+                        VS
+                      </span>
+                      <span className="text-[9px] font-mono mt-1 text-slate-500">
+                        ID: {selectedMatch.id.substring(0, 12)}
+                      </span>
+                    </div>
+                    <div className="text-center md:text-left flex-1 min-w-0">
+                      <h3 className="text-2xl md:text-3xl font-black text-blue-500 tracking-tight truncate uppercase">
+                        {getCompetitorFullName(
+                          selectedMatch.blueCompetitorId,
+                          competitors,
+                        )}
+                      </h3>
+                      <span className="text-[10px] uppercase font-bold text-blue-700 tracking-widest block mt-0.5">
+                        BLUE CORNER
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Digital Timer Panel */}
+                  <div className="mt-4 mb-1 flex justify-center">
+                    <div className="bg-slate-950/60 border border-slate-850 px-6 py-2 rounded-xl shadow-inner inline-flex items-center">
+                      <div
+                        className={`font-mono text-5xl md:text-6xl font-black tracking-tighter transition-all duration-300 ${
+                          status === MatchStatus.ACTIVE
+                            ? "text-emerald-400 drop-shadow-[0_0_20px_rgba(52,211,153,0.4)] animate-pulse"
+                            : status === MatchStatus.GOLDEN_POINT
+                              ? "text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.4)]"
+                              : "text-slate-500"
+                        }`}
+                      >
+                        {formatTime(timeRemaining)}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="relative z-10 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mt-2">
-                  <div className="text-center md:text-right flex-1 min-w-0">
-                    <h3 className="text-2xl md:text-3xl font-black text-rose-500 tracking-tight truncate uppercase">
-                      {getCompetitorFullName(
-                        selectedMatch.redCompetitorId,
-                        competitors,
-                      )}
-                    </h3>
-                    <span className="text-[10px] uppercase font-bold text-rose-700 tracking-widest block mt-0.5">
-                      RED CORNER
-                    </span>
-                  </div>
-                  <div className="text-slate-600 font-black italic flex flex-col items-center mx-2 shrink-0">
-                    <span className="text-lg bg-slate-850 border border-slate-800 text-slate-500 px-3 py-0.5 rounded-full not-italic tracking-wider text-xs uppercase">
-                      VS
-                    </span>
-                    <span className="text-[9px] font-mono mt-1 text-slate-500">
-                      ID: {selectedMatch.id.substring(0, 12)}
-                    </span>
-                  </div>
-                  <div className="text-center md:text-left flex-1 min-w-0">
-                    <h3 className="text-2xl md:text-3xl font-black text-blue-500 tracking-tight truncate uppercase">
-                      {getCompetitorFullName(
-                        selectedMatch.blueCompetitorId,
-                        competitors,
-                      )}
-                    </h3>
-                    <span className="text-[10px] uppercase font-bold text-blue-700 tracking-widest block mt-0.5">
-                      BLUE CORNER
-                    </span>
-                  </div>
-                </div>
+                {/* Live Scores & Judge Breakdown */}
+                {status === MatchStatus.ENDED &&
+                Object.keys(judgesData).length > 0 ? (
+                  <div className="bg-slate-950/60 border-y border-slate-800/80 p-6 flex-1 flex flex-col justify-center">
+                    <h4 className="text-center text-slate-400 font-bold uppercase tracking-widest text-xs mb-5">
+                      🏁 FINAL JUDGES CONSENSUS BREAKDOWN
+                    </h4>
 
-                {/* Digital Timer Panel */}
-                <div className="mt-4 mb-1 flex justify-center">
-                  <div className="bg-slate-950/60 border border-slate-850 px-6 py-2 rounded-xl shadow-inner inline-flex items-center">
+                    {/* Detailed Judge Scorecards */}
                     <div
-                      className={`font-mono text-5xl md:text-6xl font-black tracking-tighter transition-all duration-300 ${
-                        status === MatchStatus.ACTIVE
-                          ? "text-emerald-400 drop-shadow-[0_0_20px_rgba(52,211,153,0.4)] animate-pulse"
-                          : status === MatchStatus.GOLDEN_POINT
-                            ? "text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.4)]"
-                            : "text-slate-500"
-                      }`}
+                      className={`grid grid-cols-1 sm:grid-cols-2 ${Object.keys(judgesData).length === 3 ? "md:grid-cols-3" : "md:grid-cols-4"} gap-4 mb-6 max-w-4xl mx-auto w-full`}
                     >
-                      {formatTime(timeRemaining)}
+                      {Object.entries(judgesData).map(
+                        ([cornerId, data]: [string, any]) => {
+                          const r = calculateNetScore(
+                            data.redScore || 0,
+                            data.redWarnings || 0,
+                            data.redDeductions || 0,
+                          );
+                          const b = calculateNetScore(
+                            data.blueScore || 0,
+                            data.blueWarnings || 0,
+                            data.blueDeductions || 0,
+                          );
+                          const winnerClass =
+                            r > b
+                              ? "border-rose-900/60 bg-rose-950/20 shadow-[inset_0_0_15px_rgba(244,63,94,0.05)]"
+                              : b > r
+                                ? "border-blue-900/60 bg-blue-950/20 shadow-[inset_0_0_15px_rgba(59,130,246,0.05)]"
+                                : "border-slate-850 bg-slate-900/20";
+                          return (
+                            <div
+                              key={cornerId}
+                              className={`border rounded-xl p-4 text-center transition-all ${winnerClass}`}
+                            >
+                              <div className="font-bold text-slate-400 mb-2 uppercase text-[10px] tracking-widest">
+                                {cornerId}
+                              </div>
+                              <div className="flex justify-between items-center px-2">
+                                <div className="flex flex-col items-center">
+                                  <span className="text-2xl font-black text-rose-500">
+                                    {r}
+                                  </span>
+                                  <span className="text-[8px] text-slate-500">
+                                    ({data.redScore || 0} /{" "}
+                                    {data.redWarnings || 0}W /{" "}
+                                    {data.redDeductions || 0}D)
+                                  </span>
+                                </div>
+                                <span className="text-slate-700 font-bold px-2">
+                                  vs
+                                </span>
+                                <div className="flex flex-col items-center">
+                                  <span className="text-2xl font-black text-blue-500">
+                                    {b}
+                                  </span>
+                                  <span className="text-[8px] text-slate-500">
+                                    ({data.blueScore || 0} /{" "}
+                                    {data.blueWarnings || 0}W /{" "}
+                                    {data.blueDeductions || 0}D)
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        },
+                      )}
                     </div>
-                  </div>
-                </div>
-              </div>
 
-              {/* Live Scores & Judge Breakdown */}
-              {status === MatchStatus.ENDED &&
-              Object.keys(judgesData).length > 0 ? (
-                <div className="bg-slate-950/60 border-y border-slate-800/80 p-6 flex-1 flex flex-col justify-center">
-                  <h4 className="text-center text-slate-400 font-bold uppercase tracking-widest text-xs mb-5">
-                    🏁 FINAL JUDGES CONSENSUS BREAKDOWN
-                  </h4>
+                    {/* Visual Vote Comparison Bars */}
+                    <div className="bg-slate-900/40 border border-slate-850 p-6 rounded-2xl max-w-2xl mx-auto w-full">
+                      <div className="flex justify-between items-center mb-3 text-xs font-bold uppercase tracking-wider">
+                        <span className="text-rose-500">
+                          Red Corner ({redVotes})
+                        </span>
+                        <span className="text-slate-500">
+                          Ties ({tieVotes})
+                        </span>
+                        <span className="text-blue-500">
+                          Blue Corner ({blueVotes})
+                        </span>
+                      </div>
 
-                  {/* Detailed Judge Scorecards */}
-                  <div
-                    className={`grid grid-cols-1 sm:grid-cols-2 ${Object.keys(judgesData).length === 3 ? "md:grid-cols-3" : "md:grid-cols-4"} gap-4 mb-6 max-w-4xl mx-auto w-full`}
-                  >
-                    {Object.entries(judgesData).map(
-                      ([cornerId, data]: [string, any]) => {
-                        const r = calculateNetScore(
-                          data.redScore || 0,
-                          data.redWarnings || 0,
-                          data.redDeductions || 0,
-                        );
-                        const b = calculateNetScore(
-                          data.blueScore || 0,
-                          data.blueWarnings || 0,
-                          data.blueDeductions || 0,
-                        );
-                        const winnerClass =
-                          r > b
-                            ? "border-rose-900/60 bg-rose-950/20 shadow-[inset_0_0_15px_rgba(244,63,94,0.05)]"
-                            : b > r
-                              ? "border-blue-900/60 bg-blue-950/20 shadow-[inset_0_0_15px_rgba(59,130,246,0.05)]"
-                              : "border-slate-850 bg-slate-900/20";
-                        return (
-                          <div
-                            key={cornerId}
-                            className={`border rounded-xl p-4 text-center transition-all ${winnerClass}`}
-                          >
-                            <div className="font-bold text-slate-400 mb-2 uppercase text-[10px] tracking-widest">
-                              {cornerId}
-                            </div>
-                            <div className="flex justify-between items-center px-2">
-                              <div className="flex flex-col items-center">
-                                <span className="text-2xl font-black text-rose-500">
-                                  {r}
-                                </span>
-                                <span className="text-[8px] text-slate-500">
-                                  ({data.redScore || 0} /{" "}
-                                  {data.redWarnings || 0}W /{" "}
-                                  {data.redDeductions || 0}D)
-                                </span>
-                              </div>
-                              <span className="text-slate-700 font-bold px-2">
-                                vs
-                              </span>
-                              <div className="flex flex-col items-center">
-                                <span className="text-2xl font-black text-blue-500">
-                                  {b}
-                                </span>
-                                <span className="text-[8px] text-slate-500">
-                                  ({data.blueScore || 0} /{" "}
-                                  {data.blueWarnings || 0}W /{" "}
-                                  {data.blueDeductions || 0}D)
-                                </span>
-                              </div>
-                            </div>
+                      {/* Progress Bar Track */}
+                      <div className="h-4 bg-slate-950 rounded-full overflow-hidden flex border border-slate-800">
+                        {totalVotes === 0 ? (
+                          <div className="w-full bg-slate-850 text-[10px] text-slate-500 flex items-center justify-center uppercase font-bold tracking-widest">
+                            No votes recorded
                           </div>
-                        );
-                      },
-                    )}
-                  </div>
-
-                  {/* Visual Vote Comparison Bars */}
-                  <div className="bg-slate-900/40 border border-slate-850 p-6 rounded-2xl max-w-2xl mx-auto w-full">
-                    <div className="flex justify-between items-center mb-3 text-xs font-bold uppercase tracking-wider">
-                      <span className="text-rose-500">
-                        Red Corner ({redVotes})
-                      </span>
-                      <span className="text-slate-500">Ties ({tieVotes})</span>
-                      <span className="text-blue-500">
-                        Blue Corner ({blueVotes})
-                      </span>
-                    </div>
-
-                    {/* Progress Bar Track */}
-                    <div className="h-4 bg-slate-950 rounded-full overflow-hidden flex border border-slate-800">
-                      {totalVotes === 0 ? (
-                        <div className="w-full bg-slate-850 text-[10px] text-slate-500 flex items-center justify-center uppercase font-bold tracking-widest">
-                          No votes recorded
-                        </div>
-                      ) : (
-                        <>
-                          <style>{`
+                        ) : (
+                          <>
+                            <style>{`
                             .dynamic-red-bar { width: ${redPct}% !important; }
                             .dynamic-tie-bar { width: ${tiePct}% !important; }
                             .dynamic-blue-bar { width: ${bluePct}% !important; }
                           `}</style>
-                          <div
-                            className="dynamic-red-bar bg-gradient-to-r from-rose-600 to-rose-500 transition-all duration-500 shadow-[0_0_10px_rgba(244,63,94,0.4)]"
-                            title={`Red Corner: ${redVotes} votes (${redPct.toFixed(1)}%)`}
-                          />
-                          <div
-                            className="dynamic-tie-bar bg-slate-700 transition-all duration-500"
-                            title={`Ties: ${tieVotes} votes (${tiePct.toFixed(1)}%)`}
-                          />
-                          <div
-                            className="dynamic-blue-bar bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500 shadow-[0_0_10px_rgba(59,130,246,0.4)]"
-                            title={`Blue Corner: ${blueVotes} votes (${bluePct.toFixed(1)}%)`}
-                          />
-                        </>
-                      )}
+                            <div
+                              className="dynamic-red-bar bg-gradient-to-r from-rose-600 to-rose-500 transition-all duration-500 shadow-[0_0_10px_rgba(244,63,94,0.4)]"
+                              title={`Red Corner: ${redVotes} votes (${redPct.toFixed(1)}%)`}
+                            />
+                            <div
+                              className="dynamic-tie-bar bg-slate-700 transition-all duration-500"
+                              title={`Ties: ${tieVotes} votes (${tiePct.toFixed(1)}%)`}
+                            />
+                            <div
+                              className="dynamic-blue-bar bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500 shadow-[0_0_10px_rgba(59,130,246,0.4)]"
+                              title={`Blue Corner: ${blueVotes} votes (${bluePct.toFixed(1)}%)`}
+                            />
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-px bg-slate-800 border-y border-slate-800 flex-grow shrink-0">
-                  <div className="bg-rose-950/5 p-4 md:p-6 flex flex-col items-center justify-center relative overflow-hidden">
-                    <div className="absolute inset-0 bg-rose-500/2 blur-[80px] pointer-events-none" />
-                    <span className="text-rose-500/80 font-black uppercase tracking-widest text-[10px] mb-1">
-                      Red Points Accumulation
-                    </span>
-                    <span className="text-5xl md:text-6xl font-black text-rose-500 tracking-tight drop-shadow-[0_0_15px_rgba(244,63,94,0.15)]">
-                      {totalRed}
-                    </span>
-                  </div>
-                  <div className="bg-blue-950/5 p-4 md:p-6 flex flex-col items-center justify-center relative overflow-hidden">
-                    <div className="absolute inset-0 bg-blue-500/2 blur-[80px] pointer-events-none" />
-                    <span className="text-blue-500/80 font-black uppercase tracking-widest text-[10px] mb-1">
-                      Blue Points Accumulation
-                    </span>
-                    <span className="text-5xl md:text-6xl font-black text-blue-500 tracking-tight drop-shadow-[0_0_15px_rgba(59,130,246,0.15)]">
-                      {totalBlue}
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {/* Match Complete / Tie Breaker Controls */}
-              {status === MatchStatus.ENDED &&
-                selectedMatch.status !== MatchStatus.COMPLETED && (
-                  <div className="p-6 bg-slate-900 border-t border-slate-800 shrink-0 flex flex-col items-center">
-                    <h4 className="text-xs font-black text-amber-500/90 mb-4 uppercase tracking-widest flex items-center gap-1.5">
-                      <span>⚡</span> DECIDE TO DECLARE WINNER OR START EXTRA
-                      TIME
-                    </h4>
-                    <div className="flex flex-col sm:flex-row gap-4 w-full max-w-3xl">
-                      <button
-                        onClick={() =>
-                          handleDeclareWinner(selectedMatch.redCompetitorId)
-                        }
-                        className={`flex-1 py-3.5 rounded-xl font-bold text-white transition-all shadow-md active:scale-95 cursor-pointer text-sm ${redVotes > blueVotes ? "bg-rose-600 hover:bg-rose-500 hover:shadow-[0_0_20px_rgba(225,29,72,0.4)] scale-[1.02] border-2 border-rose-400" : "bg-rose-850 hover:bg-rose-750 text-rose-300 border border-rose-800/40"}`}
-                        disabled={
-                          !selectedMatch.redCompetitorId ||
-                          selectedMatch.redCompetitorId === "BYE"
-                        }
-                      >
-                        Red Corner Wins
-                      </button>
-                      <div className="flex flex-row sm:flex-col gap-2 flex-1 justify-center">
-                        <button
-                          onClick={handleExtraTime}
-                          className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all shadow bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:border-amber-500/60 active:scale-95 cursor-pointer`}
-                        >
-                          ⏱️ Extra Time (1m)
-                        </button>
-                        <button
-                          onClick={handleGoldenPoint}
-                          className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all shadow bg-yellow-500/15 hover:bg-yellow-500/25 text-yellow-300 border border-yellow-500/40 hover:border-yellow-500/70 active:scale-95 cursor-pointer`}
-                        >
-                          ⚡ Golden Point
-                        </button>
-                      </div>
-                      <button
-                        onClick={() =>
-                          handleDeclareWinner(selectedMatch.blueCompetitorId)
-                        }
-                        className={`flex-1 py-3.5 rounded-xl font-bold text-white transition-all shadow-md active:scale-95 cursor-pointer text-sm ${blueVotes > redVotes ? "bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] scale-[1.02] border-2 border-blue-400" : "bg-blue-850 hover:bg-blue-750 text-blue-300 border border-blue-800/40"}`}
-                        disabled={
-                          !selectedMatch.blueCompetitorId ||
-                          selectedMatch.blueCompetitorId === "BYE"
-                        }
-                      >
-                        Blue Corner Wins
-                      </button>
+                ) : (
+                  <div className="grid grid-cols-3 gap-px bg-slate-800 border-y border-slate-800 flex-grow shrink-0">
+                    <div className="bg-rose-950/5 p-4 md:p-6 flex flex-col items-center justify-center relative overflow-hidden">
+                      <div className="absolute inset-0 bg-rose-500/2 blur-[80px] pointer-events-none" />
+                      <span className="text-rose-500/80 font-black uppercase tracking-widest text-[10px] mb-1 text-center">
+                        Red Votes
+                      </span>
+                      <span className="text-5xl md:text-6xl font-black text-rose-500 tracking-tight drop-shadow-[0_0_15px_rgba(244,63,94,0.15)]">
+                        {redVotes}
+                      </span>
+                    </div>
+                    <div className="bg-slate-900/40 p-4 md:p-6 flex flex-col items-center justify-center relative overflow-hidden">
+                      <span className="text-slate-500/80 font-black uppercase tracking-widest text-[10px] mb-1 text-center">
+                        Ties
+                      </span>
+                      <span className="text-5xl md:text-6xl font-black text-slate-500 tracking-tight drop-shadow-[0_0_15px_rgba(100,116,139,0.15)]">
+                        {tieVotes}
+                      </span>
+                    </div>
+                    <div className="bg-blue-950/5 p-4 md:p-6 flex flex-col items-center justify-center relative overflow-hidden">
+                      <div className="absolute inset-0 bg-blue-500/2 blur-[80px] pointer-events-none" />
+                      <span className="text-blue-500/80 font-black uppercase tracking-widest text-[10px] mb-1 text-center">
+                        Blue Votes
+                      </span>
+                      <span className="text-5xl md:text-6xl font-black text-blue-500 tracking-tight drop-shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+                        {blueVotes}
+                      </span>
                     </div>
                   </div>
                 )}
 
-              {/* Action Buttons */}
-              <div className="p-4 md:p-6 bg-slate-900/60 border-t border-slate-800 flex flex-wrap justify-center gap-4 mt-auto shrink-0">
-                <button
-                  className={`px-6 py-3 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
-                    status === MatchStatus.ACTIVE ||
-                    status === MatchStatus.GOLDEN_POINT ||
-                    status === MatchStatus.ENDED ||
-                    selectedMatch.status === MatchStatus.COMPLETED ||
-                    !isMatchStartable
-                      ? "bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850"
-                      : "bg-emerald-600 hover:bg-emerald-500 text-white hover:-translate-y-0.5 hover:shadow-emerald-500/20 active:scale-95 border border-emerald-500/30"
-                  }`}
-                  onClick={handleStart}
-                  disabled={
-                    status === MatchStatus.ACTIVE ||
-                    status === MatchStatus.GOLDEN_POINT ||
-                    status === MatchStatus.ENDED ||
-                    selectedMatch.status === MatchStatus.COMPLETED ||
-                    !isMatchStartable
-                  }
-                  title={
-                    !isMatchStartable
-                      ? "Cannot start a match with TBD or BYE"
-                      : ""
-                  }
-                >
-                  {status === MatchStatus.PAUSED
-                    ? "▶️ Resume"
-                    : "🏁 Start Combat"}
-                </button>
+                {/* Match Complete / Tie Breaker Controls */}
+                {status === MatchStatus.ENDED &&
+                  selectedMatch.status !== MatchStatus.COMPLETED && (
+                    <div className="p-6 bg-slate-900 border-t border-slate-800 shrink-0 flex flex-col items-center">
+                      <h4 className="text-xs font-black text-amber-500/90 mb-4 uppercase tracking-widest flex items-center gap-1.5">
+                        <span>⚡</span> DECIDE TO DECLARE WINNER OR START EXTRA
+                        TIME
+                      </h4>
+                      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-3xl">
+                        <button
+                          onClick={() =>
+                            handleDeclareWinner(selectedMatch.redCompetitorId)
+                          }
+                          className={`flex-1 py-3.5 rounded-xl font-bold text-white transition-all shadow-md active:scale-95 cursor-pointer text-sm ${redVotes > blueVotes ? "bg-rose-600 hover:bg-rose-500 hover:shadow-[0_0_20px_rgba(225,29,72,0.4)] scale-[1.02] border-2 border-rose-400" : "bg-rose-850 hover:bg-rose-750 text-rose-300 border border-rose-800/40"}`}
+                          disabled={
+                            !selectedMatch.redCompetitorId ||
+                            selectedMatch.redCompetitorId === "BYE"
+                          }
+                        >
+                          Red Corner Wins
+                        </button>
+                        <div className="flex flex-row sm:flex-col gap-2 flex-1 justify-center">
+                          <button
+                            onClick={handleExtraTime}
+                            className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all shadow bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:border-amber-500/60 active:scale-95 cursor-pointer`}
+                          >
+                            ⏱️ Extra Time (1m)
+                          </button>
+                          <button
+                            onClick={handleGoldenPoint}
+                            className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all shadow bg-yellow-500/15 hover:bg-yellow-500/25 text-yellow-300 border border-yellow-500/40 hover:border-yellow-500/70 active:scale-95 cursor-pointer`}
+                          >
+                            ⚡ Golden Point
+                          </button>
+                        </div>
+                        <button
+                          onClick={() =>
+                            handleDeclareWinner(selectedMatch.blueCompetitorId)
+                          }
+                          className={`flex-1 py-3.5 rounded-xl font-bold text-white transition-all shadow-md active:scale-95 cursor-pointer text-sm ${blueVotes > redVotes ? "bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] scale-[1.02] border-2 border-blue-400" : "bg-blue-850 hover:bg-blue-750 text-blue-300 border border-blue-800/40"}`}
+                          disabled={
+                            !selectedMatch.blueCompetitorId ||
+                            selectedMatch.blueCompetitorId === "BYE"
+                          }
+                        >
+                          Blue Corner Wins
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
-                <button
-                  className={`px-6 py-3 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
-                    !(
+                {/* Action Buttons */}
+                <div className="p-4 md:p-6 bg-slate-900/60 border-t border-slate-800 flex flex-wrap justify-center gap-4 mt-auto shrink-0">
+                  <button
+                    className={`px-6 py-3 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
                       status === MatchStatus.ACTIVE ||
-                      status === MatchStatus.GOLDEN_POINT
-                    ) ||
-                    selectedMatch.status === MatchStatus.COMPLETED ||
-                    !isMatchStartable
-                      ? "bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850"
-                      : "bg-yellow-600 hover:bg-yellow-500 text-white hover:-translate-y-0.5 hover:shadow-yellow-500/20 active:scale-95 border border-yellow-500/30"
-                  }`}
-                  onClick={handlePause}
-                  disabled={
-                    !(
+                      status === MatchStatus.GOLDEN_POINT ||
+                      status === MatchStatus.ENDED ||
+                      selectedMatch.status === MatchStatus.COMPLETED ||
+                      !isMatchStartable
+                        ? "bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850"
+                        : "bg-emerald-600 hover:bg-emerald-500 text-white hover:-translate-y-0.5 hover:shadow-emerald-500/20 active:scale-95 border border-emerald-500/30"
+                    }`}
+                    onClick={handleStart}
+                    disabled={
                       status === MatchStatus.ACTIVE ||
-                      status === MatchStatus.GOLDEN_POINT
-                    ) ||
-                    selectedMatch.status === MatchStatus.COMPLETED ||
-                    !isMatchStartable
-                  }
-                >
-                  ⏸️ Pause
-                </button>
+                      status === MatchStatus.GOLDEN_POINT ||
+                      status === MatchStatus.ENDED ||
+                      selectedMatch.status === MatchStatus.COMPLETED ||
+                      !isMatchStartable
+                    }
+                    title={
+                      !isMatchStartable
+                        ? "Cannot start a match with TBD or BYE"
+                        : ""
+                    }
+                  >
+                    {status === MatchStatus.PAUSED
+                      ? "▶️ Resume"
+                      : "🏁 Start Combat"}
+                  </button>
 
-                <button
-                  className={`px-6 py-3 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
-                    status === MatchStatus.ENDED ||
-                    selectedMatch.status === MatchStatus.COMPLETED ||
-                    !isMatchStartable
-                      ? "bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850"
-                      : "bg-slate-800 hover:bg-slate-700 text-slate-100 hover:-translate-y-0.5 hover:shadow-slate-800/20 active:scale-95 border border-slate-750"
-                  }`}
-                  onClick={handleEnd}
-                  disabled={
-                    status === MatchStatus.ENDED ||
-                    selectedMatch.status === MatchStatus.COMPLETED ||
-                    !isMatchStartable
-                  }
-                >
-                  🛑 Stop Match
-                </button>
-              </div>
-            </motion.div>
-          )}
+                  <button
+                    className={`px-6 py-3 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
+                      !(
+                        status === MatchStatus.ACTIVE ||
+                        status === MatchStatus.GOLDEN_POINT
+                      ) ||
+                      selectedMatch.status === MatchStatus.COMPLETED ||
+                      !isMatchStartable
+                        ? "bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850"
+                        : "bg-yellow-600 hover:bg-yellow-500 text-white hover:-translate-y-0.5 hover:shadow-yellow-500/20 active:scale-95 border border-yellow-500/30"
+                    }`}
+                    onClick={handlePause}
+                    disabled={
+                      !(
+                        status === MatchStatus.ACTIVE ||
+                        status === MatchStatus.GOLDEN_POINT
+                      ) ||
+                      selectedMatch.status === MatchStatus.COMPLETED ||
+                      !isMatchStartable
+                    }
+                  >
+                    ⏸️ Pause
+                  </button>
+
+                  <button
+                    className={`px-6 py-3 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
+                      status === MatchStatus.ENDED ||
+                      selectedMatch.status === MatchStatus.COMPLETED ||
+                      !isMatchStartable
+                        ? "bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850"
+                        : "bg-slate-800 hover:bg-slate-700 text-slate-100 hover:-translate-y-0.5 hover:shadow-slate-800/20 active:scale-95 border border-slate-750"
+                    }`}
+                    onClick={handleEnd}
+                    disabled={
+                      status === MatchStatus.ENDED ||
+                      selectedMatch.status === MatchStatus.COMPLETED ||
+                      !isMatchStartable
+                    }
+                  >
+                    🛑 Stop Match
+                  </button>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </section>
       </main>

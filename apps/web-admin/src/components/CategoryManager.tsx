@@ -12,13 +12,15 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({
   tournamentId,
   isReadOnly = false,
 }) => {
-  const [selectedType, setSelectedType] = useState<TournamentType>("LOCAL_OPEN");
+  const [selectedType, setSelectedType] =
+    useState<TournamentType>("LOCAL_OPEN");
   const [generating, setGenerating] = useState(false);
 
   const utils = trpc.useUtils();
-  const { data: categories = [], isLoading: loading } = trpc.categories.getAll.useQuery({
-    tournamentId,
-  });
+  const { data: categories = [], isLoading: loading } =
+    trpc.categories.getAll.useQuery({
+      tournamentId,
+    });
 
   const generateMutation = trpc.categories.generateOfficial.useMutation();
 
@@ -48,7 +50,10 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({
   return (
     <div className="space-y-6">
       {!isReadOnly && (
-        <Card padding="md" className="bg-slate-900/60 border-slate-800 backdrop-blur-xl">
+        <Card
+          padding="md"
+          className="bg-slate-900/60 border-slate-800 backdrop-blur-xl"
+        >
           <h2 className="text-xl font-bold mb-4 text-slate-100 flex items-center gap-2">
             <span>⚙️</span> Generador de Categorías ITF
           </h2>
@@ -82,37 +87,55 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({
                 {selectedType === "LOCAL_OPEN" ? (
                   <ul className="list-disc pl-5 space-y-2">
                     <li>
-                      <span className="text-blue-300 font-bold">Edades:</span> Micro (4-5), Pre-Mini (6-7), Mini (8-9), Infantil (10-11) y todas las edades mayores.
+                      <span className="text-blue-300 font-bold">Edades:</span>{" "}
+                      Micro (4-5), Pre-Mini (6-7), Mini (8-9), Infantil (10-11)
+                      y todas las edades mayores.
                     </li>
                     <li>
-                      <span className="text-blue-300 font-bold">Cinturones:</span> Divisiones detalladas de Gups (10-9, 8-7, 6-5, 4-1) y Danes.
+                      <span className="text-blue-300 font-bold">
+                        Cinturones:
+                      </span>{" "}
+                      Divisiones detalladas de Gups (10-9, 8-7, 6-5, 4-1) y
+                      Danes.
                     </li>
                     <li>
-                      <span className="text-blue-300 font-bold">Total:</span> ~250 categorías. Ideal para academias y regionales.
+                      <span className="text-blue-300 font-bold">Total:</span>{" "}
+                      ~250 categorías. Ideal para academias y regionales.
                     </li>
                   </ul>
                 ) : selectedType === "WORLD_CUP" ? (
                   <ul className="list-disc pl-5 space-y-2">
                     <li>
-                      <span className="text-blue-300 font-bold">Edades:</span> Pre-Junior (12-14), Junior (15-17), Adulto (18-35), Senior (36+).
+                      <span className="text-blue-300 font-bold">Edades:</span>{" "}
+                      Pre-Junior (12-14), Junior (15-17), Adulto (18-35), Senior
+                      (36+).
                     </li>
                     <li>
-                      <span className="text-blue-300 font-bold">Cinturones:</span> Gups agrupados (Azul a Rojo) y Danes.
+                      <span className="text-blue-300 font-bold">
+                        Cinturones:
+                      </span>{" "}
+                      Gups agrupados (Azul a Rojo) y Danes.
                     </li>
                     <li>
-                      <span className="text-blue-300 font-bold">Total:</span> ~130 categorías.
+                      <span className="text-blue-300 font-bold">Total:</span>{" "}
+                      ~130 categorías.
                     </li>
                   </ul>
                 ) : (
                   <ul className="list-disc pl-5 space-y-2">
                     <li>
-                      <span className="text-blue-300 font-bold">Edades:</span> Pre-Junior (12-14), Junior (15-17), Adulto (18+).
+                      <span className="text-blue-300 font-bold">Edades:</span>{" "}
+                      Pre-Junior (12-14), Junior (15-17), Adulto (18+).
                     </li>
                     <li>
-                      <span className="text-blue-300 font-bold">Cinturones:</span> Solo Negros.
+                      <span className="text-blue-300 font-bold">
+                        Cinturones:
+                      </span>{" "}
+                      Solo Negros.
                     </li>
                     <li>
-                      <span className="text-blue-300 font-bold">Total:</span> ~40 categorías.
+                      <span className="text-blue-300 font-bold">Total:</span>{" "}
+                      ~40 categorías.
                     </li>
                   </ul>
                 )}
@@ -162,7 +185,10 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({
               </thead>
               <tbody className="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-700">
                 {categories.map((cat) => (
-                  <tr key={cat.id} className="hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                  <tr
+                    key={cat.id}
+                    className="hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
+                  >
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                       {cat.name}
                     </td>

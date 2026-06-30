@@ -29,7 +29,7 @@ export const authRouter = router({
           judgeData.tournamentId,
           judgeId,
           "ONLINE",
-          new Date().toISOString()
+          new Date().toISOString(),
         );
 
         const customClaims = {
@@ -39,7 +39,10 @@ export const authRouter = router({
           judgeName: judgeData.name,
         };
 
-        const customToken = await authService.createJudgeToken(judgeId, customClaims);
+        const customToken = await authService.createJudgeToken(
+          judgeId,
+          customClaims,
+        );
 
         return {
           token: customToken,
@@ -63,7 +66,10 @@ export const authRouter = router({
     .input(z.object({ email: z.string().email(), password: z.string() }))
     .mutation(async ({ input }) => {
       try {
-        const adminData = await authService.loginAdmin(input.email, input.password);
+        const adminData = await authService.loginAdmin(
+          input.email,
+          input.password,
+        );
         return {
           token: adminData.token,
           admin: {
@@ -81,41 +87,43 @@ export const authRouter = router({
       }
     }),
 
-  guestLogin: publicProcedure
-    .mutation(async () => {
-      try {
-        const guestData = await authService.createGuestToken();
-        return {
-          token: guestData.token,
-          admin: {
-            uid: guestData.uid,
-            email: "demo@cornerclick.com",
-            displayName: "Invitado (Demo)",
-          },
-        };
-      } catch (error) {
-        log.error({ err: toErr(error) }, "Error in guestLogin");
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error creating guest token",
-        });
-      }
-    }),
+  guestLogin: publicProcedure.mutation(async () => {
+    try {
+      const guestData = await authService.createGuestToken();
+      return {
+        token: guestData.token,
+        admin: {
+          uid: guestData.uid,
+          email: "demo@cornerclick.com",
+          displayName: "Invitado (Demo)",
+        },
+      };
+    } catch (error) {
+      log.error({ err: toErr(error) }, "Error in guestLogin");
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error creating guest token",
+      });
+    }
+  }),
 
-  logout: protectedProcedure
-    .mutation(async ({ ctx }) => {
-      try {
-        const user = ctx.user as any;
-        if (user && user.tournamentId && user.judgeId) {
-          await judgeRepo.updateStatus(user.tournamentId, user.judgeId, "OFFLINE");
-        }
-        return { success: true };
-      } catch (error) {
-        log.error({ err: toErr(error) }, "Error in logout");
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error during logout",
-        });
+  logout: protectedProcedure.mutation(async ({ ctx }) => {
+    try {
+      const user = ctx.user as any;
+      if (user && user.tournamentId && user.judgeId) {
+        await judgeRepo.updateStatus(
+          user.tournamentId,
+          user.judgeId,
+          "OFFLINE",
+        );
       }
-    }),
+      return { success: true };
+    } catch (error) {
+      log.error({ err: toErr(error) }, "Error in logout");
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error during logout",
+      });
+    }
+  }),
 });

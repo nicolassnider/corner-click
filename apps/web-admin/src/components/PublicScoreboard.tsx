@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ref, onValue, get } from "firebase/database";
 import { database } from "../lib/firebase";
-import {
-  connectSocket,
-  disconnectSocket,
-} from "../lib/socketClient";
+import { connectSocket, disconnectSocket } from "../lib/socketClient";
 import {
   MatchStatus,
   AUTHOR_NAME,
@@ -324,13 +321,13 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
           className="text-center p-[4vw] bg-slate-900/40 rounded-[3vw] border border-slate-800 backdrop-blur-xl w-[60vw] max-w-[1200px] shadow-[0_0_80px_rgba(59,130,246,0.1)] relative z-10"
         >
           <motion.svg
-            animate={{ 
+            animate={{
               rotate: 360,
-              scale: [1, 1.1, 1]
+              scale: [1, 1.1, 1],
             }}
-            transition={{ 
+            transition={{
               rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-              scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+              scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
             }}
             className="w-[10vw] max-w-[150px] text-blue-500 mx-auto mb-[2vw] opacity-80"
             fill="none"
@@ -354,7 +351,10 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
 
         {/* Ambient Lights */}
         <div className="absolute top-0 left-0 w-[50vw] h-[50vw] bg-blue-600/10 rounded-full blur-[10vw] pointer-events-none mix-blend-screen animate-pulse-slow"></div>
-        <div className="absolute bottom-0 right-0 w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[10vw] pointer-events-none mix-blend-screen animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
+        <div
+          className="absolute bottom-0 right-0 w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[10vw] pointer-events-none mix-blend-screen animate-pulse-slow"
+          style={{ animationDelay: "1s" }}
+        ></div>
       </div>
     );
   }
@@ -369,7 +369,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
   const showFinalScores =
     matchStatus === MatchStatus.ENDED || matchStatus === MatchStatus.COMPLETED;
 
-  const timerColor = 
+  const timerColor =
     isExtraTime && matchStatus === MatchStatus.ACTIVE
       ? "text-amber-400 drop-shadow-[0_0_5vh_rgba(245,158,11,0.6)]"
       : matchStatus === MatchStatus.ACTIVE
@@ -380,22 +380,26 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
 
   return (
     <div className="h-[100vh] w-[100vw] bg-slate-950 text-slate-100 font-sans flex flex-col justify-between p-[3vh] px-[3vw] relative overflow-hidden select-none">
-      
       {/* Cinematic Background */}
       <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
-      <motion.div 
-        animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.15, 0.1] }} 
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} 
+      <motion.div
+        animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.15, 0.1] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
         className="absolute -top-[20vh] -left-[10vw] w-[60vw] h-[60vw] bg-rose-600/20 rounded-full filter blur-[15vw] pointer-events-none mix-blend-screen"
       />
-      <motion.div 
-        animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.15, 0.1] }} 
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 5 }} 
+      <motion.div
+        animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.15, 0.1] }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 5,
+        }}
         className="absolute -bottom-[20vh] -right-[10vw] w-[60vw] h-[60vw] bg-blue-600/20 rounded-full filter blur-[15vw] pointer-events-none mix-blend-screen"
       />
 
       {/* Top Header - TV Optimized */}
-      <motion.header 
+      <motion.header
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -415,8 +419,8 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
           </span>
           <div className="text-[2vh] mt-[1.5vh] font-bold tracking-widest">
             {!activeMatch.nextMatchId ? (
-              <motion.span 
-                animate={{ opacity: [1, 0.5, 1] }} 
+              <motion.span
+                animate={{ opacity: [1, 0.5, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
                 className="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-[1.5vw] py-[0.5vh] rounded-full uppercase shadow-[0_0_2vw_rgba(245,158,11,0.2)]"
               >
@@ -433,16 +437,20 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
 
       {/* Main Scoreboard Layout - TV Optimized */}
       <main className="flex-1 my-[3vh] flex items-stretch gap-[3vw] z-10 h-full overflow-hidden">
-        
         {/* Red Corner Panel */}
-        <motion.div 
+        <motion.div
           initial={{ x: "-20vw", opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 70, damping: 20, delay: 0.1 }}
+          transition={{
+            type: "spring",
+            stiffness: 70,
+            damping: 20,
+            delay: 0.1,
+          }}
           className="flex-1 bg-gradient-to-br from-rose-950/80 via-slate-900/50 to-slate-950/80 border-[0.3vw] border-rose-500/40 p-[3vw] rounded-[3vw] backdrop-blur-xl text-center flex flex-col justify-between shadow-[0_0_5vw_rgba(225,29,72,0.15)] relative overflow-hidden group"
         >
           <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(225,29,72,0.05)_50%,transparent_75%,transparent_100%)] bg-[length:250px_250px] animate-[shine_5s_linear_infinite]" />
-          
+
           <div className="pt-[1vh] relative z-10 flex flex-col items-center">
             <span className="bg-rose-600 text-white font-black text-[2vh] px-[2vw] py-[1vh] rounded-full tracking-widest uppercase shadow-lg shadow-rose-900/50 inline-block">
               {LABELS.RED_CORNER}
@@ -519,6 +527,22 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
           </motion.div>
 
           <AnimatePresence>
+            {showFinalScores && tieVotes > 0 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                className="mt-[2vh] flex flex-col items-center justify-center"
+              >
+                <div className="text-[12vh] font-black text-slate-400 drop-shadow-[0_0_2vw_rgba(148,163,184,0.5)] leading-none font-mono">
+                  {tieVotes}
+                </div>
+                <div className="text-slate-500 font-black uppercase tracking-[0.2em] text-[1.5vh] mt-[1vh] bg-slate-900/60 border border-slate-700/80 px-[2vw] py-[1vh] rounded-full shadow-inner backdrop-blur-md">
+                  {tieVotes === 1 ? "EMPATE" : "EMPATES"}
+                </div>
+              </motion.div>
+            )}
+
             {matchStatus === MatchStatus.ENDED && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -533,14 +557,19 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
         </div>
 
         {/* Blue Corner Panel */}
-        <motion.div 
+        <motion.div
           initial={{ x: "20vw", opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 70, damping: 20, delay: 0.1 }}
+          transition={{
+            type: "spring",
+            stiffness: 70,
+            damping: 20,
+            delay: 0.1,
+          }}
           className="flex-1 bg-gradient-to-br from-indigo-950/80 via-slate-900/50 to-slate-950/80 border-[0.3vw] border-blue-500/40 p-[3vw] rounded-[3vw] backdrop-blur-xl text-center flex flex-col justify-between shadow-[0_0_5vw_rgba(59,130,246,0.15)] relative overflow-hidden group"
         >
           <div className="absolute inset-0 bg-[linear-gradient(-45deg,transparent_25%,rgba(59,130,246,0.05)_50%,transparent_75%,transparent_100%)] bg-[length:250px_250px] animate-[shine_5s_linear_infinite]" />
-          
+
           <div className="pt-[1vh] relative z-10 flex flex-col items-center">
             <span className="bg-blue-600 text-white font-black text-[2vh] px-[2vw] py-[1vh] rounded-full tracking-widest uppercase shadow-lg shadow-blue-900/50 inline-block">
               {LABELS.BLUE_CORNER}
@@ -579,7 +608,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
       </main>
 
       {/* Footer / Status Log - TV Optimized */}
-      <motion.footer 
+      <motion.footer
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}

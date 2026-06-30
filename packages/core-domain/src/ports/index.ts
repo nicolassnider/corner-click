@@ -14,7 +14,11 @@ export interface IMatchRepository {
   updateStatus(id: string, status: string): Promise<void>;
   submitScores(id: string, cornerId: string, scores: any): Promise<void>;
   getScores(id: string): Promise<any>;
-  streamScores(id: string, onUpdate: (data: any) => void, onError: (error: any) => void): () => void;
+  streamScores(
+    id: string,
+    onUpdate: (data: any) => void,
+    onError: (error: any) => void,
+  ): () => void;
   declareWinner(
     matchId: string,
     params: {
@@ -23,7 +27,7 @@ export interface IMatchRepository {
       nextMatchId?: string;
       losersMatchId?: string;
       loserId?: string;
-    }
+    },
   ): Promise<void>;
 }
 
@@ -31,14 +35,31 @@ export interface IJudgeRepository {
   create(tournamentId: string, judge: Omit<Judge, "id">): Promise<Judge>;
   findByPin(pin: string): Promise<{ id: string; data: Judge } | null>;
   findByTournament(tournamentId: string): Promise<Judge[]>;
-  updateStatus(tournamentId: string, judgeId: string, status: string, lastActiveAt?: string): Promise<void>;
-  updateAssignment(tournamentId: string, judgeId: string, assignment: any): Promise<void>;
+  updateStatus(
+    tournamentId: string,
+    judgeId: string,
+    status: string,
+    lastActiveAt?: string,
+  ): Promise<void>;
+  updateAssignment(
+    tournamentId: string,
+    judgeId: string,
+    assignment: any,
+  ): Promise<void>;
   delete(tournamentId: string, judgeId: string): Promise<void>;
   cleanupExpiredJudges(tournamentId: string): Promise<void>;
 }
 
 export interface IAuthService {
   createJudgeToken(judgeId: string, claims: any): Promise<string>;
-  loginAdmin(email: string, password: string): Promise<{ token: string; uid: string; email: string; displayName: string | null }>;
+  loginAdmin(
+    email: string,
+    password: string,
+  ): Promise<{
+    token: string;
+    uid: string;
+    email: string;
+    displayName: string | null;
+  }>;
   createGuestToken(): Promise<{ token: string; uid: string }>;
 }

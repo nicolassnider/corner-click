@@ -62,21 +62,21 @@ function calculateAge(birthDate?: string): number | null {
 }
 
 function DraggableCompetitor({ competitor }: { competitor: Competitor }) {
-  const { attributes, listeners, setNodeRef, isDragging } =
-    useDraggable({
-      id: competitor.id,
-      data: { competitor },
-    });
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: competitor.id,
+    data: { competitor },
+  });
 
   return (
     <div
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className={`p-3 border rounded-lg shadow-sm cursor-grab active:cursor-grabbing ${isDragging
+      className={`p-3 border rounded-lg shadow-sm cursor-grab active:cursor-grabbing ${
+        isDragging
           ? "opacity-40 z-50 relative border-blue-500 bg-blue-900/40"
           : "bg-slate-700/50 border-slate-600 hover:border-blue-400 hover:bg-slate-700"
-        }`}
+      }`}
     >
       <div className="font-medium text-sm text-slate-200">
         {competitor.firstName} {competitor.lastName}
@@ -110,13 +110,17 @@ function CategoryDroppable({
   return (
     <div
       ref={setNodeRef}
-      className={`flex-shrink-0 w-80 p-4 rounded-xl border flex flex-col transition-colors ${isOver
+      className={`flex-shrink-0 w-80 p-4 rounded-xl border flex flex-col transition-colors ${
+        isOver
           ? "bg-blue-950/40 border-blue-500 shadow-inner shadow-blue-900/20"
           : "bg-slate-800/80 border-slate-700"
-        }`}
+      }`}
     >
       <div className="mb-4 pb-3 border-b border-slate-700/60">
-        <h4 className="font-bold text-slate-100 truncate text-sm uppercase tracking-wide" title={category.name}>
+        <h4
+          className="font-bold text-slate-100 truncate text-sm uppercase tracking-wide"
+          title={category.name}
+        >
           {category.name}
         </h4>
         <div className="text-xs text-slate-400 mt-1 font-medium tracking-wide">
@@ -124,12 +128,13 @@ function CategoryDroppable({
         </div>
         <div className="flex items-center gap-2 mt-3">
           <span
-            className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${competitors.length >= 4
+            className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
+              competitors.length >= 4
                 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
                 : competitors.length === 0
                   ? "bg-slate-800 text-slate-500 border-slate-700"
                   : "bg-amber-500/10 text-amber-400 border-amber-500/30"
-              }`}
+            }`}
           >
             {competitors.length} inscritos
           </span>
@@ -161,13 +166,15 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
   const [activeDragCompetitor, setActiveDragCompetitor] =
     useState<Competitor | null>(null);
 
-  const { data: categories = [], isLoading: loadingCategories } = trpc.categories.getAll.useQuery({
-    tournamentId,
-  });
+  const { data: categories = [], isLoading: loadingCategories } =
+    trpc.categories.getAll.useQuery({
+      tournamentId,
+    });
 
-  const { data: competitors = [], isLoading: loadingCompetitors } = trpc.competitors.getAll.useQuery({
-    tournamentId,
-  });
+  const { data: competitors = [], isLoading: loadingCompetitors } =
+    trpc.competitors.getAll.useQuery({
+      tournamentId,
+    });
 
   const utils = trpc.useUtils();
   const mergeEmptyMutation = trpc.categories.mergeEmpty.useMutation();
@@ -195,7 +202,10 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
     }
   };
 
-  const moveCompetitor = async (competitorId: string, newCategoryId: string) => {
+  const moveCompetitor = async (
+    competitorId: string,
+    newCategoryId: string,
+  ) => {
     setProcessing(true);
     try {
       await updateCompetitorMutation.mutateAsync({
@@ -241,11 +251,15 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
     const competitorId = active.id as string;
     const newCategoryId = over.id as string;
 
-    const competitor = competitors.find((c: Competitor) => c.id === competitorId);
+    const competitor = competitors.find(
+      (c: Competitor) => c.id === competitorId,
+    );
     if (!competitor || competitor.categoryId === newCategoryId) return;
 
     // Optimistic UI update
-    const previousCompetitors = utils.competitors.getAll.getData({ tournamentId });
+    const previousCompetitors = utils.competitors.getAll.getData({
+      tournamentId,
+    });
     if (previousCompetitors) {
       utils.competitors.getAll.setData(
         { tournamentId },
@@ -298,7 +312,10 @@ export const CategoryAdjuster: React.FC<CategoryAdjusterProps> = ({
         )}
       </div>
 
-      <Card padding="md" className="space-y-4 bg-slate-900/60 border-slate-800 backdrop-blur-xl">
+      <Card
+        padding="md"
+        className="space-y-4 bg-slate-900/60 border-slate-800 backdrop-blur-xl"
+      >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <h3 className="text-lg font-semibold text-slate-100">
             Tablero de Categorías ({categories.length})
