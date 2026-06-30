@@ -89,7 +89,7 @@ export class FirebaseTournamentRepository implements ITournamentRepository {
       for (const chunkIds of matchChunks) {
         const batch = db.batch()
         chunkIds.forEach((mId) => {
-          batch.delete(db?.collection('matches').doc(mId))
+          batch.delete(db!.collection('matches').doc(mId))
         })
         await batch.commit()
       }

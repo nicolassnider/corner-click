@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css'
+import AnalyticsApp from '../components/AnalyticsApp'
 ---
 
 <html lang="es">
@@ -11,6 +12,6 @@ import '../styles/global.css'
     <title>Corner Click - Analíticas y Estadísticas Públicas</title>
   </head>
   <body>
-    <AnalyticsApp client:load />
+    <AnalyticsApp client:only="react" />
   </body>
 </html>

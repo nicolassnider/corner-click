@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css'
+import JuryDashboard from '../components/JuryDashboard'
 ---
 
 <html lang="en">
@@ -10,6 +11,6 @@ import '../styles/global.css'
     <title>Corner Click - Live Match Control</title>
   </head>
   <body>
-    <JuryDashboard client:load />
+    <JuryDashboard client:only="react" />
   </body>
 </html>

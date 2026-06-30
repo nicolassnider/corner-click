@@ -1,5 +1,6 @@
 ---
 import '../../../styles/global.css'
+import PublicScoreboard from '../../../components/PublicScoreboard'
 
 export function getStaticPaths() {
   const numericPaths = Array.from({ length: 10 }, (_, i) => ({
@@ -23,6 +24,6 @@ const { areaId } = Astro.params
   >)
 
   <body class="bg-slate-950 overflow-hidden h-screen w-screen">
-    {areaId && <PublicScoreboard areaId={areaId} client:load />}
+    {areaId && <PublicScoreboard areaId={areaId} client:only="react" />}
   </body>
 </html>
