@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import type { Tournament } from "@corner-click/types";
 import { fetchWithAuth, getDynamicAnalyticsUrl } from "../utils/apiClient";
+import { trpc } from "@corner-click/api-client";
+import { Button, Card } from "@corner-click/ui";
 
 const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:4000";
 
@@ -15,21 +17,11 @@ export default function TournamentList({
   onCreateNew,
   onEdit,
 }: Props) {
-  const [tournaments, setTournaments] = useState<Tournament[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = trpc.tournaments.getAll.useQuery();
+  const tournaments = data || [];
+  const utils = trpc.useUtils();
 
-  useEffect(() => {
-    fetchWithAuth(`${API_URL}/api/tournaments`)
-      .then((res) => res.json())
-      .then((data) => {
-        setTournaments(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, []);
+  const deleteMutation = trpc.tournaments.delete.useMutation();
 
   const handleDelete = async (id: string) => {
     if (
@@ -40,20 +32,15 @@ export default function TournamentList({
       return;
     }
     try {
-      const res = await fetchWithAuth(`${API_URL}/api/tournaments/${id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        setTournaments((prev) => prev.filter((t) => t.id !== id));
-      } else {
-        alert("Failed to delete tournament");
-      }
+      await deleteMutation.mutateAsync({ id });
+      utils.tournaments.getAll.invalidate();
     } catch (err) {
       console.error(err);
+      alert("Failed to delete tournament");
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-600"></div>
@@ -82,10 +69,11 @@ export default function TournamentList({
     }
 
     return (
-      <div
+      <Card
         key={t.id}
         onClick={() => onSelect(t)}
-        className={`p-6 rounded-xl border shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between ${
+        padding="md"
+        className={`hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between h-full ${
           t.status === "COMPLETED"
             ? "bg-slate-50/50 border-slate-200 opacity-85 hover:opacity-100"
             : "bg-white border-slate-200"
@@ -183,22 +171,23 @@ export default function TournamentList({
             )}
           </div>
         </div>
-      </div>
+      </Card>
     );
   };
 
   return (
     <div className="p-8 max-w-[95vw] 2xl:max-w-[1700px] mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">
+        <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
           Tournaments
         </h1>
-        <button
+        <Button
           onClick={onCreateNew}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:-translate-y-1"
+          variant="primary"
+          className="shadow-lg hover:-translate-y-1 transition-transform"
         >
           + New Tournament
-        </button>
+        </Button>
       </div>
 
       {tournaments.length === 0 ? (
@@ -235,7 +224,7 @@ export default function TournamentList({
           {/* Completed */}
           {completedTournaments.length > 0 && (
             <div>
-              <h2 className="text-xl font-extrabold text-slate-500 mb-4 uppercase tracking-wider flex items-center gap-2">
+              <h2 className="text-xl font-extrabold text-slate-800 dark:text-slate-400 mb-4 uppercase tracking-wider flex items-center gap-2">
                 <span>✓</span> Finalizados / Historial (
                 {completedTournaments.length})
               </h2>

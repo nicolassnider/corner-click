@@ -1,5 +1,7 @@
 import type { Auth } from "firebase/auth";
 
+export * from "./trpc.js";
+
 export interface ApiClientConfig {
   auth: Auth;
   apiUrl: string;

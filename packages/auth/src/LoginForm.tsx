@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { signInWithCustomToken } from "firebase/auth";
 import { useAuth } from "./index";
+import { trpc } from "@corner-click/api-client";
 
 interface LoginFormProps {
   title?: string;
@@ -19,29 +20,16 @@ export default function LoginForm({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const adminLoginMutation = trpc.auth.adminLogin.useMutation();
+  const guestLoginMutation = trpc.auth.guestLogin.useMutation();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const res = await fetchWithAuth(`/api/auth/admin/login`, {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        if (res.status === 403) {
-          setError("Acceso denegado: no eres administrador.");
-        } else if (res.status === 401) {
-          setError("Credenciales inválidas. Verifica tu email y contraseña.");
-        } else {
-          setError(data.error || "Error al iniciar sesión");
-        }
-        return;
-      }
+      const data = await adminLoginMutation.mutateAsync({ email, password });
 
       await signInWithCustomToken(auth, data.token);
       if (onLoginSuccess) {
@@ -50,7 +38,13 @@ export default function LoginForm({
         window.location.href = "/";
       }
     } catch (err: any) {
-      setError("Error de conexión. Verifica que el servidor esté activo.");
+      if (err.message?.includes("Acceso denegado")) {
+        setError("Acceso denegado: no eres administrador.");
+      } else if (err.message?.includes("Invalid credentials") || err.data?.code === "UNAUTHORIZED") {
+        setError("Credenciales inválidas. Verifica tu email y contraseña.");
+      } else {
+        setError(err.message || "Error al iniciar sesión");
+      }
     } finally {
       setLoading(false);
     }
@@ -61,16 +55,7 @@ export default function LoginForm({
     setLoading(true);
 
     try {
-      const res = await fetchWithAuth(`/api/auth/admin/guest-login`, {
-        method: "POST",
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Error al entrar como invitado");
-        return;
-      }
+      const data = await guestLoginMutation.mutateAsync();
 
       await signInWithCustomToken(auth, data.token);
       if (onLoginSuccess) {
@@ -79,7 +64,7 @@ export default function LoginForm({
         window.location.href = "/";
       }
     } catch (err: any) {
-      setError("Error de conexión. Verifica que el servidor esté activo.");
+      setError(err.message || "Error de conexión. Verifica que el servidor esté activo.");
     } finally {
       setLoading(false);
     }

@@ -10,6 +10,7 @@ import {
   WORLD_CUP_AGES,
   WORLD_CHAMPIONSHIP_AGES,
 } from "@corner-click/types";
+import { Button, Input, Card } from "@corner-click/ui";
 
 interface CompetitorFormProps {
   initialData?: Competitor;
@@ -193,17 +194,18 @@ export const CompetitorForm: React.FC<CompetitorFormProps> = ({
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md mt-4 border border-gray-100">
+    <Card padding="lg" className="mt-4">
       <h3 className="text-xl font-bold mb-4 text-gray-800">
         {initialData ? "Editar Competidor" : "Añadir Competidor"}
       </h3>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Category Dropdown */}
         <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
+          <label htmlFor="categoryId" className="block text-sm font-semibold text-gray-700 mb-1">
             Categoría Asignada
           </label>
           <select
+            id="categoryId"
             required
             className="block w-full rounded-md border-gray-300 shadow-sm p-2.5 border focus:ring-blue-500 focus:border-blue-500 bg-white font-medium text-blue-900"
             value={formData.categoryId}
@@ -228,78 +230,55 @@ export const CompetitorForm: React.FC<CompetitorFormProps> = ({
 
         {/* Basic Info */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Nombre
-            </label>
-            <input
-              type="text"
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
-              value={formData.firstName}
-              onChange={(e) =>
-                setFormData({ ...formData, firstName: e.target.value })
-              }
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Apellidos
-            </label>
-            <input
-              type="text"
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
-              value={formData.lastName}
-              onChange={(e) =>
-                setFormData({ ...formData, lastName: e.target.value })
-              }
-            />
-          </div>
+          <Input
+            label="Nombre"
+            type="text"
+            required
+            value={formData.firstName}
+            onChange={(e) =>
+              setFormData({ ...formData, firstName: e.target.value })
+            }
+          />
+          <Input
+            label="Apellidos"
+            type="text"
+            required
+            value={formData.lastName}
+            onChange={(e) =>
+              setFormData({ ...formData, lastName: e.target.value })
+            }
+          />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Club / Escuela
-            </label>
-            <input
-              type="text"
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
-              value={formData.club}
-              onChange={(e) =>
-                setFormData({ ...formData, club: e.target.value })
-              }
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              País
-            </label>
-            <input
-              type="text"
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
-              value={formData.country}
-              onChange={(e) =>
-                setFormData({ ...formData, country: e.target.value })
-              }
-            />
-          </div>
+          <Input
+            label="Club / Escuela"
+            type="text"
+            required
+            value={formData.club}
+            onChange={(e) =>
+              setFormData({ ...formData, club: e.target.value })
+            }
+          />
+          <Input
+            label="País"
+            type="text"
+            required
+            value={formData.country}
+            onChange={(e) =>
+              setFormData({ ...formData, country: e.target.value })
+            }
+          />
         </div>
 
         {/* Physical / Registration Details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 bg-blue-50 p-4 rounded-md border border-blue-100">
           <div>
-            <label className="block text-sm font-medium text-blue-900">
-              Fecha de Nac.
-            </label>
-            <input
+            <Input
+              label="Fecha de Nac."
               type="tel"
               required
               placeholder="DD/MM/AAAA"
-              className="mt-1 block w-full rounded-md border-blue-200 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
               value={displayDate}
               onChange={handleDateChange}
             />
@@ -308,10 +287,11 @@ export const CompetitorForm: React.FC<CompetitorFormProps> = ({
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-blue-900">
+            <label htmlFor="gender" className="block text-sm font-medium text-blue-900">
               Género
             </label>
             <select
+              id="gender"
               required
               className="mt-1 block w-full rounded-md border-blue-200 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
               value={formData.gender}
@@ -327,14 +307,11 @@ export const CompetitorForm: React.FC<CompetitorFormProps> = ({
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-blue-900">
-              Peso (kg)
-            </label>
-            <input
+            <Input
+              label="Peso (kg)"
               type="number"
               step="0.1"
               required
-              className="mt-1 block w-full rounded-md border-blue-200 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
               value={formData.weight}
               onChange={(e) =>
                 setFormData({ ...formData, weight: e.target.value })
@@ -342,14 +319,10 @@ export const CompetitorForm: React.FC<CompetitorFormProps> = ({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-blue-900">
-              Altura (cm){" "}
-              <span className="text-gray-400 font-normal">(Opcional)</span>
-            </label>
-            <input
+            <Input
+              label="Altura (cm) (Opcional)"
               type="number"
               step="1"
-              className="mt-1 block w-full rounded-md border-blue-200 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
               value={formData.height}
               onChange={(e) =>
                 setFormData({ ...formData, height: e.target.value })
@@ -358,10 +331,11 @@ export const CompetitorForm: React.FC<CompetitorFormProps> = ({
             />
           </div>
           <div className="col-span-1 md:col-span-5">
-            <label className="block text-sm font-medium text-blue-900">
+            <label htmlFor="belt" className="block text-sm font-medium text-blue-900">
               Nivel de Cinturón
             </label>
             <select
+              id="belt"
               required
               className="mt-1 block w-full rounded-md border-blue-200 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"
               value={formData.belt}
@@ -403,21 +377,21 @@ export const CompetitorForm: React.FC<CompetitorFormProps> = ({
         </div>
 
         <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100">
-          <button
+          <Button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            variant="secondary"
           >
             Cancelar
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors shadow-sm"
+            variant="primary"
           >
             {initialData ? "Guardar Cambios" : "Registrar Competidor"}
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+    </Card>
   );
 };

@@ -1,13 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import type { Competitor, Category } from "@corner-click/types";
-import {
-  getCompetitors,
-  addCompetitor,
-  updateCompetitor,
-  deleteCompetitor,
-} from "../services/competitorService";
+import { trpc } from "@corner-click/api-client";
 import { CompetitorForm } from "./CompetitorForm";
+import { Button } from "@corner-click/ui";
 
 interface CompetitorManagerProps {
   tournamentId: string;
@@ -26,51 +22,53 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
   isReadOnly = false,
   tournamentAreas = 1,
 }) => {
-  const [competitors, setCompetitors] = useState<Competitor[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCompetitor, setEditingCompetitor] = useState<
     Competitor | undefined
   >();
-  const [loading, setLoading] = useState(true);
   const [isMockModalOpen, setIsMockModalOpen] = useState(false);
   const [mockAmount, setMockAmount] = useState(tournamentAreas * 20);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  useEffect(() => {
-    loadCompetitors();
-  }, [tournamentId, categoryId]);
+  const utils = trpc.useUtils();
+  const { data: competitors = [], isLoading: loading } = trpc.competitors.getAll.useQuery({
+    tournamentId,
+    categoryId: categoryId || undefined,
+  });
 
-  const loadCompetitors = async () => {
-    setLoading(true);
-    try {
-      const data = await getCompetitors(tournamentId, categoryId);
-      setCompetitors(data);
-    } catch (error) {
-      console.error("Failed to load competitors:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const createMutation = trpc.competitors.create.useMutation();
+  const updateMutation = trpc.competitors.update.useMutation();
+  const deleteMutation = trpc.competitors.delete.useMutation();
 
   const handleSave = async (
     competitorData: Omit<Competitor, "id" | "tournamentId">,
   ) => {
     try {
       if (editingCompetitor) {
-        await updateCompetitor(
+        await updateMutation.mutateAsync({
           tournamentId,
-          editingCompetitor.id,
-          competitorData,
-        );
+          competitorId: editingCompetitor.id,
+          ...competitorData,
+        });
       } else {
-        await addCompetitor(tournamentId, competitorData);
+        await createMutation.mutateAsync({
+          tournamentId,
+          firstName: competitorData.firstName,
+          lastName: competitorData.lastName,
+          club: competitorData.club,
+          belt: competitorData.belt || "1º – 3º Dan",
+          categoryId: competitorData.categoryId,
+          birthDate: competitorData.birthDate,
+          weight: competitorData.weight ? Number(competitorData.weight) : undefined,
+        });
       }
       setIsFormOpen(false);
       setEditingCompetitor(undefined);
 
+      utils.competitors.getAll.invalidate({ tournamentId });
+      
       if (categoryId && competitorData.categoryId !== categoryId) {
         onCategoryChange(competitorData.categoryId);
-      } else {
-        await loadCompetitors();
       }
     } catch (error) {
       console.error("Failed to save competitor:", error);
@@ -80,8 +78,11 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
   const handleDelete = async (competitorId: string) => {
     if (confirm("Are you sure you want to delete this competitor?")) {
       try {
-        await deleteCompetitor(tournamentId, competitorId);
-        await loadCompetitors();
+        await deleteMutation.mutateAsync({
+          tournamentId,
+          competitorId,
+        });
+        utils.competitors.getAll.invalidate({ tournamentId });
       } catch (error) {
         console.error("Failed to delete competitor:", error);
       }
@@ -108,7 +109,7 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
       return;
     }
 
-    setLoading(true);
+    setIsGenerating(true);
 
     const maleNames = [
       "Liam",
@@ -203,12 +204,9 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
         firstName: namesList[Math.floor(Math.random() * namesList.length)],
         lastName: lastNames[Math.floor(Math.random() * lastNames.length)],
         club: clubs[Math.floor(Math.random() * clubs.length)],
-        country: countries[Math.floor(Math.random() * countries.length)],
-        gender: targetGender,
+        belt: randomCategory.beltLevel || "1º – 3º Dan",
         birthDate: `${birthYear}-${birthMonth}-${birthDay}`,
         weight: weight,
-        belt: randomCategory.beltLevel || "1º – 3º Dan",
-        isSeeded: Math.random() > 0.8,
       };
     });
 
@@ -219,7 +217,10 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
       console.log(`Iniciando generación de ${amount} competidores...`);
       await Promise.all(
         mockCompetitors.map(async (comp, index) => {
-          const result = await addCompetitor(tournamentId, comp);
+          const result = await createMutation.mutateAsync({
+            tournamentId,
+            ...comp,
+          });
           console.log(
             `Competidor ${index + 1}/${amount} creado: ${comp.firstName} ${comp.lastName}`,
           );
@@ -230,19 +231,19 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
       toast.success(`${amount} competidores generados con éxito`, {
         id: toastId,
       });
-      await loadCompetitors();
+      utils.competitors.getAll.invalidate({ tournamentId });
     } catch (err) {
       console.error("Error generating mock data", err);
       toast.error("Hubo un error al generar los competidores", { id: toastId });
     } finally {
-      setLoading(false);
+      setIsGenerating(false);
     }
   };
 
   return (
     <div className="mt-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-gray-900">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
           {categoryId
             ? "Competidores en esta categoría"
             : "Todos los competidores"}{" "}
@@ -250,20 +251,21 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
         </h2>
         {!isReadOnly && (
           <div className="flex space-x-2">
-            <button
+            <Button
               onClick={handleOpenMockModal}
-              disabled={loading}
-              className={`px-4 py-2 text-white rounded-md ${loading ? "bg-purple-400 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700"}`}
+              disabled={isGenerating}
+              variant="primary"
+              className={isGenerating ? "!bg-purple-400" : "!bg-purple-600"}
             >
-              {loading ? "Generando..." : "Generar Random [DEV]"}
-            </button>
-            <button
+              {isGenerating ? "Generando..." : "Generar Random [DEV]"}
+            </Button>
+            <Button
               onClick={() => setIsFormOpen(true)}
               disabled={loading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400"
+              variant="primary"
             >
               Add Competitor
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -277,6 +279,8 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
                 setEditingCompetitor(undefined);
               }}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"
+              aria-label="Cerrar"
+              title="Cerrar"
             >
               <svg
                 className="w-6 h-6"
@@ -311,76 +315,76 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
       {loading ? (
         <p>Loading competitors...</p>
       ) : competitors.length === 0 ? (
-        <p className="text-gray-500 text-center py-8 bg-gray-50 rounded-lg">
+        <p className="text-gray-500 dark:text-gray-400 text-center py-8 bg-gray-50 dark:bg-slate-800 rounded-lg">
           No competitors registered yet.
         </p>
       ) : (
-        <div className="overflow-x-auto bg-white rounded-lg shadow">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="overflow-x-auto bg-white dark:bg-slate-900 rounded-lg shadow">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+            <thead className="bg-gray-50 dark:bg-slate-800">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Categoría
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Club / Country
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Seeded
                 </th>
                 {!isReadOnly && (
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Actions
                   </th>
                 )}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-700">
               {competitors.map((comp) => (
-                <tr key={comp.id}>
+                <tr key={comp.id} className="hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
+                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {comp.firstName} {comp.lastName}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900 font-medium mb-1">
+                    <div className="text-sm text-gray-900 dark:text-gray-200 font-medium mb-1">
                       {categories.find((c) => c.id === comp.categoryId)?.name ||
                         "Sin categoría"}
                     </div>
                     <div className="flex gap-2 text-xs font-mono">
-                      <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md font-bold">
+                      <span className="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded-md font-bold">
                         {comp.birthDate
                           ? `${new Date().getFullYear() - new Date(comp.birthDate).getFullYear()}y`
                           : "-"}
                       </span>
                       <span
-                        className={`px-2 py-0.5 rounded-md font-bold ${comp.gender === "MALE" ? "bg-cyan-50 text-cyan-700" : "bg-pink-50 text-pink-700"}`}
+                        className={`px-2 py-0.5 rounded-md font-bold ${comp.gender === "MALE" ? "bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400" : "bg-pink-50 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400"}`}
                       >
                         {comp.gender === "MALE" ? "M" : "F"}
                       </span>
-                      <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-md font-bold">
+                      <span className="bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded-md font-bold">
                         {comp.weight ? `${comp.weight}kg` : "-"}
                       </span>
-                      <span className="bg-yellow-50 text-yellow-800 px-2 py-0.5 rounded-md font-bold truncate max-w-[100px]">
+                      <span className="bg-yellow-50 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-500 px-2 py-0.5 rounded-md font-bold truncate max-w-[100px]">
                         {comp.belt || "-"}
                       </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{comp.club}</div>
-                    <div className="text-sm text-gray-500">{comp.country}</div>
+                    <div className="text-sm text-gray-900 dark:text-gray-100">{comp.club}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">{comp.country}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {comp.isSeeded ? (
-                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400">
                         Seed
                       </span>
                     ) : (
-                      <span className="text-gray-400">-</span>
+                      <span className="text-gray-400 dark:text-gray-600">-</span>
                     )}
                   </td>
                   {!isReadOnly && (
@@ -421,26 +425,30 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
               (Recomendado para {tournamentAreas} área(s):{" "}
               {tournamentAreas * 20})
             </p>
+            <label htmlFor="mockAmount" className="text-gray-400 text-sm mb-2 block">
+              Cantidad de competidores
+            </label>
             <input
+              id="mockAmount"
               type="number"
               min="1"
               value={mockAmount}
               onChange={(e) => setMockAmount(parseInt(e.target.value, 10))}
               className="w-full px-4 py-3 bg-[#121A2F] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all mb-6"
             />
-            <div className="flex justify-end space-x-3">
-              <button
+            <div className="flex justify-end space-x-3 mt-6">
+              <Button
                 onClick={() => setIsMockModalOpen(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors border border-white/10"
+                variant="secondary"
               >
                 Cancelar
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={generateMockCompetitors}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-lg shadow-blue-500/25"
+                variant="primary"
               >
                 Aceptar
-              </button>
+              </Button>
             </div>
           </div>
         </div>

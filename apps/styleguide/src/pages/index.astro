@@ -1,0 +1,89 @@
+---
+import "@corner-click/ui/styles/base.css";
+import { Button, Input, Card } from "@corner-click/ui";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Corner Click UI Styleguide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+      body {
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      section {
+        margin-bottom: 4rem;
+      }
+      h2 {
+        border-bottom: 1px solid var(--color-border);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .flex-gap {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+      .grid-gap {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Corner Click UI Styleguide</h1>
+    <p>Premium UI Components built with React and Vanilla CSS Modules.</p>
+
+    <section>
+      <h2>Buttons</h2>
+      <div class="flex-gap">
+        <Button variant="primary">Primary Button</Button>
+        <Button variant="secondary">Secondary Button</Button>
+        <Button variant="danger">Danger Button</Button>
+        <Button variant="primary" disabled>Disabled Button</Button>
+      </div>
+      <br/>
+      <div class="flex-gap">
+        <Button variant="primary" size="sm">Small</Button>
+        <Button variant="primary" size="md">Medium</Button>
+        <Button variant="primary" size="lg">Large</Button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Inputs</h2>
+      <div class="grid-gap">
+        <Input label="Email Address" placeholder="name@example.com" />
+        <Input label="Password" type="password" placeholder="••••••••" />
+        <Input label="Username" error="This username is already taken" placeholder="johndoe" />
+        <Input label="Disabled Input" disabled placeholder="Not editable" />
+      </div>
+    </section>
+
+    <section>
+      <h2>Cards & Surfaces</h2>
+      <div class="grid-gap">
+        <Card>
+          <h3>Standard Card</h3>
+          <p>This is a standard card with default padding and a sleek drop shadow.</p>
+          <br/>
+          <Button variant="primary" fullWidth>Action</Button>
+        </Card>
+        
+        <Card glass>
+          <h3>Glassmorphism</h3>
+          <p>This card uses a premium glassmorphism effect. Best visible over complex backgrounds.</p>
+          <br/>
+          <Button variant="secondary" fullWidth>View Details</Button>
+        </Card>
+      </div>
+    </section>
+  </body>
+</html>

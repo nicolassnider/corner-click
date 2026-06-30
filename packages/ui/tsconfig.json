@@ -1,0 +1,10 @@
+{
+  "extends": "@corner-click/tsconfig/base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "moduleResolution": "Bundler",
+    "module": "ESNext"
+  },
+  "include": ["src/**/*"]
+}

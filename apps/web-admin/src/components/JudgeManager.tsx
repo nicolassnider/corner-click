@@ -45,9 +45,9 @@ export default function JudgeManager({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-2xl font-extrabold text-gray-900">
+        <h3 className="text-2xl font-extrabold text-gray-900 dark:text-gray-100">
           Judges Management
         </h3>
         {loading && (
@@ -66,14 +66,14 @@ export default function JudgeManager({
       {!isReadOnly && (
         <form
           onSubmit={handleAddJudge}
-          className="flex gap-4 mb-8 bg-gray-50 p-4 rounded-lg border border-gray-200"
+          className="flex gap-4 mb-8 bg-gray-50 dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700"
         >
           <input
             type="text"
             placeholder="Enter Judge Full Name"
             value={newJudgeName}
             onChange={(e) => setNewJudgeName(e.target.value)}
-            className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-gray-900 font-medium"
+            className="flex-1 px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-700 dark:bg-slate-900 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-gray-900 dark:text-gray-100 font-medium"
             required
           />
           <button
@@ -88,7 +88,7 @@ export default function JudgeManager({
 
       <div className="overflow-x-auto">
         <table className="min-w-full text-left text-sm whitespace-nowrap">
-          <thead className="bg-gray-100 uppercase tracking-wider font-bold text-gray-600">
+          <thead className="bg-gray-100 dark:bg-slate-800 uppercase tracking-wider font-bold text-gray-600 dark:text-gray-300">
             <tr>
               <th className="px-6 py-4 rounded-tl-lg">Name</th>
               <th className="px-6 py-4">Personal PIN</th>
@@ -101,7 +101,7 @@ export default function JudgeManager({
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
             {judges.length === 0 ? (
               <tr>
                 <td
@@ -113,8 +113,8 @@ export default function JudgeManager({
               </tr>
             ) : (
               judges.map((j) => (
-                <tr key={j.id} className="hover:bg-blue-50 transition-colors">
-                  <td className="px-6 py-4 font-bold text-gray-900">
+                <tr key={j.id} className="hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors">
+                  <td className="px-6 py-4 font-bold text-gray-900 dark:text-gray-100">
                     {j.name}
                   </td>
                   <td className="px-6 py-4">
@@ -129,7 +129,7 @@ export default function JudgeManager({
                         Online
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-gray-100 text-gray-600">
+                      <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400">
                         <span className="w-2 h-2 rounded-full bg-gray-400"></span>{" "}
                         Offline
                       </span>
@@ -138,7 +138,7 @@ export default function JudgeManager({
                   <td className="px-6 py-4">
                     {j.currentAssignment ? (
                       <div className="flex flex-col">
-                        <span className="text-blue-700 font-bold">
+                        <span className="text-blue-700 dark:text-blue-400 font-bold">
                           Area {j.currentAssignment.areaId} &bull;{" "}
                           <span className="capitalize">
                             {j.currentAssignment.cornerId}
@@ -146,7 +146,7 @@ export default function JudgeManager({
                         </span>
                       </div>
                     ) : (
-                      <span className="text-gray-400 italic font-medium">
+                      <span className="text-gray-400 dark:text-gray-500 italic font-medium">
                         Unassigned
                       </span>
                     )}

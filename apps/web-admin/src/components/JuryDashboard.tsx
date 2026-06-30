@@ -3,20 +3,24 @@ import { onAuthStateChanged } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { fetchWithAuth } from "../utils/apiClient";
 import "../styles/global.css";
-import { getCategories } from "../services/categoryService";
 import { getMatches } from "../services/bracketService";
-import { getCompetitors } from "../services/competitorService";
 import type {
   Tournament,
   Category,
   Match,
   Competitor,
 } from "@corner-click/types";
+import { trpc } from "@corner-click/api-client";
 import { MatchStatus, calculateNetScore } from "@corner-click/types";
 import { getCompetitorFullName } from "../utils/competitorUtils";
 import { useActiveMatch } from "../hooks/useActiveMatch";
 import Footer from "./Footer";
 import { auth } from "../lib/firebase";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { httpBatchLink } from "@trpc/client";
+import { API_URL } from "../utils/apiClient";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Toast {
   id: string;
@@ -24,17 +28,61 @@ interface Toast {
   type: "success" | "error" | "warning" | "info";
 }
 
-export default function JuryDashboard() {
-  const [tournaments, setTournaments] = useState<Tournament[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [competitors, setCompetitors] = useState<Record<string, Competitor>>(
-    {},
-  );
+const queryClient = new QueryClient();
+const trpcClient = trpc.createClient({
+  links: [
+    httpBatchLink({
+      url: `${API_URL}/api/trpc`,
+      async headers() {
+        const user = auth.currentUser;
+        const token = user ? await user.getIdToken() : "";
+        return {
+          authorization: token ? `Bearer ${token}` : "",
+        };
+      },
+    }),
+  ],
+});
 
+export default function JuryDashboardApp() {
+  return (
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <JuryDashboard />
+      </QueryClientProvider>
+    </trpc.Provider>
+  );
+}
+
+function JuryDashboard() {
   const [selectedTournamentId, setSelectedTournamentId] = useState<string>("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+
+  const { data: rawTournaments = [] } = trpc.tournaments.getAll.useQuery();
+  const tournaments = React.useMemo(() => {
+    return Array.isArray(rawTournaments)
+      ? rawTournaments.filter((t: any) => t.status !== "COMPLETED")
+      : [];
+  }, [rawTournaments]);
+
+  const { data: categories = [] } = trpc.categories.getAll.useQuery(
+    { tournamentId: selectedTournamentId },
+    { enabled: !!selectedTournamentId }
+  );
+
+  const { data: competitorsList = [] } = trpc.competitors.getAll.useQuery(
+    { tournamentId: selectedTournamentId },
+    { enabled: !!selectedTournamentId }
+  );
+
+  const competitors: Record<string, Competitor> = React.useMemo(() => {
+    const map: Record<string, Competitor> = {};
+    competitorsList.forEach((c) => {
+      map[c.id] = c;
+    });
+    return map;
+  }, [competitorsList]);
 
   // Custom Toast state
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -67,34 +115,6 @@ export default function JuryDashboard() {
       const cId = params.get("category");
       if (tId) setSelectedTournamentId(tId);
       if (cId) setSelectedCategoryId(cId);
-
-      // Fetch tournaments
-      fetchWithAuth(`/api/tournaments`)
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Unauthorized or failed to load");
-          }
-          return res.json();
-        })
-        .then((data) => {
-          if (Array.isArray(data)) {
-            const activeTournaments = data.filter(
-              (t: any) => t.status !== "COMPLETED",
-            );
-            setTournaments(activeTournaments);
-          } else {
-            setTournaments([]);
-            showToast("Formato de torneos inválido", "error");
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-          setTournaments([]);
-          showToast(
-            "Error al cargar torneos (No autorizado o error de red)",
-            "error",
-          );
-        });
     });
 
     return () => unsub();
@@ -114,62 +134,40 @@ export default function JuryDashboard() {
     window.history.replaceState({}, "", url.toString());
   }, [selectedTournamentId, selectedCategoryId]);
 
-  // Fetch categories and competitors when tournament changes
-  useEffect(() => {
-    if (selectedTournamentId) {
-      Promise.all([
-        getCategories(selectedTournamentId),
-        getMatches(selectedTournamentId), // Fetch all matches to see active categories
-        getCompetitors(selectedTournamentId),
-      ])
-        .then(([fetchedCategories, allMatches, fetchedCompetitors]) => {
-          const activeCategoryIds = new Set(
-            allMatches.map((m) => m.categoryId),
-          );
-          const populatedCategories = fetchedCategories.filter((c) =>
-            activeCategoryIds.has(c.id),
-          );
-          setCategories(populatedCategories);
+  const { data: allMatches = [], refetch: refetchMatches } = trpc.matches.getByTournament.useQuery(
+    { tournamentId: selectedTournamentId },
+    { enabled: !!selectedTournamentId }
+  );
 
-          const compMap: Record<string, Competitor> = {};
-          fetchedCompetitors.forEach((c) => (compMap[c.id] = c));
-          setCompetitors(compMap);
-        })
-        .catch((err) => {
-          console.error(err);
-          showToast("Error al cargar datos del torneo", "error");
-        });
-    } else {
-      setCategories([]);
-      setCompetitors({});
-    }
-  }, [selectedTournamentId]);
+  const activeCategoryIds = React.useMemo(() => {
+    return new Set(allMatches.map((m) => m.categoryId));
+  }, [allMatches]);
 
-  // Fetch matches when category changes
+  const activeCategories = React.useMemo(() => {
+    return categories.filter((c) => activeCategoryIds.has(c.id));
+  }, [categories, activeCategoryIds]);
+
+  const matches = React.useMemo(() => {
+    if (!selectedCategoryId) return [];
+    return allMatches.filter((m) => m.categoryId === selectedCategoryId);
+  }, [allMatches, selectedCategoryId]);
+
+  // When selectedCategoryId changes, update selectedMatch
   useEffect(() => {
-    if (selectedTournamentId && selectedCategoryId) {
-      getMatches(selectedTournamentId, selectedCategoryId)
-        .then((fetchedMatches) => {
-          setMatches(fetchedMatches);
-          setSelectedMatch(fetchedMatches[0] ?? null);
-        })
-        .catch((err) => {
-          console.error(err);
-          showToast("Error al cargar combates", "error");
-        });
-    } else {
-      setMatches([]);
+    if (matches.length > 0 && !selectedMatch) {
+      setSelectedMatch(matches[0]);
+    } else if (matches.length === 0) {
       setSelectedMatch(null);
     }
-  }, [selectedTournamentId, selectedCategoryId]);
+  }, [matches, selectedMatch]);
 
-  // Callback to handle matches list refresh from active match actions
   const handleMatchesRefreshed = (
     updatedMatches: Match[],
     currentMatch: Match,
   ) => {
-    setMatches(updatedMatches);
-    setSelectedMatch(currentMatch);
+    refetchMatches().then(() => {
+      setSelectedMatch(currentMatch);
+    });
   };
 
   // Initialize active match controller hook
@@ -307,14 +305,14 @@ export default function JuryDashboard() {
               value={selectedCategoryId}
               onChange={(e) => setSelectedCategoryId(e.target.value)}
               className="bg-slate-950 text-slate-200 px-3 py-2 rounded-lg border border-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium transition-all w-full sm:w-52 min-w-[200px] disabled:opacity-50 disabled:bg-slate-900 disabled:text-slate-500 disabled:border-slate-850 disabled:cursor-not-allowed"
-              disabled={!selectedTournamentId || categories.length === 0}
+              disabled={!selectedTournamentId || activeCategories.length === 0}
             >
-              {selectedTournamentId && categories.length === 0 ? (
+              {selectedTournamentId && activeCategories.length === 0 ? (
                 <option value="">No categories available</option>
               ) : (
                 <option value="">Select Category...</option>
               )}
-              {categories.map((c) => (
+              {activeCategories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
@@ -364,80 +362,87 @@ export default function JuryDashboard() {
               </p>
             ) : (
               <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 flex-1 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
-                {matches.map((match) => {
-                  const isCurrent = selectedMatch?.id === match.id;
-                  const displayStatus = isCurrent ? status : match.status;
-                  const displayWinnerId = isCurrent
-                    ? selectedMatch.winnerId
-                    : match.winnerId;
+                <AnimatePresence>
+                  {matches.map((match) => {
+                    const isCurrent = selectedMatch?.id === match.id;
+                    const displayStatus = isCurrent ? status : match.status;
+                    const displayWinnerId = isCurrent
+                      ? selectedMatch?.winnerId
+                      : match.winnerId;
 
-                  return (
-                    <div
-                      key={match.id}
-                      className={`p-3 rounded-xl cursor-pointer transition-all border-2 ${
-                        isCurrent
-                          ? "border-blue-500 bg-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.15)] transform scale-[1.02]"
-                          : "border-slate-800 bg-slate-900/30 hover:bg-slate-900/60 hover:border-slate-700"
-                      }`}
-                      onClick={() => setSelectedMatch(match)}
-                    >
-                      <div className="flex justify-between items-center mb-1">
-                        <span
-                          className={`text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded ${isCurrent ? "bg-blue-500/20 text-blue-400" : "bg-slate-800 text-slate-400"}`}
-                        >
-                          Round {match.round} {displayWinnerId ? "✓" : ""}
-                        </span>
-                        <span
-                          className="text-[10px] text-slate-600 font-mono tracking-tighter"
-                          title="Match ID"
-                        >
-                          #{match.id.substring(0, 8)}
-                        </span>
-                      </div>
-                      <div className="font-semibold text-sm flex items-center justify-between gap-2">
-                        <span
-                          className={`text-rose-400 truncate max-w-[45%] ${displayWinnerId === match.redCompetitorId ? "font-black underline decoration-2" : ""}`}
-                        >
-                          {getCompetitorFullName(
-                            match.redCompetitorId,
-                            competitors,
-                          )}
-                        </span>
-                        <span className="text-slate-600 text-[10px] uppercase font-bold tracking-widest shrink-0">
-                          vs
-                        </span>
-                        <span
-                          className={`text-blue-400 truncate max-w-[45%] text-right ${displayWinnerId === match.blueCompetitorId ? "font-black underline decoration-2" : ""}`}
-                        >
-                          {getCompetitorFullName(
-                            match.blueCompetitorId,
-                            competitors,
-                          )}
-                        </span>
-                      </div>
-                      <div className="mt-3 flex justify-between items-center">
-                        <span
-                          className={`text-[10px] font-black px-2 py-0.5 rounded-md tracking-wider uppercase ${
-                            displayStatus === MatchStatus.COMPLETED
-                              ? "bg-slate-800 text-slate-400"
-                              : displayStatus === MatchStatus.ACTIVE
-                                ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                                : displayStatus === MatchStatus.GOLDEN_POINT
-                                  ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
-                                  : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
-                          }`}
-                        >
-                          {displayStatus}
-                        </span>
-                        {displayWinnerId && (
-                          <span className="text-[10px] font-bold text-slate-500">
-                            Winner Declared
+                    return (
+                      <motion.div
+                        layout
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        key={match.id}
+                        className={`p-3 rounded-xl cursor-pointer transition-all border-2 ${
+                          isCurrent
+                            ? "border-blue-500 bg-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.15)] transform scale-[1.02]"
+                            : "border-slate-800 bg-slate-900/30 hover:bg-slate-900/60 hover:border-slate-700"
+                        }`}
+                        onClick={() => setSelectedMatch(match)}
+                      >
+                        <div className="flex justify-between items-center mb-1">
+                          <span
+                            className={`text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded ${isCurrent ? "bg-blue-500/20 text-blue-400" : "bg-slate-800 text-slate-400"}`}
+                          >
+                            Round {match.round} {displayWinnerId ? "✓" : ""}
                           </span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+                          <span
+                            className="text-[10px] text-slate-600 font-mono tracking-tighter"
+                            title="Match ID"
+                          >
+                            #{match.id.substring(0, 8)}
+                          </span>
+                        </div>
+                        <div className="font-semibold text-sm flex items-center justify-between gap-2">
+                          <span
+                            className={`text-rose-400 truncate max-w-[45%] ${displayWinnerId === match.redCompetitorId ? "font-black underline decoration-2" : ""}`}
+                          >
+                            {getCompetitorFullName(
+                              match.redCompetitorId,
+                              competitors,
+                            )}
+                          </span>
+                          <span className="text-slate-600 text-[10px] uppercase font-bold tracking-widest shrink-0">
+                            vs
+                          </span>
+                          <span
+                            className={`text-blue-400 truncate max-w-[45%] text-right ${displayWinnerId === match.blueCompetitorId ? "font-black underline decoration-2" : ""}`}
+                          >
+                            {getCompetitorFullName(
+                              match.blueCompetitorId,
+                              competitors,
+                            )}
+                          </span>
+                        </div>
+                        <div className="mt-3 flex justify-between items-center">
+                          <span
+                            className={`text-[10px] font-black px-2 py-0.5 rounded-md tracking-wider uppercase ${
+                              displayStatus === MatchStatus.COMPLETED
+                                ? "bg-slate-800 text-slate-400"
+                                : displayStatus === MatchStatus.ACTIVE
+                                  ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                                  : displayStatus === MatchStatus.GOLDEN_POINT
+                                    ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                                    : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+                            }`}
+                          >
+                            {displayStatus}
+                          </span>
+                          {displayWinnerId && (
+                            <span className="text-[10px] font-bold text-slate-500">
+                              Winner Declared
+                            </span>
+                          )}
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
               </div>
             )}
           </div>
@@ -445,19 +450,32 @@ export default function JuryDashboard() {
 
         {/* Right Main Area: Timer & Controls */}
         <section className="lg:col-span-2 order-1 lg:order-2 flex flex-col">
-          {!selectedMatch ? (
-            <div className="bg-slate-900/20 backdrop-blur-xl rounded-2xl border border-slate-800 shadow-2xl flex flex-col items-center justify-center p-12 min-h-[450px] flex-grow text-center">
-              <span className="text-6xl mb-4 animate-bounce">⚡</span>
-              <p className="text-slate-400 text-lg font-bold">
-                Select a match from the queue to start control operations.
-              </p>
-              <p className="text-slate-600 text-sm mt-1">
-                Make sure you have selected a tournament and active category
-                first.
-              </p>
-            </div>
-          ) : (
-            <div className="bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-800/80 shadow-2xl overflow-hidden flex flex-col h-full flex-grow">
+          <AnimatePresence mode="wait">
+            {!selectedMatch ? (
+              <motion.div 
+                key="no-match"
+                initial={{ opacity: 0, scale: 0.95 }} 
+                animate={{ opacity: 1, scale: 1 }} 
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="bg-slate-900/20 backdrop-blur-xl rounded-2xl border border-slate-800 shadow-2xl flex flex-col items-center justify-center p-12 min-h-[450px] flex-grow text-center"
+              >
+                <span className="text-6xl mb-4 animate-bounce">⚡</span>
+                <p className="text-slate-400 text-lg font-bold">
+                  Select a match from the queue to start control operations.
+                </p>
+                <p className="text-slate-600 text-sm mt-1">
+                  Make sure you have selected a tournament and active category
+                  first.
+                </p>
+              </motion.div>
+            ) : (
+              <motion.div 
+                key={selectedMatch.id}
+                initial={{ opacity: 0, y: 20 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                exit={{ opacity: 0, y: -20 }}
+                className="bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-800/80 shadow-2xl overflow-hidden flex flex-col h-full flex-grow relative"
+              >
               {/* Match Header */}
               <div className="bg-slate-900/80 border-b border-slate-800 p-4 md:p-6 text-center relative overflow-hidden shrink-0">
                 <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
@@ -807,8 +825,9 @@ export default function JuryDashboard() {
                   🛑 Stop Match
                 </button>
               </div>
-            </div>
+            </motion.div>
           )}
+          </AnimatePresence>
         </section>
       </main>
 
