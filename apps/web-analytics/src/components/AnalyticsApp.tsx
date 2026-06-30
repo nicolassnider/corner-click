@@ -1,44 +1,42 @@
-import React, { useState, useEffect } from "react";
-import { ref, get } from "firebase/database";
-import { database } from "../lib/firebase";
-import { getCategories } from "../services/categoryService";
-import AnalyticsManager from "./AnalyticsManager";
-import { fetchWithAuth, API_URL } from "../utils/apiClient";
-import AnalyticsHeader from "./AnalyticsHeader";
-import AnalyticsFooter from "./AnalyticsFooter";
-import { auth } from "../lib/firebase";
-import { AuthProvider, useAuth, LoginForm } from "@corner-click/auth";
+import { AuthProvider, LoginForm, useAuth } from '@corner-click/auth'
+import { useEffect, useState } from 'react'
+import { auth } from '../lib/firebase'
+import { getCategories } from '../services/categoryService'
+import { API_URL, fetchWithAuth } from '../utils/apiClient'
+import AnalyticsFooter from './AnalyticsFooter'
+import AnalyticsHeader from './AnalyticsHeader'
+import AnalyticsManager from './AnalyticsManager'
 
 function AnalyticsAppContent() {
-  const { user, loading } = useAuth();
-  const [tournaments, setTournaments] = useState<
-    { id: string; name: string }[]
-  >([]);
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
-    [],
-  );
+  const { user, loading } = useAuth()
+  const [tournaments, setTournaments] = useState<{ id: string; name: string }[]>([])
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
 
-  const [selectedTournamentId, setSelectedTournamentId] = useState<string>("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
-  const [loadingCategories, setLoadingCategories] = useState(false);
+  const [selectedTournamentId, setSelectedTournamentId] = useState<string>('')
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>('')
+  const [loadingCategories, setLoadingCategories] = useState(false)
 
-  const selectedCategory = categories.find((c) => c.id === selectedCategoryId);
-  const selectedCategoryName = selectedCategory?.name;
+  const selectedCategory = categories.find((c) => c.id === selectedCategoryId)
+  const selectedCategoryName = selectedCategory?.name
 
-  const selectedTournament = tournaments.find(
-    (t) => t.id === selectedTournamentId,
-  );
-  const selectedTournamentName = selectedTournament?.name;
+  const selectedTournament = tournaments.find((t) => t.id === selectedTournamentId)
+  const selectedTournamentName = selectedTournament?.name
 
   // Load URL params if any
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return
+    }
 
-    const params = new URLSearchParams(window.location.search);
-    const tId = params.get("tournament");
-    const cId = params.get("category");
-    if (tId) setSelectedTournamentId(tId);
-    if (cId) setSelectedCategoryId(cId);
+    const params = new URLSearchParams(window.location.search)
+    const tId = params.get('tournament')
+    const cId = params.get('category')
+    if (tId) {
+      setSelectedTournamentId(tId)
+    }
+    if (cId) {
+      setSelectedCategoryId(cId)
+    }
 
     // Fetch tournaments list from API publicly (since Firestore holds their names)
     fetchWithAuth(`${API_URL}/api/tournaments`)
@@ -47,64 +45,68 @@ function AnalyticsAppContent() {
         if (Array.isArray(data)) {
           const list = data.map((t: any) => ({
             id: t.id,
-            name: t.name || "Torneo Sin Nombre",
-          }));
-          setTournaments(list);
+            name: t.name || 'Torneo Sin Nombre',
+          }))
+          setTournaments(list)
         }
       })
-      .catch((err) => console.error("Failed to load tournaments:", err));
-  }, [user]);
+      .catch((err) => console.error('Failed to load tournaments:', err))
+  }, [user])
 
   // Update URL params when selections change
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return
+    }
 
-    const url = new URL(window.location.href);
+    const url = new URL(window.location.href)
     if (selectedTournamentId) {
-      url.searchParams.set("tournament", selectedTournamentId);
+      url.searchParams.set('tournament', selectedTournamentId)
     } else {
-      url.searchParams.delete("tournament");
+      url.searchParams.delete('tournament')
     }
 
     if (selectedCategoryId) {
-      url.searchParams.set("category", selectedCategoryId);
+      url.searchParams.set('category', selectedCategoryId)
     } else {
-      url.searchParams.delete("category");
+      url.searchParams.delete('category')
     }
 
-    window.history.replaceState({}, "", url.toString());
-  }, [selectedTournamentId, selectedCategoryId, user]);
+    window.history.replaceState({}, '', url.toString())
+  }, [selectedTournamentId, selectedCategoryId, user])
 
   // Fetch categories when tournament is selected
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return
+    }
 
     if (selectedTournamentId) {
-      setLoadingCategories(true);
+      setLoadingCategories(true)
       getCategories(selectedTournamentId)
         .then((list) => {
-          setCategories(list);
+          setCategories(list)
           if (list.length > 0 && !selectedCategoryId) {
-            setSelectedCategoryId(list[0].id);
+            setSelectedCategoryId(list[0].id)
           }
-          setLoadingCategories(false);
+          setLoadingCategories(false)
         })
         .catch((err) => {
-          console.error(err);
-          setLoadingCategories(false);
-        });
+          console.error(err)
+          setLoadingCategories(false)
+        })
     } else {
-      setCategories([]);
-      setSelectedCategoryId("");
+      setCategories([])
+      setSelectedCategoryId('')
     }
-  }, [selectedTournamentId, user]);
+  }, [selectedTournamentId, user, selectedCategoryId])
 
   if (loading) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-[#0A0F1C]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500"></div>
       </div>
-    );
+    )
   }
 
   if (!user) {
@@ -114,10 +116,10 @@ function AnalyticsAppContent() {
         subtitle="Public Analytics"
         onLoginSuccess={() => {
           // reload the page to initialize session state correctly
-          window.location.reload();
+          window.location.reload()
         }}
       />
-    );
+    )
   }
 
   return (
@@ -139,8 +141,8 @@ function AnalyticsAppContent() {
               id="t-select"
               value={selectedTournamentId}
               onChange={(e) => {
-                setSelectedTournamentId(e.target.value);
-                setSelectedCategoryId("");
+                setSelectedTournamentId(e.target.value)
+                setSelectedCategoryId('')
               }}
               className="block w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50 focus:ring-blue-500 focus:border-blue-500 text-sm"
             >
@@ -211,8 +213,8 @@ function AnalyticsAppContent() {
             </svg>
             <p className="text-lg font-bold">Espera de Selección</p>
             <p className="text-sm mt-1">
-              Selecciona un torneo y categoría en los paneles superiores para
-              cargar estadísticas y reportes.
+              Selecciona un torneo y categoría en los paneles superiores para cargar estadísticas y
+              reportes.
             </p>
           </div>
         )}
@@ -220,7 +222,7 @@ function AnalyticsAppContent() {
 
       <AnalyticsFooter />
     </div>
-  );
+  )
 }
 
 export default function AnalyticsApp() {
@@ -228,5 +230,5 @@ export default function AnalyticsApp() {
     <AuthProvider auth={auth} fetchWithAuth={fetchWithAuth}>
       <AnalyticsAppContent />
     </AuthProvider>
-  );
+  )
 }

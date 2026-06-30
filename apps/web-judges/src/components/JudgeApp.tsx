@@ -1,45 +1,41 @@
-import React, { useState, useEffect } from "react";
-import { onAuthStateChanged, signInWithCustomToken } from "firebase/auth";
-import type { User } from "firebase/auth";
-import { ref, onValue } from "firebase/database";
-import { auth, database } from "../lib/firebase";
-import { fetchWithAuth, API_URL } from "../utils/apiClient";
-import ScorePad from "./ScorePad";
-import InstallPrompt from "./InstallPrompt";
-import {
-  APP_MOTTO,
-  AUTHOR_NAME,
-  AUTHOR_GITHUB,
-  AUTHOR_LINKEDIN,
-} from "@corner-click/types";
-import "../styles/global.css";
+import { APP_MOTTO, AUTHOR_GITHUB, AUTHOR_LINKEDIN, AUTHOR_NAME } from '@corner-click/types'
+import type { User } from 'firebase/auth'
+import { onAuthStateChanged, signInWithCustomToken } from 'firebase/auth'
+import { onValue, ref } from 'firebase/database'
+import type React from 'react'
+import { useEffect, useState } from 'react'
+import { auth, database } from '../lib/firebase'
+import { API_URL } from '../utils/apiClient'
+import InstallPrompt from './InstallPrompt'
+import ScorePad from './ScorePad'
+import '../styles/global.css'
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { httpBatchLink } from "@trpc/client";
-import { trpc } from "@corner-click/api-client";
+import { trpc } from '@corner-click/api-client'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { httpBatchLink } from '@trpc/client'
 
 interface AssignedData {
-  tournamentId: string;
-  areaId: string;
-  cornerId: string;
-  matchId?: string;
+  tournamentId: string
+  areaId: string
+  cornerId: string
+  matchId?: string
 }
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
       url: `${API_URL}/api/trpc`,
       async headers() {
-        const user = auth.currentUser;
-        const token = user ? await user.getIdToken() : "";
+        const user = auth.currentUser
+        const token = user ? await user.getIdToken() : ''
         return {
-          authorization: token ? `Bearer ${token}` : "",
-        };
+          authorization: token ? `Bearer ${token}` : '',
+        }
       },
     }),
   ],
-});
+})
 
 export default function JudgeAppApp() {
   return (
@@ -48,207 +44,206 @@ export default function JudgeAppApp() {
         <JudgeApp />
       </QueryClientProvider>
     </trpc.Provider>
-  );
+  )
 }
 
 function JudgeApp() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [pin, setPin] = useState("");
-  const [error, setError] = useState("");
-  const [assignment, setAssignment] = useState<AssignedData | null>(null);
-  const [activeMatchId, setActiveMatchId] = useState<string | null>(null);
-  const [judgeName, setJudgeName] = useState<string>("");
-  const [tournamentId, setTournamentId] = useState<string | null>(null);
-  const [judgeId, setJudgeId] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [pin, setPin] = useState('')
+  const [error, setError] = useState('')
+  const [assignment, setAssignment] = useState<AssignedData | null>(null)
+  const [activeMatchId, setActiveMatchId] = useState<string | null>(null)
+  const [judgeName, setJudgeName] = useState<string>('')
+  const [tournamentId, setTournamentId] = useState<string | null>(null)
+  const [judgeId, setJudgeId] = useState<string | null>(null)
 
   // Listen to active match in the assigned area
   useEffect(() => {
     if (!assignment) {
-      setActiveMatchId(null);
-      return;
+      setActiveMatchId(null)
+      return
     }
 
-    if (assignment.tournamentId === "offline-tournament") {
-      setActiveMatchId("offline-match");
-      return;
+    if (assignment.tournamentId === 'offline-tournament') {
+      setActiveMatchId('offline-match')
+      return
     }
 
-    const areaRef = ref(database, `live_matches_by_area/${assignment.areaId}`);
+    const areaRef = ref(database, `live_matches_by_area/${assignment.areaId}`)
     const unsub = onValue(areaRef, (snap) => {
       if (snap.exists() && snap.val().matchId) {
-        setActiveMatchId(snap.val().matchId);
+        setActiveMatchId(snap.val().matchId)
       } else {
-        setActiveMatchId(null);
+        setActiveMatchId(null)
       }
-    });
+    })
 
-    return () => unsub();
-  }, [assignment]);
+    return () => unsub()
+  }, [assignment])
 
   // Authenticate user
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
+      setUser(currentUser)
 
       if (currentUser) {
-        const tokenResult = await currentUser.getIdTokenResult();
-        const tId = tokenResult.claims.tournamentId as string;
-        const jId = tokenResult.claims.judgeId as string;
-        const jName = tokenResult.claims.judgeName as string;
+        const tokenResult = await currentUser.getIdTokenResult()
+        const tId = tokenResult.claims.tournamentId as string
+        const jId = tokenResult.claims.judgeId as string
+        const jName = tokenResult.claims.judgeName as string
 
         if (!tId || !jId) {
-          await auth.signOut();
-          setUser(null);
-          setTournamentId(null);
-          setJudgeId(null);
-          setLoading(false);
-          return;
+          await auth.signOut()
+          setUser(null)
+          setTournamentId(null)
+          setJudgeId(null)
+          setLoading(false)
+          return
         }
 
-        setJudgeName(jName);
-        setTournamentId(tId);
-        setJudgeId(jId);
-        setLoading(false);
+        setJudgeName(jName)
+        setTournamentId(tId)
+        setJudgeId(jId)
+        setLoading(false)
       } else {
-        setTournamentId(null);
-        setJudgeId(null);
-        setLoading(false);
+        setTournamentId(null)
+        setJudgeId(null)
+        setLoading(false)
       }
-    });
+    })
 
     return () => {
-      unsubscribe();
-    };
-  }, []);
+      unsubscribe()
+    }
+  }, [])
 
   // Poll for judge assignment using tRPC
   const { data: judgeData, error: queryError } = trpc.judges.getById.useQuery(
     { tournamentId: tournamentId!, judgeId: judgeId! },
     {
-      enabled:
-        !!tournamentId && !!judgeId && tournamentId !== "offline-tournament",
+      enabled: !!tournamentId && !!judgeId && tournamentId !== 'offline-tournament',
       refetchInterval: 3000,
-    },
-  );
+    }
+  )
 
   useEffect(() => {
     if (queryError) {
-      console.error("tRPC query error:", queryError);
-      setError("Error de base de datos (tRPC): " + queryError.message);
+      console.error('tRPC query error:', queryError)
+      setError(`Error de base de datos (tRPC): ${queryError.message}`)
     }
     if (judgeData) {
-      setError("");
-      if (judgeData.status === "OFFLINE") {
-        auth.signOut();
-        setAssignment(null);
-        setPin("");
-        setUser(null);
-        setTournamentId(null);
-        setJudgeId(null);
+      setError('')
+      if (judgeData.status === 'OFFLINE') {
+        auth.signOut()
+        setAssignment(null)
+        setPin('')
+        setUser(null)
+        setTournamentId(null)
+        setJudgeId(null)
       } else if (judgeData.currentAssignment) {
         setAssignment({
           ...judgeData.currentAssignment,
-          tournamentId: tournamentId || "",
-        });
+          tournamentId: tournamentId || '',
+        })
       } else {
-        setAssignment(null);
+        setAssignment(null)
       }
     }
-  }, [judgeData, queryError, tournamentId]);
+  }, [judgeData, queryError, tournamentId])
 
-  const pinLoginMutation = trpc.auth.pinLogin.useMutation();
-  const logoutMutation = trpc.auth.logout.useMutation();
+  const pinLoginMutation = trpc.auth.pinLogin.useMutation()
+  const logoutMutation = trpc.auth.logout.useMutation()
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+    e.preventDefault()
+    setError('')
 
-    if (pin === "9999") {
+    if (pin === '9999') {
       // Local Offline Mock mode activation
-      setJudgeName("Juez Offline (PIN 9999)");
-      setTournamentId("offline-tournament");
-      setJudgeId("offline-judge-id");
+      setJudgeName('Juez Offline (PIN 9999)')
+      setTournamentId('offline-tournament')
+      setJudgeId('offline-judge-id')
       setAssignment({
-        tournamentId: "offline-tournament",
-        areaId: "1",
-        cornerId: "corner_1",
-      });
+        tournamentId: 'offline-tournament',
+        areaId: '1',
+        cornerId: 'corner_1',
+      })
       setUser({
-        uid: "offline-judge-uid",
+        uid: 'offline-judge-uid',
         emailVerified: true,
         isAnonymous: true,
-        providerId: "custom",
-        getIdToken: () => Promise.resolve("offline-token"),
+        providerId: 'custom',
+        getIdToken: () => Promise.resolve('offline-token'),
         getIdTokenResult: () =>
           Promise.resolve({
-            authTime: "",
+            authTime: '',
             claims: {
-              tournamentId: "offline-tournament",
-              judgeId: "offline-judge-id",
-              judgeName: "Juez Offline (PIN 9999)",
+              tournamentId: 'offline-tournament',
+              judgeId: 'offline-judge-id',
+              judgeName: 'Juez Offline (PIN 9999)',
             },
-            expirationTime: "",
-            issuedAtTime: "",
-            signInProvider: "",
-            signInSecondFactor: "",
-            token: "",
+            expirationTime: '',
+            issuedAtTime: '',
+            signInProvider: '',
+            signInSecondFactor: '',
+            token: '',
           }),
         phoneNumber: null,
         photoURL: null,
-        displayName: "Juez Offline",
-        email: "offline@corner.click",
+        displayName: 'Juez Offline',
+        email: 'offline@corner.click',
         metadata: {},
         providerData: [],
-        refreshToken: "",
+        refreshToken: '',
         tenantId: null,
         delete: () => Promise.resolve(),
         reload: () => Promise.resolve(),
         toJSON: () => ({}),
-      } as any);
-      setLoading(false);
-      return;
+      } as any)
+      setLoading(false)
+      return
     }
 
     try {
-      const data = await pinLoginMutation.mutateAsync({ pin });
-      await signInWithCustomToken(auth, data.token);
+      const data = await pinLoginMutation.mutateAsync({ pin })
+      await signInWithCustomToken(auth, data.token)
     } catch (err: any) {
-      setError(err.message || "Error al iniciar sesión");
+      setError(err.message || 'Error al iniciar sesión')
     }
-  };
+  }
 
   const handleLogout = async () => {
-    if (pin === "9999") {
-      setAssignment(null);
-      setPin("");
-      setUser(null);
-      setTournamentId(null);
-      setJudgeId(null);
-      return;
+    if (pin === '9999') {
+      setAssignment(null)
+      setPin('')
+      setUser(null)
+      setTournamentId(null)
+      setJudgeId(null)
+      return
     }
 
     if (user) {
       try {
-        await logoutMutation.mutateAsync();
+        await logoutMutation.mutateAsync()
       } catch (err) {
-        console.error("Failed to logout via API", err);
+        console.error('Failed to logout via API', err)
       }
     }
 
-    await auth.signOut();
-    setAssignment(null);
-    setPin("");
-    setTournamentId(null);
-    setJudgeId(null);
-  };
+    await auth.signOut()
+    setAssignment(null)
+    setPin('')
+    setTournamentId(null)
+    setJudgeId(null)
+  }
 
   if (loading) {
     return (
       <div className="flex h-[100dvh] w-screen items-center justify-center bg-slate-950 text-slate-100 font-sans">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
-    );
+    )
   }
 
   if (!user) {
@@ -275,14 +270,13 @@ function JudgeApp() {
             pattern="[0-9]{4,6}"
             value={pin}
             onChange={(e) => {
-              const val = e.target.value.replace(/\D/g, "");
+              const val = e.target.value.replace(/\D/g, '')
               if (val.length <= 6) {
-                setPin(val);
+                setPin(val)
               }
             }}
             placeholder="••••"
             required
-            autoFocus
             className="p-4 text-3xl text-center rounded-2xl border border-slate-700 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold tracking-[0.5em]"
           />
 
@@ -326,7 +320,7 @@ function JudgeApp() {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   if (!assignment || !activeMatchId) {
@@ -339,16 +333,14 @@ function JudgeApp() {
           <h1 className="text-3xl font-black text-slate-100 mb-2 tracking-tight uppercase">
             Hola, <span className="text-blue-500">{judgeName}</span>
           </h1>
-          <p className="text-slate-400 font-medium mb-8">
-            Has iniciado sesión correctamente.
-          </p>
+          <p className="text-slate-400 font-medium mb-8">Has iniciado sesión correctamente.</p>
 
           <div className="p-6 bg-slate-950/50 rounded-2xl border border-slate-800 w-full animate-pulse-slow relative overflow-hidden">
             <div className="absolute inset-0 bg-blue-500/5 blur-[40px]" />
             <p className="text-lg font-bold text-slate-200 leading-relaxed relative z-10">
               {assignment
                 ? `Esperando que inicie un combate en el Área ${assignment.areaId}...`
-                : "Esperando asignación desde la Mesa Central..."}
+                : 'Esperando asignación desde la Mesa Central...'}
             </p>
             <div className="mt-6 flex justify-center space-x-2 relative z-10">
               <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce [animation-delay:0ms]"></div>
@@ -371,7 +363,7 @@ function JudgeApp() {
           </button>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -382,11 +374,11 @@ function JudgeApp() {
         matchId={activeMatchId}
         cornerId={assignment.cornerId}
         areaId={assignment.areaId}
-        judgeId={user?.uid || "offline-judge-id"}
+        judgeId={user?.uid || 'offline-judge-id'}
         judgeName={judgeName}
         onLogout={handleLogout}
-        isOffline={assignment.tournamentId === "offline-tournament"}
+        isOffline={assignment.tournamentId === 'offline-tournament'}
       />
     </>
-  );
+  )
 }

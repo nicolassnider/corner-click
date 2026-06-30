@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from "react";
-import type { Judge } from "@corner-click/types";
-import { CornerRole } from "@corner-click/types";
+import type { Judge } from '@corner-click/types'
+import { CornerRole } from '@corner-click/types'
+import type React from 'react'
+import { useEffect, useState } from 'react'
 
 interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  judge: Judge | null;
-  judges: Judge[];
-  tournamentAreas: number;
-  tournamentId: string;
-  onAssign: (
-    judgeId: string,
-    assignment: { areaId: string; cornerId: string },
-  ) => Promise<void>;
+  isOpen: boolean
+  onClose: () => void
+  judge: Judge | null
+  judges: Judge[]
+  tournamentAreas: number
+  tournamentId: string
+  onAssign: (judgeId: string, assignment: { areaId: string; cornerId: string }) => Promise<void>
 }
 
 export default function AssignJudgeModal({
@@ -24,67 +22,62 @@ export default function AssignJudgeModal({
   tournamentId,
   onAssign,
 }: Props) {
-  const [areaId, setAreaId] = useState("1");
-  const [cornerId, setCornerId] = useState(CornerRole.CORNER_1 as string);
-  const [submitting, setSubmitting] = useState(false);
+  const [areaId, setAreaId] = useState('1')
+  const [cornerId, setCornerId] = useState(CornerRole.CORNER_1 as string)
+  const [submitting, setSubmitting] = useState(false)
 
   // Reset form when opened with a new judge
   useEffect(() => {
     if (judge) {
-      setAreaId(judge.currentAssignment?.areaId || "1");
-      setCornerId(judge.currentAssignment?.cornerId || CornerRole.CORNER_1);
+      setAreaId(judge.currentAssignment?.areaId || '1')
+      setCornerId(judge.currentAssignment?.cornerId || CornerRole.CORNER_1)
     }
-  }, [judge]);
+  }, [judge])
 
-  if (!isOpen || !judge) return null;
+  if (!isOpen || !judge) {
+    return null
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     const existingAssignment = judges.find(
       (j) =>
         j.id !== judge.id &&
         j.currentAssignment?.areaId === areaId &&
-        j.currentAssignment?.cornerId === cornerId,
-    );
+        j.currentAssignment?.cornerId === cornerId
+    )
 
     if (existingAssignment) {
       alert(
-        `Cannot assign: ${existingAssignment.name} is already assigned to Area ${areaId} as ${cornerId}. Please unassign them first.`,
-      );
-      return;
+        `Cannot assign: ${existingAssignment.name} is already assigned to Area ${areaId} as ${cornerId}. Please unassign them first.`
+      )
+      return
     }
 
-    setSubmitting(true);
+    setSubmitting(true)
     try {
-      await onAssign(judge.id!, { areaId, cornerId });
-      onClose();
+      await onAssign(judge.id!, { areaId, cornerId })
+      onClose()
     } catch (error) {
-      console.error("Failed to assign", error);
+      console.error('Failed to assign', error)
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-200 dark:border-slate-800 animate-in fade-in zoom-in duration-200">
         <div className="bg-gray-900 px-6 py-4 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-white tracking-wide">
-            Assign Judge
-          </h2>
+          <h2 className="text-xl font-bold text-white tracking-wide">Assign Judge</h2>
           <button
             onClick={onClose}
             aria-label="Close"
             title="Close"
             className="text-gray-400 hover:text-white transition-colors"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -169,12 +162,12 @@ export default function AssignJudgeModal({
                 disabled={submitting}
                 className="flex-1 px-4 py-3 text-white font-bold bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-95"
               >
-                {submitting ? "Assigning..." : "Confirm Assignment"}
+                {submitting ? 'Assigning...' : 'Confirm Assignment'}
               </button>
             </div>
           </form>
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -1,80 +1,78 @@
-import React, { useState } from "react";
-import { signInWithCustomToken } from "firebase/auth";
-import { useAuth } from "./index";
-import { trpc } from "@corner-click/api-client";
+import { trpc } from '@corner-click/api-client'
+import { signInWithCustomToken } from 'firebase/auth'
+import type React from 'react'
+import { useState } from 'react'
+import { useAuth } from './index'
 
 interface LoginFormProps {
-  title?: string;
-  subtitle?: string;
-  onLoginSuccess?: () => void;
+  title?: string
+  subtitle?: string
+  onLoginSuccess?: () => void
 }
 
 export default function LoginForm({
-  title = "CORNERCLICK",
-  subtitle = "Admin Console",
+  title = 'CORNERCLICK',
+  subtitle = 'Admin Console',
   onLoginSuccess,
 }: LoginFormProps) {
-  const { auth, fetchWithAuth } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { auth, fetchWithAuth } = useAuth()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const adminLoginMutation = trpc.auth.adminLogin.useMutation();
-  const guestLoginMutation = trpc.auth.guestLogin.useMutation();
+  const adminLoginMutation = trpc.auth.adminLogin.useMutation()
+  const guestLoginMutation = trpc.auth.guestLogin.useMutation()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+    e.preventDefault()
+    setError('')
+    setLoading(true)
 
     try {
-      const data = await adminLoginMutation.mutateAsync({ email, password });
+      const data = await adminLoginMutation.mutateAsync({ email, password })
 
-      await signInWithCustomToken(auth, data.token);
+      await signInWithCustomToken(auth, data.token)
       if (onLoginSuccess) {
-        onLoginSuccess();
+        onLoginSuccess()
       } else {
-        window.location.href = "/";
+        window.location.href = '/'
       }
     } catch (err: any) {
-      if (err.message?.includes("Acceso denegado")) {
-        setError("Acceso denegado: no eres administrador.");
+      if (err.message?.includes('Acceso denegado')) {
+        setError('Acceso denegado: no eres administrador.')
       } else if (
-        err.message?.includes("Invalid credentials") ||
-        err.data?.code === "UNAUTHORIZED"
+        err.message?.includes('Invalid credentials') ||
+        err.data?.code === 'UNAUTHORIZED'
       ) {
-        setError("Credenciales inválidas. Verifica tu email y contraseña.");
+        setError('Credenciales inválidas. Verifica tu email y contraseña.')
       } else {
-        setError(err.message || "Error al iniciar sesión");
+        setError(err.message || 'Error al iniciar sesión')
       }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleGuestLogin = async () => {
-    setError("");
-    setLoading(true);
+    setError('')
+    setLoading(true)
 
     try {
-      const data = await guestLoginMutation.mutateAsync();
+      const data = await guestLoginMutation.mutateAsync()
 
-      await signInWithCustomToken(auth, data.token);
+      await signInWithCustomToken(auth, data.token)
       if (onLoginSuccess) {
-        onLoginSuccess();
+        onLoginSuccess()
       } else {
-        window.location.href = "/";
+        window.location.href = '/'
       }
     } catch (err: any) {
-      setError(
-        err.message ||
-          "Error de conexión. Verifica que el servidor esté activo.",
-      );
+      setError(err.message || 'Error de conexión. Verifica que el servidor esté activo.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0A0F1C] px-4">
@@ -97,7 +95,7 @@ export default function LoginForm({
             </svg>
           </div>
           <h1 className="text-3xl font-black text-white mb-2">
-            {title === "CORNERCLICK" ? (
+            {title === 'CORNERCLICK' ? (
               <>
                 CORNER<span className="text-blue-500">CLICK</span>
               </>
@@ -114,10 +112,7 @@ export default function LoginForm({
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-300 mb-2"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email
               </label>
               <input
@@ -132,10 +127,7 @@ export default function LoginForm({
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-300 mb-2"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Contraseña
               </label>
               <input
@@ -160,7 +152,7 @@ export default function LoginForm({
               disabled={loading}
               className="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#121A2F] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-500/25"
             >
-              {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
+              {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
             </button>
           </form>
 
@@ -181,5 +173,5 @@ export default function LoginForm({
         </p>
       </div>
     </div>
-  );
+  )
 }

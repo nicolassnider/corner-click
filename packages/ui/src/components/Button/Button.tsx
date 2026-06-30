@@ -1,25 +1,15 @@
-import React from "react";
-import clsx from "clsx";
-import styles from "./Button.module.css";
+import clsx from 'clsx'
+import React from 'react'
+import styles from './Button.module.css'
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "danger";
-  size?: "sm" | "md" | "lg";
-  fullWidth?: boolean;
+  variant?: 'primary' | 'secondary' | 'danger'
+  size?: 'sm' | 'md' | 'lg'
+  fullWidth?: boolean
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      className,
-      variant = "primary",
-      size = "md",
-      fullWidth = false,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ className, variant = 'primary', size = 'md', fullWidth = false, children, ...props }, ref) => {
     return (
       <button
         ref={ref}
@@ -28,14 +18,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           styles[variant],
           styles[size],
           { [styles.fullWidth]: fullWidth },
-          className,
+          className
         )}
         {...props}
       >
         {children}
       </button>
-    );
-  },
-);
+    )
+  }
+)
 
-Button.displayName = "Button";
+Button.displayName = 'Button'

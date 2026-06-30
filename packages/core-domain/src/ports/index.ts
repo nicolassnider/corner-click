@@ -1,65 +1,57 @@
-import type { Tournament, Match, Judge } from "@corner-click/types";
+import type { Judge, Match, Tournament } from '@corner-click/types'
 
 export interface ITournamentRepository {
-  findAll(): Promise<Tournament[]>;
-  findById(id: string): Promise<Tournament | null>;
-  create(tournament: Omit<Tournament, "id">): Promise<Tournament>;
-  update(id: string, data: Partial<Tournament>): Promise<Tournament | null>;
-  delete(id: string): Promise<void>;
+  findAll(): Promise<Tournament[]>
+  findById(id: string): Promise<Tournament | null>
+  create(tournament: Omit<Tournament, 'id'>): Promise<Tournament>
+  update(id: string, data: Partial<Tournament>): Promise<Tournament | null>
+  delete(id: string): Promise<void>
 }
 
 export interface IMatchRepository {
-  findByTournament(tournamentId: string): Promise<Match[]>;
-  findById(id: string): Promise<Match | null>;
-  updateStatus(id: string, status: string): Promise<void>;
-  submitScores(id: string, cornerId: string, scores: any): Promise<void>;
-  getScores(id: string): Promise<any>;
-  streamScores(
-    id: string,
-    onUpdate: (data: any) => void,
-    onError: (error: any) => void,
-  ): () => void;
+  findByTournament(tournamentId: string): Promise<Match[]>
+  findById(id: string): Promise<Match | null>
+  updateStatus(id: string, status: string): Promise<void>
+  submitScores(id: string, cornerId: string, scores: any): Promise<void>
+  getScores(id: string): Promise<any>
+  streamScores(id: string, onUpdate: (data: any) => void, onError: (error: any) => void): () => void
   declareWinner(
     matchId: string,
     params: {
-      winnerId: string;
-      tournamentId: string;
-      nextMatchId?: string;
-      losersMatchId?: string;
-      loserId?: string;
-    },
-  ): Promise<void>;
+      winnerId: string
+      tournamentId: string
+      nextMatchId?: string
+      losersMatchId?: string
+      loserId?: string
+    }
+  ): Promise<void>
 }
 
 export interface IJudgeRepository {
-  create(tournamentId: string, judge: Omit<Judge, "id">): Promise<Judge>;
-  findByPin(pin: string): Promise<{ id: string; data: Judge } | null>;
-  findByTournament(tournamentId: string): Promise<Judge[]>;
+  create(tournamentId: string, judge: Omit<Judge, 'id'>): Promise<Judge>
+  findByPin(pin: string): Promise<{ id: string; data: Judge } | null>
+  findByTournament(tournamentId: string): Promise<Judge[]>
   updateStatus(
     tournamentId: string,
     judgeId: string,
     status: string,
-    lastActiveAt?: string,
-  ): Promise<void>;
-  updateAssignment(
-    tournamentId: string,
-    judgeId: string,
-    assignment: any,
-  ): Promise<void>;
-  delete(tournamentId: string, judgeId: string): Promise<void>;
-  cleanupExpiredJudges(tournamentId: string): Promise<void>;
+    lastActiveAt?: string
+  ): Promise<void>
+  updateAssignment(tournamentId: string, judgeId: string, assignment: any): Promise<void>
+  delete(tournamentId: string, judgeId: string): Promise<void>
+  cleanupExpiredJudges(tournamentId: string): Promise<void>
 }
 
 export interface IAuthService {
-  createJudgeToken(judgeId: string, claims: any): Promise<string>;
+  createJudgeToken(judgeId: string, claims: any): Promise<string>
   loginAdmin(
     email: string,
-    password: string,
+    password: string
   ): Promise<{
-    token: string;
-    uid: string;
-    email: string;
-    displayName: string | null;
-  }>;
-  createGuestToken(): Promise<{ token: string; uid: string }>;
+    token: string
+    uid: string
+    email: string
+    displayName: string | null
+  }>
+  createGuestToken(): Promise<{ token: string; uid: string }>
 }

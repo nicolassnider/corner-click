@@ -1,25 +1,19 @@
-import React from "react";
-import clsx from "clsx";
-import styles from "./Input.module.css";
+import clsx from 'clsx'
+import React from 'react'
+import styles from './Input.module.css'
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  error?: string;
-  wrapperClassName?: string;
+  label?: string
+  error?: string
+  wrapperClassName?: string
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, wrapperClassName, label, error, id, ...props }, ref) => {
-    const inputId = id || React.useId();
+    const inputId = id || React.useId()
 
     return (
-      <div
-        className={clsx(
-          styles.inputWrapper,
-          { [styles.error]: !!error },
-          wrapperClassName,
-        )}
-      >
+      <div className={clsx(styles.inputWrapper, { [styles.error]: !!error }, wrapperClassName)}>
         {label && (
           <label htmlFor={inputId} className={styles.label}>
             {label}
@@ -39,8 +33,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           </span>
         )}
       </div>
-    );
-  },
-);
+    )
+  }
+)
 
-Input.displayName = "Input";
+Input.displayName = 'Input'

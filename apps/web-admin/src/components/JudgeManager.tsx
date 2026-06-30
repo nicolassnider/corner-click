@@ -1,48 +1,40 @@
-import React, { useState } from "react";
-import type { Judge } from "@corner-click/types";
-import { JudgeStatus } from "@corner-click/types";
-import { useJudges } from "../hooks/useJudges";
-import AssignJudgeModal from "./AssignJudgeModal";
+import type { Judge } from '@corner-click/types'
+import { JudgeStatus } from '@corner-click/types'
+import type React from 'react'
+import { useState } from 'react'
+import { useJudges } from '../hooks/useJudges'
+import AssignJudgeModal from './AssignJudgeModal'
 
 interface Props {
-  tournamentId: string;
-  tournamentAreas: number;
-  isReadOnly?: boolean;
+  tournamentId: string
+  tournamentAreas: number
+  isReadOnly?: boolean
 }
 
-export default function JudgeManager({
-  tournamentId,
-  tournamentAreas,
-  isReadOnly = false,
-}: Props) {
-  const {
-    judges,
-    loading,
-    error,
-    addJudge,
-    assignJudge,
-    disconnectJudge,
-    deleteJudge,
-  } = useJudges(tournamentId);
-  const [newJudgeName, setNewJudgeName] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+export default function JudgeManager({ tournamentId, tournamentAreas, isReadOnly = false }: Props) {
+  const { judges, loading, error, addJudge, assignJudge, disconnectJudge, deleteJudge } =
+    useJudges(tournamentId)
+  const [newJudgeName, setNewJudgeName] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
-  const [selectedJudge, setSelectedJudge] = useState<Judge | null>(null);
+  const [selectedJudge, setSelectedJudge] = useState<Judge | null>(null)
 
   const handleAddJudge = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newJudgeName.trim()) return;
-
-    setSubmitting(true);
-    try {
-      await addJudge(newJudgeName);
-      setNewJudgeName("");
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setSubmitting(false);
+    e.preventDefault()
+    if (!newJudgeName.trim()) {
+      return
     }
-  };
+
+    setSubmitting(true)
+    try {
+      await addJudge(newJudgeName)
+      setNewJudgeName('')
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6">
@@ -51,9 +43,7 @@ export default function JudgeManager({
           Judges Management
         </h3>
         {loading && (
-          <span className="text-sm font-bold text-gray-400 animate-pulse">
-            Syncing...
-          </span>
+          <span className="text-sm font-bold text-gray-400 animate-pulse">Syncing...</span>
         )}
       </div>
 
@@ -81,7 +71,7 @@ export default function JudgeManager({
             disabled={submitting}
             className="bg-gray-900 hover:bg-black text-white font-bold py-3 px-8 rounded-lg shadow disabled:opacity-50 transition-colors"
           >
-            {submitting ? "Adding..." : "Register Judge"}
+            {submitting ? 'Adding...' : 'Register Judge'}
           </button>
         </form>
       )}
@@ -104,10 +94,7 @@ export default function JudgeManager({
           <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
             {judges.length === 0 ? (
               <tr>
-                <td
-                  colSpan={5}
-                  className="text-center py-8 text-gray-500 italic"
-                >
+                <td colSpan={5} className="text-center py-8 text-gray-500 italic">
                   No judges registered yet.
                 </td>
               </tr>
@@ -117,9 +104,7 @@ export default function JudgeManager({
                   key={j.id}
                   className="hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors"
                 >
-                  <td className="px-6 py-4 font-bold text-gray-900 dark:text-gray-100">
-                    {j.name}
-                  </td>
+                  <td className="px-6 py-4 font-bold text-gray-900 dark:text-gray-100">{j.name}</td>
                   <td className="px-6 py-4">
                     <span className="font-mono text-lg tracking-widest bg-gray-900 text-white px-3 py-1 rounded-md">
                       {j.pin}
@@ -128,13 +113,11 @@ export default function JudgeManager({
                   <td className="px-6 py-4">
                     {j.status === JudgeStatus.ONLINE ? (
                       <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-green-100 text-green-800">
-                        <span className="w-2 h-2 rounded-full bg-green-500"></span>{" "}
-                        Online
+                        <span className="w-2 h-2 rounded-full bg-green-500"></span> Online
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-bold bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400">
-                        <span className="w-2 h-2 rounded-full bg-gray-400"></span>{" "}
-                        Offline
+                        <span className="w-2 h-2 rounded-full bg-gray-400"></span> Offline
                       </span>
                     )}
                   </td>
@@ -142,10 +125,8 @@ export default function JudgeManager({
                     {j.currentAssignment ? (
                       <div className="flex flex-col">
                         <span className="text-blue-700 dark:text-blue-400 font-bold">
-                          Area {j.currentAssignment.areaId} &bull;{" "}
-                          <span className="capitalize">
-                            {j.currentAssignment.cornerId}
-                          </span>
+                          Area {j.currentAssignment.areaId} &bull;{' '}
+                          <span className="capitalize">{j.currentAssignment.cornerId}</span>
                         </span>
                       </div>
                     ) : (
@@ -160,10 +141,8 @@ export default function JudgeManager({
                         {j.status === JudgeStatus.ONLINE && (
                           <button
                             onClick={() => {
-                              if (
-                                window.confirm(`Force disconnect ${j.name}?`)
-                              ) {
-                                disconnectJudge(j.id!);
+                              if (window.confirm(`Force disconnect ${j.name}?`)) {
+                                disconnectJudge(j.id!)
                               }
                             }}
                             className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-bold py-2 px-3 rounded-lg transition-colors text-xs uppercase tracking-wide"
@@ -175,16 +154,12 @@ export default function JudgeManager({
                           onClick={() => setSelectedJudge(j)}
                           className="bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold py-2 px-4 rounded-lg transition-colors text-xs uppercase tracking-wide"
                         >
-                          {j.currentAssignment ? "Re-Assign" : "Assign"}
+                          {j.currentAssignment ? 'Re-Assign' : 'Assign'}
                         </button>
                         <button
                           onClick={() => {
-                            if (
-                              window.confirm(
-                                `Are you sure you want to delete ${j.name}?`,
-                              )
-                            ) {
-                              deleteJudge(j.id!);
+                            if (window.confirm(`Are you sure you want to delete ${j.name}?`)) {
+                              deleteJudge(j.id!)
                             }
                           }}
                           className="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-2 px-3 rounded-lg transition-colors text-xs uppercase tracking-wide"
@@ -213,5 +188,5 @@ export default function JudgeManager({
         onAssign={assignJudge}
       />
     </div>
-  );
+  )
 }

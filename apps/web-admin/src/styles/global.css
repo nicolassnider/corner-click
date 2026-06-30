@@ -2,70 +2,67 @@
 @import "@corner-click/ui/styles/base.css";
 @source "../../../../packages/auth/src/**/*.{ts,tsx}";
 
-
 /* Height-based responsive scaling for TV Scoreboard to prevent footer clipping on shorter viewports (e.g. 1600x900) */
 @media (max-height: 950px) {
   .tv-root {
-    padding-top: 2vh !important;
-    padding-bottom: 2vh !important;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
   }
   .tv-header {
-    padding-top: 0.75rem !important;
-    padding-bottom: 0.75rem !important;
-    padding-left: 2rem !important;
-    padding-right: 2rem !important;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
   .tv-main {
-    margin-top: 1rem !important;
-    margin-bottom: 1rem !important;
-    gap: 1.5rem !important;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    gap: 1.5rem;
   }
   .tv-panel {
-    padding: 1.5rem !important;
+    padding: 1.5rem;
   }
   .tv-panel-title {
-    margin-top: 1rem !important;
-    font-size: 3rem !important; /* approx 48px */
-    line-height: 1 !important;
+    margin-top: 1rem;
+    font-size: 3rem; /* approx 48px */
+    line-height: 1;
   }
   .tv-panel-subtitle {
-    margin-top: 0.5rem !important;
-    font-size: 1.25rem !important;
+    margin-top: 0.5rem;
+    font-size: 1.25rem;
   }
   .tv-score {
-    font-size: 8rem !important;
+    font-size: 8rem;
   }
   .tv-timer {
-    font-size: 7.5rem !important;
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
+    font-size: 7.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
   }
   .tv-footer {
-    padding-top: 0.75rem !important;
-    padding-bottom: 0.75rem !important;
-    padding-left: 2rem !important;
-    padding-right: 2rem !important;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
 }
 
 @media (max-height: 750px) {
   .tv-panel-title {
-    font-size: 2.25rem !important;
-    margin-top: 0.5rem !important;
+    font-size: 2.25rem;
+    margin-top: 0.5rem;
   }
   .tv-panel-subtitle {
-    font-size: 1rem !important;
-    margin-top: 0.25rem !important;
+    font-size: 1rem;
+    margin-top: 0.25rem;
   }
   .tv-score {
-    font-size: 6rem !important;
+    font-size: 6rem;
   }
   .tv-timer {
-    font-size: 5.5rem !important;
+    font-size: 5.5rem;
   }
 }
 
-
 /* Print styles for cleaner reports and bracket printing */
 @import "../../../../packages/shared-styles/print.css";
-

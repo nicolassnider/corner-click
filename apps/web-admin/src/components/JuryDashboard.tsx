@@ -1,48 +1,40 @@
-import React, { useState, useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import type { User } from "firebase/auth";
-import { fetchWithAuth } from "../utils/apiClient";
-import "../styles/global.css";
-import { getMatches } from "../services/bracketService";
-import type {
-  Tournament,
-  Category,
-  Match,
-  Competitor,
-} from "@corner-click/types";
-import { trpc } from "@corner-click/api-client";
-import { MatchStatus, calculateNetScore } from "@corner-click/types";
-import { getCompetitorFullName } from "../utils/competitorUtils";
-import { useActiveMatch } from "../hooks/useActiveMatch";
-import Footer from "./Footer";
-import { auth } from "../lib/firebase";
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { httpBatchLink } from "@trpc/client";
-import { API_URL } from "../utils/apiClient";
-import { motion, AnimatePresence } from "framer-motion";
+import type { User } from 'firebase/auth'
+import { onAuthStateChanged } from 'firebase/auth'
+import React, { useEffect, useState } from 'react'
+import '../styles/global.css'
+import { trpc } from '@corner-click/api-client'
+import type { Competitor, Match } from '@corner-click/types'
+import { calculateNetScore, MatchStatus } from '@corner-click/types'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { httpBatchLink } from '@trpc/client'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useActiveMatch } from '../hooks/useActiveMatch'
+import { auth } from '../lib/firebase'
+import { API_URL } from '../utils/apiClient'
+import { getCompetitorFullName } from '../utils/competitorUtils'
+import Footer from './Footer'
 
 interface Toast {
-  id: string;
-  message: string;
-  type: "success" | "error" | "warning" | "info";
+  id: string
+  message: string
+  type: 'success' | 'error' | 'warning' | 'info'
 }
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
       url: `${API_URL}/api/trpc`,
       async headers() {
-        const user = auth.currentUser;
-        const token = user ? await user.getIdToken() : "";
+        const user = auth.currentUser
+        const token = user ? await user.getIdToken() : ''
         return {
-          authorization: token ? `Bearer ${token}` : "",
-        };
+          authorization: token ? `Bearer ${token}` : '',
+        }
       },
     }),
   ],
-});
+})
 
 export default function JuryDashboardApp() {
   return (
@@ -51,125 +43,128 @@ export default function JuryDashboardApp() {
         <JuryDashboard />
       </QueryClientProvider>
     </trpc.Provider>
-  );
+  )
 }
 
 function JuryDashboard() {
-  const [selectedTournamentId, setSelectedTournamentId] = useState<string>("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
-  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [selectedTournamentId, setSelectedTournamentId] = useState<string>('')
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>('')
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
 
-  const { data: rawTournaments = [] } = trpc.tournaments.getAll.useQuery();
+  const { data: rawTournaments = [] } = trpc.tournaments.getAll.useQuery()
   const tournaments = React.useMemo(() => {
     return Array.isArray(rawTournaments)
-      ? rawTournaments.filter((t: any) => t.status !== "COMPLETED")
-      : [];
-  }, [rawTournaments]);
+      ? rawTournaments.filter((t: any) => t.status !== 'COMPLETED')
+      : []
+  }, [rawTournaments])
 
   const { data: categories = [] } = trpc.categories.getAll.useQuery(
     { tournamentId: selectedTournamentId },
-    { enabled: !!selectedTournamentId },
-  );
+    { enabled: !!selectedTournamentId }
+  )
 
   const { data: competitorsList = [] } = trpc.competitors.getAll.useQuery(
     { tournamentId: selectedTournamentId },
-    { enabled: !!selectedTournamentId },
-  );
+    { enabled: !!selectedTournamentId }
+  )
 
   const competitors: Record<string, Competitor> = React.useMemo(() => {
-    const map: Record<string, Competitor> = {};
+    const map: Record<string, Competitor> = {}
     competitorsList.forEach((c) => {
-      map[c.id] = c;
-    });
-    return map;
-  }, [competitorsList]);
+      map[c.id] = c
+    })
+    return map
+  }, [competitorsList])
 
   // Custom Toast state
-  const [toasts, setToasts] = useState<Toast[]>([]);
-  const [authChecked, setAuthChecked] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [toasts, setToasts] = useState<Toast[]>([])
+  const [authChecked, setAuthChecked] = useState(false)
+  const [_user, setUser] = useState<User | null>(null)
 
-  const showToast = (
-    message: string,
-    type: "success" | "error" | "warning" | "info" = "info",
-  ) => {
-    const id = Math.random().toString(36).substring(2, 9);
-    setToasts((prev) => [...prev, { id, message, type }]);
+  const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
+    const id = Math.random().toString(36).substring(2, 9)
+    setToasts((prev) => [...prev, { id, message, type }])
     setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
-  };
+      setToasts((prev) => prev.filter((t) => t.id !== id))
+    }, 4000)
+  }
 
   // Load URL params and fetch tournaments on mount after auth resolves
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
       if (!u) {
-        window.location.href = "/login";
-        return;
+        window.location.href = '/login'
+        return
       }
-      setUser(u);
-      setAuthChecked(true);
+      setUser(u)
+      setAuthChecked(true)
 
-      const params = new URLSearchParams(window.location.search);
-      const tId = params.get("tournament");
-      const cId = params.get("category");
-      if (tId) setSelectedTournamentId(tId);
-      if (cId) setSelectedCategoryId(cId);
-    });
+      const params = new URLSearchParams(window.location.search)
+      const tId = params.get('tournament')
+      const cId = params.get('category')
+      if (tId) {
+        setSelectedTournamentId(tId)
+      }
+      if (cId) {
+        setSelectedCategoryId(cId)
+      }
+    })
 
-    return () => unsub();
-  }, []);
+    return () => unsub()
+  }, [])
 
   // Update URL params when selection changes
   useEffect(() => {
-    const url = new URL(window.location.href);
-    if (selectedTournamentId)
-      url.searchParams.set("tournament", selectedTournamentId);
-    else url.searchParams.delete("tournament");
+    const url = new URL(window.location.href)
+    if (selectedTournamentId) {
+      url.searchParams.set('tournament', selectedTournamentId)
+    } else {
+      url.searchParams.delete('tournament')
+    }
 
-    if (selectedCategoryId)
-      url.searchParams.set("category", selectedCategoryId);
-    else url.searchParams.delete("category");
+    if (selectedCategoryId) {
+      url.searchParams.set('category', selectedCategoryId)
+    } else {
+      url.searchParams.delete('category')
+    }
 
-    window.history.replaceState({}, "", url.toString());
-  }, [selectedTournamentId, selectedCategoryId]);
+    window.history.replaceState({}, '', url.toString())
+  }, [selectedTournamentId, selectedCategoryId])
 
-  const { data: allMatches = [], refetch: refetchMatches } =
-    trpc.matches.getByTournament.useQuery(
-      { tournamentId: selectedTournamentId },
-      { enabled: !!selectedTournamentId },
-    );
+  const { data: allMatches = [], refetch: refetchMatches } = trpc.matches.getByTournament.useQuery(
+    { tournamentId: selectedTournamentId },
+    { enabled: !!selectedTournamentId }
+  )
 
   const activeCategoryIds = React.useMemo(() => {
-    return new Set(allMatches.map((m) => m.categoryId));
-  }, [allMatches]);
+    return new Set(allMatches.map((m) => m.categoryId))
+  }, [allMatches])
 
-  const activeCategories = React.useMemo(() => {
-    return categories.filter((c) => activeCategoryIds.has(c.id));
-  }, [categories, activeCategoryIds]);
+  const _activeCategories = React.useMemo(() => {
+    return categories.filter((c) => activeCategoryIds.has(c.id))
+  }, [categories, activeCategoryIds])
 
   const matches = React.useMemo(() => {
-    if (!selectedCategoryId) return [];
-    return allMatches.filter((m) => m.categoryId === selectedCategoryId);
-  }, [allMatches, selectedCategoryId]);
+    if (!selectedCategoryId) {
+      return []
+    }
+    return allMatches.filter((m) => m.categoryId === selectedCategoryId)
+  }, [allMatches, selectedCategoryId])
 
   // When selectedCategoryId changes, update selectedMatch
   useEffect(() => {
     if (matches.length > 0 && !selectedMatch) {
-      setSelectedMatch(matches[0]);
+      setSelectedMatch(matches[0])
     } else if (matches.length === 0) {
-      setSelectedMatch(null);
+      setSelectedMatch(null)
     }
-  }, [matches, selectedMatch]);
+  }, [matches, selectedMatch])
 
-  const handleMatchesRefreshed = (
-    updatedMatches: Match[],
-    currentMatch: Match,
-  ) => {
+  const handleMatchesRefreshed = (_updatedMatches: Match[], currentMatch: Match) => {
     refetchMatches().then(() => {
-      setSelectedMatch(currentMatch);
-    });
-  };
+      setSelectedMatch(currentMatch)
+    })
+  }
 
   // Initialize active match controller hook
   const {
@@ -196,21 +191,21 @@ function JuryDashboard() {
     selectedCategoryId,
     handleMatchesRefreshed,
     competitors,
-    showToast,
-  );
+    showToast
+  )
 
   // Derive final vote percentage for the visual bar comparison
-  const totalVotes = redVotes + blueVotes + tieVotes;
-  const redPct = totalVotes > 0 ? (redVotes / totalVotes) * 100 : 0;
-  const bluePct = totalVotes > 0 ? (blueVotes / totalVotes) * 100 : 0;
-  const tiePct = totalVotes > 0 ? (tieVotes / totalVotes) * 100 : 0;
+  const totalVotes = redVotes + blueVotes + tieVotes
+  const redPct = totalVotes > 0 ? (redVotes / totalVotes) * 100 : 0
+  const bluePct = totalVotes > 0 ? (blueVotes / totalVotes) * 100 : 0
+  const tiePct = totalVotes > 0 ? (tieVotes / totalVotes) * 100 : 0
 
   if (!authChecked) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-slate-950 text-slate-100 font-sans">
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
       </div>
-    );
+    )
   }
 
   return (
@@ -225,29 +220,27 @@ function JuryDashboard() {
           <div
             key={t.id}
             className={`p-4 rounded-xl border shadow-xl flex items-center gap-3 animate-slide-in backdrop-blur-md transition-all duration-300 ${
-              t.type === "success"
-                ? "bg-emerald-950/80 border-emerald-500/30 text-emerald-300"
-                : t.type === "error"
-                  ? "bg-rose-950/80 border-rose-500/30 text-rose-300"
-                  : t.type === "warning"
-                    ? "bg-amber-950/80 border-amber-500/30 text-amber-300"
-                    : "bg-slate-900/90 border-slate-700/50 text-slate-200"
+              t.type === 'success'
+                ? 'bg-emerald-950/80 border-emerald-500/30 text-emerald-300'
+                : t.type === 'error'
+                  ? 'bg-rose-950/80 border-rose-500/30 text-rose-300'
+                  : t.type === 'warning'
+                    ? 'bg-amber-950/80 border-amber-500/30 text-amber-300'
+                    : 'bg-slate-900/90 border-slate-700/50 text-slate-200'
             }`}
           >
             <span className="text-xl">
-              {t.type === "success"
-                ? "✨"
-                : t.type === "error"
-                  ? "⚠️"
-                  : t.type === "warning"
-                    ? "🔥"
-                    : "ℹ️"}
+              {t.type === 'success'
+                ? '✨'
+                : t.type === 'error'
+                  ? '⚠️'
+                  : t.type === 'warning'
+                    ? '🔥'
+                    : 'ℹ️'}
             </span>
             <div className="flex-1 text-sm font-semibold">{t.message}</div>
             <button
-              onClick={() =>
-                setToasts((prev) => prev.filter((item) => item.id !== t.id))
-              }
+              onClick={() => setToasts((prev) => prev.filter((item) => item.id !== t.id))}
               className="text-slate-400 hover:text-slate-200 font-bold ml-auto"
             >
               &times;
@@ -325,13 +318,11 @@ function JuryDashboard() {
             </span>
             {firebaseConnected ? (
               <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 py-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>{" "}
-                ONLINE
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ONLINE
               </span>
             ) : (
               <span className="bg-amber-500/20 text-amber-400 border border-amber-500/30 py-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 animate-pulse">
-                <span className="w-2 h-2 rounded-full bg-amber-400"></span>{" "}
-                OFFLINE FALLBACK
+                <span className="w-2 h-2 rounded-full bg-amber-400"></span> OFFLINE FALLBACK
               </span>
             )}
           </div>
@@ -346,30 +337,22 @@ function JuryDashboard() {
               <span>📅</span> Matches Queue
             </h2>
             {!selectedTournamentId ? (
-              <p className="text-slate-500 text-sm italic">
-                Select a tournament to load matches.
-              </p>
+              <p className="text-slate-500 text-sm italic">Select a tournament to load matches.</p>
             ) : categories.length === 0 ? (
               <p className="text-slate-500 text-sm italic">
                 No categories found for this tournament.
               </p>
             ) : !selectedCategoryId ? (
-              <p className="text-slate-500 text-sm italic">
-                Select a category to load matches.
-              </p>
+              <p className="text-slate-500 text-sm italic">Select a category to load matches.</p>
             ) : matches.length === 0 ? (
-              <p className="text-slate-500 text-sm italic">
-                No matches found for this category.
-              </p>
+              <p className="text-slate-500 text-sm italic">No matches found for this category.</p>
             ) : (
               <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 flex-1 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
                 <AnimatePresence>
                   {matches.map((match) => {
-                    const isCurrent = selectedMatch?.id === match.id;
-                    const displayStatus = isCurrent ? status : match.status;
-                    const displayWinnerId = isCurrent
-                      ? selectedMatch?.winnerId
-                      : match.winnerId;
+                    const isCurrent = selectedMatch?.id === match.id
+                    const displayStatus = isCurrent ? status : match.status
+                    const displayWinnerId = isCurrent ? selectedMatch?.winnerId : match.winnerId
 
                     return (
                       <motion.div
@@ -381,16 +364,16 @@ function JuryDashboard() {
                         key={match.id}
                         className={`p-3 rounded-xl cursor-pointer transition-all border-2 ${
                           isCurrent
-                            ? "border-blue-500 bg-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.15)] transform scale-[1.02]"
-                            : "border-slate-800 bg-slate-900/30 hover:bg-slate-900/60 hover:border-slate-700"
+                            ? 'border-blue-500 bg-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.15)] transform scale-[1.02]'
+                            : 'border-slate-800 bg-slate-900/30 hover:bg-slate-900/60 hover:border-slate-700'
                         }`}
                         onClick={() => setSelectedMatch(match)}
                       >
                         <div className="flex justify-between items-center mb-1">
                           <span
-                            className={`text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded ${isCurrent ? "bg-blue-500/20 text-blue-400" : "bg-slate-800 text-slate-400"}`}
+                            className={`text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded ${isCurrent ? 'bg-blue-500/20 text-blue-400' : 'bg-slate-800 text-slate-400'}`}
                           >
-                            Round {match.round} {displayWinnerId ? "✓" : ""}
+                            Round {match.round} {displayWinnerId ? '✓' : ''}
                           </span>
                           <span
                             className="text-[10px] text-slate-600 font-mono tracking-tighter"
@@ -401,35 +384,29 @@ function JuryDashboard() {
                         </div>
                         <div className="font-semibold text-sm flex items-center justify-between gap-2">
                           <span
-                            className={`text-rose-400 truncate max-w-[45%] ${displayWinnerId === match.redCompetitorId ? "font-black underline decoration-2" : ""}`}
+                            className={`text-rose-400 truncate max-w-[45%] ${displayWinnerId === match.redCompetitorId ? 'font-black underline decoration-2' : ''}`}
                           >
-                            {getCompetitorFullName(
-                              match.redCompetitorId,
-                              competitors,
-                            )}
+                            {getCompetitorFullName(match.redCompetitorId, competitors)}
                           </span>
                           <span className="text-slate-600 text-[10px] uppercase font-bold tracking-widest shrink-0">
                             vs
                           </span>
                           <span
-                            className={`text-blue-400 truncate max-w-[45%] text-right ${displayWinnerId === match.blueCompetitorId ? "font-black underline decoration-2" : ""}`}
+                            className={`text-blue-400 truncate max-w-[45%] text-right ${displayWinnerId === match.blueCompetitorId ? 'font-black underline decoration-2' : ''}`}
                           >
-                            {getCompetitorFullName(
-                              match.blueCompetitorId,
-                              competitors,
-                            )}
+                            {getCompetitorFullName(match.blueCompetitorId, competitors)}
                           </span>
                         </div>
                         <div className="mt-3 flex justify-between items-center">
                           <span
                             className={`text-[10px] font-black px-2 py-0.5 rounded-md tracking-wider uppercase ${
                               displayStatus === MatchStatus.COMPLETED
-                                ? "bg-slate-800 text-slate-400"
+                                ? 'bg-slate-800 text-slate-400'
                                 : displayStatus === MatchStatus.ACTIVE
-                                  ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                                   : displayStatus === MatchStatus.GOLDEN_POINT
-                                    ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
-                                    : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+                                    ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                    : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
                             }`}
                           >
                             {displayStatus}
@@ -441,7 +418,7 @@ function JuryDashboard() {
                           )}
                         </div>
                       </motion.div>
-                    );
+                    )
                   })}
                 </AnimatePresence>
               </div>
@@ -465,8 +442,7 @@ function JuryDashboard() {
                   Select a match from the queue to start control operations.
                 </p>
                 <p className="text-slate-600 text-sm mt-1">
-                  Make sure you have selected a tournament and active category
-                  first.
+                  Make sure you have selected a tournament and active category first.
                 </p>
               </motion.div>
             ) : (
@@ -488,32 +464,24 @@ function JuryDashboard() {
                       <span
                         className={`px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest border ${
                           status === MatchStatus.ACTIVE
-                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.2)] animate-pulse"
+                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.2)] animate-pulse'
                             : status === MatchStatus.GOLDEN_POINT
-                              ? "bg-amber-500/10 text-amber-400 border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.2)] animate-pulse"
+                              ? 'bg-amber-500/10 text-amber-400 border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.2)] animate-pulse'
                               : status === MatchStatus.PAUSED
-                                ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/40"
+                                ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/40'
                                 : status === MatchStatus.ENDED ||
-                                    selectedMatch.status ===
-                                      MatchStatus.COMPLETED
-                                  ? "bg-slate-800 text-slate-400 border-slate-700"
-                                  : "bg-blue-500/10 text-blue-400 border-blue-500/40"
+                                    selectedMatch.status === MatchStatus.COMPLETED
+                                  ? 'bg-slate-800 text-slate-400 border-slate-700'
+                                  : 'bg-blue-500/10 text-blue-400 border-blue-500/40'
                         }`}
                       >
-                        {selectedMatch.status === MatchStatus.COMPLETED
-                          ? "COMPLETED"
-                          : status}
+                        {selectedMatch.status === MatchStatus.COMPLETED ? 'COMPLETED' : status}
                       </span>
                     </div>
 
                     {/* TV Projector View link */}
                     <button
-                      onClick={() =>
-                        window.open(
-                          `/area/${selectedMatch.areaId}/tv`,
-                          "_blank",
-                        )
-                      }
+                      onClick={() => window.open(`/area/${selectedMatch.areaId}/tv`, '_blank')}
                       className="flex items-center gap-2 bg-slate-850 hover:bg-slate-800 text-slate-350 hover:text-slate-100 border border-slate-800 hover:border-slate-700 rounded-lg px-3 py-1.5 text-xs font-bold uppercase transition-all shadow-md active:scale-95"
                       title="Open Spectator screen for TV display/projectors"
                     >
@@ -524,10 +492,7 @@ function JuryDashboard() {
                   <div className="relative z-10 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mt-2">
                     <div className="text-center md:text-right flex-1 min-w-0">
                       <h3 className="text-2xl md:text-3xl font-black text-rose-500 tracking-tight truncate uppercase">
-                        {getCompetitorFullName(
-                          selectedMatch.redCompetitorId,
-                          competitors,
-                        )}
+                        {getCompetitorFullName(selectedMatch.redCompetitorId, competitors)}
                       </h3>
                       <span className="text-[10px] uppercase font-bold text-rose-700 tracking-widest block mt-0.5">
                         RED CORNER
@@ -543,10 +508,7 @@ function JuryDashboard() {
                     </div>
                     <div className="text-center md:text-left flex-1 min-w-0">
                       <h3 className="text-2xl md:text-3xl font-black text-blue-500 tracking-tight truncate uppercase">
-                        {getCompetitorFullName(
-                          selectedMatch.blueCompetitorId,
-                          competitors,
-                        )}
+                        {getCompetitorFullName(selectedMatch.blueCompetitorId, competitors)}
                       </h3>
                       <span className="text-[10px] uppercase font-bold text-blue-700 tracking-widest block mt-0.5">
                         BLUE CORNER
@@ -560,10 +522,10 @@ function JuryDashboard() {
                       <div
                         className={`font-mono text-5xl md:text-6xl font-black tracking-tighter transition-all duration-300 ${
                           status === MatchStatus.ACTIVE
-                            ? "text-emerald-400 drop-shadow-[0_0_20px_rgba(52,211,153,0.4)] animate-pulse"
+                            ? 'text-emerald-400 drop-shadow-[0_0_20px_rgba(52,211,153,0.4)] animate-pulse'
                             : status === MatchStatus.GOLDEN_POINT
-                              ? "text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.4)]"
-                              : "text-slate-500"
+                              ? 'text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.4)]'
+                              : 'text-slate-500'
                         }`}
                       >
                         {formatTime(timeRemaining)}
@@ -573,8 +535,7 @@ function JuryDashboard() {
                 </div>
 
                 {/* Live Scores & Judge Breakdown */}
-                {status === MatchStatus.ENDED &&
-                Object.keys(judgesData).length > 0 ? (
+                {status === MatchStatus.ENDED && Object.keys(judgesData).length > 0 ? (
                   <div className="bg-slate-950/60 border-y border-slate-800/80 p-6 flex-1 flex flex-col justify-center">
                     <h4 className="text-center text-slate-400 font-bold uppercase tracking-widest text-xs mb-5">
                       🏁 FINAL JUDGES CONSENSUS BREAKDOWN
@@ -582,77 +543,61 @@ function JuryDashboard() {
 
                     {/* Detailed Judge Scorecards */}
                     <div
-                      className={`grid grid-cols-1 sm:grid-cols-2 ${Object.keys(judgesData).length === 3 ? "md:grid-cols-3" : "md:grid-cols-4"} gap-4 mb-6 max-w-4xl mx-auto w-full`}
+                      className={`grid grid-cols-1 sm:grid-cols-2 ${Object.keys(judgesData).length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-4'} gap-4 mb-6 max-w-4xl mx-auto w-full`}
                     >
-                      {Object.entries(judgesData).map(
-                        ([cornerId, data]: [string, any]) => {
-                          const r = calculateNetScore(
-                            data.redScore || 0,
-                            data.redWarnings || 0,
-                            data.redDeductions || 0,
-                          );
-                          const b = calculateNetScore(
-                            data.blueScore || 0,
-                            data.blueWarnings || 0,
-                            data.blueDeductions || 0,
-                          );
-                          const winnerClass =
-                            r > b
-                              ? "border-rose-900/60 bg-rose-950/20 shadow-[inset_0_0_15px_rgba(244,63,94,0.05)]"
-                              : b > r
-                                ? "border-blue-900/60 bg-blue-950/20 shadow-[inset_0_0_15px_rgba(59,130,246,0.05)]"
-                                : "border-slate-850 bg-slate-900/20";
-                          return (
-                            <div
-                              key={cornerId}
-                              className={`border rounded-xl p-4 text-center transition-all ${winnerClass}`}
-                            >
-                              <div className="font-bold text-slate-400 mb-2 uppercase text-[10px] tracking-widest">
-                                {cornerId}
-                              </div>
-                              <div className="flex justify-between items-center px-2">
-                                <div className="flex flex-col items-center">
-                                  <span className="text-2xl font-black text-rose-500">
-                                    {r}
-                                  </span>
-                                  <span className="text-[8px] text-slate-500">
-                                    ({data.redScore || 0} /{" "}
-                                    {data.redWarnings || 0}W /{" "}
-                                    {data.redDeductions || 0}D)
-                                  </span>
-                                </div>
-                                <span className="text-slate-700 font-bold px-2">
-                                  vs
+                      {Object.entries(judgesData).map(([cornerId, data]: [string, any]) => {
+                        const r = calculateNetScore(
+                          data.redScore || 0,
+                          data.redWarnings || 0,
+                          data.redDeductions || 0
+                        )
+                        const b = calculateNetScore(
+                          data.blueScore || 0,
+                          data.blueWarnings || 0,
+                          data.blueDeductions || 0
+                        )
+                        const winnerClass =
+                          r > b
+                            ? 'border-rose-900/60 bg-rose-950/20 shadow-[inset_0_0_15px_rgba(244,63,94,0.05)]'
+                            : b > r
+                              ? 'border-blue-900/60 bg-blue-950/20 shadow-[inset_0_0_15px_rgba(59,130,246,0.05)]'
+                              : 'border-slate-850 bg-slate-900/20'
+                        return (
+                          <div
+                            key={cornerId}
+                            className={`border rounded-xl p-4 text-center transition-all ${winnerClass}`}
+                          >
+                            <div className="font-bold text-slate-400 mb-2 uppercase text-[10px] tracking-widest">
+                              {cornerId}
+                            </div>
+                            <div className="flex justify-between items-center px-2">
+                              <div className="flex flex-col items-center">
+                                <span className="text-2xl font-black text-rose-500">{r}</span>
+                                <span className="text-[8px] text-slate-500">
+                                  ({data.redScore || 0} / {data.redWarnings || 0}W /{' '}
+                                  {data.redDeductions || 0}D)
                                 </span>
-                                <div className="flex flex-col items-center">
-                                  <span className="text-2xl font-black text-blue-500">
-                                    {b}
-                                  </span>
-                                  <span className="text-[8px] text-slate-500">
-                                    ({data.blueScore || 0} /{" "}
-                                    {data.blueWarnings || 0}W /{" "}
-                                    {data.blueDeductions || 0}D)
-                                  </span>
-                                </div>
+                              </div>
+                              <span className="text-slate-700 font-bold px-2">vs</span>
+                              <div className="flex flex-col items-center">
+                                <span className="text-2xl font-black text-blue-500">{b}</span>
+                                <span className="text-[8px] text-slate-500">
+                                  ({data.blueScore || 0} / {data.blueWarnings || 0}W /{' '}
+                                  {data.blueDeductions || 0}D)
+                                </span>
                               </div>
                             </div>
-                          );
-                        },
-                      )}
+                          </div>
+                        )
+                      })}
                     </div>
 
                     {/* Visual Vote Comparison Bars */}
                     <div className="bg-slate-900/40 border border-slate-850 p-6 rounded-2xl max-w-2xl mx-auto w-full">
                       <div className="flex justify-between items-center mb-3 text-xs font-bold uppercase tracking-wider">
-                        <span className="text-rose-500">
-                          Red Corner ({redVotes})
-                        </span>
-                        <span className="text-slate-500">
-                          Ties ({tieVotes})
-                        </span>
-                        <span className="text-blue-500">
-                          Blue Corner ({blueVotes})
-                        </span>
+                        <span className="text-rose-500">Red Corner ({redVotes})</span>
+                        <span className="text-slate-500">Ties ({tieVotes})</span>
+                        <span className="text-blue-500">Blue Corner ({blueVotes})</span>
                       </div>
 
                       {/* Progress Bar Track */}
@@ -717,55 +662,48 @@ function JuryDashboard() {
                 )}
 
                 {/* Match Complete / Tie Breaker Controls */}
-                {status === MatchStatus.ENDED &&
-                  selectedMatch.status !== MatchStatus.COMPLETED && (
-                    <div className="p-6 bg-slate-900 border-t border-slate-800 shrink-0 flex flex-col items-center">
-                      <h4 className="text-xs font-black text-amber-500/90 mb-4 uppercase tracking-widest flex items-center gap-1.5">
-                        <span>⚡</span> DECIDE TO DECLARE WINNER OR START EXTRA
-                        TIME
-                      </h4>
-                      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-3xl">
+                {status === MatchStatus.ENDED && selectedMatch.status !== MatchStatus.COMPLETED && (
+                  <div className="p-6 bg-slate-900 border-t border-slate-800 shrink-0 flex flex-col items-center">
+                    <h4 className="text-xs font-black text-amber-500/90 mb-4 uppercase tracking-widest flex items-center gap-1.5">
+                      <span>⚡</span> DECIDE TO DECLARE WINNER OR START EXTRA TIME
+                    </h4>
+                    <div className="flex flex-col sm:flex-row gap-4 w-full max-w-3xl">
+                      <button
+                        onClick={() => handleDeclareWinner(selectedMatch.redCompetitorId)}
+                        className={`flex-1 py-3.5 rounded-xl font-bold text-white transition-all shadow-md active:scale-95 cursor-pointer text-sm ${redVotes > blueVotes ? 'bg-rose-600 hover:bg-rose-500 hover:shadow-[0_0_20px_rgba(225,29,72,0.4)] scale-[1.02] border-2 border-rose-400' : 'bg-rose-850 hover:bg-rose-750 text-rose-300 border border-rose-800/40'}`}
+                        disabled={
+                          !selectedMatch.redCompetitorId || selectedMatch.redCompetitorId === 'BYE'
+                        }
+                      >
+                        Red Corner Wins
+                      </button>
+                      <div className="flex flex-row sm:flex-col gap-2 flex-1 justify-center">
                         <button
-                          onClick={() =>
-                            handleDeclareWinner(selectedMatch.redCompetitorId)
-                          }
-                          className={`flex-1 py-3.5 rounded-xl font-bold text-white transition-all shadow-md active:scale-95 cursor-pointer text-sm ${redVotes > blueVotes ? "bg-rose-600 hover:bg-rose-500 hover:shadow-[0_0_20px_rgba(225,29,72,0.4)] scale-[1.02] border-2 border-rose-400" : "bg-rose-850 hover:bg-rose-750 text-rose-300 border border-rose-800/40"}`}
-                          disabled={
-                            !selectedMatch.redCompetitorId ||
-                            selectedMatch.redCompetitorId === "BYE"
-                          }
+                          onClick={handleExtraTime}
+                          className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all shadow bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:border-amber-500/60 active:scale-95 cursor-pointer`}
                         >
-                          Red Corner Wins
+                          ⏱️ Extra Time (1m)
                         </button>
-                        <div className="flex flex-row sm:flex-col gap-2 flex-1 justify-center">
-                          <button
-                            onClick={handleExtraTime}
-                            className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all shadow bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:border-amber-500/60 active:scale-95 cursor-pointer`}
-                          >
-                            ⏱️ Extra Time (1m)
-                          </button>
-                          <button
-                            onClick={handleGoldenPoint}
-                            className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all shadow bg-yellow-500/15 hover:bg-yellow-500/25 text-yellow-300 border border-yellow-500/40 hover:border-yellow-500/70 active:scale-95 cursor-pointer`}
-                          >
-                            ⚡ Golden Point
-                          </button>
-                        </div>
                         <button
-                          onClick={() =>
-                            handleDeclareWinner(selectedMatch.blueCompetitorId)
-                          }
-                          className={`flex-1 py-3.5 rounded-xl font-bold text-white transition-all shadow-md active:scale-95 cursor-pointer text-sm ${blueVotes > redVotes ? "bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] scale-[1.02] border-2 border-blue-400" : "bg-blue-850 hover:bg-blue-750 text-blue-300 border border-blue-800/40"}`}
-                          disabled={
-                            !selectedMatch.blueCompetitorId ||
-                            selectedMatch.blueCompetitorId === "BYE"
-                          }
+                          onClick={handleGoldenPoint}
+                          className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all shadow bg-yellow-500/15 hover:bg-yellow-500/25 text-yellow-300 border border-yellow-500/40 hover:border-yellow-500/70 active:scale-95 cursor-pointer`}
                         >
-                          Blue Corner Wins
+                          ⚡ Golden Point
                         </button>
                       </div>
+                      <button
+                        onClick={() => handleDeclareWinner(selectedMatch.blueCompetitorId)}
+                        className={`flex-1 py-3.5 rounded-xl font-bold text-white transition-all shadow-md active:scale-95 cursor-pointer text-sm ${blueVotes > redVotes ? 'bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] scale-[1.02] border-2 border-blue-400' : 'bg-blue-850 hover:bg-blue-750 text-blue-300 border border-blue-800/40'}`}
+                        disabled={
+                          !selectedMatch.blueCompetitorId ||
+                          selectedMatch.blueCompetitorId === 'BYE'
+                        }
+                      >
+                        Blue Corner Wins
+                      </button>
                     </div>
-                  )}
+                  </div>
+                )}
 
                 {/* Action Buttons */}
                 <div className="p-4 md:p-6 bg-slate-900/60 border-t border-slate-800 flex flex-wrap justify-center gap-4 mt-auto shrink-0">
@@ -776,8 +714,8 @@ function JuryDashboard() {
                       status === MatchStatus.ENDED ||
                       selectedMatch.status === MatchStatus.COMPLETED ||
                       !isMatchStartable
-                        ? "bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850"
-                        : "bg-emerald-600 hover:bg-emerald-500 text-white hover:-translate-y-0.5 hover:shadow-emerald-500/20 active:scale-95 border border-emerald-500/30"
+                        ? 'bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850'
+                        : 'bg-emerald-600 hover:bg-emerald-500 text-white hover:-translate-y-0.5 hover:shadow-emerald-500/20 active:scale-95 border border-emerald-500/30'
                     }`}
                     onClick={handleStart}
                     disabled={
@@ -787,34 +725,22 @@ function JuryDashboard() {
                       selectedMatch.status === MatchStatus.COMPLETED ||
                       !isMatchStartable
                     }
-                    title={
-                      !isMatchStartable
-                        ? "Cannot start a match with TBD or BYE"
-                        : ""
-                    }
+                    title={!isMatchStartable ? 'Cannot start a match with TBD or BYE' : ''}
                   >
-                    {status === MatchStatus.PAUSED
-                      ? "▶️ Resume"
-                      : "🏁 Start Combat"}
+                    {status === MatchStatus.PAUSED ? '▶️ Resume' : '🏁 Start Combat'}
                   </button>
 
                   <button
                     className={`px-6 py-3 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
-                      !(
-                        status === MatchStatus.ACTIVE ||
-                        status === MatchStatus.GOLDEN_POINT
-                      ) ||
+                      !(status === MatchStatus.ACTIVE || status === MatchStatus.GOLDEN_POINT) ||
                       selectedMatch.status === MatchStatus.COMPLETED ||
                       !isMatchStartable
-                        ? "bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850"
-                        : "bg-yellow-600 hover:bg-yellow-500 text-white hover:-translate-y-0.5 hover:shadow-yellow-500/20 active:scale-95 border border-yellow-500/30"
+                        ? 'bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850'
+                        : 'bg-yellow-600 hover:bg-yellow-500 text-white hover:-translate-y-0.5 hover:shadow-yellow-500/20 active:scale-95 border border-yellow-500/30'
                     }`}
                     onClick={handlePause}
                     disabled={
-                      !(
-                        status === MatchStatus.ACTIVE ||
-                        status === MatchStatus.GOLDEN_POINT
-                      ) ||
+                      !(status === MatchStatus.ACTIVE || status === MatchStatus.GOLDEN_POINT) ||
                       selectedMatch.status === MatchStatus.COMPLETED ||
                       !isMatchStartable
                     }
@@ -827,8 +753,8 @@ function JuryDashboard() {
                       status === MatchStatus.ENDED ||
                       selectedMatch.status === MatchStatus.COMPLETED ||
                       !isMatchStartable
-                        ? "bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850"
-                        : "bg-slate-800 hover:bg-slate-700 text-slate-100 hover:-translate-y-0.5 hover:shadow-slate-800/20 active:scale-95 border border-slate-750"
+                        ? 'bg-slate-800/50 text-slate-600 cursor-not-allowed shadow-none border border-slate-850'
+                        : 'bg-slate-800 hover:bg-slate-700 text-slate-100 hover:-translate-y-0.5 hover:shadow-slate-800/20 active:scale-95 border border-slate-750'
                     }`}
                     onClick={handleEnd}
                     disabled={
@@ -848,5 +774,5 @@ function JuryDashboard() {
 
       <Footer />
     </div>
-  );
+  )
 }

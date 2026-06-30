@@ -23,7 +23,15 @@
   box-shadow: 0 10px 40px 0 rgba(31, 38, 135, 0.15);
 }
 
-.padding-none { padding: 0; }
-.padding-sm { padding: var(--space-3); }
-.padding-md { padding: var(--space-5); }
-.padding-lg { padding: var(--space-6); }
+.padding-none {
+  padding: 0;
+}
+.padding-sm {
+  padding: var(--space-3);
+}
+.padding-md {
+  padding: var(--space-5);
+}
+.padding-lg {
+  padding: var(--space-6);
+}

@@ -68,3 +68,6 @@ apps/e2e/playwright-report/trace/assets/urlMatch-BYQrIQwR.js
 apps/e2e/test-results/tournament-multiarea-flow--3eb73-ador-y-3-Jueces-interactúan-chromium/trace.zip
 database-debug.log
 .gitignore
+
+*storybook.log
+storybook-static

@@ -1,100 +1,94 @@
-import React, { useState, useEffect, useRef } from "react";
-import { ref, onValue, get } from "firebase/database";
-import { database } from "../lib/firebase";
-import { connectSocket, disconnectSocket } from "../lib/socketClient";
+import { AudioService } from '@corner-click/audio'
 import {
-  MatchStatus,
-  AUTHOR_NAME,
   APP_MOTTO,
+  APP_NAME,
   calculateNetScore,
+  MatchStatus,
   SocketEvent,
   SocketRole,
-  APP_NAME,
   SYSTEM_OFFICIAL_TITLE,
-} from "@corner-click/types";
-import { AudioService } from "@corner-click/audio";
-import { API_URL } from "../utils/apiClient";
-import { motion, AnimatePresence } from "framer-motion";
-import "../styles/global.css";
+} from '@corner-click/types'
+import { get, onValue, ref } from 'firebase/database'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { database } from '../lib/firebase'
+import { connectSocket, disconnectSocket } from '../lib/socketClient'
+import { API_URL } from '../utils/apiClient'
+import '../styles/global.css'
 
 interface PublicScoreboardProps {
-  areaId: string;
+  areaId: string
 }
 
 interface AreaMatchData {
-  matchId: string;
-  tournamentId: string;
-  categoryId: string;
-  redCompetitorId: string;
-  blueCompetitorId: string;
-  round: number;
-  nextMatchId?: string | null;
+  matchId: string
+  tournamentId: string
+  categoryId: string
+  redCompetitorId: string
+  blueCompetitorId: string
+  round: number
+  nextMatchId?: string | null
 }
 
 interface ScoreData {
-  redScore: number;
-  blueScore: number;
-  redWarnings: number;
-  blueWarnings: number;
-  redDeductions: number;
-  blueDeductions: number;
+  redScore: number
+  blueScore: number
+  redWarnings: number
+  blueWarnings: number
+  redDeductions: number
+  blueDeductions: number
 }
 
 const LABELS = {
-  WAITING_MATCH:
-    "Esperando inicio de combate. La pantalla se actualizará automáticamente.",
-  RED_CORNER: "CORNER ROJO",
-  BLUE_CORNER: "CORNER AZUL",
-  JUDGE_VOTES: "VOTOS DE JUECES",
-  CLOSED_SCOREBOARD: "MARCADOR CERRADO",
-  WAITING_JURY: "ESPERANDO CONFIRMACIÓN DEL JURY",
-  LOADING_CATEGORY: "CARGANDO CATEGORÍA...",
-  ROUND: "Ronda",
-  GOLDEN_POINT: "PUNTO DE ORO",
-  EXTRA_TIME: "TIEMPO EXTRA",
-  MATCH_TIME: "TIEMPO DE COMBATE",
-  BYE_DIRECT: "BYE (Pase Directo)",
-  LOADING: "Cargando...",
-  TBD: "TBD",
-  CHAMPIONSHIP_TITLE: "ITF TAEKWONDO CHAMPIONSHIP",
-};
+  WAITING_MATCH: 'Esperando inicio de combate. La pantalla se actualizará automáticamente.',
+  RED_CORNER: 'CORNER ROJO',
+  BLUE_CORNER: 'CORNER AZUL',
+  JUDGE_VOTES: 'VOTOS DE JUECES',
+  CLOSED_SCOREBOARD: 'MARCADOR CERRADO',
+  WAITING_JURY: 'ESPERANDO CONFIRMACIÓN DEL JURY',
+  LOADING_CATEGORY: 'CARGANDO CATEGORÍA...',
+  ROUND: 'Ronda',
+  GOLDEN_POINT: 'PUNTO DE ORO',
+  EXTRA_TIME: 'TIEMPO EXTRA',
+  MATCH_TIME: 'TIEMPO DE COMBATE',
+  BYE_DIRECT: 'BYE (Pase Directo)',
+  LOADING: 'Cargando...',
+  TBD: 'TBD',
+  CHAMPIONSHIP_TITLE: 'ITF TAEKWONDO CHAMPIONSHIP',
+}
 
 const STATUS_LABELS: Record<MatchStatus, string> = {
-  [MatchStatus.PENDING]: "PREPARADOS",
-  [MatchStatus.ACTIVE]: "EN COMBATE",
-  [MatchStatus.PAUSED]: "PAUSA",
-  [MatchStatus.ENDED]: "FINALIZADO",
-  [MatchStatus.GOLDEN_POINT]: "PUNTO DE ORO",
-  [MatchStatus.COMPLETED]: "COMPLETADO",
-};
+  [MatchStatus.PENDING]: 'PREPARADOS',
+  [MatchStatus.ACTIVE]: 'EN COMBATE',
+  [MatchStatus.PAUSED]: 'PAUSA',
+  [MatchStatus.ENDED]: 'FINALIZADO',
+  [MatchStatus.GOLDEN_POINT]: 'PUNTO DE ORO',
+  [MatchStatus.COMPLETED]: 'COMPLETADO',
+}
 
 export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
-  const [activeMatch, setActiveMatch] = useState<AreaMatchData | null>(null);
-  const [timeRemaining, setTimeRemaining] = useState<number>(120);
-  const [matchStatus, setMatchStatus] = useState<MatchStatus>(
-    MatchStatus.PENDING,
-  );
+  const [activeMatch, setActiveMatch] = useState<AreaMatchData | null>(null)
+  const [timeRemaining, setTimeRemaining] = useState<number>(120)
+  const [matchStatus, setMatchStatus] = useState<MatchStatus>(MatchStatus.PENDING)
 
-  const [competitors, setCompetitors] = useState<
-    Record<string, { name: string; club: string }>
-  >({});
-  const [categoryName, setCategoryName] = useState<string>("");
-  const [judgesData, setJudgesData] = useState<Record<string, ScoreData>>({});
-  const [isExtraTime, setIsExtraTime] = useState<boolean>(false);
+  const [competitors, setCompetitors] = useState<Record<string, { name: string; club: string }>>({})
+  const [categoryName, setCategoryName] = useState<string>('')
+  const [judgesData, setJudgesData] = useState<Record<string, ScoreData>>({})
+  const [isExtraTime, setIsExtraTime] = useState<boolean>(false)
 
-  const [firebaseConnected, setFirebaseConnected] = useState(true);
-  const useLocal = !firebaseConnected;
+  const [firebaseConnected, setFirebaseConnected] = useState(true)
+  const useLocal = !firebaseConnected
 
   useEffect(() => {
-    const connectedRef = ref(database, ".info/connected");
+    const connectedRef = ref(database, '.info/connected')
     const unsubscribe = onValue(connectedRef, (snap) => {
-      setFirebaseConnected(snap.val() === true);
-    });
-    return () => unsubscribe();
-  }, []);
+      setFirebaseConnected(snap.val() === true)
+    })
+    return () => unsubscribe()
+  }, [])
 
-  const prevStatusRef = useRef<MatchStatus | null>(null);
-  const prevTimeRef = useRef<number | null>(null);
+  const prevStatusRef = useRef<MatchStatus | null>(null)
+  const prevTimeRef = useRef<number | null>(null)
 
   useEffect(() => {
     if (
@@ -102,31 +96,32 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
       prevStatusRef.current !== MatchStatus.ACTIVE &&
       matchStatus === MatchStatus.ACTIVE
     ) {
-      AudioService.playGong();
+      AudioService.playGong()
     }
-    prevStatusRef.current = matchStatus;
-  }, [matchStatus]);
+    prevStatusRef.current = matchStatus
+  }, [matchStatus])
 
   useEffect(() => {
     if (
       timeRemaining === 0 &&
       prevTimeRef.current !== 0 &&
       prevTimeRef.current !== null &&
-      (matchStatus === MatchStatus.ACTIVE ||
-        matchStatus === MatchStatus.GOLDEN_POINT)
+      (matchStatus === MatchStatus.ACTIVE || matchStatus === MatchStatus.GOLDEN_POINT)
     ) {
-      AudioService.playBuzzer();
+      AudioService.playBuzzer()
     }
-    prevTimeRef.current = timeRemaining;
-  }, [timeRemaining, matchStatus]);
+    prevTimeRef.current = timeRemaining
+  }, [timeRemaining, matchStatus])
 
   useEffect(() => {
-    if (!useLocal) return;
+    if (!useLocal) {
+      return
+    }
 
-    const socket = connectSocket(areaId, SocketRole.SPECTATOR);
+    const socket = connectSocket(areaId, SocketRole.SPECTATOR)
 
     socket.on(SocketEvent.MATCH_STATE, (state: any) => {
-      if (state && state.match) {
+      if (state?.match) {
         setActiveMatch({
           matchId: state.match.id,
           tournamentId: state.match.tournamentId,
@@ -135,12 +130,12 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
           blueCompetitorId: state.match.blueCompetitorId,
           round: state.match.round || 1,
           nextMatchId: state.match.nextMatchId || null,
-        });
-        setTimeRemaining(state.timer);
-        setMatchStatus(state.match.status);
-        setIsExtraTime(state.match.isExtraTime || false);
+        })
+        setTimeRemaining(state.timer)
+        setMatchStatus(state.match.status)
+        setIsExtraTime(state.match.isExtraTime || false)
         if (state.scores) {
-          setJudgesData(state.scores);
+          setJudgesData(state.scores)
         }
 
         if (state.match.redCompetitorName) {
@@ -148,168 +143,173 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
             ...prev,
             [state.match.redCompetitorId]: {
               name: state.match.redCompetitorName,
-              club: state.match.redCompetitorClub || "",
+              club: state.match.redCompetitorClub || '',
             },
-          }));
+          }))
         }
         if (state.match.blueCompetitorName) {
           setCompetitors((prev) => ({
             ...prev,
             [state.match.blueCompetitorId]: {
               name: state.match.blueCompetitorName,
-              club: state.match.blueCompetitorClub || "",
+              club: state.match.blueCompetitorClub || '',
             },
-          }));
+          }))
         }
       }
-    });
+    })
 
     return () => {
-      disconnectSocket();
-    };
-  }, [useLocal, areaId]);
+      disconnectSocket()
+    }
+  }, [useLocal, areaId])
 
   useEffect(() => {
-    if (useLocal) return;
-    const areaMatchRef = ref(database, `live_matches_by_area/${areaId}`);
+    if (useLocal) {
+      return
+    }
+    const areaMatchRef = ref(database, `live_matches_by_area/${areaId}`)
 
     const unsubscribe = onValue(areaMatchRef, async (snapshot) => {
       if (snapshot.exists()) {
-        const data = snapshot.val() as AreaMatchData;
-        setActiveMatch(data);
+        const data = snapshot.val() as AreaMatchData
+        setActiveMatch(data)
 
         const categoryRef = ref(
           database,
-          `tournaments/${data.tournamentId}/categories/${data.categoryId}`,
-        );
-        const catSnap = await get(categoryRef);
+          `tournaments/${data.tournamentId}/categories/${data.categoryId}`
+        )
+        const catSnap = await get(categoryRef)
         if (catSnap.exists()) {
-          setCategoryName(catSnap.val().name || "");
+          setCategoryName(catSnap.val().name || '')
         }
 
-        const competitorsRef = ref(
-          database,
-          `tournaments/${data.tournamentId}/competitors`,
-        );
-        const compsSnap = await get(competitorsRef);
+        const competitorsRef = ref(database, `tournaments/${data.tournamentId}/competitors`)
+        const compsSnap = await get(competitorsRef)
         if (compsSnap.exists()) {
-          const compsData = compsSnap.val();
-          const mapped: Record<string, { name: string; club: string }> = {};
+          const compsData = compsSnap.val()
+          const mapped: Record<string, { name: string; club: string }> = {}
           Object.keys(compsData).forEach((key) => {
-            const c = compsData[key];
+            const c = compsData[key]
             mapped[key] = {
               name: `${c.firstName} ${c.lastName}`,
-              club: c.club || "",
-            };
-          });
-          setCompetitors(mapped);
+              club: c.club || '',
+            }
+          })
+          setCompetitors(mapped)
         }
       } else {
-        setActiveMatch(null);
+        setActiveMatch(null)
       }
-    });
+    })
 
-    return () => unsubscribe();
-  }, [areaId, useLocal]);
+    return () => unsubscribe()
+  }, [areaId, useLocal])
 
   useEffect(() => {
-    if (useLocal || !activeMatch) return;
+    if (useLocal || !activeMatch) {
+      return
+    }
 
-    const liveMatchRef = ref(database, `live_matches/${activeMatch.matchId}`);
+    const liveMatchRef = ref(database, `live_matches/${activeMatch.matchId}`)
 
     const unsubscribe = onValue(liveMatchRef, (snapshot) => {
       if (snapshot.exists()) {
-        const data = snapshot.val();
-        setTimeRemaining(
-          data.timeRemaining !== undefined ? data.timeRemaining : 120,
-        );
-        setMatchStatus(data.status || MatchStatus.PENDING);
-        setIsExtraTime(data.isExtraTime || false);
+        const data = snapshot.val()
+        setTimeRemaining(data.timeRemaining !== undefined ? data.timeRemaining : 120)
+        setMatchStatus(data.status || MatchStatus.PENDING)
+        setIsExtraTime(data.isExtraTime || false)
         if (data.scores) {
-          setJudgesData(data.scores);
+          setJudgesData(data.scores)
         } else {
-          setJudgesData({});
+          setJudgesData({})
         }
       }
-    });
+    })
 
-    return () => unsubscribe();
-  }, [activeMatch?.matchId, useLocal]);
+    return () => unsubscribe()
+  }, [activeMatch?.matchId, useLocal, activeMatch])
 
   useEffect(() => {
-    if (useLocal) return;
-    let eventSource: EventSource | null = null;
-    setJudgesData({});
+    if (useLocal) {
+      return
+    }
+    let eventSource: EventSource | null = null
+    setJudgesData({})
 
     if (
       activeMatch &&
-      (matchStatus === MatchStatus.ENDED ||
-        matchStatus === MatchStatus.COMPLETED)
+      (matchStatus === MatchStatus.ENDED || matchStatus === MatchStatus.COMPLETED)
     ) {
-      eventSource = new EventSource(
-        `${API_URL}/api/matches/${activeMatch.matchId}/stream-scores`,
-      );
+      eventSource = new EventSource(`${API_URL}/api/matches/${activeMatch.matchId}/stream-scores`)
 
       eventSource.onmessage = (event) => {
         try {
-          const data = JSON.parse(event.data);
+          const data = JSON.parse(event.data)
           if (data.scores) {
-            setJudgesData(data.scores);
+            setJudgesData(data.scores)
           }
         } catch (err) {
-          console.error("Failed to parse SSE scores:", err);
+          console.error('Failed to parse SSE scores:', err)
         }
-      };
+      }
     }
 
     return () => {
-      if (eventSource) eventSource.close();
-    };
-  }, [activeMatch?.matchId, matchStatus, useLocal]);
+      if (eventSource) {
+        eventSource.close()
+      }
+    }
+  }, [activeMatch?.matchId, matchStatus, useLocal, activeMatch])
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60)
       .toString()
-      .padStart(2, "0");
-    const s = (seconds % 60).toString().padStart(2, "0");
-    return `${m}:${s}`;
-  };
+      .padStart(2, '0')
+    const s = (seconds % 60).toString().padStart(2, '0')
+    return `${m}:${s}`
+  }
 
-  let redVotes = 0;
-  let blueVotes = 0;
-  let tieVotes = 0;
-  let totalRed = 0;
-  let totalBlue = 0;
+  let redVotes = 0
+  let blueVotes = 0
+  let tieVotes = 0
+  let _totalRed = 0
+  let _totalBlue = 0
 
   Object.values(judgesData).forEach((curr) => {
-    const r = calculateNetScore(
-      curr.redScore || 0,
-      curr.redWarnings || 0,
-      curr.redDeductions || 0,
-    );
+    const r = calculateNetScore(curr.redScore || 0, curr.redWarnings || 0, curr.redDeductions || 0)
     const b = calculateNetScore(
       curr.blueScore || 0,
       curr.blueWarnings || 0,
-      curr.blueDeductions || 0,
-    );
-    totalRed += r;
-    totalBlue += b;
-    if (r > b) redVotes++;
-    else if (b > r) blueVotes++;
-    else tieVotes++;
-  });
+      curr.blueDeductions || 0
+    )
+    _totalRed += r
+    _totalBlue += b
+    if (r > b) {
+      redVotes++
+    } else if (b > r) {
+      blueVotes++
+    } else {
+      tieVotes++
+    }
+  })
 
   const getCompName = (id: string) => {
-    if (!id || id === "" || id.toUpperCase().includes("TBD")) return LABELS.TBD;
-    if (id === "BYE") return LABELS.BYE_DIRECT;
-    return competitors[id]?.name || LABELS.LOADING;
-  };
+    if (!id || id === '' || id.toUpperCase().includes('TBD')) {
+      return LABELS.TBD
+    }
+    if (id === 'BYE') {
+      return LABELS.BYE_DIRECT
+    }
+    return competitors[id]?.name || LABELS.LOADING
+  }
 
   const getCompClub = (id: string) => {
-    if (!id || id === "" || id.toUpperCase().includes("TBD") || id === "BYE")
-      return "";
-    return competitors[id]?.club || "";
-  };
+    if (!id || id === '' || id.toUpperCase().includes('TBD') || id === 'BYE') {
+      return ''
+    }
+    return competitors[id]?.club || ''
+  }
 
   if (!activeMatch) {
     return (
@@ -317,7 +317,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
         <motion.div
           initial={{ opacity: 0, y: 50, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
           className="text-center p-[4vw] bg-slate-900/40 rounded-[3vw] border border-slate-800 backdrop-blur-xl w-[60vw] max-w-[1200px] shadow-[0_0_80px_rgba(59,130,246,0.1)] relative z-10"
         >
           <motion.svg
@@ -326,8 +326,8 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
               scale: [1, 1.1, 1],
             }}
             transition={{
-              rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-              scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+              rotate: { duration: 20, repeat: Infinity, ease: 'linear' },
+              scale: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
             }}
             className="w-[10vw] max-w-[150px] text-blue-500 mx-auto mb-[2vw] opacity-80"
             fill="none"
@@ -353,30 +353,29 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
         <div className="absolute top-0 left-0 w-[50vw] h-[50vw] bg-blue-600/10 rounded-full blur-[10vw] pointer-events-none mix-blend-screen animate-pulse-slow"></div>
         <div
           className="absolute bottom-0 right-0 w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[10vw] pointer-events-none mix-blend-screen animate-pulse-slow"
-          style={{ animationDelay: "1s" }}
+          style={{ animationDelay: '1s' }}
         ></div>
       </div>
-    );
+    )
   }
 
   const getStatusLabel = (status: MatchStatus) => {
     if (isExtraTime && status === MatchStatus.ACTIVE) {
-      return LABELS.EXTRA_TIME;
+      return LABELS.EXTRA_TIME
     }
-    return STATUS_LABELS[status] || status;
-  };
+    return STATUS_LABELS[status] || status
+  }
 
-  const showFinalScores =
-    matchStatus === MatchStatus.ENDED || matchStatus === MatchStatus.COMPLETED;
+  const showFinalScores = matchStatus === MatchStatus.ENDED || matchStatus === MatchStatus.COMPLETED
 
   const timerColor =
     isExtraTime && matchStatus === MatchStatus.ACTIVE
-      ? "text-amber-400 drop-shadow-[0_0_5vh_rgba(245,158,11,0.6)]"
+      ? 'text-amber-400 drop-shadow-[0_0_5vh_rgba(245,158,11,0.6)]'
       : matchStatus === MatchStatus.ACTIVE
-        ? "text-emerald-400 drop-shadow-[0_0_5vh_rgba(52,211,153,0.6)]"
+        ? 'text-emerald-400 drop-shadow-[0_0_5vh_rgba(52,211,153,0.6)]'
         : matchStatus === MatchStatus.GOLDEN_POINT
-          ? "text-amber-400 drop-shadow-[0_0_5vh_rgba(245,158,11,0.6)]"
-          : "text-slate-500 drop-shadow-none";
+          ? 'text-amber-400 drop-shadow-[0_0_5vh_rgba(245,158,11,0.6)]'
+          : 'text-slate-500 drop-shadow-none'
 
   return (
     <div className="h-[100vh] w-[100vw] bg-slate-950 text-slate-100 font-sans flex flex-col justify-between p-[3vh] px-[3vw] relative overflow-hidden select-none">
@@ -384,7 +383,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
       <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
       <motion.div
         animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.15, 0.1] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
         className="absolute -top-[20vh] -left-[10vw] w-[60vw] h-[60vw] bg-rose-600/20 rounded-full filter blur-[15vw] pointer-events-none mix-blend-screen"
       />
       <motion.div
@@ -392,7 +391,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
         transition={{
           duration: 10,
           repeat: Infinity,
-          ease: "easeInOut",
+          ease: 'easeInOut',
           delay: 5,
         }}
         className="absolute -bottom-[20vh] -right-[10vw] w-[60vw] h-[60vw] bg-blue-600/20 rounded-full filter blur-[15vw] pointer-events-none mix-blend-screen"
@@ -402,7 +401,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
       <motion.header
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 100, damping: 20 }}
+        transition={{ type: 'spring', stiffness: 100, damping: 20 }}
         className="flex justify-between items-center bg-slate-900/70 border border-slate-800/80 px-[3vw] py-[2vh] rounded-[2vw] backdrop-blur-xl z-10 shadow-[0_2vh_5vh_rgba(0,0,0,0.5)]"
       >
         <div>
@@ -415,7 +414,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
         </div>
         <div className="text-right flex flex-col items-end">
           <span className="bg-slate-950 text-slate-100 font-black px-[2vw] py-[1vh] rounded-full border-2 border-slate-700 uppercase tracking-widest text-[3vh] shadow-lg whitespace-nowrap">
-            ÁREA {areaId.toLowerCase().replace("area-", "")}
+            ÁREA {areaId.toLowerCase().replace('area-', '')}
           </span>
           <div className="text-[2vh] mt-[1.5vh] font-bold tracking-widest">
             {!activeMatch.nextMatchId ? (
@@ -439,10 +438,10 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
       <main className="flex-1 my-[3vh] flex items-stretch gap-[3vw] z-10 h-full overflow-hidden">
         {/* Red Corner Panel */}
         <motion.div
-          initial={{ x: "-20vw", opacity: 0 }}
+          initial={{ x: '-20vw', opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{
-            type: "spring",
+            type: 'spring',
             stiffness: 70,
             damping: 20,
             delay: 0.1,
@@ -466,15 +465,15 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
           <div className="flex flex-col items-center justify-center my-auto py-[2vh] relative z-10">
             <AnimatePresence mode="popLayout">
               <motion.div
-                key={showFinalScores ? redVotes : "0"}
+                key={showFinalScores ? redVotes : '0'}
                 initial={{ scale: 0.5, opacity: 0, y: 50 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 1.5, opacity: 0, y: -50 }}
-                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
                 className={`text-[25vh] font-black leading-none font-mono tracking-tighter ${
                   showFinalScores
-                    ? "text-rose-500 drop-shadow-[0_0_3vw_rgba(244,63,94,0.8)]"
-                    : "text-slate-800/80 drop-shadow-none"
+                    ? 'text-rose-500 drop-shadow-[0_0_3vw_rgba(244,63,94,0.8)]'
+                    : 'text-slate-800/80 drop-shadow-none'
                 }`}
               >
                 {showFinalScores ? redVotes : 0}
@@ -508,18 +507,18 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
             <span
               className={`px-[3vw] py-[1.5vh] rounded-full text-[2.2vh] font-black uppercase tracking-[0.2em] border-[0.2vw] shadow-[0_1vh_3vh_rgba(0,0,0,0.5)] inline-block transition-colors duration-500 ${
                 matchStatus === MatchStatus.GOLDEN_POINT
-                  ? "bg-amber-500/20 border-amber-500 text-amber-400 animate-pulse"
+                  ? 'bg-amber-500/20 border-amber-500 text-amber-400 animate-pulse'
                   : isExtraTime && matchStatus === MatchStatus.ACTIVE
-                    ? "bg-amber-500/20 border-amber-500 text-amber-400 animate-pulse"
+                    ? 'bg-amber-500/20 border-amber-500 text-amber-400 animate-pulse'
                     : matchStatus === MatchStatus.ACTIVE
-                      ? "bg-emerald-500/20 border-emerald-500 text-emerald-400 animate-pulse"
+                      ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400 animate-pulse'
                       : matchStatus === MatchStatus.PAUSED
-                        ? "bg-yellow-500/20 border-yellow-500 text-yellow-400"
+                        ? 'bg-yellow-500/20 border-yellow-500 text-yellow-400'
                         : matchStatus === MatchStatus.ENDED
-                          ? "bg-rose-500/20 border-rose-500 text-rose-400"
+                          ? 'bg-rose-500/20 border-rose-500 text-rose-400'
                           : matchStatus === MatchStatus.PENDING
-                            ? "bg-slate-800/80 border-slate-600 text-slate-200"
-                            : "bg-slate-900 border-slate-700 text-slate-500"
+                            ? 'bg-slate-800/80 border-slate-600 text-slate-200'
+                            : 'bg-slate-900 border-slate-700 text-slate-500'
               }`}
             >
               {getStatusLabel(matchStatus)}
@@ -538,7 +537,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
                   {tieVotes}
                 </div>
                 <div className="text-slate-500 font-black uppercase tracking-[0.2em] text-[1.5vh] mt-[1vh] bg-slate-900/60 border border-slate-700/80 px-[2vw] py-[1vh] rounded-full shadow-inner backdrop-blur-md">
-                  {tieVotes === 1 ? "EMPATE" : "EMPATES"}
+                  {tieVotes === 1 ? 'EMPATE' : 'EMPATES'}
                 </div>
               </motion.div>
             )}
@@ -558,10 +557,10 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
 
         {/* Blue Corner Panel */}
         <motion.div
-          initial={{ x: "20vw", opacity: 0 }}
+          initial={{ x: '20vw', opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{
-            type: "spring",
+            type: 'spring',
             stiffness: 70,
             damping: 20,
             delay: 0.1,
@@ -585,15 +584,15 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
           <div className="flex flex-col items-center justify-center my-auto py-[2vh] relative z-10">
             <AnimatePresence mode="popLayout">
               <motion.div
-                key={showFinalScores ? blueVotes : "0"}
+                key={showFinalScores ? blueVotes : '0'}
                 initial={{ scale: 0.5, opacity: 0, y: 50 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 1.5, opacity: 0, y: -50 }}
-                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
                 className={`text-[25vh] font-black leading-none font-mono tracking-tighter ${
                   showFinalScores
-                    ? "text-blue-500 drop-shadow-[0_0_3vw_rgba(59,130,246,0.8)]"
-                    : "text-slate-800/80 drop-shadow-none"
+                    ? 'text-blue-500 drop-shadow-[0_0_3vw_rgba(59,130,246,0.8)]'
+                    : 'text-slate-800/80 drop-shadow-none'
                 }`}
               >
                 {showFinalScores ? blueVotes : 0}
@@ -629,5 +628,5 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
         }
       `}</style>
     </div>
-  );
+  )
 }

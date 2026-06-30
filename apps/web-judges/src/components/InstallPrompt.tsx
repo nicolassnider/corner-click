@@ -1,69 +1,72 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from 'react'
 
 interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+  prompt: () => Promise<void>
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
 }
 
 export default function InstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] =
-    useState<BeforeInstallPromptEvent | null>(null);
-  const [showPrompt, setShowPrompt] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
+  const [showPrompt, setShowPrompt] = useState(false)
 
   useEffect(() => {
     const handler = (e: Event) => {
       // Prevent the mini-infobar from showing on mobile
-      e.preventDefault();
-      const promptEvent = e as BeforeInstallPromptEvent;
-      setDeferredPrompt(promptEvent);
+      e.preventDefault()
+      const promptEvent = e as BeforeInstallPromptEvent
+      setDeferredPrompt(promptEvent)
 
       // Show custom install prompt after a short delay
       setTimeout(() => {
-        setShowPrompt(true);
-      }, 2000);
-    };
+        setShowPrompt(true)
+      }, 2000)
+    }
 
-    window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener('beforeinstallprompt', handler)
 
     // Check if app is already installed
-    if (window.matchMedia("(display-mode: standalone)").matches) {
-      setShowPrompt(false);
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setShowPrompt(false)
     }
 
     return () => {
-      window.removeEventListener("beforeinstallprompt", handler);
-    };
-  }, []);
+      window.removeEventListener('beforeinstallprompt', handler)
+    }
+  }, [])
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-
-    if (outcome === "accepted") {
-      console.log("User accepted the install prompt");
-    } else {
-      console.log("User dismissed the install prompt");
+    if (!deferredPrompt) {
+      return
     }
 
-    setDeferredPrompt(null);
-    setShowPrompt(false);
-  };
+    deferredPrompt.prompt()
+    const { outcome } = await deferredPrompt.userChoice
+
+    if (outcome === 'accepted') {
+      console.log('User accepted the install prompt')
+    } else {
+      console.log('User dismissed the install prompt')
+    }
+
+    setDeferredPrompt(null)
+    setShowPrompt(false)
+  }
 
   const handleDismiss = () => {
-    setShowPrompt(false);
+    setShowPrompt(false)
     // Don't show again for this session
-    sessionStorage.setItem("installPromptDismissed", "true");
-  };
+    sessionStorage.setItem('installPromptDismissed', 'true')
+  }
 
   useEffect(() => {
-    if (sessionStorage.getItem("installPromptDismissed")) {
-      setShowPrompt(false);
+    if (sessionStorage.getItem('installPromptDismissed')) {
+      setShowPrompt(false)
     }
-  }, []);
+  }, [])
 
-  if (!showPrompt || !deferredPrompt) return null;
+  if (!showPrompt || !deferredPrompt) {
+    return null
+  }
 
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:w-96">
@@ -85,12 +88,10 @@ export default function InstallPrompt() {
             </svg>
           </div>
           <div className="flex-1">
-            <h3 className="text-white font-bold text-sm mb-1">
-              Instalar la App
-            </h3>
+            <h3 className="text-white font-bold text-sm mb-1">Instalar la App</h3>
             <p className="text-slate-400 text-xs mb-3">
-              Instala Corner Click en tu dispositivo para una experiencia más
-              rápida y acceso offline.
+              Instala Corner Click en tu dispositivo para una experiencia más rápida y acceso
+              offline.
             </p>
             <div className="flex gap-2">
               <button
@@ -110,5 +111,5 @@ export default function InstallPrompt() {
         </div>
       </div>
     </div>
-  );
+  )
 }

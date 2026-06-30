@@ -9,14 +9,27 @@
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^5.2.1",
+    "@storybook/addon-a11y": "^10.4.6",
+    "@storybook/addon-docs": "^10.4.6",
+    "@storybook/addon-mcp": "^0.6.0",
+    "@storybook/addon-vitest": "^10.4.6",
+    "@storybook/react-vite": "^10.4.6",
     "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3"
+    "@types/react-dom": "^19.2.3",
+    "@vitest/browser-playwright": "^4.1.9",
+    "@vitest/coverage-v8": "^4.1.9",
+    "histoire": "^1.0.0-beta.1",
+    "playwright": "^1.61.1",
+    "storybook": "^10.4.6"
   },
   "private": true,
   "scripts": {
-    "build": "astro build",
-    "dev": "astro dev --port 4323",
-    "preview": "astro preview"
+    "build": "storybook build",
+    "build-storybook": "storybook build",
+    "dev": "storybook dev -p 4323",
+    "preview": "npx http-server storybook-static",
+    "storybook": "storybook dev -p 6006"
   },
   "type": "module"
 }

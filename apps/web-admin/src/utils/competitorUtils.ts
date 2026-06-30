@@ -1,4 +1,4 @@
-import type { Competitor } from "@corner-click/types";
+import type { Competitor } from '@corner-click/types'
 
 /**
  * Resolves a competitor's full name based on their ID and a provided map of competitors.
@@ -6,18 +6,22 @@ import type { Competitor } from "@corner-click/types";
  */
 export const getCompetitorFullName = (
   id: string | null | undefined,
-  competitorsMap: Record<string, Competitor> | Competitor[],
+  competitorsMap: Record<string, Competitor> | Competitor[]
 ): string => {
-  if (!id) return "TBD";
-  if (id === "BYE") return "BYE";
-
-  let comp: Competitor | undefined;
-
-  if (Array.isArray(competitorsMap)) {
-    comp = competitorsMap.find((c) => c.id === id);
-  } else {
-    comp = competitorsMap[id];
+  if (!id) {
+    return 'TBD'
+  }
+  if (id === 'BYE') {
+    return 'BYE'
   }
 
-  return comp ? `${comp.firstName} ${comp.lastName}` : id;
-};
+  let comp: Competitor | undefined
+
+  if (Array.isArray(competitorsMap)) {
+    comp = competitorsMap.find((c) => c.id === id)
+  } else {
+    comp = competitorsMap[id]
+  }
+
+  return comp ? `${comp.firstName} ${comp.lastName}` : id
+}
