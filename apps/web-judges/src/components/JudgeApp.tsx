@@ -5,6 +5,7 @@ import { ref, onValue } from "firebase/database";
 import { auth, database } from "../lib/firebase";
 import { fetchWithAuth, API_URL } from "../utils/apiClient";
 import ScorePad from "./ScorePad";
+import InstallPrompt from "./InstallPrompt";
 import {
   APP_MOTTO,
   AUTHOR_NAME,
@@ -144,11 +145,16 @@ function JudgeApp() {
         setUser(null);
         setTournamentId(null);
         setJudgeId(null);
+      } else if (judgeData.currentAssignment) {
+        setAssignment({
+          ...judgeData.currentAssignment,
+          tournamentId: tournamentId!,
+        });
       } else {
-        setAssignment(judgeData.currentAssignment || null);
+        setAssignment(null);
       }
     }
-  }, [judgeData, queryError]);
+  }, [judgeData, queryError, tournamentId]);
 
   const pinLoginMutation = trpc.auth.pinLogin.useMutation();
   const logoutMutation = trpc.auth.logout.useMutation();
@@ -368,15 +374,18 @@ function JudgeApp() {
   }
 
   return (
-    <ScorePad
-      key={`${activeMatchId}-${assignment.cornerId}`}
-      matchId={activeMatchId}
-      cornerId={assignment.cornerId}
-      areaId={assignment.areaId}
-      judgeId={user?.uid || "offline-judge-id"}
-      judgeName={judgeName}
-      onLogout={handleLogout}
-      isOffline={assignment.tournamentId === "offline-tournament"}
-    />
+    <>
+      <InstallPrompt />
+      <ScorePad
+        key={`${activeMatchId}-${assignment.cornerId}`}
+        matchId={activeMatchId}
+        cornerId={assignment.cornerId}
+        areaId={assignment.areaId}
+        judgeId={user?.uid || "offline-judge-id"}
+        judgeName={judgeName}
+        onLogout={handleLogout}
+        isOffline={assignment.tournamentId === "offline-tournament"}
+      />
+    </>
   );
 }

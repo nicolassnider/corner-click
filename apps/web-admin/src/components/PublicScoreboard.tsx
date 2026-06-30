@@ -519,6 +519,22 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
           </motion.div>
 
           <AnimatePresence>
+            {showFinalScores && tieVotes > 0 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                className="mt-[2vh] flex flex-col items-center justify-center"
+              >
+                <div className="text-[12vh] font-black text-slate-400 drop-shadow-[0_0_2vw_rgba(148,163,184,0.5)] leading-none font-mono">
+                  {tieVotes}
+                </div>
+                <div className="text-slate-500 font-black uppercase tracking-[0.2em] text-[1.5vh] mt-[1vh] bg-slate-900/60 border border-slate-700/80 px-[2vw] py-[1vh] rounded-full shadow-inner backdrop-blur-md">
+                  {tieVotes === 1 ? "EMPATE" : "EMPATES"}
+                </div>
+              </motion.div>
+            )}
+
             {matchStatus === MatchStatus.ENDED && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ref, get, set, onValue } from "firebase/database";
+import { ref, get, set, update, onValue } from "firebase/database";
 import { database } from "../lib/firebase";
 import { fetchWithAuth } from "../utils/apiClient";
 import { getMatches, advanceWinner } from "../services/bracketService";
@@ -47,7 +47,8 @@ export const useActiveMatch = (
   const [wasGoldenPoint, setWasGoldenPoint] = useState(false);
 
   const [firebaseConnected, setFirebaseConnected] = useState(true);
-  const useLocal = !firebaseConnected;
+  // Disabled automatic fallback to avoid split-brain state between Admin and Judge
+  const useLocal = false;
 
   const updateStatusMutation = trpc.matches.updateStatus.useMutation();
   const submitScoresMutation = trpc.matches.submitScores.useMutation();
@@ -312,7 +313,7 @@ export const useActiveMatch = (
   useEffect(() => {
     if (!isLoaded || !selectedMatch || useLocal) return;
     const matchRef = ref(database, `live_matches/${selectedMatch.id}`);
-    set(matchRef, {
+    update(matchRef, {
       timeRemaining,
       status,
       isExtraTime: isExtraTime || false,
@@ -329,18 +330,22 @@ export const useActiveMatch = (
   // Sync Active Match ID for Area (Online only)
   useEffect(() => {
     if (!selectedMatch || useLocal) return;
-    const areaMatchRef = ref(
-      database,
-      `live_matches_by_area/${selectedMatch.areaId}`,
-    );
-    set(areaMatchRef, {
-      matchId: selectedMatch.id,
-      tournamentId: selectedMatch.tournamentId,
-      categoryId: selectedMatch.categoryId,
-      redCompetitorId: selectedMatch.redCompetitorId,
-      blueCompetitorId: selectedMatch.blueCompetitorId,
+    const areaId = selectedMatch.areaId || "1";
+    const areaMatchRef = ref(database, `live_matches_by_area/${areaId}`);
+    
+    // Avoid undefined values for Firebase RTDB
+    const payload = {
+      matchId: selectedMatch.id || "",
+      tournamentId: selectedMatch.tournamentId || "",
+      categoryId: selectedMatch.categoryId || "",
+      redCompetitorId: selectedMatch.redCompetitorId || "",
+      blueCompetitorId: selectedMatch.blueCompetitorId || "",
       round: selectedMatch.round || 1,
       nextMatchId: selectedMatch.nextMatchId || null,
+    };
+
+    set(areaMatchRef, payload).catch(err => {
+      console.error("Failed to sync live_matches_by_area:", err);
     });
   }, [selectedMatch?.id, useLocal]);
 

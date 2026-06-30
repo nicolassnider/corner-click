@@ -7,14 +7,13 @@ const log = createLogger("match-repo");
 
 export class FirebaseMatchRepository implements IMatchRepository {
   async findByTournament(tournamentId: string): Promise<Match[]> {
-    if (!db) throw new Error("Database not initialized");
-    const snapshot = await db
-      .collection("matches")
-      .where("tournamentId", "==", tournamentId)
-      .get();
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
+    if (!rtdb) throw new Error("Firebase RTDB not initialized");
+    const snapshot = await rtdb.ref(`tournaments/${tournamentId}/matches`).once("value");
+    if (!snapshot.exists()) return [];
+    const data = snapshot.val();
+    return Object.keys(data).map((key) => ({
+      id: key,
+      ...data[key],
     })) as Match[];
   }
 

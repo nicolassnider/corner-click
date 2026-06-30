@@ -305,14 +305,14 @@ function JuryDashboard() {
               value={selectedCategoryId}
               onChange={(e) => setSelectedCategoryId(e.target.value)}
               className="bg-slate-950 text-slate-200 px-3 py-2 rounded-lg border border-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium transition-all w-full sm:w-52 min-w-[200px] disabled:opacity-50 disabled:bg-slate-900 disabled:text-slate-500 disabled:border-slate-850 disabled:cursor-not-allowed"
-              disabled={!selectedTournamentId || activeCategories.length === 0}
+              disabled={!selectedTournamentId || categories.length === 0}
             >
-              {selectedTournamentId && activeCategories.length === 0 ? (
+              {selectedTournamentId && categories.length === 0 ? (
                 <option value="">No categories available</option>
               ) : (
                 <option value="">Select Category...</option>
               )}
-              {activeCategories.map((c) => (
+              {categories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
@@ -679,23 +679,31 @@ function JuryDashboard() {
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-px bg-slate-800 border-y border-slate-800 flex-grow shrink-0">
+                <div className="grid grid-cols-3 gap-px bg-slate-800 border-y border-slate-800 flex-grow shrink-0">
                   <div className="bg-rose-950/5 p-4 md:p-6 flex flex-col items-center justify-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-rose-500/2 blur-[80px] pointer-events-none" />
-                    <span className="text-rose-500/80 font-black uppercase tracking-widest text-[10px] mb-1">
-                      Red Points Accumulation
+                    <span className="text-rose-500/80 font-black uppercase tracking-widest text-[10px] mb-1 text-center">
+                      Red Votes
                     </span>
                     <span className="text-5xl md:text-6xl font-black text-rose-500 tracking-tight drop-shadow-[0_0_15px_rgba(244,63,94,0.15)]">
-                      {totalRed}
+                      {redVotes}
+                    </span>
+                  </div>
+                  <div className="bg-slate-900/40 p-4 md:p-6 flex flex-col items-center justify-center relative overflow-hidden">
+                    <span className="text-slate-500/80 font-black uppercase tracking-widest text-[10px] mb-1 text-center">
+                      Ties
+                    </span>
+                    <span className="text-5xl md:text-6xl font-black text-slate-500 tracking-tight drop-shadow-[0_0_15px_rgba(100,116,139,0.15)]">
+                      {tieVotes}
                     </span>
                   </div>
                   <div className="bg-blue-950/5 p-4 md:p-6 flex flex-col items-center justify-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-blue-500/2 blur-[80px] pointer-events-none" />
-                    <span className="text-blue-500/80 font-black uppercase tracking-widest text-[10px] mb-1">
-                      Blue Points Accumulation
+                    <span className="text-blue-500/80 font-black uppercase tracking-widest text-[10px] mb-1 text-center">
+                      Blue Votes
                     </span>
                     <span className="text-5xl md:text-6xl font-black text-blue-500 tracking-tight drop-shadow-[0_0_15px_rgba(59,130,246,0.15)]">
-                      {totalBlue}
+                      {blueVotes}
                     </span>
                   </div>
                 </div>
