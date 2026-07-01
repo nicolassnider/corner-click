@@ -4,7 +4,7 @@
   "version": "1.0.1",
   "author": "",
   "dependencies": {
-    "@corner-click/logger": "0.0.1",
+    "@corner-click/logger": "*",
     "@trpc/server": "^11.18.0",
     "cors": "^2.8.6",
     "express": "^4.22.2",
@@ -14,8 +14,8 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@corner-click/tsconfig": "0.0.1",
-    "@corner-click/types": "0.0.1",
+    "@corner-click/tsconfig": "*",
+    "@corner-click/types": "*",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.9.3",

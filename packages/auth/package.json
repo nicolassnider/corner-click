@@ -2,13 +2,13 @@
   "name": "@corner-click/auth",
   "version": "0.0.2",
   "dependencies": {
-    "@corner-click/api-client": "0.0.1",
+    "@corner-click/api-client": "*",
     "firebase": "^12.14.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
-    "@corner-click/tsconfig": "0.0.1",
+    "@corner-click/tsconfig": "*",
     "@types/react": "^19.2.17",
     "typescript": "^5.7.3"
   },
