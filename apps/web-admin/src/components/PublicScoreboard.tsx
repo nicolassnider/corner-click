@@ -319,10 +319,7 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
 
         {/* Ambient Lights */}
         <div className="absolute top-0 left-0 w-[50vw] h-[50vw] bg-blue-600/10 rounded-full blur-[10vw] pointer-events-none mix-blend-screen animate-pulse-slow"></div>
-        <div
-          className="absolute bottom-0 right-0 w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[10vw] pointer-events-none mix-blend-screen animate-pulse-slow"
-          style={{ animationDelay: '1s' }}
-        ></div>
+        <div className="absolute bottom-0 right-0 w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[10vw] pointer-events-none mix-blend-screen animate-pulse-slow delay-1000"></div>
       </div>
     )
   }

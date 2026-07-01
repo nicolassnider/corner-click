@@ -9,8 +9,9 @@ import {
   SocketRole,
 } from '@corner-click/types'
 import { onValue, ref, set } from 'firebase/database'
+import { motion } from 'framer-motion'
 import type React from 'react'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { database } from '../lib/firebase'
 import { connectSocket, disconnectSocket, getSocket } from '../lib/socketClient'
 import '../styles/global.css'
@@ -34,44 +35,15 @@ function ScoreButton({
   className: string
   children: React.ReactNode
 }) {
-  const [isPressed, setIsPressed] = useState(false)
-
-  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
-    e.currentTarget.setPointerCapture(e.pointerId)
-    setIsPressed(true)
-  }
-
-  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
-    if (!isPressed) return
-    setIsPressed(false)
-
-    const rect = e.currentTarget.getBoundingClientRect()
-    const inside =
-      e.clientX >= rect.left &&
-      e.clientX <= rect.right &&
-      e.clientY >= rect.top &&
-      e.clientY <= rect.bottom
-
-    if (inside) onAction()
-  }
-
-  const handlePointerCancel = () => setIsPressed(false)
-
   return (
-    <button
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerCancel}
-      onClick={(e) => e.preventDefault()}
-      style={{ touchAction: 'none' }} // ← fix 1: deshabilita gesture detection del browser en este elemento
-      className={`${className} active:scale-95 transition-transform duration-75 ${isPressed ? 'scale-95' : ''}`}
+    <motion.button
+      whileTap={{ scale: 0.95 }}
+      onTap={onAction}
+      className={`${className} relative overflow-hidden`}
     >
-      <div
-        className={`absolute inset-0 bg-white/10 transition-opacity pointer-events-none ${isPressed ? 'opacity-100' : 'opacity-0'}`}
-      />{' '}
-      {/* ← fix 2: no interceptar eventos */}
+      <div className="absolute inset-0 bg-white/0 transition-colors active:bg-white/10 pointer-events-none" />
       {children}
-    </button>
+    </motion.button>
   )
 }
 
@@ -265,10 +237,7 @@ export default function ScorePad({
   }
 
   return (
-    <div
-      className="flex flex-col h-[100dvh] w-screen bg-slate-950 overflow-hidden text-slate-100 font-sans touch-manipulation select-none relative"
-      onTouchStart={() => {}}
-    >
+    <div className="flex flex-col h-[100dvh] w-screen bg-slate-950 overflow-hidden text-slate-100 font-sans touch-manipulation select-none relative">
       {/* Top Bar Glassmorphism */}
       <div className="flex justify-between items-center px-4 py-3 bg-slate-900/60 backdrop-blur-md border-b border-slate-800/80 z-30">
         <div className="flex items-center gap-3">
@@ -284,7 +253,7 @@ export default function ScorePad({
         {onLogout && (
           <button
             onClick={onLogout}
-            className="text-white text-[10px] font-black uppercase tracking-widest bg-rose-600/90 hover:bg-rose-500 px-4 py-1.5 rounded-lg shadow-lg active:scale-95 transition-all border border-rose-500/50"
+            className="text-white text-[10px] font-black uppercase tracking-widest bg-rose-600/90 hover:bg-rose-500 px-4 py-1.5 rounded-lg shadow-lg active:scale-95 transition-transform border border-rose-500/50"
           >
             Salir
           </button>
@@ -352,7 +321,7 @@ export default function ScorePad({
 
           <ScoreButton
             onAction={() => handleScore(CornerRole.RED, 1)}
-            className="flex-[3] bg-rose-600 hover:bg-rose-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(225,29,72,0.3)] border-t border-rose-400/30 cursor-pointer relative overflow-hidden group"
+            className="flex-[3] bg-rose-600 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(225,29,72,0.3)] border-t border-rose-400/30 group cursor-pointer"
           >
             <span className="text-7xl font-black drop-shadow-md">+1</span>
             <span className="text-xs font-black uppercase tracking-widest opacity-90 mt-2">
@@ -362,7 +331,7 @@ export default function ScorePad({
 
           <ScoreButton
             onAction={() => handleScore(CornerRole.RED, 2)}
-            className="flex-[3] bg-rose-600 hover:bg-rose-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(225,29,72,0.3)] border-t border-rose-400/30 cursor-pointer relative overflow-hidden group"
+            className="flex-[3] bg-rose-600 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(225,29,72,0.3)] border-t border-rose-400/30 group cursor-pointer"
           >
             <span className="text-7xl font-black drop-shadow-md">+2</span>
             <span className="text-xs font-black uppercase tracking-widest opacity-90 mt-2">
@@ -372,7 +341,7 @@ export default function ScorePad({
 
           <ScoreButton
             onAction={() => handleScore(CornerRole.RED, 3)}
-            className="flex-[3] bg-rose-600 hover:bg-rose-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(225,29,72,0.3)] border-t border-rose-400/30 cursor-pointer relative overflow-hidden group"
+            className="flex-[3] bg-rose-600 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(225,29,72,0.3)] border-t border-rose-400/30 group cursor-pointer"
           >
             <span className="text-7xl font-black drop-shadow-md">+3</span>
             <span className="text-xs font-black uppercase tracking-widest opacity-90 mt-2">
@@ -383,13 +352,13 @@ export default function ScorePad({
           <div className="flex gap-2 mt-1 flex-[1.5]">
             <ScoreButton
               onAction={() => handleWarning(CornerRole.RED)}
-              className="flex-1 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-2xl font-black uppercase tracking-widest shadow-lg flex flex-col items-center justify-center text-xs cursor-pointer border-t border-amber-300/50"
+              className="flex-1 bg-amber-500 text-amber-950 rounded-2xl font-black uppercase tracking-widest shadow-lg flex flex-col items-center justify-center text-xs border-t border-amber-300/50 cursor-pointer"
             >
               Warn
             </ScoreButton>
             <ScoreButton
               onAction={() => handleDeduction(CornerRole.RED)}
-              className="flex-1 bg-slate-900 border-2 border-rose-900/50 hover:border-rose-700 hover:bg-slate-800 text-rose-500 rounded-2xl font-black uppercase tracking-widest shadow-lg flex flex-col items-center justify-center text-xs cursor-pointer"
+              className="flex-1 bg-slate-900 border-2 border-rose-900/50 text-rose-500 rounded-2xl font-black uppercase tracking-widest shadow-lg flex flex-col items-center justify-center text-xs cursor-pointer"
             >
               Dedct
             </ScoreButton>
@@ -402,7 +371,7 @@ export default function ScorePad({
 
           <ScoreButton
             onAction={() => handleScore(CornerRole.BLUE, 1)}
-            className="flex-[3] bg-blue-600 hover:bg-blue-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(37,99,235,0.3)] border-t border-blue-400/30 cursor-pointer relative overflow-hidden group"
+            className="flex-[3] bg-blue-600 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(37,99,235,0.3)] border-t border-blue-400/30 group cursor-pointer"
           >
             <span className="text-7xl font-black drop-shadow-md">+1</span>
             <span className="text-xs font-black uppercase tracking-widest opacity-90 mt-2">
@@ -412,7 +381,7 @@ export default function ScorePad({
 
           <ScoreButton
             onAction={() => handleScore(CornerRole.BLUE, 2)}
-            className="flex-[3] bg-blue-600 hover:bg-blue-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(37,99,235,0.3)] border-t border-blue-400/30 cursor-pointer relative overflow-hidden group"
+            className="flex-[3] bg-blue-600 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(37,99,235,0.3)] border-t border-blue-400/30 group cursor-pointer"
           >
             <span className="text-7xl font-black drop-shadow-md">+2</span>
             <span className="text-xs font-black uppercase tracking-widest opacity-90 mt-2">
@@ -422,7 +391,7 @@ export default function ScorePad({
 
           <ScoreButton
             onAction={() => handleScore(CornerRole.BLUE, 3)}
-            className="flex-[3] bg-blue-600 hover:bg-blue-500 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(37,99,235,0.3)] border-t border-blue-400/30 cursor-pointer relative overflow-hidden group"
+            className="flex-[3] bg-blue-600 text-white rounded-3xl flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(37,99,235,0.3)] border-t border-blue-400/30 group cursor-pointer"
           >
             <span className="text-7xl font-black drop-shadow-md">+3</span>
             <span className="text-xs font-black uppercase tracking-widest opacity-90 mt-2">
@@ -433,13 +402,13 @@ export default function ScorePad({
           <div className="flex gap-2 mt-1 flex-[1.5]">
             <ScoreButton
               onAction={() => handleWarning(CornerRole.BLUE)}
-              className="flex-1 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-2xl font-black uppercase tracking-widest shadow-lg flex flex-col items-center justify-center text-xs cursor-pointer border-t border-amber-300/50"
+              className="flex-1 bg-amber-500 text-amber-950 rounded-2xl font-black uppercase tracking-widest shadow-lg flex flex-col items-center justify-center text-xs border-t border-amber-300/50 cursor-pointer"
             >
               Warn
             </ScoreButton>
             <ScoreButton
               onAction={() => handleDeduction(CornerRole.BLUE)}
-              className="flex-1 bg-slate-900 border-2 border-blue-900/50 hover:border-blue-700 hover:bg-slate-800 text-blue-500 rounded-2xl font-black uppercase tracking-widest shadow-lg flex flex-col items-center justify-center text-xs cursor-pointer"
+              className="flex-1 bg-slate-900 border-2 border-blue-900/50 text-blue-500 rounded-2xl font-black uppercase tracking-widest shadow-lg flex flex-col items-center justify-center text-xs cursor-pointer"
             >
               Dedct
             </ScoreButton>
