@@ -19,6 +19,9 @@ export interface Settings {
   port: string | number
   app: AppSettings
   firebase: FirebaseSettings
+  redis: {
+    url?: string
+  }
 }
 
 const settings: Settings = {
@@ -39,6 +42,9 @@ const settings: Settings = {
       ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
       : undefined,
     databaseURL: process.env.FIREBASE_DATABASE_URL,
+  },
+  redis: {
+    url: process.env.REDIS_URL,
   },
 }
 
