@@ -1,5 +1,14 @@
 import { calculateNetScore, type Match, MatchStatus } from '@corner-click/types'
 
+export interface ScoreCard {
+  redScore?: number
+  redWarnings?: number
+  redDeductions?: number
+  blueScore?: number
+  blueWarnings?: number
+  blueDeductions?: number
+}
+
 export interface GeneralStats {
   totalPoints: number
   totalWarnings: number
@@ -33,7 +42,7 @@ export interface MatchStats {
 
 export function calculateStatsAndAudits(
   matches: Match[],
-  matchScores: Record<string, Record<string, any>> // matchId -> judgeName -> scoreCard
+  matchScores: Record<string, Record<string, ScoreCard>> // matchId -> judgeName -> scoreCard
 ): {
   generalStats: GeneralStats
   judgeAudits: JudgeAudit[]
