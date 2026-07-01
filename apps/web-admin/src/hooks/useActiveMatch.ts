@@ -2,9 +2,7 @@ import { trpc } from '@corner-click/api-client'
 import { AudioService } from '@corner-click/audio'
 import type { Competitor, Match } from '@corner-click/types'
 import { MatchControlAction, MatchStatus, SocketEvent, SocketRole } from '@corner-click/types'
-import { get, onValue, ref, set, update } from 'firebase/database'
 import { useEffect, useState } from 'react'
-import { database } from '../lib/firebase'
 import { connectSocket, disconnectSocket, getSocket } from '../lib/socketClient'
 import { getMatches } from '../services/bracketService'
 
@@ -31,23 +29,10 @@ export const useActiveMatch = (
   const [isLoaded, setIsLoaded] = useState(false)
   const [isExtraTime, setIsExtraTime] = useState(false)
   const [wasGoldenPoint, setWasGoldenPoint] = useState(false)
-
   const [firebaseConnected, setFirebaseConnected] = useState(true)
-  // Disabled automatic fallback to avoid split-brain state between Admin and Judge
-  const useLocal = false
 
   const updateStatusMutation = trpc.matches.updateStatus.useMutation()
-  const submitScoresMutation = trpc.matches.submitScores.useMutation()
   const declareWinnerMutation = trpc.matches.declareWinner.useMutation()
-
-  // Track Firebase connection state
-  useEffect(() => {
-    const connectedRef = ref(database, '.info/connected')
-    const unsubscribe = onValue(connectedRef, (snap) => {
-      setFirebaseConnected(snap.val() === true)
-    })
-    return () => unsubscribe()
-  }, [])
 
   // Consolidate Judge votes (calculated on every render from state)
   let redVotes = 0
@@ -104,37 +89,34 @@ export const useActiveMatch = (
       setWasGoldenPoint(false)
     }
 
-    if (useLocal) {
-      setStatus(newStatus)
-      const socket = getSocket()
-      socket.emit(SocketEvent.MATCH_CONTROL, {
-        areaId: selectedMatch.areaId,
-        matchId: selectedMatch.id,
-        action:
-          newStatus === MatchStatus.ACTIVE
-            ? MatchControlAction.START
-            : newStatus === MatchStatus.PAUSED
-              ? MatchControlAction.PAUSE
-              : newStatus === MatchStatus.GOLDEN_POINT
-                ? MatchControlAction.GOLDEN_POINT
-                : MatchControlAction.END,
-        matchData: { status: newStatus, isExtraTime: nextExtraTime },
-      })
-      showToast?.(`[LOCAL] Estado del combate: ${newStatus}`, 'info')
-      return
-    }
+    // Always use WebSockets for real-time state sync
+    setStatus(newStatus)
+    const socket = getSocket()
+    socket.emit(SocketEvent.MATCH_CONTROL, {
+      areaId: selectedMatch.areaId,
+      matchId: selectedMatch.id,
+      action:
+        newStatus === MatchStatus.ACTIVE
+          ? MatchControlAction.START
+          : newStatus === MatchStatus.PAUSED
+            ? MatchControlAction.PAUSE
+            : newStatus === MatchStatus.GOLDEN_POINT
+              ? MatchControlAction.GOLDEN_POINT
+              : MatchControlAction.END,
+      matchData: { status: newStatus, isExtraTime: nextExtraTime },
+    })
 
-    try {
-      await updateStatusMutation.mutateAsync({
-        matchId: selectedMatch.id,
-        status: newStatus,
-        isExtraTime: nextExtraTime,
-      })
-      setStatus(newStatus)
-      showToast?.(`Estado del combate actualizado a: ${newStatus}`, 'info')
-    } catch (err) {
-      console.error('Failed to update status', err)
-      showToast?.('Error al cambiar el estado del combate', 'error')
+    // Also persist critical state changes via TRPC (e.g. ENDED or COMPLETED)
+    if (newStatus === MatchStatus.ENDED || newStatus === MatchStatus.COMPLETED) {
+      try {
+        await updateStatusMutation.mutateAsync({
+          matchId: selectedMatch.id,
+          status: newStatus,
+          isExtraTime: nextExtraTime,
+        })
+      } catch (err) {
+        console.error('Failed to update status in DB', err)
+      }
     }
   }
 
@@ -158,36 +140,6 @@ export const useActiveMatch = (
     }
     AudioService.playBeep()
 
-    if (useLocal) {
-      // Buffer the result to localStorage for later synchronization
-      const buffer = JSON.parse(localStorage.getItem('offline_matches_buffer') || '[]')
-      buffer.push({
-        matchId: selectedMatch.id,
-        winnerId,
-        nextMatchId: selectedMatch.nextMatchId,
-        tournamentId: selectedTournamentId,
-        categoryId: selectedCategoryId,
-        scores: judgesData,
-      })
-      localStorage.setItem('offline_matches_buffer', JSON.stringify(buffer))
-      showToast?.('Combate guardado en el buffer local (Sin conexión).', 'warning')
-
-      setStatus(MatchStatus.COMPLETED)
-      setIsExtraTime(false)
-      const socket = getSocket()
-      socket.emit(SocketEvent.MATCH_CONTROL, {
-        areaId: selectedMatch.areaId,
-        matchId: selectedMatch.id,
-        action: MatchControlAction.END,
-        matchData: {
-          winnerId,
-          status: MatchStatus.COMPLETED,
-          isExtraTime: false,
-        },
-      })
-      return
-    }
-
     try {
       await declareWinnerMutation.mutateAsync({
         matchId: selectedMatch.id,
@@ -203,6 +155,19 @@ export const useActiveMatch = (
         setStatus(MatchStatus.COMPLETED)
       }
 
+      // Notify via socket to end match for everyone
+      const socket = getSocket()
+      socket.emit(SocketEvent.MATCH_CONTROL, {
+        areaId: selectedMatch.areaId,
+        matchId: selectedMatch.id,
+        action: MatchControlAction.END,
+        matchData: {
+          winnerId,
+          status: MatchStatus.COMPLETED,
+          isExtraTime: false,
+        },
+      })
+
       showToast?.('¡Ganador declarado y llave actualizada!', 'success')
     } catch (err) {
       console.error(err)
@@ -210,18 +175,18 @@ export const useActiveMatch = (
     }
   }
 
-  // Connect/Sync with Local Socket fallback
+  // Socket Connection and Setup
   useEffect(() => {
-    if (!useLocal || !selectedMatch) {
+    if (!selectedMatch) {
       return
     }
 
     const socket = connectSocket(selectedMatch.areaId, SocketRole.ADMIN)
-
+    
     const redComp = competitors?.[selectedMatch.redCompetitorId]
     const blueComp = competitors?.[selectedMatch.blueCompetitorId]
 
-    // Announce active match to socket server with competitor names
+    // Announce active match to socket server
     socket.emit(SocketEvent.MATCH_CONTROL, {
       areaId: selectedMatch.areaId,
       matchId: selectedMatch.id,
@@ -236,7 +201,7 @@ export const useActiveMatch = (
       timerValue: timeRemaining,
     })
 
-    socket.on(SocketEvent.MATCH_STATE, (state: any) => {
+    const onMatchState = (state: any) => {
       if (state?.match && state.match.id === selectedMatch.id) {
         setStatus(state.match.status)
         setTimeRemaining(state.timer)
@@ -245,152 +210,16 @@ export const useActiveMatch = (
           setJudgesData(state.scores)
         }
       }
-    })
+    }
+
+    socket.on(SocketEvent.MATCH_STATE, onMatchState)
+    setIsLoaded(true)
 
     return () => {
+      socket.off(SocketEvent.MATCH_STATE, onMatchState)
       disconnectSocket()
     }
-  }, [selectedMatch?.id, selectedMatch.areaId, selectedMatch, timeRemaining, competitors])
-
-  // Load state from Firebase when switching matches (Online only)
-  useEffect(() => {
-    if (!selectedMatch || useLocal) {
-      return
-    }
-    setIsLoaded(false)
-    const fetchState = async () => {
-      const matchRef = ref(database, `live_matches/${selectedMatch.id}`)
-      const snapshot = await get(matchRef)
-      if (snapshot.exists()) {
-        const data = snapshot.val()
-        setStatus(data.status || MatchStatus.PENDING)
-        setTimeRemaining(data.timeRemaining !== undefined ? data.timeRemaining : 120)
-        setIsExtraTime(data.isExtraTime || false)
-      } else {
-        setStatus(selectedMatch.status || MatchStatus.PENDING)
-        setTimeRemaining(120)
-        setIsExtraTime(false)
-      }
-      setIsLoaded(true)
-    }
-    fetchState()
-    setJudgesData({})
-  }, [selectedMatch?.id, selectedMatch])
-
-  // Sync Timer and Extra Time to Firebase (Online only)
-  useEffect(() => {
-    if (!isLoaded || !selectedMatch || useLocal) {
-      return
-    }
-    const matchRef = ref(database, `live_matches/${selectedMatch.id}`)
-    update(matchRef, {
-      timeRemaining,
-      status,
-      isExtraTime: isExtraTime || false,
-    })
-  }, [timeRemaining, status, isExtraTime, selectedMatch?.id, isLoaded, selectedMatch])
-
-  // Sync Active Match ID for Area (Online only)
-  useEffect(() => {
-    if (!selectedMatch || useLocal) {
-      return
-    }
-    const areaId = selectedMatch.areaId || '1'
-    const areaMatchRef = ref(database, `live_matches_by_area/${areaId}`)
-
-    // Avoid undefined values for Firebase RTDB
-    const payload = {
-      matchId: selectedMatch.id || '',
-      tournamentId: selectedMatch.tournamentId || '',
-      categoryId: selectedMatch.categoryId || '',
-      redCompetitorId: selectedMatch.redCompetitorId || '',
-      blueCompetitorId: selectedMatch.blueCompetitorId || '',
-      round: selectedMatch.round || 1,
-      nextMatchId: selectedMatch.nextMatchId || null,
-    }
-
-    set(areaMatchRef, payload).catch((err) => {
-      console.error('Failed to sync live_matches_by_area:', err)
-    })
-  }, [selectedMatch])
-
-  // Listen to live scores in Firebase (Online only)
-  useEffect(() => {
-    if (!selectedMatch || useLocal) {
-      return
-    }
-    const scoresRef = ref(database, `live_matches/${selectedMatch.id}/scores`)
-    const unsubscribe = onValue(scoresRef, (snapshot) => {
-      if (snapshot.exists()) {
-        setJudgesData(snapshot.val())
-      } else {
-        setJudgesData({})
-      }
-    })
-    return () => unsubscribe()
-  }, [selectedMatch?.id, selectedMatch])
-
-  // Offline deferred sync to cloud when connection is restored
-  useEffect(() => {
-    if (firebaseConnected && isLoaded) {
-      const bufferRaw = localStorage.getItem('offline_matches_buffer')
-      if (bufferRaw) {
-        const buffer = JSON.parse(bufferRaw)
-        if (buffer.length > 0) {
-          showToast?.(`¡Conexión recuperada! Sincronizando ${buffer.length} combates...`, 'info')
-
-          const syncBuffer = async () => {
-            for (const item of buffer) {
-              try {
-                // Post all individual corner scores
-                for (const [cornerId, score] of Object.entries(item.scores)) {
-                  await submitScoresMutation.mutateAsync({
-                    matchId: item.matchId as string,
-                    cornerId,
-                    ...(score as any),
-                  })
-                }
-
-                // Declare winner & advance bracket
-                await declareWinnerMutation.mutateAsync({
-                  tournamentId: item.tournamentId,
-                  matchId: item.matchId,
-                  winnerId: item.winnerId,
-                  nextMatchId: item.nextMatchId || undefined,
-                })
-              } catch (e) {
-                console.error('Failed to sync offline match:', e)
-              }
-            }
-
-            localStorage.removeItem('offline_matches_buffer')
-            showToast?.('¡Sincronización de nube completada!', 'success')
-
-            // Refresh parent matches
-            getMatches(selectedTournamentId, selectedCategoryId).then((updatedMatches) => {
-              if (selectedMatch) {
-                const updatedSelectedMatch = updatedMatches.find((m) => m.id === selectedMatch.id)
-                if (updatedSelectedMatch) {
-                  onMatchesRefreshed(updatedMatches, updatedSelectedMatch)
-                }
-              }
-            })
-          }
-          syncBuffer()
-        }
-      }
-    }
-  }, [
-    firebaseConnected,
-    isLoaded,
-    selectedTournamentId,
-    selectedCategoryId,
-    showToast,
-    selectedMatch,
-    onMatchesRefreshed,
-    submitScoresMutation.mutateAsync,
-    declareWinnerMutation.mutateAsync,
-  ])
+  }, [selectedMatch?.id, selectedMatch?.areaId])
 
   // Auto-declare winner during Golden Point when consensus is reached
   useEffect(() => {
@@ -415,7 +244,7 @@ export const useActiveMatch = (
       interval = setInterval(() => {
         setTimeRemaining((prev) => {
           const next = prev - 1
-          if (useLocal && selectedMatch) {
+          if (selectedMatch) {
             const socket = getSocket()
             socket.emit(SocketEvent.MATCH_CONTROL, {
               areaId: selectedMatch.areaId,
@@ -439,7 +268,7 @@ export const useActiveMatch = (
     timeRemaining,
     setTimeRemaining,
     judgesData,
-    isLoaded: isLoaded || useLocal,
+    isLoaded,
     formatTime,
     handleStart,
     handlePause,

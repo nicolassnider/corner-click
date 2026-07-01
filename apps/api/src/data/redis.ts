@@ -6,9 +6,13 @@ const log = createLogger('redis')
 
 const redisUrl = settings.redis.url || 'redis://localhost:6379'
 
+const isUpstash = redisUrl.includes('upstash.io')
+const useTls = isUpstash || redisUrl.startsWith('rediss://')
+
 export const redis = new Redis(redisUrl, {
   maxRetriesPerRequest: null,
   enableReadyCheck: false,
+  ...(useTls ? { tls: {} } : {}),
 })
 
 redis.on('connect', () => {
