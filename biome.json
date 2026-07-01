@@ -6,7 +6,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**/*", "!coverage/**"]
+    "includes": ["**/*", "!coverage"]
   },
   "formatter": {
     "enabled": true,
@@ -60,7 +60,8 @@
         "noDuplicateProperties": "warn",
         "noImplicitAnyLet": "warn",
         "noRedeclare": "warn",
-        "useIterableCallbackReturn": "warn"
+        "useIterableCallbackReturn": "warn",
+        "noUnknownAtRules": "off"
       }
     }
   },
@@ -82,5 +83,20 @@
       "cssModules": false,
       "tailwindDirectives": true
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noNonNullAssertion": "off"
+          },
+          "suspicious": {
+            "noExplicitAny": "off"
+          }
+        }
+      }
+    }
+  ]
 }

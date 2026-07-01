@@ -71,3 +71,4 @@ database-debug.log
 
 *storybook.log
 storybook-static
+lint_output.txt
