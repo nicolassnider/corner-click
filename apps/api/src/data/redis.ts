@@ -23,3 +23,13 @@ export const closeRedis = async () => {
   log.info('Closing Redis connection')
   await redis.quit()
 }
+
+export const checkRedisConnection = async () => {
+  try {
+    await redis.ping()
+    return true
+  } catch (error) {
+    log.error({ error }, 'Failed to ping Redis during startup')
+    return false
+  }
+}

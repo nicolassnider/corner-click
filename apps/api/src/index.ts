@@ -7,7 +7,7 @@ import cors from 'cors'
 import express, { type Request, type Response } from 'express'
 import settings from './config/settings.js'
 import { initSocketService } from './services/socketService.js'
-import { closeRedis } from './data/redis.js'
+import { closeRedis, checkRedisConnection } from './data/redis.js'
 import { appRouter } from './trpc/routers/_app.js'
 import { createContext } from './trpc/trpc.js'
 
@@ -80,6 +80,12 @@ app.get('/judges/*', (_req, res) => {
 })
 
 if (!isVercel) {
+  // Check Redis before starting
+  const redisOk = await checkRedisConnection()
+  if (redisOk) {
+    log.info('Redis connection verified successfully')
+  }
+
   httpServer.listen(settings.port, () => {
     log.info({ port: settings.port, env: environment }, `${appName} running`)
   })
