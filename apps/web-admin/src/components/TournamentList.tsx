@@ -1,71 +1,60 @@
-import React, { useState, useEffect } from "react";
-import type { Tournament } from "@corner-click/types";
-import { fetchWithAuth, getDynamicAnalyticsUrl } from "../utils/apiClient";
-import { trpc } from "@corner-click/api-client";
-import { Button, Card } from "@corner-click/ui";
+import { trpc } from '@corner-click/api-client'
+import type { Tournament } from '@corner-click/types'
+import { Button, Card } from '@corner-click/ui'
+import { getDynamicAnalyticsUrl } from '../utils/apiClient'
 
-const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:4000";
+const _API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000'
 
 interface Props {
-  onSelect: (t: Tournament) => void;
-  onCreateNew: () => void;
-  onEdit: (t: Tournament) => void;
+  onSelect: (t: Tournament) => void
+  onCreateNew: () => void
+  onEdit: (t: Tournament) => void
 }
 
-export default function TournamentList({
-  onSelect,
-  onCreateNew,
-  onEdit,
-}: Props) {
-  const { data, isLoading } = trpc.tournaments.getAll.useQuery();
-  const tournaments = data || [];
-  const utils = trpc.useUtils();
+export default function TournamentList({ onSelect, onCreateNew, onEdit }: Props) {
+  const { data, isLoading } = trpc.tournaments.getAll.useQuery()
+  const tournaments = data || []
+  const utils = trpc.useUtils()
 
-  const deleteMutation = trpc.tournaments.delete.useMutation();
+  const deleteMutation = trpc.tournaments.delete.useMutation()
 
   const handleDelete = async (id: string) => {
     if (
       !confirm(
-        "Are you sure you want to delete this tournament? This will erase all its categories, competitors, matches and judges.",
+        'Are you sure you want to delete this tournament? This will erase all its categories, competitors, matches and judges.'
       )
     ) {
-      return;
+      return
     }
     try {
-      await deleteMutation.mutateAsync({ id });
-      utils.tournaments.getAll.invalidate();
+      await deleteMutation.mutateAsync({ id })
+      utils.tournaments.getAll.invalidate()
     } catch (err) {
-      console.error(err);
-      alert("Failed to delete tournament");
+      console.error(err)
+      alert('Failed to delete tournament')
     }
-  };
+  }
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-600"></div>
       </div>
-    );
+    )
   }
-  const inProgressTournaments = tournaments.filter(
-    (t) => t.status === "IN_PROGRESS",
-  );
-  const upcomingTournaments = tournaments.filter(
-    (t) => t.status === "UPCOMING",
-  );
-  const completedTournaments = tournaments.filter(
-    (t) => t.status === "COMPLETED",
-  );
+  const inProgressTournaments = tournaments.filter((t) => t.status === 'IN_PROGRESS')
+  const upcomingTournaments = tournaments.filter((t) => t.status === 'UPCOMING')
+  const completedTournaments = tournaments.filter((t) => t.status === 'COMPLETED')
 
   const renderTournamentCard = (t: Tournament) => {
-    let statusClass = "bg-green-100 text-green-800";
-    if (t.status === "IN_PROGRESS") {
+    let statusClass = 'bg-green-100 text-green-800'
+    if (t.status === 'IN_PROGRESS') {
       statusClass =
-        "bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.15)]";
-    } else if (t.status === "UPCOMING") {
-      statusClass = "bg-blue-500/10 text-blue-500 border border-blue-500/30";
+        'bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.15)]'
+    } else if (t.status === 'UPCOMING') {
+      statusClass = 'bg-blue-500/10 text-blue-500 border border-blue-500/30'
     } else {
-      statusClass = "bg-slate-100 text-slate-500 border border-slate-200";
+      statusClass = 'bg-slate-100 text-slate-500 border border-slate-200'
     }
 
     return (
@@ -74,24 +63,22 @@ export default function TournamentList({
         onClick={() => onSelect(t)}
         padding="md"
         className={`hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between h-full ${
-          t.status === "COMPLETED"
-            ? "bg-slate-50/50 border-slate-200 opacity-85 hover:opacity-100"
-            : "bg-white border-slate-200"
+          t.status === 'COMPLETED'
+            ? 'bg-slate-50/50 border-slate-200 opacity-85 hover:opacity-100'
+            : 'bg-white border-slate-200'
         }`}
       >
         <div>
           <div className="flex justify-between items-start mb-4">
-            <h2 className="text-2xl font-extrabold text-gray-800 leading-tight">
-              {t.name}
-            </h2>
+            <h2 className="text-2xl font-extrabold text-gray-800 leading-tight">{t.name}</h2>
             <span
               className={`text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shrink-0 ml-2 ${statusClass}`}
             >
-              {t.status === "IN_PROGRESS"
-                ? "LIVE / EN CURSO"
-                : t.status === "UPCOMING"
-                  ? "PRÓXIMO"
-                  : "FINALIZADO"}
+              {t.status === 'IN_PROGRESS'
+                ? 'LIVE / EN CURSO'
+                : t.status === 'UPCOMING'
+                  ? 'PRÓXIMO'
+                  : 'FINALIZADO'}
             </span>
           </div>
           <p className="text-gray-650 mb-2 flex items-center text-sm font-semibold">
@@ -134,12 +121,10 @@ export default function TournamentList({
           </p>
         </div>
         <div className="border-t border-gray-100 pt-4 mt-4 flex justify-between items-center">
-          <p className="text-sm font-bold text-gray-500">
-            {t.areas || 1} Áreas
-          </p>
+          <p className="text-sm font-bold text-gray-500">{t.areas || 1} Áreas</p>
           <div className="flex space-x-2">
             <a
-              href={`${getDynamicAnalyticsUrl(import.meta.env.PUBLIC_ANALYTICS_URL || "http://localhost:4323")}/?tournament=${encodeURIComponent(t.id!)}`}
+              href={`${getDynamicAnalyticsUrl(import.meta.env.PUBLIC_ANALYTICS_URL || 'http://localhost:4323')}/?tournament=${encodeURIComponent(t.id!)}`}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
@@ -147,12 +132,12 @@ export default function TournamentList({
             >
               Stats ↗
             </a>
-            {t.status !== "COMPLETED" && (
+            {t.status !== 'COMPLETED' && (
               <>
                 <button
                   onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(t);
+                    e.stopPropagation()
+                    onEdit(t)
                   }}
                   className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded text-xs transition-colors cursor-pointer border border-gray-300"
                 >
@@ -160,8 +145,8 @@ export default function TournamentList({
                 </button>
                 <button
                   onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(t.id!);
+                    e.stopPropagation()
+                    handleDelete(t.id!)
                   }}
                   className="px-3 py-1 bg-red-50 hover:bg-red-100 text-red-650 font-bold rounded text-xs transition-colors cursor-pointer border border-red-200"
                 >
@@ -172,8 +157,8 @@ export default function TournamentList({
           </div>
         </div>
       </Card>
-    );
-  };
+    )
+  }
 
   return (
     <div className="p-8 max-w-[95vw] 2xl:max-w-[1700px] mx-auto">
@@ -225,8 +210,7 @@ export default function TournamentList({
           {completedTournaments.length > 0 && (
             <div>
               <h2 className="text-xl font-extrabold text-slate-800 dark:text-slate-400 mb-4 uppercase tracking-wider flex items-center gap-2">
-                <span>✓</span> Finalizados / Historial (
-                {completedTournaments.length})
+                <span>✓</span> Finalizados / Historial ({completedTournaments.length})
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {completedTournaments.map(renderTournamentCard)}
@@ -236,5 +220,5 @@ export default function TournamentList({
         </div>
       )}
     </div>
-  );
+  )
 }

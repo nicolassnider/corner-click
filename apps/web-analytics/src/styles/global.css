@@ -1,8 +1,5 @@
 @import "tailwindcss";
 @source "../../../../packages/auth/src/**/*.{ts,tsx}";
 
-
-
 /* Print styles for cleaner reports and bracket printing */
 @import "../../../../packages/shared-styles/print.css";
-

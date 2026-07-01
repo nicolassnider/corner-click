@@ -1,29 +1,29 @@
-import { io, Socket } from "socket.io-client";
-import { API_URL } from "../utils/apiClient";
-import { SocketEvent, SocketRole } from "@corner-click/types";
+import { SocketEvent, type SocketRole } from '@corner-click/types'
+import { io, type Socket } from 'socket.io-client'
+import { API_URL } from '../utils/apiClient'
 
-let socket: Socket | null = null;
+let socket: Socket | null = null
 
 export const getSocket = (): Socket => {
   if (!socket) {
     socket = io(API_URL, {
       autoConnect: false,
-      transports: ["websocket"],
-    });
+      transports: ['websocket'],
+    })
   }
-  return socket;
-};
+  return socket
+}
 
 export const connectSocket = (
   areaId: string,
   role: SocketRole,
   judgeId?: string,
   judgeName?: string,
-  corner?: string,
+  corner?: string
 ) => {
-  const s = getSocket();
+  const s = getSocket()
   if (!s.connected) {
-    s.connect();
+    s.connect()
   }
 
   s.emit(SocketEvent.JOIN_AREA, {
@@ -32,14 +32,14 @@ export const connectSocket = (
     judgeId,
     judgeName,
     corner,
-  });
+  })
 
-  return s;
-};
+  return s
+}
 
 export const disconnectSocket = () => {
   if (socket) {
-    socket.disconnect();
-    socket = null;
+    socket.disconnect()
+    socket = null
   }
-};
+}

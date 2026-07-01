@@ -1,6 +1,6 @@
 ---
-import Dashboard from "../components/Dashboard.tsx";
-import "../styles/global.css";
+import '../styles/global.css'
+import Dashboard from '../components/Dashboard'
 ---
 
 <html lang="en">
@@ -12,6 +12,6 @@ import "../styles/global.css";
     <title>Corner Click - Admin Dashboard</title>
   </head>
   <body>
-    <Dashboard client:load />
+    <Dashboard client:only="react" />
   </body>
 </html>

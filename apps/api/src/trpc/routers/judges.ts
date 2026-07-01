@@ -1,12 +1,11 @@
-import { router, publicProcedure, protectedProcedure } from "../trpc.js";
-import { FirebaseJudgeRepository } from "../../data/repositories/FirebaseJudgeRepository.js";
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
+import { FirebaseJudgeRepository } from '../../data/repositories/FirebaseJudgeRepository.js'
+import { protectedProcedure, router } from '../trpc.js'
 
-const judgeRepo = new FirebaseJudgeRepository();
+const judgeRepo = new FirebaseJudgeRepository()
 
-const generatePin = (): string =>
-  Math.floor(1000 + Math.random() * 9000).toString();
+const generatePin = (): string => Math.floor(1000 + Math.random() * 9000).toString()
 
 export const judgesRouter = router({
   getAll: protectedProcedure
@@ -14,20 +13,20 @@ export const judgesRouter = router({
     .query(async ({ input, ctx }) => {
       if (!ctx.db) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Database not initialized",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Database not initialized',
+        })
       }
 
       try {
-        await judgeRepo.cleanupExpiredJudges(input.tournamentId);
-        const judges = await judgeRepo.findByTournament(input.tournamentId);
-        return judges;
-      } catch (error) {
+        await judgeRepo.cleanupExpiredJudges(input.tournamentId)
+        const judges = await judgeRepo.findByTournament(input.tournamentId)
+        return judges
+      } catch (_error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error fetching judges",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Error fetching judges',
+        })
       }
     }),
 
@@ -36,27 +35,29 @@ export const judgesRouter = router({
     .query(async ({ input, ctx }) => {
       if (!ctx.db) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Database not initialized",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Database not initialized',
+        })
       }
 
       try {
-        const judges = await judgeRepo.findByTournament(input.tournamentId);
-        const judge = judges.find((j) => j.id === input.judgeId);
+        const judges = await judgeRepo.findByTournament(input.tournamentId)
+        const judge = judges.find((j) => j.id === input.judgeId)
         if (!judge) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Judge not found",
-          });
+            code: 'NOT_FOUND',
+            message: 'Judge not found',
+          })
         }
-        return judge;
+        return judge
       } catch (error) {
-        if (error instanceof TRPCError) throw error;
+        if (error instanceof TRPCError) {
+          throw error
+        }
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error fetching judge",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Error fetching judge',
+        })
       }
     }),
 
@@ -65,57 +66,55 @@ export const judgesRouter = router({
       z.object({
         tournamentId: z.string(),
         name: z.string().min(1),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.db) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Database not initialized",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Database not initialized',
+        })
       }
 
       try {
-        const tDoc = await ctx.db
-          .collection("tournaments")
-          .doc(input.tournamentId)
-          .get();
+        const tDoc = await ctx.db.collection('tournaments').doc(input.tournamentId).get()
         if (!tDoc.exists) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Tournament not found",
-          });
+            code: 'NOT_FOUND',
+            message: 'Tournament not found',
+          })
         }
 
-        let pin = "";
-        let isUnique = false;
+        let pin = ''
+        let isUnique = false
 
         while (!isUnique) {
-          pin = generatePin();
-          const existing = await judgeRepo.findByPin(pin);
-          if (!existing) isUnique = true;
+          pin = generatePin()
+          const existing = await judgeRepo.findByPin(pin)
+          if (!existing) {
+            isUnique = true
+          }
         }
 
         const judgeData = {
           name: input.name,
           pin,
           tournamentId: input.tournamentId,
-          status: "OFFLINE" as any,
+          status: 'OFFLINE' as any,
           currentAssignment: null,
           createdAt: new Date().toISOString(),
-        };
+        }
 
-        const createdJudge = await judgeRepo.create(
-          input.tournamentId,
-          judgeData,
-        );
-        return createdJudge;
+        const createdJudge = await judgeRepo.create(input.tournamentId, judgeData)
+        return createdJudge
       } catch (error) {
-        if (error instanceof TRPCError) throw error;
+        if (error instanceof TRPCError) {
+          throw error
+        }
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error creating judge",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Error creating judge',
+        })
       }
     }),
 
@@ -127,39 +126,39 @@ export const judgesRouter = router({
         areaId: z.string(),
         cornerId: z.string(),
         matchId: z.string().optional(),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.db) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Database not initialized",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Database not initialized',
+        })
       }
 
       try {
-        const allJudges = await judgeRepo.findByTournament(input.tournamentId);
+        const allJudges = await judgeRepo.findByTournament(input.tournamentId)
         const existingAssignment = allJudges.find(
           (j) =>
             j.id !== input.judgeId &&
             j.currentAssignment?.areaId === input.areaId &&
-            j.currentAssignment?.cornerId === input.cornerId,
-        );
+            j.currentAssignment?.cornerId === input.cornerId
+        )
 
         if (existingAssignment) {
-          const existingName = existingAssignment.name || "Another judge";
+          const existingName = existingAssignment.name || 'Another judge'
           throw new TRPCError({
-            code: "CONFLICT",
+            code: 'CONFLICT',
             message: `${existingName} is already assigned to Area ${input.areaId} as ${input.cornerId}.`,
-          });
+          })
         }
 
-        const judgeDoc = allJudges.find((j) => j.id === input.judgeId);
+        const judgeDoc = allJudges.find((j) => j.id === input.judgeId)
         if (!judgeDoc) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Judge not found",
-          });
+            code: 'NOT_FOUND',
+            message: 'Judge not found',
+          })
         }
 
         const currentAssignment = {
@@ -167,20 +166,18 @@ export const judgesRouter = router({
           areaId: input.areaId,
           cornerId: input.cornerId,
           matchId: input.matchId || null,
-        };
+        }
 
-        await judgeRepo.updateAssignment(
-          input.tournamentId,
-          input.judgeId,
-          currentAssignment,
-        );
-        return { message: "Judge assigned successfully", currentAssignment };
+        await judgeRepo.updateAssignment(input.tournamentId, input.judgeId, currentAssignment)
+        return { message: 'Judge assigned successfully', currentAssignment }
       } catch (error) {
-        if (error instanceof TRPCError) throw error;
+        if (error instanceof TRPCError) {
+          throw error
+        }
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error assigning judge",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Error assigning judge',
+        })
       }
     }),
 
@@ -189,33 +186,25 @@ export const judgesRouter = router({
       z.object({
         tournamentId: z.string(),
         judgeId: z.string(),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.db) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Database not initialized",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Database not initialized',
+        })
       }
 
       try {
-        await judgeRepo.updateStatus(
-          input.tournamentId,
-          input.judgeId,
-          "OFFLINE",
-        );
-        await judgeRepo.updateAssignment(
-          input.tournamentId,
-          input.judgeId,
-          null,
-        );
-        return { success: true };
-      } catch (error) {
+        await judgeRepo.updateStatus(input.tournamentId, input.judgeId, 'OFFLINE')
+        await judgeRepo.updateAssignment(input.tournamentId, input.judgeId, null)
+        return { success: true }
+      } catch (_error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error disconnecting judge",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Error disconnecting judge',
+        })
       }
     }),
 
@@ -224,24 +213,24 @@ export const judgesRouter = router({
       z.object({
         tournamentId: z.string(),
         judgeId: z.string(),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.db) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Database not initialized",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Database not initialized',
+        })
       }
 
       try {
-        await judgeRepo.delete(input.tournamentId, input.judgeId);
-        return { success: true };
-      } catch (error) {
+        await judgeRepo.delete(input.tournamentId, input.judgeId)
+        return { success: true }
+      } catch (_error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error deleting judge",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Error deleting judge',
+        })
       }
     }),
-});
+})

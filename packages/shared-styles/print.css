@@ -1,8 +1,8 @@
 /* Shared print styles for cleaner reports and bracket printing */
 @media print {
   body {
-    background: white !important;
-    color: black !important;
+    background: white;
+    color: black;
   }
   .print\:hidden,
   button,
@@ -13,28 +13,28 @@
   input,
   .print-hidden,
   aside {
-    display: none !important;
+    display: none;
   }
   .print\:block {
-    display: block !important;
+    display: block;
   }
   main {
-    padding: 0 !important;
-    margin: 0 !important;
+    padding: 0;
+    margin: 0;
   }
   .bg-white {
-    background: none !important;
-    border: none !important;
-    box-shadow: none !important;
+    background: none;
+    border: none;
+    box-shadow: none;
   }
   /* Keep tables borders clean for printing */
   table {
-    border-collapse: collapse !important;
-    width: 100% !important;
+    border-collapse: collapse;
+    width: 100%;
   }
   th,
   td {
-    border: 1px solid #94a3b8 !important;
-    color: black !important;
+    border: 1px solid #94a3b8;
+    color: black;
   }
 }

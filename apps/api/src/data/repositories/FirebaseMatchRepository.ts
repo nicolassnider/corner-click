@@ -1,72 +1,79 @@
-import { db, rtdb } from "../../services/firebase.js";
-import type { IMatchRepository } from "@corner-click/core-domain";
-import type { Match } from "@corner-click/types";
-import { createLogger, toErr } from "@corner-click/logger";
+import type { IMatchRepository } from '@corner-click/core-domain'
+import { createLogger } from '@corner-click/logger'
+import type { Match } from '@corner-click/types'
+import { db, rtdb } from '../../services/firebase.js'
 
-const log = createLogger("match-repo");
+const log = createLogger('match-repo')
 
 export class FirebaseMatchRepository implements IMatchRepository {
   async findByTournament(tournamentId: string): Promise<Match[]> {
-    if (!rtdb) throw new Error("Firebase RTDB not initialized");
-    const snapshot = await rtdb
-      .ref(`tournaments/${tournamentId}/matches`)
-      .once("value");
-    if (!snapshot.exists()) return [];
-    const data = snapshot.val();
+    if (!rtdb) {
+      throw new Error('Firebase RTDB not initialized')
+    }
+    const snapshot = await rtdb.ref(`tournaments/${tournamentId}/matches`).once('value')
+    if (!snapshot.exists()) {
+      return []
+    }
+    const data = snapshot.val()
     return Object.keys(data).map((key) => ({
       id: key,
       ...data[key],
-    })) as Match[];
+    })) as Match[]
   }
 
   async findById(id: string): Promise<Match | null> {
-    if (!db) throw new Error("Database not initialized");
-    const doc = await db.collection("matches").doc(id).get();
-    if (!doc.exists) return null;
-    return { id: doc.id, ...doc.data() } as Match;
+    if (!db) {
+      throw new Error('Database not initialized')
+    }
+    const doc = await db.collection('matches').doc(id).get()
+    if (!doc.exists) {
+      return null
+    }
+    return { id: doc.id, ...doc.data() } as Match
   }
 
   async updateStatus(id: string, status: string): Promise<void> {
-    if (!rtdb) throw new Error("Firebase RTDB not initialized");
+    if (!rtdb) {
+      throw new Error('Firebase RTDB not initialized')
+    }
 
     // Update status in Realtime Database to broadcast to judges
-    await rtdb.ref(`live_matches/${id}`).update({ status });
+    await rtdb.ref(`live_matches/${id}`).update({ status })
 
     // Auto-advance tournament status: UPCOMING → IN_PROGRESS on first ACTIVE match
-    if (status === "ACTIVE" && db) {
-      const matchSnap = await rtdb.ref(`tournaments`).once("value");
+    if (status === 'ACTIVE' && db) {
+      const matchSnap = await rtdb.ref(`tournaments`).once('value')
       const allTournaments = matchSnap.val() as Record<
         string,
-        { matches?: Record<string, any> }
-      > | null;
+        { matches?: Record<string, Record<string, unknown>> }
+      > | null
 
       // Find which tournament owns this match
-      let tournamentId: string | null = null;
+      let tournamentId: string | null = null
       if (allTournaments) {
         for (const [tId, tData] of Object.entries(allTournaments)) {
-          if (tData.matches && tData.matches[id]) {
-            tournamentId = tId;
-            break;
+          if (tData.matches?.[id]) {
+            tournamentId = tId
+            break
           }
         }
       }
 
       if (tournamentId) {
-        const tournamentRef = db.collection("tournaments").doc(tournamentId);
-        const tournamentDoc = await tournamentRef.get();
-        if (
-          tournamentDoc.exists &&
-          tournamentDoc.data()?.status === "UPCOMING"
-        ) {
-          await tournamentRef.update({ status: "IN_PROGRESS" });
-          log.info(`[Tournament] ${tournamentId} → IN_PROGRESS`);
+        const tournamentRef = db.collection('tournaments').doc(tournamentId)
+        const tournamentDoc = await tournamentRef.get()
+        if (tournamentDoc.exists && tournamentDoc.data()?.status === 'UPCOMING') {
+          await tournamentRef.update({ status: 'IN_PROGRESS' })
+          log.info(`[Tournament] ${tournamentId} → IN_PROGRESS`)
         }
       }
     }
   }
-  async submitScores(id: string, cornerId: string, scores: any): Promise<void> {
-    if (!db) throw new Error("Database not initialized");
-    const matchRef = db.collection("matches").doc(id);
+  async submitScores(id: string, cornerId: string, scores: Record<string, unknown>): Promise<void> {
+    if (!db) {
+      throw new Error('Database not initialized')
+    }
+    const matchRef = db.collection('matches').doc(id)
     await matchRef.set(
       {
         scores: {
@@ -76,70 +83,71 @@ export class FirebaseMatchRepository implements IMatchRepository {
           },
         },
       },
-      { merge: true },
-    );
+      { merge: true }
+    )
   }
 
-  async getScores(id: string): Promise<any> {
-    if (!db) throw new Error("Database not initialized");
-    const doc = await db.collection("matches").doc(id).get();
-    if (!doc.exists) return {};
-    const data = doc.data();
-    return data?.scores || {};
+  async getScores(id: string): Promise<Record<string, unknown>> {
+    if (!db) {
+      throw new Error('Database not initialized')
+    }
+    const doc = await db.collection('matches').doc(id).get()
+    if (!doc.exists) {
+      return {}
+    }
+    const data = doc.data()
+    return data?.scores || {}
   }
 
   streamScores(
     id: string,
-    onUpdate: (data: any) => void,
-    onError: (error: any) => void,
+    onUpdate: (data: Record<string, unknown>) => void,
+    onError: (error: Error) => void
   ): () => void {
-    if (!db) throw new Error("Database not initialized");
-    const matchRef = db.collection("matches").doc(id);
+    if (!db) {
+      throw new Error('Database not initialized')
+    }
+    const matchRef = db.collection('matches').doc(id)
     return matchRef.onSnapshot(
       (doc) => {
-        const data = doc.data();
-        onUpdate({ scores: data?.scores || {} });
+        const data = doc.data()
+        onUpdate({ scores: data?.scores || {} })
       },
-      (error) => onError(error),
-    );
+      (error) => onError(error)
+    )
   }
 
   async declareWinner(
     matchId: string,
     params: {
-      winnerId: string;
-      tournamentId: string;
-      nextMatchId?: string;
-      losersMatchId?: string;
-      loserId?: string;
-    },
+      winnerId: string
+      tournamentId: string
+      nextMatchId?: string
+      losersMatchId?: string
+      loserId?: string
+    }
   ): Promise<void> {
-    if (!rtdb) throw new Error("Firebase RTDB not initialized");
-    const { winnerId, tournamentId, nextMatchId, losersMatchId, loserId } =
-      params;
-    const updates: Record<string, string> = {};
+    if (!rtdb) {
+      throw new Error('Firebase RTDB not initialized')
+    }
+    const { winnerId, tournamentId, nextMatchId, losersMatchId, loserId } = params
+    const updates: Record<string, string> = {}
 
     // Mark current match as completed with winner
-    updates[`tournaments/${tournamentId}/matches/${matchId}/winnerId`] =
-      winnerId;
-    updates[`tournaments/${tournamentId}/matches/${matchId}/status`] =
-      "COMPLETED";
+    updates[`tournaments/${tournamentId}/matches/${matchId}/winnerId`] = winnerId
+    updates[`tournaments/${tournamentId}/matches/${matchId}/status`] = 'COMPLETED'
 
     // Advance winner to next match if applicable
     if (nextMatchId) {
       const nextMatchSnap = await rtdb
         .ref(`tournaments/${tournamentId}/matches/${nextMatchId}`)
-        .once("value");
+        .once('value')
       if (nextMatchSnap.exists()) {
-        const nextMatch = nextMatchSnap.val();
+        const nextMatch = nextMatchSnap.val()
         if (!nextMatch.redCompetitorId) {
-          updates[
-            `tournaments/${tournamentId}/matches/${nextMatchId}/redCompetitorId`
-          ] = winnerId;
+          updates[`tournaments/${tournamentId}/matches/${nextMatchId}/redCompetitorId`] = winnerId
         } else if (!nextMatch.blueCompetitorId) {
-          updates[
-            `tournaments/${tournamentId}/matches/${nextMatchId}/blueCompetitorId`
-          ] = winnerId;
+          updates[`tournaments/${tournamentId}/matches/${nextMatchId}/blueCompetitorId`] = winnerId
         }
       }
     }
@@ -148,44 +156,33 @@ export class FirebaseMatchRepository implements IMatchRepository {
     if (losersMatchId && loserId) {
       const losersMatchSnap = await rtdb
         .ref(`tournaments/${tournamentId}/matches/${losersMatchId}`)
-        .once("value");
+        .once('value')
       if (losersMatchSnap.exists()) {
-        const losersMatch = losersMatchSnap.val();
+        const losersMatch = losersMatchSnap.val()
         if (!losersMatch.redCompetitorId) {
-          updates[
-            `tournaments/${tournamentId}/matches/${losersMatchId}/redCompetitorId`
-          ] = loserId;
+          updates[`tournaments/${tournamentId}/matches/${losersMatchId}/redCompetitorId`] = loserId
         } else if (!losersMatch.blueCompetitorId) {
-          updates[
-            `tournaments/${tournamentId}/matches/${losersMatchId}/blueCompetitorId`
-          ] = loserId;
+          updates[`tournaments/${tournamentId}/matches/${losersMatchId}/blueCompetitorId`] = loserId
         }
       }
     }
 
-    await rtdb.ref().update(updates);
+    await rtdb.ref().update(updates)
 
     // Auto-complete tournament: check if ALL matches have a winnerId
     if (db) {
-      const allMatchesSnap = await rtdb
-        .ref(`tournaments/${tournamentId}/matches`)
-        .once("value");
-      const allMatches = allMatchesSnap.val() as Record<string, any> | null;
+      const allMatchesSnap = await rtdb.ref(`tournaments/${tournamentId}/matches`).once('value')
+      const allMatches = allMatchesSnap.val() as Record<string, Record<string, unknown>> | null
 
       if (allMatches) {
         const allDone = Object.values(allMatches).every(
-          (m: any) =>
-            m.winnerId !== null &&
-            m.winnerId !== undefined &&
-            m.winnerId !== "",
-        );
+          (m: Record<string, unknown>) =>
+            m.winnerId !== null && m.winnerId !== undefined && m.winnerId !== ''
+        )
 
         if (allDone) {
-          await db
-            .collection("tournaments")
-            .doc(tournamentId)
-            .update({ status: "COMPLETED" });
-          log.info(`[Tournament] ${tournamentId} → COMPLETED`);
+          await db.collection('tournaments').doc(tournamentId).update({ status: 'COMPLETED' })
+          log.info(`[Tournament] ${tournamentId} → COMPLETED`)
         }
       }
     }

@@ -1,121 +1,125 @@
-import { db } from "../../services/firebase.js";
-import type { IJudgeRepository } from "@corner-click/core-domain";
-import type { Judge } from "@corner-click/types";
-import { createLogger, toErr } from "@corner-click/logger";
+import type { IJudgeRepository } from '@corner-click/core-domain'
+import { createLogger, toErr } from '@corner-click/logger'
+import type { Judge } from '@corner-click/types'
+import { db } from '../../services/firebase.js'
 
-const log = createLogger("judge-repo");
+const log = createLogger('judge-repo')
 
 export class FirebaseJudgeRepository implements IJudgeRepository {
-  async create(tournamentId: string, judge: Omit<Judge, "id">): Promise<Judge> {
-    if (!db) throw new Error("Database not initialized");
+  async create(tournamentId: string, judge: Omit<Judge, 'id'>): Promise<Judge> {
+    if (!db) {
+      throw new Error('Database not initialized')
+    }
     const docRef = await db
-      .collection("tournaments")
+      .collection('tournaments')
       .doc(tournamentId)
-      .collection("judges")
-      .add(judge);
-    return { id: docRef.id, ...judge } as Judge;
+      .collection('judges')
+      .add(judge)
+    return { id: docRef.id, ...judge } as Judge
   }
 
   async findByPin(pin: string): Promise<{ id: string; data: Judge } | null> {
-    if (!db) throw new Error("Database not initialized");
-    const snapshot = await db
-      .collectionGroup("judges")
-      .where("pin", "==", pin)
-      .get();
-    if (snapshot.empty) return null;
-    const doc = snapshot.docs[0];
-    return { id: doc.id, data: doc.data() as Judge };
+    if (!db) {
+      throw new Error('Database not initialized')
+    }
+    const snapshot = await db.collectionGroup('judges').where('pin', '==', pin).get()
+    if (snapshot.empty) {
+      return null
+    }
+    const doc = snapshot.docs[0]
+    return { id: doc.id, data: doc.data() as Judge }
   }
 
   async findByTournament(tournamentId: string): Promise<Judge[]> {
-    if (!db) throw new Error("Database not initialized");
-    const snapshot = await db
-      .collection("tournaments")
-      .doc(tournamentId)
-      .collection("judges")
-      .get();
+    if (!db) {
+      throw new Error('Database not initialized')
+    }
+    const snapshot = await db.collection('tournaments').doc(tournamentId).collection('judges').get()
     return snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-    })) as Judge[];
+    })) as Judge[]
   }
 
   async updateStatus(
     tournamentId: string,
     judgeId: string,
     status: string,
-    lastActiveAt?: string,
+    lastActiveAt?: string
   ): Promise<void> {
-    if (!db) throw new Error("Database not initialized");
-    const updateData: any = { status };
+    if (!db) {
+      throw new Error('Database not initialized')
+    }
+    const updateData: { status: string; lastActiveAt?: string } = { status }
     if (lastActiveAt) {
-      updateData.lastActiveAt = lastActiveAt;
+      updateData.lastActiveAt = lastActiveAt
     }
     await db
-      .collection("tournaments")
+      .collection('tournaments')
       .doc(tournamentId)
-      .collection("judges")
+      .collection('judges')
       .doc(judgeId)
-      .update(updateData);
+      .update(updateData)
   }
 
   async updateAssignment(
     tournamentId: string,
     judgeId: string,
-    assignment: any,
+    assignment: Record<string, unknown> | null
   ): Promise<void> {
-    if (!db) throw new Error("Database not initialized");
+    if (!db) {
+      throw new Error('Database not initialized')
+    }
     await db
-      .collection("tournaments")
+      .collection('tournaments')
       .doc(tournamentId)
-      .collection("judges")
+      .collection('judges')
       .doc(judgeId)
-      .update({ currentAssignment: assignment });
+      .update({ currentAssignment: assignment })
   }
 
   async delete(tournamentId: string, judgeId: string): Promise<void> {
-    if (!db) throw new Error("Database not initialized");
-    await db
-      .collection("tournaments")
-      .doc(tournamentId)
-      .collection("judges")
-      .doc(judgeId)
-      .delete();
+    if (!db) {
+      throw new Error('Database not initialized')
+    }
+    await db.collection('tournaments').doc(tournamentId).collection('judges').doc(judgeId).delete()
   }
 
   async cleanupExpiredJudges(tournamentId: string): Promise<void> {
-    if (!db) throw new Error("Database not initialized");
+    if (!db) {
+      throw new Error('Database not initialized')
+    }
     try {
       const snapshot = await db
-        .collection("tournaments")
+        .collection('tournaments')
         .doc(tournamentId)
-        .collection("judges")
-        .get();
-      const now = new Date();
-      const batch = db.batch();
+        .collection('judges')
+        .get()
+      const now = new Date()
+      const batch = db.batch()
 
       snapshot.docs.forEach((doc) => {
-        const data = doc.data();
-        if (data.status === "ONLINE") {
+        const data = doc.data()
+        if (data.status === 'ONLINE') {
           const lastActive = data.lastActiveAt
             ? new Date(data.lastActiveAt)
             : data.createdAt
               ? new Date(data.createdAt)
-              : new Date(0);
-          const diffMs = now.getTime() - lastActive.getTime();
-          const diffHours = diffMs / (1000 * 60 * 60);
+              : new Date(0)
+          const diffMs = now.getTime() - lastActive.getTime()
+          const diffHours = diffMs / (1000 * 60 * 60)
 
           if (diffHours >= 24) {
             batch.update(doc.ref, {
-              status: "OFFLINE",
+              status: 'OFFLINE',
               currentAssignment: null,
-            });
+            })
           }
         }
-      });
-      await batch.commit();
+      })
+      await batch.commit()
     } catch (error) {
-      log.error({ err: toErr(error) }, "Error cleaning up judges");
+      log.error({ err: toErr(error) }, 'Error cleaning up judges')
     }
   }
 }
