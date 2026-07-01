@@ -7,7 +7,7 @@ import { BracketType, MatchStatus } from '@corner-click/types'
 function shuffle<T>(array: T[]): T[] {
   const arr = [...array]
   let currentIndex = arr.length,
-    randomIndex
+    randomIndex: number
   while (currentIndex !== 0) {
     randomIndex = Math.floor(Math.random() * currentIndex)
     currentIndex--
@@ -461,8 +461,8 @@ export class RoundRobinGenerator implements BracketGenerator {
 /**
  * Factory class to instantiate the appropriate BracketGenerator.
  */
-export class BracketFactory {
-  static getGenerator(type: BracketType): BracketGenerator {
+export const BracketFactory = {
+  getGenerator(type: BracketType): BracketGenerator {
     switch (type) {
       case BracketType.DOUBLE_ELIMINATION:
         return new DoubleEliminationGenerator()
@@ -471,5 +471,5 @@ export class BracketFactory {
       default:
         return new SingleEliminationGenerator()
     }
-  }
+  },
 }

@@ -268,6 +268,7 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
           <div className="relative w-full max-w-3xl bg-white rounded-xl shadow-2xl p-6 max-h-[90vh] overflow-y-auto">
             <button
+              type="button"
               onClick={() => {
                 setIsFormOpen(false)
                 setEditingCompetitor(undefined)
@@ -276,7 +277,13 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
               aria-label="Cerrar"
               title="Cerrar"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                aria-hidden="true"
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -381,6 +388,7 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
                   {!isReadOnly && (
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
+                        type="button"
                         onClick={() => {
                           setEditingCompetitor(comp)
                           setIsFormOpen(true)
@@ -390,6 +398,7 @@ export const CompetitorManager: React.FC<CompetitorManagerProps> = ({
                         Edit
                       </button>
                       <button
+                        type="button"
                         onClick={() => handleDelete(comp.id)}
                         className="text-red-600 hover:text-red-900"
                       >

@@ -43,7 +43,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
         const comps = competitors.filter((c) => c.categoryId === cat.id)
         if (comps.length >= 2) {
           const areaId = `${(areaIndex % totalAreas) + 1}`
-          await generateBracket(tournament.id!, cat.id, areaId, comps)
+          await generateBracket(tournament.id as string, cat.id, areaId, comps)
           generated++
           areaIndex++
         }
@@ -61,11 +61,11 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
   }
 
   const { data: categories = [] } = trpc.categories.getAll.useQuery({
-    tournamentId: tournament.id!,
+    tournamentId: tournament.id as string,
   })
 
   const { data: competitors = [] } = trpc.competitors.getAll.useQuery({
-    tournamentId: tournament.id!,
+    tournamentId: tournament.id as string,
   })
 
   const [competitorCounts, setCompetitorCounts] = useState<Record<string, number>>({})
@@ -102,7 +102,13 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           }}
           variant="secondary"
         >
-          <svg className="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            aria-hidden="true"
+            className="w-5 h-5 mr-2 -ml-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -123,7 +129,13 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           variant="primary"
         >
           Siguiente
-          <svg className="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            aria-hidden="true"
+            className="w-5 h-5 ml-2 -mr-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -142,11 +154,18 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center space-x-6">
           <button
+            type="button"
             onClick={onBack}
             className="text-gray-500 hover:text-gray-900 bg-white hover:bg-gray-100 p-3 rounded-full shadow transition-colors shrink-0"
             title="Back to List"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              aria-hidden="true"
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -170,7 +189,13 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-bold rounded-lg shadow-sm text-white bg-red-600 hover:bg-red-700 transition-colors shrink-0"
           rel="noopener"
         >
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            aria-hidden="true"
+            className="w-5 h-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -222,30 +247,35 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           {/* Tabs */}
           <div className="flex space-x-4 border-b border-gray-200 mb-6 overflow-x-auto">
             <button
+              type="button"
               className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'categories' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               onClick={() => setActiveTab('categories')}
             >
               1. Generar Categorías
             </button>
             <button
+              type="button"
               className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'competitors' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               onClick={() => setActiveTab('competitors')}
             >
               2. Competidores
             </button>
             <button
+              type="button"
               className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'adjust-categories' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               onClick={() => setActiveTab('adjust-categories')}
             >
               3. Ajustar Categorías
             </button>
             <button
+              type="button"
               className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'brackets' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               onClick={() => setActiveTab('brackets')}
             >
               4. Llaves
             </button>
             <button
+              type="button"
               className={`py-2 px-4 font-semibold whitespace-nowrap ${activeTab === 'judges' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               onClick={() => setActiveTab('judges')}
             >
@@ -260,12 +290,14 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
             <div className="mb-6 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
               <div className="flex gap-4">
                 <button
+                  type="button"
                   onClick={() => setBracketsViewMode('CATEGORY')}
                   className={`px-4 py-2 rounded-lg font-bold text-sm ${bracketsViewMode === 'CATEGORY' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                 >
                   Ver por Categoría
                 </button>
                 <button
+                  type="button"
                   onClick={() => setBracketsViewMode('AREA')}
                   className={`px-4 py-2 rounded-lg font-bold text-sm ${bracketsViewMode === 'AREA' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                 >
@@ -340,12 +372,12 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
                       const newType = e.target.value as BracketType
                       try {
                         await updateBracketTypeMutation.mutateAsync({
-                          tournamentId: tournament.id!,
+                          tournamentId: tournament.id as string,
                           categoryId: selectedCategoryId,
                           bracketType: newType,
                         })
                         utils.categories.getAll.invalidate({
-                          tournamentId: tournament.id!,
+                          tournamentId: tournament.id as string,
                         })
                       } catch (err) {
                         console.error(err)
@@ -368,7 +400,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
 
               {selectedCategoryId && (
                 <a
-                  href={`${getDynamicAnalyticsUrl(import.meta.env.PUBLIC_ANALYTICS_URL || 'http://localhost:4323')}/?tournament=${encodeURIComponent(tournament.id!)}&category=${encodeURIComponent(selectedCategoryId)}`}
+                  href={`${getDynamicAnalyticsUrl(import.meta.env.PUBLIC_ANALYTICS_URL || 'http://localhost:4323')}/?tournament=${encodeURIComponent(tournament.id as string)}&category=${encodeURIComponent(selectedCategoryId)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center px-6 py-2.5 border border-transparent text-sm font-bold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shrink-0 shadow-sm"
@@ -381,21 +413,21 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
 
           {activeTab === 'categories' && (
             <CategoryManager
-              tournamentId={tournament.id!}
+              tournamentId={tournament.id as string}
               isReadOnly={tournament.status === 'COMPLETED'}
             />
           )}
 
           {activeTab === 'adjust-categories' && (
             <CategoryAdjuster
-              tournamentId={tournament.id!}
+              tournamentId={tournament.id as string}
               isReadOnly={tournament.status === 'COMPLETED'}
             />
           )}
 
           {activeTab === 'judges' && (
             <JudgeManager
-              tournamentId={tournament.id!}
+              tournamentId={tournament.id as string}
               tournamentAreas={tournament.areas || 1}
               isReadOnly={tournament.status === 'COMPLETED'}
             />
@@ -404,7 +436,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           {activeTab === 'competitors' && (
             <Card padding="md">
               <CompetitorManager
-                tournamentId={tournament.id!}
+                tournamentId={tournament.id as string}
                 categoryId={selectedCategoryId}
                 categories={categories}
                 onCategoryChange={setSelectedCategoryId}
@@ -417,7 +449,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           {activeTab === 'brackets' && bracketsViewMode === 'CATEGORY' && selectedCategoryId && (
             <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm">
               <BracketManager
-                tournamentId={tournament.id!}
+                tournamentId={tournament.id as string}
                 categoryId={selectedCategoryId}
                 areaId={defaultArea}
                 isReadOnly={tournament.status === 'COMPLETED'}
@@ -436,7 +468,7 @@ export default function TournamentDetail({ tournament, onBack }: Props) {
           {activeTab === 'brackets' && bracketsViewMode === 'AREA' && (
             <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm">
               <AreaScheduleManager
-                tournamentId={tournament.id!}
+                tournamentId={tournament.id as string}
                 tournamentAreas={tournament.areas || 1}
               />
             </div>

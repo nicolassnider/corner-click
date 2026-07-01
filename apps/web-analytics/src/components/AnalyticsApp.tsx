@@ -199,6 +199,7 @@ function AnalyticsAppContent() {
         ) : (
           <div className="bg-slate-100/50 rounded-2xl border border-slate-200 border-dashed p-12 text-center text-slate-400 print:hidden">
             <svg
+              aria-hidden="true"
               className="w-12 h-12 mx-auto mb-4 opacity-50"
               fill="none"
               stroke="currentColor"

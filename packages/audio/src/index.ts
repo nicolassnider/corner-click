@@ -1,168 +1,181 @@
-export class AudioService {
-  private static ctx: AudioContext | null = null
+export const AudioService = {
+  ctx: null as AudioContext | null,
 
-  private static getContext(): AudioContext | null {
+  getContext(): AudioContext | null {
     if (typeof window === 'undefined') {
       return null
     }
 
     if (!AudioService.ctx) {
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
       if (AudioContextClass) {
         AudioService.ctx = new AudioContextClass()
       }
     }
-
-    if (AudioService.ctx && AudioService.ctx.state === 'suspended') {
-      AudioService.ctx.resume().catch((err) => {
-        console.warn('Failed to resume AudioContext:', err)
-      })
-    }
-
     return AudioService.ctx
-  }
+  },
+
+  /**
+   * Helper to resume audio context if suspended (needed for some browsers)
+   */
+  async ensureContextRunning(): Promise<void> {
+    const ctx = AudioService.getContext()
+    if (ctx && ctx.state === 'suspended') {
+      await ctx.resume()
+    }
+  },
 
   /**
    * Synthesizes a gong/bell metallic sound for the match start.
    */
-  public static playGong(): void {
+  playGong(): void {
     const ctx = AudioService.getContext()
     if (!ctx) {
       return
     }
 
-    const now = ctx.currentTime
+    const oscs = [
+      ctx.createOscillator(),
+      ctx.createOscillator(),
+      ctx.createOscillator(),
+      ctx.createOscillator(),
+    ]
+
     const gainNode = ctx.createGain()
-    gainNode.gain.setValueAtTime(0, now)
-    gainNode.gain.linearRampToValueAtTime(0.8, now + 0.02)
-    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 2.0)
 
-    // Combination of frequencies for metallic timbre
-    const freqs = [330, 440, 550, 660]
-    const oscs: OscillatorNode[] = []
-
-    freqs.forEach((freq, index) => {
-      const osc = ctx.createOscillator()
-      // Mix sine and triangle waves
-      osc.type = index % 2 === 0 ? 'sine' : 'triangle'
-      osc.frequency.setValueAtTime(freq, now)
+    // Frequencies that somewhat mimic a metallic gong
+    const freqs = [300, 520, 780, 1040]
+    oscs.forEach((osc, idx) => {
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(freqs[idx]!, ctx.currentTime)
       osc.connect(gainNode)
-      osc.start(now)
-      osc.stop(now + 2.0)
-      oscs.push(osc)
     })
+
+    // Envelope
+    gainNode.gain.setValueAtTime(0, ctx.currentTime)
+    gainNode.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.05)
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2)
 
     gainNode.connect(ctx.destination)
 
+    oscs.forEach((osc) => {
+      osc.start(ctx.currentTime)
+      osc.stop(ctx.currentTime + 2)
+    })
+
     // Clean up
     setTimeout(() => {
-      oscs.forEach((osc) => osc.disconnect())
+      oscs.forEach((osc) => {
+        osc.disconnect()
+      })
       gainNode.disconnect()
     }, 2100)
-  }
+  },
 
   /**
    * Synthesizes a low-frequency buzzer/chicharra sound for the match end.
    */
-  public static playBuzzer(): void {
+  playBuzzer(): void {
     const ctx = AudioService.getContext()
     if (!ctx) {
       return
     }
 
-    const now = ctx.currentTime
-    const gainNode = ctx.createGain()
-    gainNode.gain.setValueAtTime(0, now)
-    gainNode.gain.linearRampToValueAtTime(0.7, now + 0.05)
-    gainNode.gain.setValueAtTime(0.7, now + 1.4)
-    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 1.5)
-
-    // Detuned square waves for high-impact buzzing sound
     const osc1 = ctx.createOscillator()
-    osc1.type = 'square'
-    osc1.frequency.setValueAtTime(110, now)
-
     const osc2 = ctx.createOscillator()
-    osc2.type = 'sawtooth'
-    osc2.frequency.setValueAtTime(110.5, now)
+    const gainNode = ctx.createGain()
+
+    // Sawtooth waves at low frequencies for a harsh buzzer sound
+    osc1.type = 'sawtooth'
+    osc1.frequency.setValueAtTime(120, ctx.currentTime) // ~B2
+    osc2.type = 'square'
+    osc2.frequency.setValueAtTime(123, ctx.currentTime) // Slightly detuned
 
     osc1.connect(gainNode)
     osc2.connect(gainNode)
     gainNode.connect(ctx.destination)
 
-    osc1.start(now)
-    osc2.start(now)
-    osc1.stop(now + 1.5)
-    osc2.stop(now + 1.5)
+    // Envelope: quick attack, sustain, quick release
+    gainNode.gain.setValueAtTime(0, ctx.currentTime)
+    gainNode.gain.linearRampToValueAtTime(0.8, ctx.currentTime + 0.05)
+    gainNode.gain.setValueAtTime(0.8, ctx.currentTime + 0.95)
+    gainNode.gain.linearRampToValueAtTime(0.001, ctx.currentTime + 1.0)
+
+    osc1.start(ctx.currentTime)
+    osc2.start(ctx.currentTime)
+    osc1.stop(ctx.currentTime + 1.0)
+    osc2.stop(ctx.currentTime + 1.0)
 
     setTimeout(() => {
       osc1.disconnect()
       osc2.disconnect()
       gainNode.disconnect()
-    }, 1600)
-  }
+    }, 1100)
+  },
 
   /**
    * Synthesizes a standard short beep sound for Jury control actions.
    */
-  public static playBeep(): void {
+  playBeep(): void {
     const ctx = AudioService.getContext()
     if (!ctx) {
       return
     }
 
-    const now = ctx.currentTime
-    const gainNode = ctx.createGain()
-    gainNode.gain.setValueAtTime(0, now)
-    gainNode.gain.linearRampToValueAtTime(0.4, now + 0.01)
-    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.12)
-
     const osc = ctx.createOscillator()
+    const gainNode = ctx.createGain()
+
     osc.type = 'sine'
-    osc.frequency.setValueAtTime(880, now)
+    osc.frequency.setValueAtTime(800, ctx.currentTime) // High pitch beep
 
     osc.connect(gainNode)
     gainNode.connect(ctx.destination)
 
-    osc.start(now)
-    osc.stop(now + 0.12)
+    gainNode.gain.setValueAtTime(0, ctx.currentTime)
+    gainNode.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.02)
+    gainNode.gain.linearRampToValueAtTime(0.001, ctx.currentTime + 0.15)
+
+    osc.start(ctx.currentTime)
+    osc.stop(ctx.currentTime + 0.15)
 
     setTimeout(() => {
       osc.disconnect()
       gainNode.disconnect()
     }, 200)
-  }
+  },
 
   /**
    * Synthesizes a subtle tick/click sound for the judge scoring pads.
    */
-  public static playClick(): void {
+  playClick(): void {
     const ctx = AudioService.getContext()
     if (!ctx) {
       return
     }
 
-    const now = ctx.currentTime
-    const gainNode = ctx.createGain()
-    gainNode.gain.setValueAtTime(0, now)
-    gainNode.gain.linearRampToValueAtTime(0.3, now + 0.002)
-    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.03)
-
     const osc = ctx.createOscillator()
-    osc.type = 'sine'
-    // Pitch slide downwards creates a pleasant tactile click
-    osc.frequency.setValueAtTime(1500, now)
-    osc.frequency.exponentialRampToValueAtTime(150, now + 0.03)
+    const gainNode = ctx.createGain()
+
+    // A very short high frequency pop
+    osc.type = 'square'
+    osc.frequency.setValueAtTime(1500, ctx.currentTime)
+    osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.02)
 
     osc.connect(gainNode)
     gainNode.connect(ctx.destination)
 
-    osc.start(now)
-    osc.stop(now + 0.03)
+    gainNode.gain.setValueAtTime(0, ctx.currentTime)
+    gainNode.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.005)
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03)
+
+    osc.start(ctx.currentTime)
+    osc.stop(ctx.currentTime + 0.03)
 
     setTimeout(() => {
       osc.disconnect()
       gainNode.disconnect()
     }, 100)
-  }
+  },
 }

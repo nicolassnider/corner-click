@@ -57,7 +57,7 @@ export default function AssignJudgeModal({
 
     setSubmitting(true)
     try {
-      await onAssign(judge.id!, { areaId, cornerId })
+      await onAssign(judge.id as string, { areaId, cornerId })
       onClose()
     } catch (error) {
       console.error('Failed to assign', error)
@@ -72,12 +72,19 @@ export default function AssignJudgeModal({
         <div className="bg-gray-900 px-6 py-4 flex justify-between items-center">
           <h2 className="text-xl font-bold text-white tracking-wide">Assign Judge</h2>
           <button
+            type="button"
             onClick={onClose}
             aria-label="Close"
             title="Close"
             className="text-gray-400 hover:text-white transition-colors"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              aria-hidden="true"
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

@@ -240,6 +240,7 @@ function JuryDashboard() {
             </span>
             <div className="flex-1 text-sm font-semibold">{t.message}</div>
             <button
+              type="button"
               onClick={() => setToasts((prev) => prev.filter((item) => item.id !== t.id))}
               className="text-slate-400 hover:text-slate-200 font-bold ml-auto"
             >
@@ -258,6 +259,7 @@ function JuryDashboard() {
             title="Volver al inicio"
           >
             <svg
+              aria-hidden="true"
               className="w-8 h-8 text-blue-500 mr-3"
               fill="none"
               stroke="currentColor"
@@ -481,6 +483,7 @@ function JuryDashboard() {
 
                     {/* TV Projector View link */}
                     <button
+                      type="button"
                       onClick={() => window.open(`/area/${selectedMatch.areaId}/tv`, '_blank')}
                       className="flex items-center gap-2 bg-slate-850 hover:bg-slate-800 text-slate-350 hover:text-slate-100 border border-slate-800 hover:border-slate-700 rounded-lg px-3 py-1.5 text-xs font-bold uppercase transition-all shadow-md active:scale-95"
                       title="Open Spectator screen for TV display/projectors"
@@ -669,6 +672,7 @@ function JuryDashboard() {
                     </h4>
                     <div className="flex flex-col sm:flex-row gap-4 w-full max-w-3xl">
                       <button
+                        type="button"
                         onClick={() => handleDeclareWinner(selectedMatch.redCompetitorId)}
                         className={`flex-1 py-3.5 rounded-xl font-bold text-white transition-all shadow-md active:scale-95 cursor-pointer text-sm ${redVotes > blueVotes ? 'bg-rose-600 hover:bg-rose-500 hover:shadow-[0_0_20px_rgba(225,29,72,0.4)] scale-[1.02] border-2 border-rose-400' : 'bg-rose-850 hover:bg-rose-750 text-rose-300 border border-rose-800/40'}`}
                         disabled={
@@ -679,12 +683,14 @@ function JuryDashboard() {
                       </button>
                       <div className="flex flex-row sm:flex-col gap-2 flex-1 justify-center">
                         <button
+                          type="button"
                           onClick={handleExtraTime}
                           className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all shadow bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:border-amber-500/60 active:scale-95 cursor-pointer`}
                         >
                           ⏱️ Extra Time (1m)
                         </button>
                         <button
+                          type="button"
                           onClick={handleGoldenPoint}
                           className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all shadow bg-yellow-500/15 hover:bg-yellow-500/25 text-yellow-300 border border-yellow-500/40 hover:border-yellow-500/70 active:scale-95 cursor-pointer`}
                         >
@@ -692,6 +698,7 @@ function JuryDashboard() {
                         </button>
                       </div>
                       <button
+                        type="button"
                         onClick={() => handleDeclareWinner(selectedMatch.blueCompetitorId)}
                         className={`flex-1 py-3.5 rounded-xl font-bold text-white transition-all shadow-md active:scale-95 cursor-pointer text-sm ${blueVotes > redVotes ? 'bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] scale-[1.02] border-2 border-blue-400' : 'bg-blue-850 hover:bg-blue-750 text-blue-300 border border-blue-800/40'}`}
                         disabled={
@@ -708,6 +715,7 @@ function JuryDashboard() {
                 {/* Action Buttons */}
                 <div className="p-4 md:p-6 bg-slate-900/60 border-t border-slate-800 flex flex-wrap justify-center gap-4 mt-auto shrink-0">
                   <button
+                    type="button"
                     className={`px-6 py-3 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
                       status === MatchStatus.ACTIVE ||
                       status === MatchStatus.GOLDEN_POINT ||
@@ -731,6 +739,7 @@ function JuryDashboard() {
                   </button>
 
                   <button
+                    type="button"
                     className={`px-6 py-3 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
                       !(status === MatchStatus.ACTIVE || status === MatchStatus.GOLDEN_POINT) ||
                       selectedMatch.status === MatchStatus.COMPLETED ||
@@ -749,6 +758,7 @@ function JuryDashboard() {
                   </button>
 
                   <button
+                    type="button"
                     className={`px-6 py-3 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-lg flex-1 max-w-xs cursor-pointer ${
                       status === MatchStatus.ENDED ||
                       selectedMatch.status === MatchStatus.COMPLETED ||

@@ -83,6 +83,7 @@ export default function TournamentList({ onSelect, onCreateNew, onEdit }: Props)
           </div>
           <p className="text-gray-650 mb-2 flex items-center text-sm font-semibold">
             <svg
+              aria-hidden="true"
               className="w-5 h-5 mr-2 text-gray-400"
               fill="none"
               stroke="currentColor"
@@ -105,6 +106,7 @@ export default function TournamentList({ onSelect, onCreateNew, onEdit }: Props)
           </p>
           <p className="text-gray-600 mb-4 flex items-center text-sm">
             <svg
+              aria-hidden="true"
               className="w-5 h-5 mr-2 text-gray-400"
               fill="none"
               stroke="currentColor"
@@ -124,7 +126,7 @@ export default function TournamentList({ onSelect, onCreateNew, onEdit }: Props)
           <p className="text-sm font-bold text-gray-500">{t.areas || 1} Áreas</p>
           <div className="flex space-x-2">
             <a
-              href={`${getDynamicAnalyticsUrl(import.meta.env.PUBLIC_ANALYTICS_URL || 'http://localhost:4323')}/?tournament=${encodeURIComponent(t.id!)}`}
+              href={`${getDynamicAnalyticsUrl(import.meta.env.PUBLIC_ANALYTICS_URL || 'http://localhost:4323')}/?tournament=${encodeURIComponent(t.id as string)}`}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
@@ -135,6 +137,7 @@ export default function TournamentList({ onSelect, onCreateNew, onEdit }: Props)
             {t.status !== 'COMPLETED' && (
               <>
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation()
                     onEdit(t)
@@ -144,9 +147,10 @@ export default function TournamentList({ onSelect, onCreateNew, onEdit }: Props)
                   Edit
                 </button>
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation()
-                    handleDelete(t.id!)
+                    handleDelete(t.id as string)
                   }}
                   className="px-3 py-1 bg-red-50 hover:bg-red-100 text-red-650 font-bold rounded text-xs transition-colors cursor-pointer border border-red-200"
                 >

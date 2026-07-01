@@ -281,6 +281,7 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
                           m.redCompetitorId !== 'BYE' &&
                           !isReadOnly && (
                             <button
+                              type="button"
                               onClick={(e) => {
                                 e.stopPropagation()
                                 handleAdvanceWinner(m.id, m.redCompetitorId, m.nextMatchId)
@@ -314,6 +315,7 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
                           m.blueCompetitorId !== 'BYE' &&
                           !isReadOnly && (
                             <button
+                              type="button"
                               onClick={(e) => {
                                 e.stopPropagation()
                                 handleAdvanceWinner(m.id, m.blueCompetitorId, m.nextMatchId)
@@ -489,6 +491,7 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
                     </span>
                     {m.status !== 'COMPLETED' && !isReadOnly && (
                       <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation()
                           handleAdvanceWinner(m.id, m.redCompetitorId)
@@ -509,6 +512,7 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
                     </span>
                     {m.status !== 'COMPLETED' && !isReadOnly && (
                       <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation()
                           handleAdvanceWinner(m.id, m.blueCompetitorId)
@@ -539,6 +543,7 @@ export const BracketManager: React.FC<BracketManagerProps> = ({
         </div>
         {!isReadOnly && (
           <button
+            type="button"
             onClick={handleGenerateBracket}
             disabled={generating}
             className="px-5 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 font-bold transition-all shadow-sm"
