@@ -1,7 +1,7 @@
 {
   "name": "api",
   "description": "Corner Click API",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "",
   "dependencies": {
     "@corner-click/logger": "0.0.1",

@@ -1,6 +1,6 @@
 {
   "name": "@corner-click/api-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "@tanstack/react-query": "^5.101.2",
     "@trpc/client": "^11.18.0",

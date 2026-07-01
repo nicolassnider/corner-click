@@ -1,6 +1,6 @@
 {
   "name": "@corner-click/stats",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "@corner-click/types": "0.0.1"
   },
