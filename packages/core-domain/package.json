@@ -1,6 +1,6 @@
 {
   "name": "@corner-click/core-domain",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "dependencies": {
     "@corner-click/types": "*"
   },

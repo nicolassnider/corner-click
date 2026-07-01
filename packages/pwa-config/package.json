@@ -1,6 +1,6 @@
 {
   "name": "@corner-click/pwa-config",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "index.ts",
   "private": true,
   "type": "module"

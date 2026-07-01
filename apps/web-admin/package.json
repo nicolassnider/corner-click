@@ -1,6 +1,6 @@
 {
   "name": "apps-web-admin",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "dependencies": {
     "@astrojs/react": "^6.0.0",
     "@corner-click/api-client": "*",
