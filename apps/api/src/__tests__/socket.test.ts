@@ -105,6 +105,44 @@ describe('SocketService & RedisStore Tests', () => {
       const retrieved = await store.getMatchState(areaId)
       expect(retrieved).toBeDefined()
       expect(retrieved?.match.id).toBe('test-match-1')
+      
+      const expectedKey = `match_state:${areaId}`
+      expect(mockRedisStore.has(expectedKey)).toBe(true)
+      expect(JSON.parse(mockRedisStore.get(expectedKey)!)).toEqual(initialState)
+    })
+
+    it('should delete match state from redis and return undefined afterwards', async () => {
+      const areaId = 'area-5'
+      const initialState = {
+        match: {
+          id: 'test-match-1',
+          tournamentId: 't-123',
+          categoryId: 'cat-456',
+          areaId,
+          status: MatchStatus.ACTIVE,
+          redCompetitorId: 'Red',
+          blueCompetitorId: 'Blue',
+          winnerId: null,
+          score: { red: 0, blue: 0 },
+          warnings: { red: 0, blue: 0 },
+          deductions: { red: 0, blue: 0 },
+        },
+        timer: 120,
+        timerActive: true,
+        judges: {},
+        judgeClicks: {},
+      }
+
+      await store.setMatchState(areaId, initialState)
+
+      const expectedKey = `match_state:${areaId}`
+      expect(mockRedisStore.has(expectedKey)).toBe(true)
+
+      // delete the match state and verify it is removed from redis
+      await store.deleteMatchState(areaId)
+
+      expect(mockRedisStore.has(expectedKey)).toBe(false)
+      expect(await store.getMatchState(areaId)).toBeUndefined()
     })
   })
 
@@ -124,6 +162,29 @@ describe('SocketService & RedisStore Tests', () => {
       const state = await store.getMatchState('area-1')
       expect(state).toBeDefined()
       expect(state?.match.id).toBe('temp-area-1')
+    })
+
+    it('should recover from malformed stored state and initialize default state on join_area', async () => {
+      const joinAreaHandler = registeredSocketEvents[SocketEvent.JOIN_AREA]
+      expect(joinAreaHandler).toBeDefined()
+
+      // Seed malformed JSON into the backing store for this area
+      mockRedisStore.set('match_state:area-1', 'not-json')
+
+      // The handler should not throw when the stored state is malformed
+      await expect(
+        joinAreaHandler({
+          areaId: 'area-1',
+          role: SocketRole.SPECTATOR,
+        })
+      ).resolves.not.toThrow()
+
+      // It should still join the correct room and emit a fresh match_state
+      expect(socketInstance.join).toHaveBeenCalledWith('area:area-1')
+      expect(socketInstance.emit).toHaveBeenCalledWith(
+        SocketEvent.MATCH_STATE,
+        expect.any(Object)
+      )
     })
 
     it('should register judge details and notify room on judge join_area', async () => {
@@ -169,6 +230,26 @@ describe('SocketService & RedisStore Tests', () => {
       }
       state.match.status = MatchStatus.ACTIVE
       await store.setMatchState('area-1', state)
+    })
+
+    it('does not emit MATCH_STATE when receiving JUDGE_SCORE_UPDATE for an uninitialized area', async () => {
+      const judgeScoreUpdateHandler = registeredSocketEvents[SocketEvent.JUDGE_SCORE_UPDATE]
+
+      // Ensure no leftover calls from previous tests
+      mockEmitToRoom.mockClear()
+
+      await expect(
+        judgeScoreUpdateHandler({
+          areaId: 'area-without-state',
+          matchId: 'temp-area-1',
+          judgeId: 'j-1',
+          corner: 'red',
+          type: ScoreUpdateType.POINT,
+          value: 1,
+        })
+      ).resolves.not.toThrow()
+
+      expect(mockEmitToRoom).not.toHaveBeenCalled()
     })
 
     it('should calculate consolidated scores correctly when judge clicks point', async () => {

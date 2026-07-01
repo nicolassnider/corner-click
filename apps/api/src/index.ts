@@ -7,6 +7,7 @@ import cors from 'cors'
 import express, { type Request, type Response } from 'express'
 import settings from './config/settings.js'
 import { initSocketService } from './services/socketService.js'
+import { closeRedis } from './data/redis.js'
 import { appRouter } from './trpc/routers/_app.js'
 import { createContext } from './trpc/trpc.js'
 
@@ -82,6 +83,17 @@ if (!isVercel) {
   httpServer.listen(settings.port, () => {
     log.info({ port: settings.port, env: environment }, `${appName} running`)
   })
+
+  const gracefulShutdown = async () => {
+    log.info('Shutting down server...')
+    httpServer.close(async () => {
+      await closeRedis()
+      process.exit(0)
+    })
+  }
+
+  process.on('SIGTERM', gracefulShutdown)
+  process.on('SIGINT', gracefulShutdown)
 }
 
 export default app

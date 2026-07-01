@@ -18,3 +18,8 @@ redis.on('connect', () => {
 redis.on('error', (err) => {
   log.error({ err }, 'Redis connection error')
 })
+
+export const closeRedis = async () => {
+  log.info('Closing Redis connection')
+  await redis.quit()
+}

@@ -36,6 +36,8 @@ interface ActiveMatchState {
   }
 }
 
+const MATCH_STATE_TTL_SECONDS = 60 * 60 * 2 // 2 hours
+
 class RedisStore {
   private getRedisKey(areaId: string): string {
     return `match_state:${areaId}`
@@ -53,7 +55,7 @@ class RedisStore {
   }
 
   async setMatchState(areaId: string, state: ActiveMatchState): Promise<void> {
-    await redis.set(this.getRedisKey(areaId), JSON.stringify(state))
+    await redis.set(this.getRedisKey(areaId), JSON.stringify(state), 'EX', MATCH_STATE_TTL_SECONDS)
   }
 
   async deleteMatchState(areaId: string): Promise<void> {
@@ -118,8 +120,15 @@ export const initSocketService = (httpServer: HttpServer): Server => {
         socket.join(roomName)
         log.info({ socketId: socket.id, areaId, role, judgeId }, 'client joined area room')
 
-        // Initialize area state if it doesn't exist
-        let state = await store.getMatchState(areaId)
+        let state: ActiveMatchState | undefined
+        try {
+          state = await store.getMatchState(areaId)
+        } catch (error) {
+          log.error({ err: error, socketId: socket.id, areaId, role, judgeId }, 'failed to load match state from store')
+          socket.emit(SocketEvent.MATCH_STATE, { error: 'Unable to join area at this time.' })
+          return
+        }
+
         if (!state) {
           state = {
             match: {
@@ -140,7 +149,13 @@ export const initSocketService = (httpServer: HttpServer): Server => {
             judges: {},
             judgeClicks: {},
           }
-          await store.setMatchState(areaId, state)
+          try {
+            await store.setMatchState(areaId, state)
+          } catch (error) {
+             log.error({ err: error, socketId: socket.id, areaId, role, judgeId }, 'failed to initialize match state in store')
+             socket.emit(SocketEvent.MATCH_STATE, { error: 'Unable to join area at this time.' })
+             return
+          }
         }
 
         // If user is a judge, register them in the area state
@@ -159,7 +174,13 @@ export const initSocketService = (httpServer: HttpServer): Server => {
               deductions: 0,
             }
           }
-          await store.setMatchState(areaId, state)
+          try {
+            await store.setMatchState(areaId, state)
+          } catch (error) {
+             log.error({ err: error, socketId: socket.id, areaId, role, judgeId }, 'failed to save judge state in store')
+             socket.emit(SocketEvent.MATCH_STATE, { error: 'Unable to join area at this time.' })
+             return
+          }
 
           // Notify other clients in the room (e.g. admin) that judge joined/connected
           io.to(roomName).emit(SocketEvent.JUDGES_UPDATE, state.judges)
@@ -188,7 +209,14 @@ export const initSocketService = (httpServer: HttpServer): Server => {
         value: number
       }) => {
         const { areaId, judgeId, corner, type, value } = data
-        const state = await store.getMatchState(areaId)
+        let state: ActiveMatchState | undefined
+        try {
+          state = await store.getMatchState(areaId)
+        } catch (error) {
+          log.error({ err: error, areaId, judgeId }, 'failed to load match state for judge score update')
+          return
+        }
+
         if (!state) {
           return
         }
@@ -234,7 +262,12 @@ export const initSocketService = (httpServer: HttpServer): Server => {
         state.match.score.red = Math.round(totalRedRaw / judgeCount)
         state.match.score.blue = Math.round(totalBlueRaw / judgeCount)
 
-        await store.setMatchState(areaId, state)
+        try {
+          await store.setMatchState(areaId, state)
+        } catch (error) {
+          log.error({ err: error, areaId, judgeId }, 'failed to save match state for judge score update')
+          return
+        }
 
         // Broadcast new match state to the room
         io.to(`area:${areaId}`).emit(SocketEvent.MATCH_STATE, {
@@ -258,7 +291,14 @@ export const initSocketService = (httpServer: HttpServer): Server => {
         timerValue?: number
       }) => {
         const { areaId, action, matchData, timerValue } = data
-        const state = await store.getMatchState(areaId)
+        let state: ActiveMatchState | undefined
+        try {
+           state = await store.getMatchState(areaId)
+        } catch (error) {
+           log.error({ err: error, areaId, action }, 'failed to load match state for match control')
+           return
+        }
+        
         if (!state) {
           return
         }
@@ -315,7 +355,12 @@ export const initSocketService = (httpServer: HttpServer): Server => {
           state.timerActive = false
         }
 
-        await store.setMatchState(areaId, state)
+        try {
+          await store.setMatchState(areaId, state)
+        } catch (error) {
+          log.error({ err: error, areaId, action }, 'failed to save match state for match control')
+          return
+        }
 
         // Broadcast update
         io.to(`area:${areaId}`).emit(SocketEvent.MATCH_STATE, {
@@ -333,12 +378,16 @@ export const initSocketService = (httpServer: HttpServer): Server => {
       log.info({ socketId: socket.id }, 'client disconnected from WebSocket')
 
       if (currentAreaId && currentRole === SocketRole.JUDGE && currentJudgeId) {
-        const state = await store.getMatchState(currentAreaId)
-        if (state?.judges[currentJudgeId]) {
-          state.judges[currentJudgeId].connected = false
-          await store.setMatchState(currentAreaId, state)
+        try {
+          const state = await store.getMatchState(currentAreaId)
+          if (state?.judges[currentJudgeId]) {
+            state.judges[currentJudgeId].connected = false
+            await store.setMatchState(currentAreaId, state)
 
-          io.to(`area:${currentAreaId}`).emit(SocketEvent.JUDGES_UPDATE, state.judges)
+            io.to(`area:${currentAreaId}`).emit(SocketEvent.JUDGES_UPDATE, state.judges)
+          }
+        } catch (error) {
+           log.error({ err: error, areaId: currentAreaId, judgeId: currentJudgeId }, 'failed to handle judge disconnect')
         }
       }
     })
