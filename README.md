@@ -22,6 +22,7 @@ Corner Click is a comprehensive web application designed for managing ITF Taekwo
 - **Astro:** Core framework for routing and fast page loads.
 - **React:** UI library used for complex, stateful components like the interactive scoring pad, tournament brackets, and standings tables.
 - **Node.js & Express (API):** Central hub for all business logic, score processing, and tournament rules.
+- **WebSockets (Socket.io) & Redis:** Used for ultra-low latency real-time communication between Judges, Jury, and the Public Scoreboard, ensuring instant score consensus in memory.
 - **Firebase:** Persistent storage for tournament structures (Firestore) and Authentication. Handled exclusively via the API.
 - **Netlify:** Hosting platform for web apps.
 - **Vanilla CSS:** Custom, modern, and premium design system featuring glassmorphism and dynamic micro-animations.
@@ -87,7 +88,7 @@ The API is configured to be deployed as a Web Service on **Render** using Render
    - `FIREBASE_PROJECT_ID`
    - `FIREBASE_CLIENT_EMAIL`
    - `FIREBASE_PRIVATE_KEY` (ensure you format newline characters properly)
-   - `FIREBASE_DATABASE_URL`
+   - `REDIS_URL` (Connection string for Upstash or standard Redis)
 
 ### Frontend Applications (Netlify)
 

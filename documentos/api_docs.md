@@ -68,14 +68,14 @@ Returns a list of the generated PINs. The Organizer must note these down or prin
 
 ---
 
-## Hybrid Architecture: Match Control & Scoring
+## Real-Time Architecture: WebSockets & Redis
 
-To support Serverless deployment, the API uses a hybrid approach:
+To provide ultra-low latency and scale predictably, the API uses a highly optimized real-time architecture:
 
-- **Match Status (Firebase RTDB)**: Firebase Realtime Database is strictly used as a "dumb pipe" to broadcast the match `status` and `timer`. The API or Admin pushes to Firebase, and Judges only listen.
-- **Match Control (REST)**: Admin clients use REST POST requests (`/api/matches/:id/status`) to change match state. The API validates these commands.
-- **Local Scoring**: Judges accumulate points locally in their app's state during an `ACTIVE` match. They do **not** send points in real-time.
-- **Score Collection (REST)**: When a match status changes to `ENDED`, judges automatically send their locally accumulated score to the API via REST (`/api/matches/:id/scores`). The API validates and records the final result in Firestore.
+- **Match Status (WebSockets & Redis)**: We use Socket.io for all real-time communication. The `web-admin` (Jury) and `web-judges` connect to rooms based on `areaId`. All real-time state (timer, match status, judges' clicks) is processed instantly and maintained in a fast memory layer using **Upstash Redis**.
+- **Match Control (WebSockets)**: Admin clients emit `MATCH_CONTROL` WebSocket events to change match state (start, pause, golden point). The API updates the Redis store and broadcasts the new state.
+- **Local Scoring (WebSockets)**: Judges emit `JUDGE_SCORE_UPDATE` events in real-time as they click. The Node.js server aggregates these clicks in Redis, computes the consensus, and broadcasts the live scores back to the room instantly.
+- **Score Persistence (TRPC / REST)**: Firebase Firestore remains the definitive source of truth for the tournament bracket. When a match ends or a winner is declared, the final calculated result is pushed to Firestore via standard API mutations. Firebase Realtime Database is no longer used for live matching.
 
 ---
 
