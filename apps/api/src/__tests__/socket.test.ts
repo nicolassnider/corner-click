@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Create a module-level mock state to capture the callbacks
-const registeredSocketEvents: Record<string, Function> = {}
-let connectionCallback: Function = () => {}
+const registeredSocketEvents: Record<string, (...args: unknown[]) => unknown> = {}
+let connectionCallback: (...args: unknown[]) => unknown = () => {}
 
 const mockEmitToRoom = vi.fn()
 const mockToRoom = vi.fn().mockReturnValue({ emit: mockEmitToRoom })
@@ -10,7 +10,7 @@ const mockToRoom = vi.fn().mockReturnValue({ emit: mockEmitToRoom })
 vi.mock('socket.io', () => {
   return {
     Server: class {
-      on(event: string, callback: Function) {
+      on(event: string, callback: (...args: unknown[]) => unknown) {
         if (event === 'connection') {
           connectionCallback = callback
         }
@@ -53,7 +53,7 @@ describe('SocketService & MemoryStore Tests', () => {
       id: 'socket-judge-1',
       join: vi.fn(),
       emit: vi.fn(),
-      on: vi.fn().mockImplementation((event: string, callback: Function) => {
+      on: vi.fn().mockImplementation((event: string, callback: (...args: unknown[]) => unknown) => {
         registeredSocketEvents[event] = callback
       }),
     }

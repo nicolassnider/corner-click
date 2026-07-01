@@ -132,6 +132,7 @@ export const AreaScheduleManager: React.FC<AreaScheduleManagerProps> = ({
         <div className="flex gap-2 overflow-x-auto pb-2">
           {areaOptions.map((area) => (
             <button
+              type="button"
               key={area}
               onClick={() => setSelectedAreaId(area)}
               className={`px-4 py-2 rounded-lg font-bold text-sm whitespace-nowrap transition-colors ${

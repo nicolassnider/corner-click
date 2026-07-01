@@ -239,13 +239,13 @@ export default function ScorePad({
   return (
     <div className="flex flex-col h-[100dvh] w-screen bg-slate-950 overflow-hidden text-slate-100 font-sans touch-manipulation select-none relative">
       {/* Top Bar Glassmorphism */}
-      <div className="flex justify-between items-center px-4 py-3 bg-slate-900/60 backdrop-blur-md border-b border-slate-800/80 z-30">
+      <div className="flex justify-between items-center px-4 py-3 bg-slate-900/60 backdrop-blur-md border-b border-slate-800/80 z-30 hardware-accelerated">
         <div className="flex items-center gap-3">
           <span className="text-slate-400 font-black tracking-[0.2em] uppercase text-[10px]">
             CORNER CLICK
           </span>
           {useLocal && (
-            <span className="bg-amber-500/10 text-amber-500 border border-amber-500/30 text-[9px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+            <span className="bg-amber-500/10 text-amber-500 border border-amber-500/30 text-[9px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.2)] hardware-accelerated">
               LOCAL
             </span>
           )}
@@ -261,7 +261,7 @@ export default function ScorePad({
       </div>
 
       {/* Scoreboard Header */}
-      <div className="flex-none bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/80 shadow-2xl z-20 pb-4 relative pt-2">
+      <div className="flex-none bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/80 shadow-2xl z-20 pb-4 relative pt-2 hardware-accelerated">
         <div className="flex items-center justify-between px-6 py-2">
           {/* Red Score */}
           <div className="flex flex-col items-center w-[40%]">
@@ -297,8 +297,8 @@ export default function ScorePad({
       <div className="flex-1 flex w-full relative z-10 p-2 gap-2">
         {/* Overlay when scoring is disabled */}
         {matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md">
-            <div className="bg-amber-500 text-slate-950 px-8 py-6 rounded-3xl shadow-[0_0_50px_rgba(245,158,11,0.3)] flex flex-col items-center border-4 border-amber-400 animate-pulse-slow">
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md hardware-accelerated">
+            <div className="bg-amber-500 text-slate-950 px-8 py-6 rounded-3xl shadow-[0_0_50px_rgba(245,158,11,0.3)] flex flex-col items-center border-4 border-amber-400 animate-pulse-slow hardware-accelerated">
               <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"

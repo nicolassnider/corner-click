@@ -250,12 +250,12 @@ function JudgeApp() {
     return (
       <div className="flex flex-col items-center justify-center h-[100dvh] bg-slate-950 relative overflow-hidden font-sans">
         {/* Dynamic Background Glows */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-rose-600/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none hardware-accelerated" />
+        <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-rose-600/10 rounded-full blur-[120px] pointer-events-none hardware-accelerated" />
 
         <form
           onSubmit={handleLogin}
-          className="flex flex-col gap-6 w-80 max-w-sm bg-slate-900/60 backdrop-blur-xl p-8 rounded-3xl border border-slate-800/80 shadow-2xl z-10"
+          className="flex flex-col gap-6 w-80 max-w-sm bg-slate-900/60 backdrop-blur-xl p-8 rounded-3xl border border-slate-800/80 shadow-2xl z-10 hardware-accelerated"
         >
           <h1 className="text-3xl font-black text-slate-100 text-center tracking-tight uppercase">
             CORNER<span className="text-blue-500">CLICK</span>
@@ -327,16 +327,16 @@ function JudgeApp() {
     return (
       <div className="flex flex-col items-center justify-center h-[100dvh] bg-slate-950 px-6 text-center font-sans relative overflow-hidden">
         {/* Dynamic Background Glows */}
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none hardware-accelerated" />
 
-        <div className="z-10 bg-slate-900/60 backdrop-blur-xl p-8 rounded-3xl border border-slate-800/80 shadow-2xl max-w-lg w-full flex flex-col items-center">
+        <div className="z-10 bg-slate-900/60 backdrop-blur-xl p-8 rounded-3xl border border-slate-800/80 shadow-2xl max-w-lg w-full flex flex-col items-center hardware-accelerated">
           <h1 className="text-3xl font-black text-slate-100 mb-2 tracking-tight uppercase">
             Hola, <span className="text-blue-500">{judgeName}</span>
           </h1>
           <p className="text-slate-400 font-medium mb-8">Has iniciado sesión correctamente.</p>
 
           <div className="p-6 bg-slate-950/50 rounded-2xl border border-slate-800 w-full animate-pulse-slow relative overflow-hidden">
-            <div className="absolute inset-0 bg-blue-500/5 blur-[40px]" />
+            <div className="absolute inset-0 bg-blue-500/5 blur-[40px] hardware-accelerated" />
             <p className="text-lg font-bold text-slate-200 leading-relaxed relative z-10">
               {assignment
                 ? `Esperando que inicie un combate en el Área ${assignment.areaId}...`
