@@ -9,6 +9,7 @@ import {
   SocketRole,
 } from '@corner-click/types'
 import { Server, type Socket } from 'socket.io'
+import { redis } from '../data/redis.js'
 
 const log = createLogger('socket-service')
 
@@ -35,28 +36,34 @@ interface ActiveMatchState {
   }
 }
 
-class MemoryStore {
-  // In-memory fallback repository for active matches per area
-  private activeMatches: Map<string, ActiveMatchState> = new Map()
+const MATCH_STATE_TTL_SECONDS = 60 * 60 * 2 // 2 hours
 
-  getMatchState(areaId: string): ActiveMatchState | undefined {
-    return this.activeMatches.get(areaId)
+class RedisStore {
+  private getRedisKey(areaId: string): string {
+    return `match_state:${areaId}`
   }
 
-  setMatchState(areaId: string, state: ActiveMatchState): void {
-    this.activeMatches.set(areaId, state)
+  async getMatchState(areaId: string): Promise<ActiveMatchState | undefined> {
+    const data = await redis.get(this.getRedisKey(areaId))
+    if (!data) return undefined
+    try {
+      return JSON.parse(data) as ActiveMatchState
+    } catch (error) {
+      log.error({ error, areaId }, 'Failed to parse match state from Redis')
+      return undefined
+    }
   }
 
-  deleteMatchState(areaId: string): void {
-    this.activeMatches.delete(areaId)
+  async setMatchState(areaId: string, state: ActiveMatchState): Promise<void> {
+    await redis.set(this.getRedisKey(areaId), JSON.stringify(state), 'EX', MATCH_STATE_TTL_SECONDS)
   }
 
-  getAllMatchStates(): Map<string, ActiveMatchState> {
-    return this.activeMatches
+  async deleteMatchState(areaId: string): Promise<void> {
+    await redis.del(this.getRedisKey(areaId))
   }
 }
 
-export const localStore = new MemoryStore()
+export const store = new RedisStore()
 
 const buildScoresPayload = (state: ActiveMatchState) => {
   const scores: Record<string, any> = {}
@@ -97,7 +104,7 @@ export const initSocketService = (httpServer: HttpServer): Server => {
     // Join a specific area
     socket.on(
       SocketEvent.JOIN_AREA,
-      (data: {
+      async (data: {
         areaId: string
         role: SocketRole
         judgeId?: string
@@ -113,8 +120,15 @@ export const initSocketService = (httpServer: HttpServer): Server => {
         socket.join(roomName)
         log.info({ socketId: socket.id, areaId, role, judgeId }, 'client joined area room')
 
-        // Initialize area state if it doesn't exist
-        let state = localStore.getMatchState(areaId)
+        let state: ActiveMatchState | undefined
+        try {
+          state = await store.getMatchState(areaId)
+        } catch (error) {
+          log.error({ err: error, socketId: socket.id, areaId, role, judgeId }, 'failed to load match state from store')
+          socket.emit(SocketEvent.MATCH_STATE, { error: 'Unable to join area at this time.' })
+          return
+        }
+
         if (!state) {
           state = {
             match: {
@@ -135,7 +149,13 @@ export const initSocketService = (httpServer: HttpServer): Server => {
             judges: {},
             judgeClicks: {},
           }
-          localStore.setMatchState(areaId, state)
+          try {
+            await store.setMatchState(areaId, state)
+          } catch (error) {
+             log.error({ err: error, socketId: socket.id, areaId, role, judgeId }, 'failed to initialize match state in store')
+             socket.emit(SocketEvent.MATCH_STATE, { error: 'Unable to join area at this time.' })
+             return
+          }
         }
 
         // If user is a judge, register them in the area state
@@ -154,7 +174,13 @@ export const initSocketService = (httpServer: HttpServer): Server => {
               deductions: 0,
             }
           }
-          localStore.setMatchState(areaId, state)
+          try {
+            await store.setMatchState(areaId, state)
+          } catch (error) {
+             log.error({ err: error, socketId: socket.id, areaId, role, judgeId }, 'failed to save judge state in store')
+             socket.emit(SocketEvent.MATCH_STATE, { error: 'Unable to join area at this time.' })
+             return
+          }
 
           // Notify other clients in the room (e.g. admin) that judge joined/connected
           io.to(roomName).emit(SocketEvent.JUDGES_UPDATE, state.judges)
@@ -174,7 +200,7 @@ export const initSocketService = (httpServer: HttpServer): Server => {
     // Score update from a judge
     socket.on(
       SocketEvent.JUDGE_SCORE_UPDATE,
-      (data: {
+      async (data: {
         areaId: string
         matchId: string
         judgeId: string
@@ -183,7 +209,14 @@ export const initSocketService = (httpServer: HttpServer): Server => {
         value: number
       }) => {
         const { areaId, judgeId, corner, type, value } = data
-        const state = localStore.getMatchState(areaId)
+        let state: ActiveMatchState | undefined
+        try {
+          state = await store.getMatchState(areaId)
+        } catch (error) {
+          log.error({ err: error, areaId, judgeId }, 'failed to load match state for judge score update')
+          return
+        }
+
         if (!state) {
           return
         }
@@ -229,7 +262,12 @@ export const initSocketService = (httpServer: HttpServer): Server => {
         state.match.score.red = Math.round(totalRedRaw / judgeCount)
         state.match.score.blue = Math.round(totalBlueRaw / judgeCount)
 
-        localStore.setMatchState(areaId, state)
+        try {
+          await store.setMatchState(areaId, state)
+        } catch (error) {
+          log.error({ err: error, areaId, judgeId }, 'failed to save match state for judge score update')
+          return
+        }
 
         // Broadcast new match state to the room
         io.to(`area:${areaId}`).emit(SocketEvent.MATCH_STATE, {
@@ -245,7 +283,7 @@ export const initSocketService = (httpServer: HttpServer): Server => {
     // Control update from Admin
     socket.on(
       SocketEvent.MATCH_CONTROL,
-      (data: {
+      async (data: {
         areaId: string
         matchId: string
         action: MatchControlAction
@@ -253,7 +291,14 @@ export const initSocketService = (httpServer: HttpServer): Server => {
         timerValue?: number
       }) => {
         const { areaId, action, matchData, timerValue } = data
-        const state = localStore.getMatchState(areaId)
+        let state: ActiveMatchState | undefined
+        try {
+           state = await store.getMatchState(areaId)
+        } catch (error) {
+           log.error({ err: error, areaId, action }, 'failed to load match state for match control')
+           return
+        }
+        
         if (!state) {
           return
         }
@@ -310,7 +355,12 @@ export const initSocketService = (httpServer: HttpServer): Server => {
           state.timerActive = false
         }
 
-        localStore.setMatchState(areaId, state)
+        try {
+          await store.setMatchState(areaId, state)
+        } catch (error) {
+          log.error({ err: error, areaId, action }, 'failed to save match state for match control')
+          return
+        }
 
         // Broadcast update
         io.to(`area:${areaId}`).emit(SocketEvent.MATCH_STATE, {
@@ -324,16 +374,20 @@ export const initSocketService = (httpServer: HttpServer): Server => {
     )
 
     // Handle disconnect
-    socket.on(SocketEvent.DISCONNECT, () => {
+    socket.on(SocketEvent.DISCONNECT, async () => {
       log.info({ socketId: socket.id }, 'client disconnected from WebSocket')
 
       if (currentAreaId && currentRole === SocketRole.JUDGE && currentJudgeId) {
-        const state = localStore.getMatchState(currentAreaId)
-        if (state?.judges[currentJudgeId]) {
-          state.judges[currentJudgeId].connected = false
-          localStore.setMatchState(currentAreaId, state)
+        try {
+          const state = await store.getMatchState(currentAreaId)
+          if (state?.judges[currentJudgeId]) {
+            state.judges[currentJudgeId].connected = false
+            await store.setMatchState(currentAreaId, state)
 
-          io.to(`area:${currentAreaId}`).emit(SocketEvent.JUDGES_UPDATE, state.judges)
+            io.to(`area:${currentAreaId}`).emit(SocketEvent.JUDGES_UPDATE, state.judges)
+          }
+        } catch (error) {
+           log.error({ err: error, areaId: currentAreaId, judgeId: currentJudgeId }, 'failed to handle judge disconnect')
         }
       }
     })
