@@ -54,4 +54,12 @@ body {
 
 .animate-slide-up {
   animation: slide-up 0.3s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+/* Utilities for TV/Spectator rendering to force layer creation */
+.hardware-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
