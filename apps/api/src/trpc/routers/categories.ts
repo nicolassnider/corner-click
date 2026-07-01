@@ -1,4 +1,10 @@
-import type { AgeGroupDef, BeltGroupDef, Category, WeightClass } from '@corner-click/types'
+import type {
+  AgeGroupDef,
+  BeltGroupDef,
+  Category,
+  Competitor,
+  WeightClass,
+} from '@corner-click/types'
 import {
   Gender,
   getBeltsForAgeGroup,
@@ -57,7 +63,7 @@ export const categoriesRouter = router({
         })
       }
 
-      const user = ctx.user as any
+      const user = ctx.user
       if (user?.role === 'guest') {
         throw new TRPCError({
           code: 'FORBIDDEN',
@@ -84,7 +90,7 @@ export const categoriesRouter = router({
               ? WORLD_CHAMPIONSHIP_AGES
               : WORLD_CUP_AGES
 
-        const updates: Record<string, any> = {}
+        const updates: Record<string, unknown> = {}
 
         const createCategoryNode = (
           ageGroup: AgeGroupDef,
@@ -138,7 +144,7 @@ export const categoriesRouter = router({
         })
       }
 
-      const user = ctx.user as any
+      const user = ctx.user
       if (user?.role === 'guest') {
         throw new TRPCError({
           code: 'FORBIDDEN',
@@ -158,7 +164,7 @@ export const categoriesRouter = router({
 
         const compRef = rtdb.ref(`tournaments/${input.tournamentId}/competitors`)
         const compSnap = await compRef.once('value')
-        const allComps: any[] = compSnap.exists()
+        const allComps: Competitor[] = compSnap.exists()
           ? Object.keys(compSnap.val()).map((k) => ({
               id: k,
               ...compSnap.val()[k],
@@ -166,7 +172,9 @@ export const categoriesRouter = router({
           : []
 
         const counts: Record<string, number> = {}
-        categories.forEach((c) => (counts[c.id] = 0))
+        categories.forEach((c) => {
+          counts[c.id] = 0
+        })
         allComps.forEach((c) => {
           if (counts[c.categoryId] !== undefined) {
             counts[c.categoryId]++
@@ -182,9 +190,9 @@ export const categoriesRouter = router({
           groups[key].push(c)
         })
 
-        const competitorUpdates: Record<string, any> = {}
+        const competitorUpdates: Record<string, unknown> = {}
         const categoriesToDelete: string[] = []
-        const categoryUpdates: Record<string, any> = {}
+        const categoryUpdates: Record<string, unknown> = {}
 
         for (const catsInGroup of Object.values(groups)) {
           for (let i = 0; i < catsInGroup.length; i++) {
@@ -250,7 +258,7 @@ export const categoriesRouter = router({
         })
       }
 
-      const user = ctx.user as any
+      const user = ctx.user
       if (user?.role === 'guest') {
         throw new TRPCError({
           code: 'FORBIDDEN',

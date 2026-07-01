@@ -22,7 +22,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Extract app settings to variables to avoid magic strings
-const { name: appName, version, description, apiPrefix, environment, isVercel } = settings.app
+const { name: appName, apiPrefix, environment, isVercel } = settings.app
 app.use(express.json())
 
 // HTTP request logging

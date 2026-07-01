@@ -6,7 +6,7 @@ const _log = createLogger('auth-service')
 const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY
 
 export class FirebaseAuthService implements IAuthService {
-  async createJudgeToken(judgeId: string, claims: any): Promise<string> {
+  async createJudgeToken(judgeId: string, claims: Record<string, unknown>): Promise<string> {
     if (!auth) {
       throw new Error('Firebase Auth not initialized')
     }
@@ -42,7 +42,11 @@ export class FirebaseAuthService implements IAuthService {
       throw new Error('Invalid credentials')
     }
 
-    const firebaseData = (await firebaseRes.json()) as any
+    const firebaseData = (await firebaseRes.json()) as {
+      localId: string
+      email: string
+      displayName?: string
+    }
     const uid = firebaseData.localId
 
     const adminDoc = await db.collection('admins').doc(uid).get()

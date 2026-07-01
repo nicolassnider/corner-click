@@ -42,7 +42,7 @@ export const tournamentsRouter = router({
       })
     }
 
-    const user = ctx.user as any
+    const user = ctx.user
     if (user?.role === 'guest') {
       return getDemoData()
     }
@@ -66,7 +66,7 @@ export const tournamentsRouter = router({
       })
     }
 
-    const user = ctx.user as any
+    const user = ctx.user
     if (user?.role === 'guest') {
       const demoData = getDemoData()
       const demoTournament = demoData.find((t: any) => t.id === input.id)
@@ -114,7 +114,7 @@ export const tournamentsRouter = router({
         })
       }
 
-      const user = ctx.user as any
+      const user = ctx.user
       if (user?.role === 'guest') {
         throw new TRPCError({
           code: 'FORBIDDEN',
@@ -163,7 +163,7 @@ export const tournamentsRouter = router({
         })
       }
 
-      const user = ctx.user as any
+      const user = ctx.user
       if (user?.role === 'guest') {
         throw new TRPCError({
           code: 'FORBIDDEN',
@@ -223,7 +223,7 @@ export const tournamentsRouter = router({
         })
       }
 
-      const user = ctx.user as any
+      const user = ctx.user
       if (user?.role === 'guest') {
         throw new TRPCError({
           code: 'FORBIDDEN',

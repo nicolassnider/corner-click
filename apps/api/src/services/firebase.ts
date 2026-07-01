@@ -11,8 +11,8 @@ if (process.env.USE_FIREBASE_EMULATOR === 'true') {
       databaseURL: 'http://127.0.0.1:9000/?ns=demo-corner-click',
     })
     console.log('Firebase Admin initialized for Emulator.')
-  } catch (err: any) {
-    console.error('Error initializing Firebase Admin Emulator:', err.message)
+  } catch (err: unknown) {
+    console.error('Error initializing Firebase Admin Emulator:', (err as Error).message)
   }
 } else if (
   settings.firebase.projectId &&
@@ -29,8 +29,8 @@ if (process.env.USE_FIREBASE_EMULATOR === 'true') {
       databaseURL: settings.firebase.databaseURL,
     })
     console.log('Firebase Admin initialized successfully.')
-  } catch (err: any) {
-    console.error('Error initializing Firebase Admin:', err.message)
+  } catch (err: unknown) {
+    console.error('Error initializing Firebase Admin:', (err as Error).message)
   }
 } else {
   console.warn('⚠️  Firebase Admin initialization skipped due to missing credentials.')

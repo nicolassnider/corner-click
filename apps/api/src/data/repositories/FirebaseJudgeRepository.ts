@@ -50,7 +50,7 @@ export class FirebaseJudgeRepository implements IJudgeRepository {
     if (!db) {
       throw new Error('Database not initialized')
     }
-    const updateData: any = { status }
+    const updateData: { status: string; lastActiveAt?: string } = { status }
     if (lastActiveAt) {
       updateData.lastActiveAt = lastActiveAt
     }
@@ -62,7 +62,11 @@ export class FirebaseJudgeRepository implements IJudgeRepository {
       .update(updateData)
   }
 
-  async updateAssignment(tournamentId: string, judgeId: string, assignment: any): Promise<void> {
+  async updateAssignment(
+    tournamentId: string,
+    judgeId: string,
+    assignment: Record<string, unknown> | null
+  ): Promise<void> {
     if (!db) {
       throw new Error('Database not initialized')
     }

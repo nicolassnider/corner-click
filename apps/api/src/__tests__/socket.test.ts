@@ -30,7 +30,12 @@ import {
 import { initSocketService, localStore } from '../services/socketService.js'
 
 describe('SocketService & MemoryStore Tests', () => {
-  let socketInstance: any
+  let socketInstance: {
+    id: string
+    join: ReturnType<typeof vi.fn>
+    emit: ReturnType<typeof vi.fn>
+    on: ReturnType<typeof vi.fn>
+  }
 
   beforeEach(() => {
     // Clear stores
@@ -40,6 +45,7 @@ describe('SocketService & MemoryStore Tests', () => {
     vi.clearAllMocks()
 
     // Re-initialize service to bind classes
+    // biome-ignore lint/suspicious/noExplicitAny: Mock socket server for testing
     initSocketService({} as any)
 
     // Mock socket instance
@@ -116,7 +122,10 @@ describe('SocketService & MemoryStore Tests', () => {
         corner: 'corner_1',
       })
 
-      const state = localStore.getMatchState('area-1')!
+      const state = localStore.getMatchState('area-1')
+      if (!state) {
+        throw new Error('State should exist')
+      }
       expect(state.judges['j-1']).toEqual({
         name: 'Nicolas Snider',
         corner: 'corner_1',
@@ -140,7 +149,10 @@ describe('SocketService & MemoryStore Tests', () => {
         corner: 'corner_1',
       })
       // Mock active match status to ACTIVE
-      const state = localStore.getMatchState('area-1')!
+      const state = localStore.getMatchState('area-1')
+      if (!state) {
+        throw new Error('State should exist')
+      }
       state.match.status = MatchStatus.ACTIVE
       localStore.setMatchState('area-1', state)
     })

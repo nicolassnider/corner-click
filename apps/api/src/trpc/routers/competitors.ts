@@ -67,7 +67,7 @@ export const competitorsRouter = router({
         })
       }
 
-      const user = ctx.user as any
+      const user = ctx.user
       if (user?.role === 'guest') {
         throw new TRPCError({
           code: 'FORBIDDEN',
@@ -126,7 +126,7 @@ export const competitorsRouter = router({
         })
       }
 
-      const user = ctx.user as any
+      const user = ctx.user
       if (user?.role === 'guest') {
         throw new TRPCError({
           code: 'FORBIDDEN',
@@ -187,7 +187,7 @@ export const competitorsRouter = router({
         })
       }
 
-      const user = ctx.user as any
+      const user = ctx.user
       if (user?.role === 'guest') {
         throw new TRPCError({
           code: 'FORBIDDEN',

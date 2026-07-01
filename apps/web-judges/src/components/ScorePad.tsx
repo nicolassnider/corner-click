@@ -26,7 +26,7 @@ interface ScorePadProps {
   isOffline?: boolean
 }
 
-function ScoreButton({
+export function ScoreButton({
   onAction,
   className,
   children,

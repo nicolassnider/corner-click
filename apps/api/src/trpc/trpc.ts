@@ -3,9 +3,15 @@ import type * as trpcExpress from '@trpc/server/adapters/express'
 import type { DecodedIdToken } from 'firebase-admin/auth'
 import { auth, db } from '../services/firebase.js'
 
+export interface AppUser extends DecodedIdToken {
+  role?: string
+  tournamentId?: string
+  judgeId?: string
+}
+
 // Create context for every request
 export const createContext = async ({ req, res }: trpcExpress.CreateExpressContextOptions) => {
-  let user: DecodedIdToken | null = null
+  let user: AppUser | null = null
   const authHeader = req.headers.authorization
 
   if (authHeader?.startsWith('Bearer ')) {

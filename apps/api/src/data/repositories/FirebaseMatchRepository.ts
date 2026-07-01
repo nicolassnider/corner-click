@@ -45,7 +45,7 @@ export class FirebaseMatchRepository implements IMatchRepository {
       const matchSnap = await rtdb.ref(`tournaments`).once('value')
       const allTournaments = matchSnap.val() as Record<
         string,
-        { matches?: Record<string, any> }
+        { matches?: Record<string, Record<string, unknown>> }
       > | null
 
       // Find which tournament owns this match
@@ -69,7 +69,7 @@ export class FirebaseMatchRepository implements IMatchRepository {
       }
     }
   }
-  async submitScores(id: string, cornerId: string, scores: any): Promise<void> {
+  async submitScores(id: string, cornerId: string, scores: Record<string, unknown>): Promise<void> {
     if (!db) {
       throw new Error('Database not initialized')
     }
@@ -87,7 +87,7 @@ export class FirebaseMatchRepository implements IMatchRepository {
     )
   }
 
-  async getScores(id: string): Promise<any> {
+  async getScores(id: string): Promise<Record<string, unknown>> {
     if (!db) {
       throw new Error('Database not initialized')
     }
@@ -101,8 +101,8 @@ export class FirebaseMatchRepository implements IMatchRepository {
 
   streamScores(
     id: string,
-    onUpdate: (data: any) => void,
-    onError: (error: any) => void
+    onUpdate: (data: Record<string, unknown>) => void,
+    onError: (error: Error) => void
   ): () => void {
     if (!db) {
       throw new Error('Database not initialized')
@@ -172,11 +172,12 @@ export class FirebaseMatchRepository implements IMatchRepository {
     // Auto-complete tournament: check if ALL matches have a winnerId
     if (db) {
       const allMatchesSnap = await rtdb.ref(`tournaments/${tournamentId}/matches`).once('value')
-      const allMatches = allMatchesSnap.val() as Record<string, any> | null
+      const allMatches = allMatchesSnap.val() as Record<string, Record<string, unknown>> | null
 
       if (allMatches) {
         const allDone = Object.values(allMatches).every(
-          (m: any) => m.winnerId !== null && m.winnerId !== undefined && m.winnerId !== ''
+          (m: Record<string, unknown>) =>
+            m.winnerId !== null && m.winnerId !== undefined && m.winnerId !== ''
         )
 
         if (allDone) {

@@ -103,7 +103,7 @@ export const authRouter = router({
 
   logout: protectedProcedure.mutation(async ({ ctx }) => {
     try {
-      const user = ctx.user as any
+      const user = ctx.user
       if (user?.tournamentId && user.judgeId) {
         await judgeRepo.updateStatus(user.tournamentId, user.judgeId, 'OFFLINE')
       }
