@@ -13,7 +13,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { database } from '../lib/firebase'
 import { connectSocket, disconnectSocket } from '../lib/socketClient'
-import { API_URL } from '../utils/apiClient'
 import '../styles/global.css'
 
 interface PublicScoreboardProps {

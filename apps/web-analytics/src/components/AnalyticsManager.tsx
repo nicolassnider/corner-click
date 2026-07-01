@@ -178,10 +178,17 @@ export default function AnalyticsManager({
         <h2 className="text-xl font-bold text-gray-800">Analíticas & Auditoría de Llaves</h2>
         <div className="flex gap-4">
           <button
+            type="button"
             onClick={handleDownloadMarkdown}
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-sm"
           >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              aria-hidden="true"
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -192,10 +199,17 @@ export default function AnalyticsManager({
             Exportar Markdown (.md)
           </button>
           <button
+            type="button"
             onClick={handlePrint}
             className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm"
           >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              aria-hidden="true"
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -250,7 +264,7 @@ export default function AnalyticsManager({
             Distribución Estándar de Técnicas
           </h3>
           <div className="flex justify-center items-center h-64">
-            <svg viewBox="0 0 400 200" className="w-full max-w-sm h-full">
+            <svg aria-hidden="true" viewBox="0 0 400 200" className="w-full max-w-sm h-full">
               {/* Grid lines */}
               <line x1="50" y1="20" x2="350" y2="20" stroke="#E2E8F0" strokeDasharray="4" />
               <line x1="50" y1="70" x2="350" y2="70" stroke="#E2E8F0" strokeDasharray="4" />
@@ -392,7 +406,7 @@ export default function AnalyticsManager({
                           ? 'bg-amber-100 text-amber-800'
                           : 'bg-rose-100 text-rose-800'
                     return (
-                      <tr key={idx}>
+                      <tr key={m.id || idx}>
                         <td className="px-4 py-3 whitespace-nowrap text-sm font-bold text-gray-800">
                           {j.judgeName}
                         </td>

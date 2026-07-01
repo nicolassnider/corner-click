@@ -24,7 +24,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           className={clsx(styles.input, className)}
-          aria-invalid={error ? "true" : "false"}
+          aria-invalid={error ? 'true' : 'false'}
           aria-describedby={error ? `${inputId}-error` : undefined}
           {...props}
         />

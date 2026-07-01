@@ -12,9 +12,13 @@ export interface IMatchRepository {
   findByTournament(tournamentId: string): Promise<Match[]>
   findById(id: string): Promise<Match | null>
   updateStatus(id: string, status: string): Promise<void>
-  submitScores(id: string, cornerId: string, scores: any): Promise<void>
-  getScores(id: string): Promise<any>
-  streamScores(id: string, onUpdate: (data: any) => void, onError: (error: any) => void): () => void
+  submitScores(id: string, cornerId: string, scores: unknown): Promise<void>
+  getScores(id: string): Promise<unknown>
+  streamScores(
+    id: string,
+    onUpdate: (data: unknown) => void,
+    onError: (error: unknown) => void
+  ): () => void
   declareWinner(
     matchId: string,
     params: {
@@ -37,13 +41,13 @@ export interface IJudgeRepository {
     status: string,
     lastActiveAt?: string
   ): Promise<void>
-  updateAssignment(tournamentId: string, judgeId: string, assignment: any): Promise<void>
+  updateAssignment(tournamentId: string, judgeId: string, assignment: unknown): Promise<void>
   delete(tournamentId: string, judgeId: string): Promise<void>
   cleanupExpiredJudges(tournamentId: string): Promise<void>
 }
 
 export interface IAuthService {
-  createJudgeToken(judgeId: string, claims: any): Promise<string>
+  createJudgeToken(judgeId: string, claims: Record<string, unknown>): Promise<string>
   loginAdmin(
     email: string,
     password: string

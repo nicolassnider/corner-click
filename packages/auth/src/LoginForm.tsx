@@ -15,7 +15,7 @@ export default function LoginForm({
   subtitle = 'Admin Console',
   onLoginSuccess,
 }: LoginFormProps) {
-  const { auth, fetchWithAuth } = useAuth()
+  const { auth } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -38,7 +38,8 @@ export default function LoginForm({
       } else {
         window.location.href = '/'
       }
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as Record<string, unknown> & { message?: string; data?: { code?: string } }
       if (err.message?.includes('Acceso denegado')) {
         setError('Acceso denegado: no eres administrador.')
       } else if (
@@ -67,7 +68,8 @@ export default function LoginForm({
       } else {
         window.location.href = '/'
       }
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as Record<string, unknown> & { message?: string; data?: { code?: string } }
       setError(err.message || 'Error de conexión. Verifica que el servidor esté activo.')
     } finally {
       setLoading(false)
@@ -81,6 +83,7 @@ export default function LoginForm({
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/40 mb-4">
             <svg
+              aria-hidden="true"
               className="w-10 h-10 text-white"
               fill="none"
               stroke="currentColor"

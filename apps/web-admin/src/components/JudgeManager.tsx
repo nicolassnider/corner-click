@@ -140,9 +140,10 @@ export default function JudgeManager({ tournamentId, tournamentAreas, isReadOnly
                       <div className="flex justify-end gap-2">
                         {j.status === JudgeStatus.ONLINE && (
                           <button
+                            type="button"
                             onClick={() => {
                               if (window.confirm(`Force disconnect ${j.name}?`)) {
-                                disconnectJudge(j.id!)
+                                disconnectJudge(j.id as string)
                               }
                             }}
                             className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-bold py-2 px-3 rounded-lg transition-colors text-xs uppercase tracking-wide"
@@ -151,15 +152,17 @@ export default function JudgeManager({ tournamentId, tournamentAreas, isReadOnly
                           </button>
                         )}
                         <button
+                          type="button"
                           onClick={() => setSelectedJudge(j)}
                           className="bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold py-2 px-4 rounded-lg transition-colors text-xs uppercase tracking-wide"
                         >
                           {j.currentAssignment ? 'Re-Assign' : 'Assign'}
                         </button>
                         <button
+                          type="button"
                           onClick={() => {
                             if (window.confirm(`Are you sure you want to delete ${j.name}?`)) {
-                              deleteJudge(j.id!)
+                              deleteJudge(j.id as string)
                             }
                           }}
                           className="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-2 px-3 rounded-lg transition-colors text-xs uppercase tracking-wide"

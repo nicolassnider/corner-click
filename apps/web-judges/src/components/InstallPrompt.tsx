@@ -74,6 +74,7 @@ export default function InstallPrompt() {
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-rose-500 to-blue-500 rounded-xl flex items-center justify-center">
             <svg
+              aria-hidden="true"
               className="w-6 h-6 text-white"
               fill="none"
               stroke="currentColor"
@@ -95,12 +96,14 @@ export default function InstallPrompt() {
             </p>
             <div className="flex gap-2">
               <button
+                type="button"
                 onClick={handleInstallClick}
                 className="flex-1 bg-gradient-to-r from-rose-500 to-blue-500 text-white text-xs font-bold uppercase tracking-wider py-2 px-4 rounded-lg hover:opacity-90 transition-opacity active:scale-95"
               >
                 Instalar
               </button>
               <button
+                type="button"
                 onClick={handleDismiss}
                 className="text-slate-400 text-xs font-bold uppercase tracking-wider py-2 px-4 rounded-lg hover:text-slate-300 transition-colors"
               >

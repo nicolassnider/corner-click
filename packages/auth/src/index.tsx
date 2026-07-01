@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null
   loading: boolean
   auth: Auth
-  fetchWithAuth: any
+  fetchWithAuth: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -22,7 +22,7 @@ export function useAuth() {
 interface AuthProviderProps {
   children: React.ReactNode
   auth: Auth
-  fetchWithAuth: any
+  fetchWithAuth: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
 }
 
 export function AuthProvider({ children, auth, fetchWithAuth }: AuthProviderProps) {

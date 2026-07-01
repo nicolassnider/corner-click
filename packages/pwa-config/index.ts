@@ -5,7 +5,7 @@
  * @param description - Description of the application
  * @returns PWA configuration object for @vite-pwa/astro
  */
-export function getPWAConfig(appName: string, shortName: string, description: string): any {
+export function getPWAConfig(appName: string, shortName: string, description: string): unknown {
   return {
     registerType: 'autoUpdate',
     workbox: {

@@ -98,7 +98,7 @@ export default function ScorePad({
       return
     }
     const socket = connectSocket(areaId, SocketRole.JUDGE, judgeId, judgeName, cornerId)
-    socket.on(SocketEvent.MATCH_STATE, (state: any) => {
+    socket.on(SocketEvent.MATCH_STATE, (state: unknown) => {
       if (state?.match && state.match.id === matchId) {
         setMatchStatus(state.match.status)
       }
@@ -177,11 +177,17 @@ export default function ScorePad({
   ])
 
   const handleScore = (color: CornerRole, points: number) => {
-    if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) return
+    if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) {
+      return
+    }
 
     AudioService.playClick()
-    if (color === CornerRole.RED) setRedScore((prev) => prev + points)
-    if (color === CornerRole.BLUE) setBlueScore((prev) => prev + points)
+    if (color === CornerRole.RED) {
+      setRedScore((prev) => prev + points)
+    }
+    if (color === CornerRole.BLUE) {
+      setBlueScore((prev) => prev + points)
+    }
 
     if (useLocal && !isOffline) {
       const socket = getSocket()
@@ -197,11 +203,17 @@ export default function ScorePad({
   }
 
   const handleWarning = (color: CornerRole) => {
-    if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) return
+    if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) {
+      return
+    }
 
     AudioService.playClick()
-    if (color === CornerRole.RED) setRedWarnings((prev) => prev + 1)
-    if (color === CornerRole.BLUE) setBlueWarnings((prev) => prev + 1)
+    if (color === CornerRole.RED) {
+      setRedWarnings((prev) => prev + 1)
+    }
+    if (color === CornerRole.BLUE) {
+      setBlueWarnings((prev) => prev + 1)
+    }
 
     if (useLocal && !isOffline) {
       const socket = getSocket()
@@ -217,11 +229,17 @@ export default function ScorePad({
   }
 
   const handleDeduction = (color: CornerRole) => {
-    if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) return
+    if (matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT) {
+      return
+    }
 
     AudioService.playClick()
-    if (color === CornerRole.RED) setRedDeductions((prev) => prev + 1)
-    if (color === CornerRole.BLUE) setBlueDeductions((prev) => prev + 1)
+    if (color === CornerRole.RED) {
+      setRedDeductions((prev) => prev + 1)
+    }
+    if (color === CornerRole.BLUE) {
+      setBlueDeductions((prev) => prev + 1)
+    }
 
     if (useLocal && !isOffline) {
       const socket = getSocket()
@@ -252,6 +270,7 @@ export default function ScorePad({
         </div>
         {onLogout && (
           <button
+            type="button"
             onClick={onLogout}
             className="text-white text-[10px] font-black uppercase tracking-widest bg-rose-600/90 hover:bg-rose-500 px-4 py-1.5 rounded-lg shadow-lg active:scale-95 transition-transform border border-rose-500/50"
           >
@@ -299,7 +318,13 @@ export default function ScorePad({
         {matchStatus !== MatchStatus.ACTIVE && matchStatus !== MatchStatus.GOLDEN_POINT && (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md hardware-accelerated">
             <div className="bg-amber-500 text-slate-950 px-8 py-6 rounded-3xl shadow-[0_0_50px_rgba(245,158,11,0.3)] flex flex-col items-center border-4 border-amber-400 animate-pulse-slow hardware-accelerated">
-              <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                aria-hidden="true"
+                className="w-16 h-16 mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

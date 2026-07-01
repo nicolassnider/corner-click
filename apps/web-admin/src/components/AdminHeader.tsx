@@ -50,7 +50,11 @@ export default function AdminHeader({ onHomeClick, user }: AdminHeaderProps) {
       <div className="max-w-[95vw] 2xl:max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center cursor-pointer group" onClick={onHomeClick}>
+          <button
+            type="button"
+            className="flex items-center cursor-pointer group"
+            onClick={onHomeClick}
+          >
             <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-all duration-300 group-hover:scale-105">
               <svg
                 className="w-5 h-5 text-white"
@@ -76,7 +80,7 @@ export default function AdminHeader({ onHomeClick, user }: AdminHeaderProps) {
                 Admin Console
               </span>
             </div>
-          </div>
+          </button>
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-1">
@@ -97,7 +101,14 @@ export default function AdminHeader({ onHomeClick, user }: AdminHeaderProps) {
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" role="img" aria-label={item.label}>
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    role="img"
+                    aria-label={item.label}
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -141,7 +152,14 @@ export default function AdminHeader({ onHomeClick, user }: AdminHeaderProps) {
               title="Cerrar sesión"
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all border border-transparent hover:border-red-500/20"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" role="img" aria-label="Cerrar sesión">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                role="img"
+                aria-label="Cerrar sesión"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

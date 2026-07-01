@@ -120,7 +120,7 @@ function JudgeApp() {
 
   // Poll for judge assignment using tRPC
   const { data: judgeData, error: queryError } = trpc.judges.getById.useQuery(
-    { tournamentId: tournamentId!, judgeId: judgeId! },
+    { tournamentId: tournamentId as string, judgeId: judgeId as string },
     {
       enabled: !!tournamentId && !!judgeId && tournamentId !== 'offline-tournament',
       refetchInterval: 3000,
@@ -200,7 +200,7 @@ function JudgeApp() {
         delete: () => Promise.resolve(),
         reload: () => Promise.resolve(),
         toJSON: () => ({}),
-      } as any)
+      } as unknown as Record<string, unknown>)
       setLoading(false)
       return
     }
@@ -208,7 +208,7 @@ function JudgeApp() {
     try {
       const data = await pinLoginMutation.mutateAsync({ pin })
       await signInWithCustomToken(auth, data.token)
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.message || 'Error al iniciar sesión')
     }
   }
@@ -356,6 +356,7 @@ function JudgeApp() {
           )}
 
           <button
+            type="button"
             onClick={handleLogout}
             className="mt-8 text-slate-500 hover:text-slate-300 font-bold uppercase tracking-widest text-xs transition-colors cursor-pointer border border-transparent hover:border-slate-700 bg-slate-950 hover:bg-slate-900 px-4 py-2 rounded-lg"
           >
