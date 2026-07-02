@@ -13,6 +13,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { database } from '../lib/firebase'
 import { connectSocket, disconnectSocket } from '../lib/socketClient'
+import { mockSponsorsConfig } from '../config/sponsorsConfig'
+import { SponsorTicker } from './SponsorTicker'
 import '../styles/global.css'
 
 interface PublicScoreboardProps {
@@ -575,13 +577,16 @@ export default function PublicScoreboard({ areaId }: PublicScoreboardProps) {
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="text-center bg-slate-900/50 border border-slate-800/60 py-[1.5vh] rounded-[1.5vw] z-10 text-slate-500 text-[1.5vh] font-black tracking-widest flex justify-between px-[4vw] gap-2 backdrop-blur-md"
+        className="text-center bg-slate-900/50 border border-slate-800/60 rounded-[1.5vw] z-10 flex flex-col justify-between overflow-hidden shadow-xl"
       >
-        <span>
-          {APP_NAME.toUpperCase()} &copy; {new Date().getFullYear()}
-        </span>
-        <span className="italic text-slate-400">&ldquo;{APP_MOTTO}&rdquo;</span>
-        <span>{SYSTEM_OFFICIAL_TITLE}</span>
+        <SponsorTicker sponsors={mockSponsorsConfig.ticker || []} speed={40} />
+        <div className="text-slate-500 text-[1.5vh] font-black tracking-widest flex justify-between px-[4vw] py-[1vh] gap-2 backdrop-blur-md bg-slate-950/80">
+          <span>
+            {APP_NAME.toUpperCase()} &copy; {new Date().getFullYear()}
+          </span>
+          <span className="italic text-slate-400">&ldquo;{APP_MOTTO}&rdquo;</span>
+          <span>{SYSTEM_OFFICIAL_TITLE}</span>
+        </div>
       </motion.footer>
 
       {/* Add keyframes globally for shine effect */}

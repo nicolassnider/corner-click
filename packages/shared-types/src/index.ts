@@ -120,6 +120,7 @@ export interface Match {
 }
 
 export * from './itfCategories.js'
+export * from './sponsors.js'
 
 export const APP_NAME = 'Corner Click'
 export const APP_MOTTO = 'Every Point. Every Match. Every Corner.'
